@@ -38,10 +38,12 @@ import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
 try:
-    from .flb_reader import read_flb, flb_to_csv
+    from .flb_reader import read_flb
+    from .dataset_builder import build_dataset, classify_trials
 except ImportError:
     # Allow running directly: python main.py <file.flb>
-    from flb_reader import read_flb, flb_to_csv
+    from flb_reader import read_flb
+    from dataset_builder import build_dataset, classify_trials
 
 
 # ── Plotting helpers ──────────────────────────────────────────────────────
@@ -324,7 +326,7 @@ def main():
         print("\nTrial 1 preview (first 5 rows):")
         print(pd.read_csv(csv_paths[0]).head().to_string(index=False))
 
-    # ── Generate plots ────────────────────────────────────────────────────
+    # ── Generate raw signal plots (before build_dataset adds envelope columns) ─
     if not args.no_plots:
         os.makedirs(plots_dir, exist_ok=True)
 
@@ -338,9 +340,24 @@ def main():
         plot_trial(trials[t_idx], trial_num=t_idx + 1, output_path=trial_path)
         print(f"Saved trial-{t_idx+1} plot     → '{trial_path}'")
 
-        # 2) All-trials overlay
-        overlay_path = os.path.join(plots_dir, 'all_trials_overlay.png')
-        plot_all_trials_overlay(trials, overlay_path, downsample=args.downsample)
+    # ── Build dataset (classify → envelopes → passive subtract → windows) ─
+    X_train, y_train, X_val, y_val, X_test, y_test, mvc_max, passive_entries = \
+        build_dataset(trials)
+
+    print("\n── Dataset quality checks ──────────────────────────────────────")
+    print(f"  NaN in inputs : {np.isnan(X_train).any()}")
+    print(f"  EMG range     : [{X_train[:, :, :4].min():.4f},  {X_train[:, :, :4].max():.4f}]  (expect ≈ [0, 1])")
+    print(f"  Torque range  : [{y_train.min():.2f},  {y_train.max():.2f}] Nm")
+
+    # ── Envelope check plot (after build_dataset adds *_env/*_rect columns) ─
+    if not args.no_plots:
+        _, _, active_trials = classify_trials(trials)
+        if active_trials:
+            first_active = active_trials[0]
+            comment = first_active.attrs.get('comment', '')
+            env_path = os.path.join(plots_dir, 'envelope_check.png')
+            plot_emg_envelopes(first_active, env_path,
+                               title=f'EMG Envelope Check — {comment}')
 
     print("\nDone.")
 
