@@ -216,7 +216,7 @@ def plot_emg_envelopes(df, output_path: str, title: str = '') -> None:
     Plot raw EMG (blue) with the extracted envelope overlaid (red).
 
     Expects the DataFrame to already have ``*_env`` columns added by
-    ``process_trials`` or ``normalize_with_max``.  One subplot per EMG channel.
+    ``process_trials``.  One subplot per EMG channel.
 
     Parameters
     ----------
@@ -350,7 +350,7 @@ def main():
         print(f"Saved trial-{t_idx+1} plot     → '{trial_path}'")
 
     # ── Build dataset (classify → envelopes → passive subtract → windows) ─
-    X_train, y_train, X_val, y_val, X_test, y_test, emg_max, passive_entries = \
+    X_train, y_train, X_val, y_val, X_test, y_test, emg_max, passive_entries, _ = \
         build_dataset(trials,
                       test_trial_indices=args.test_trials,
                       retest_trial_indices=args.retest_trials)

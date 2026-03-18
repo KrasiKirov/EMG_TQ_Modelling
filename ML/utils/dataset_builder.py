@@ -6,7 +6,7 @@ Builds the LSTM input dataset from FLB trial data.
 Pipeline
 --------
 1.  Classify all trials by comment → MVC / passive / active
-2.  Extract EMG envelopes at 1000 Hz and normalize using MVC max per channel
+2.  Extract EMG envelopes at 1000 Hz and normalize using global max per channel
 3.  Subtract mean passive torque per ankle position → net active torque
 4.  Downsample 1000 Hz → 100 Hz
 5.  Build sliding windows  [N × 20 × 5]
@@ -18,7 +18,7 @@ Design choices
 --------------
 - Ankle position kept in raw radians (no scaling).
 - Torque target is net active torque after passive subtraction.
-- EMG normalization uses MVC max (trials with comment starting with 'mvc').
+- EMG normalization uses global max across train/val trials only (no leakage).
 - Passive torque is the mean measured torque over the matching passive trial(s)
   for each ankle position tag (p1 … p8).
 """
@@ -30,9 +30,9 @@ import pandas as pd
 from scipy.signal import decimate
 
 try:
-    from .emg_envelope import process_trials, normalize_with_max
+    from .emg_envelope import process_trials, extract_envelope
 except ImportError:
-    from emg_envelope import process_trials, normalize_with_max
+    from emg_envelope import process_trials, extract_envelope
 
 
 # ── Constants ──────────────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ def classify_trials(trials):
 # ── Passive torque map ──────────────────────────────────────────────────────
 
 _PASSIVE_STD_THRESHOLD = 20.0   # Nm  — segment rejected if torque still noisy after split
-_PASSIVE_TQ_BOUND      = 30.0   # Nm  — mean passive torque above this is physiologically impossible
+_PASSIVE_TQ_BOUND      = 10.0   # Nm  — mean passive torque above this is physiologically implausible
 _POSITION_TOLERANCE    = 0.05   # rad — positions within this band are merged into one entry
 _STEP_VEL_THRESHOLD    = 5.0    # rad/s — single-sample velocity spike flags a device step
 _SETTLE_SAMPLES        = 1000   # samples to skip after a step (1 s at 1000 Hz)
@@ -376,7 +376,6 @@ def build_dataset(trials,
                   emg_columns=None,
                   test_trial_indices=None,
                   retest_trial_indices=None,
-                  norm_method='global_max',
                   downsample_factor=DOWNSAMPLE_FACTOR,
                   window=WINDOW_STEPS,
                   stride=STRIDE_STEPS,
@@ -398,10 +397,6 @@ def build_dataset(trials,
     retest_trial_indices : list of int, optional
         1-indexed trial numbers for held-out test set.
         If None, auto-detected from comments containing 'retest'.
-    norm_method : str
-        ``'global_max'`` — normalize by global max across active trials
-        (matches MATLAB default).
-        ``'mvc'`` — normalize by MVC trial peaks.
     downsample_factor : int
         1000 Hz / target Hz (default 10 → 100 Hz).
     window, stride : int
@@ -416,6 +411,7 @@ def build_dataset(trials,
     X_test,  y_test  : np.ndarray
     emg_max          : dict  {emg_col: max_value_used_for_normalization}
     passive_entries  : list of (position_rad, passive_torque_Nm)
+    operating_positions : list of float — mean ankle position (rad) per retest trial, sorted
     """
     # ── Step 1: Classify ──────────────────────────────────────────────────
     mvc_trials, passive_trials, active_trials = classify_trials(trials)
@@ -431,37 +427,9 @@ def build_dataset(trials,
     if not active_trials:
         raise ValueError("No active trials found.")
 
-    # ── Step 2: EMG envelope extraction + normalization ───────────────────
-    if norm_method == 'mvc':
-        if not mvc_trials:
-            raise ValueError("No MVC trials found — cannot normalize with 'mvc' method.")
-        _, emg_max = process_trials(mvc_trials, emg_columns=emg_columns)
-        if emg_columns is None:
-            emg_columns = list(emg_max.keys())
-        active_trials = normalize_with_max(active_trials, emg_max,
-                                           emg_columns=emg_columns)
-    elif norm_method == 'global_max':
-        # Normalize by global max across all active trials (matches MATLAB default)
-        active_trials, emg_max = process_trials(active_trials,
-                                                 emg_columns=emg_columns)
-        if emg_columns is None:
-            emg_columns = list(emg_max.keys())
-    else:
-        raise ValueError(f"Unknown norm_method: {norm_method!r}. Use 'mvc' or 'global_max'.")
-
-    # ── Step 3: Passive torque lookup (position-based) ────────────────────
-    passive_entries = get_passive_torque_map(passive_trials)
-    print(f"\nPassive trials used (std < {_PASSIVE_STD_THRESHOLD} Nm):")
-    if passive_entries:
-        for pos, tq in passive_entries:
-            print(f"  pos ≈ {pos:+.3f} rad → passive torque = {tq:+.3f} Nm")
-    else:
-        print("  (none found — proceeding without passive subtraction)")
-
-    # ── Steps 4–6: Per-trial downsample → window → split ─────────────────
-    # Determine which active trials go to train/val vs held-out test.
-    # If explicit indices are provided, use them; otherwise auto-detect
-    # from the 'session' tag parsed from trial comments.
+    # ── Step 2: Determine trial split BEFORE normalization ──────────────
+    # This prevents data leakage: the global max used for EMG normalization
+    # must come only from train/val trials, not from the held-out retest set.
     if test_trial_indices is not None and retest_trial_indices is not None:
         test_set   = {i - 1 for i in test_trial_indices}
         retest_set = {i - 1 for i in retest_trial_indices}
@@ -480,6 +448,42 @@ def build_dataset(trials,
         print(f"  Train/Val (test session):  {sorted(i+1 for i in test_set)}")
         print(f"  Held-out  (retest session): {sorted(i+1 for i in retest_set)}")
 
+    # Separate train/val trials from retest trials
+    trainval_trials = [df for df in active_trials
+                       if df.attrs.get('trial_index') in test_set]
+    retest_trials   = [df for df in active_trials
+                       if df.attrs.get('trial_index') in retest_set]
+
+    # ── Step 3: EMG envelope extraction + normalization (global max) ─────
+    # Compute global max ONLY from train/val trials (no leakage)
+    trainval_trials, emg_max = process_trials(trainval_trials,
+                                               emg_columns=emg_columns)
+    if emg_columns is None:
+        emg_columns = list(emg_max.keys())
+
+    # Normalize retest trials using the train/val max (no leakage)
+    for df in retest_trials:
+        for col in emg_columns:
+            env, rect = extract_envelope(df[col].values,
+                                         return_intermediates=True)
+            df[f'{col}_rect'] = rect
+            df[f'{col}_env'] = env
+            df[f'{col}_env_norm'] = env / emg_max[col]
+    print(f"Retest trials normalized using train/val max (no data leakage)")
+
+    # Recombine for the windowing loop below
+    active_trials = trainval_trials + retest_trials
+
+    # ── Step 4: Passive torque lookup (position-based) ────────────────────
+    passive_entries = get_passive_torque_map(passive_trials)
+    print(f"\nPassive trials used (std < {_PASSIVE_STD_THRESHOLD} Nm):")
+    if passive_entries:
+        for pos, tq in passive_entries:
+            print(f"  pos ≈ {pos:+.3f} rad → passive torque = {tq:+.3f} Nm")
+    else:
+        print("  (none found — proceeding without passive subtraction)")
+
+    # ── Steps 5–7: Per-trial downsample → window → split ─────────────────
     # Determine which positions have retest coverage so we can fall back
     # to a 3-way split (60/20/20) for test-session trials at positions
     # without retest data.
@@ -510,6 +514,7 @@ def build_dataset(trials,
 
     fs_target = 1000.0 / downsample_factor
     trains, vals, tests = [], [], []
+    operating_positions = []  # mean position per retest trial
 
     for df in active_trials:
         idx = df.attrs.get('trial_index')
@@ -526,6 +531,7 @@ def build_dataset(trials,
                               passive_entries if subtract_passive else None,
                               window=window, stride=stride)
 
+        comment = df.attrs.get('comment', '')
         if idx in test_set:
             if idx in fallback_indices:
                 # No retest for this position → 60 % train / 20 % val / 20 % test
@@ -535,15 +541,19 @@ def build_dataset(trials,
                 vals.append((Xv, yv))
                 if len(Xte) > 0:
                     tests.append((Xte, yte))
+                print(f"  Trial {idx+1:2d} ({comment:30s}) → TRAIN {len(Xtr):5d} | VAL {len(Xv):5d} | TEST {len(Xte):5d}  (fallback)")
             else:
                 # Retest exists for this position → 80 % train / 20 % val
                 (Xtr, ytr), (Xv, yv), _ = _temporal_split(
                     X, y, train_frac, 1.0 - train_frac)
                 trains.append((Xtr, ytr))
                 vals.append((Xv, yv))
+                print(f"  Trial {idx+1:2d} ({comment:30s}) → TRAIN {len(Xtr):5d} | VAL {len(Xv):5d}")
         else:
             # Retest trial → 100 % held-out test
             tests.append((X, y))
+            operating_positions.append(float(df_ds[POSITION_COL].mean()))
+            print(f"  Trial {idx+1:2d} ({comment:30s}) → TEST  {len(X):5d}  (retest — fully held out)")
 
     X_train = np.concatenate([x for x, _ in trains])
     y_train = np.concatenate([y for _, y in trains])
@@ -567,4 +577,6 @@ def build_dataset(trials,
     print(f"  X_val    : {X_val.shape}   y_val:   {y_val.shape}")
     print(f"  X_test   : {X_test.shape}   y_test:  {y_test.shape}")
 
-    return X_train, y_train, X_val, y_val, X_test, y_test, emg_max, passive_entries
+    operating_positions = sorted(operating_positions)
+
+    return X_train, y_train, X_val, y_val, X_test, y_test, emg_max, passive_entries, operating_positions

@@ -58,9 +58,6 @@ def parse_args():
                    help='1-indexed test trial numbers (default: auto-detect from comments)')
     p.add_argument('--retest-trials', nargs='+', type=int, default=None,
                    help='1-indexed retest trial numbers (default: auto-detect from comments)')
-    p.add_argument('--norm-method', choices=['mvc', 'global_max'],
-                   default='global_max',
-                   help='EMG normalization method (default: global_max)')
     return p.parse_args()
 
 
@@ -96,7 +93,7 @@ def plot_predictions(y_true, y_pred, out_path: str, n_samples: int = 2000):
     ax.plot(idx, y_pred[idx], label='Predicted',   linewidth=0.8, color='red', alpha=0.8)
     ax.set_xlabel('Window index')
     ax.set_ylabel('Net active torque (Nm)')
-    ax.set_title(f'Test set predictions (first {len(idx)} windows)')
+    ax.set_title(f'Retest session predictions (first {len(idx)} windows)')
     ax.legend()
     ax.grid(True, linewidth=0.4)
     fig.tight_layout()
@@ -226,7 +223,7 @@ def plot_predictions_per_position(X_test, y_test, y_pred, out_path: str,
     for i in range(n_pos, rows * cols):
         axes[i // cols][i % cols].set_visible(False)
 
-    fig.suptitle('Predictions per Ankle Position (Test Set)', fontsize=11)
+    fig.suptitle('Predictions per Ankle Position (Retest Session — Unseen Data)', fontsize=11)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
@@ -287,7 +284,7 @@ def plot_scatter_per_position(X_test, y_test, y_pred, out_path: str,
     for i in range(n_pos, rows * cols):
         axes[i // cols][i % cols].set_visible(False)
 
-    fig.suptitle('Predicted vs Actual Torque per Position (Test Set)', fontsize=11)
+    fig.suptitle('Predicted vs Actual Torque per Position (Retest Session — Unseen Data)', fontsize=11)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
@@ -317,11 +314,11 @@ def main():
     (X_train, y_train,
      X_val,   y_val,
      X_test,  y_test,
-     emg_max, passive_entries) = build_dataset(
+     emg_max, passive_entries,
+     operating_positions) = build_dataset(
         trials,
         test_trial_indices=args.test_trials,
         retest_trial_indices=args.retest_trials,
-        norm_method=args.norm_method,
         subtract_passive=True,
     )
 
@@ -381,8 +378,9 @@ def main():
     print(f'  MAE        : {mae:.4f} Nm')
 
     # ── 6. Per-position evaluation ───────────────────────────────────────────
-    # Use the 8 known operating points from passive torque map for position binning
-    known_pos = [pos for pos, _ in passive_entries] if passive_entries else None
+    # Use the operating positions returned by build_dataset (one mean position
+    # per retest trial).  This is exact — no clustering heuristics needed.
+    known_pos = operating_positions
 
     evaluate_per_position(X_test, y_test, y_pred,
                           os.path.join(PLOT_DIR, 'per_position_metrics.png'),
