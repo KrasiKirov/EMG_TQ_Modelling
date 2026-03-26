@@ -1,12 +1,12 @@
 """
-main.py
--------
-Entry point: reads a REKLAB .flb file, exports every trial to CSV, and
+explore.py
+----------
+Exploratory CLI: reads a REKLAB .flb file, exports every trial to CSV, and
 generates signal plots.
 
 Usage
 -----
-    python main.py <path/to/file.flb> [options]
+    python -m ML.explore <path/to/file.flb> [options]
 
 Options
 -------
@@ -30,20 +30,17 @@ Output structure
 """
 
 import os
+import sys
 import argparse
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # non-interactive backend; works without a display
-import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
-try:
-    from .flb_reader import read_flb
-    from .dataset_builder import build_dataset, classify_trials
-except ImportError:
-    # Allow running directly: python main.py <file.flb>
-    from flb_reader import read_flb
-    from dataset_builder import build_dataset, classify_trials
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from ML.preprocessing.flb_reader import read_flb
+from ML.preprocessing.dataset_builder import build_dataset, classify_trials
 
 
 # ── Plotting helpers ──────────────────────────────────────────────────────
@@ -152,63 +149,6 @@ def plot_trial(df, trial_num: int, output_path: str) -> None:
     fig.tight_layout()
     fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
-
-
-def plot_all_trials_overlay(trials, output_path: str, downsample: int = 10) -> None:
-    """
-    Save a figure with one subplot per channel, overlaying all trials.
-
-    Parameters
-    ----------
-    trials : list of pd.DataFrame
-    output_path : str
-        Full path for the saved PNG file.
-    downsample : int
-        Keep every N-th sample to reduce render time (default 10).
-    """
-    if not trials:
-        return
-
-    signal_cols = [c for c in trials[0].columns if c != 'time']
-    n_ch = len(signal_cols)
-    n_trials = len(trials)
-
-    # Each trial gets a shade along the channel's base colour
-    fig, axes = plt.subplots(n_ch, 1, figsize=(14, 2.5 * n_ch),
-                             sharex=False, facecolor='white')
-    if n_ch == 1:
-        axes = [axes]
-
-    fig.suptitle(f'All {n_trials} Trials Overlay',
-                 fontsize=11, fontweight='bold', y=1.01)
-
-    for idx, (ax, col) in enumerate(zip(axes, signal_cols)):
-        base_color = _ch_color(col, idx)
-        cmap = mcolors.LinearSegmentedColormap.from_list(
-            'ch', ['#cccccc', base_color], N=n_trials)
-        name, unit = _ch_label(col)
-        for i, df in enumerate(trials):
-            t = df['time'].values[::downsample]
-            y = df[col].values[::downsample]
-            ax.plot(t, y, linewidth=0.4, alpha=0.55, color=cmap(i / max(n_trials - 1, 1)),
-                    label=f'T{i+1}')
-        ax.set_facecolor('white')
-        ax.set_ylabel(f'{name}\n({unit})', fontsize=8, labelpad=6,
-                      rotation=90, va='center')
-        ax.grid(True, linewidth=0.4, color='#cccccc', linestyle='-')
-        ax.tick_params(labelsize=7.5)
-        ax.spines[['top', 'right']].set_visible(False)
-        ax.set_xlabel('Time (s)', fontsize=8)
-
-    # Single legend for the whole figure
-    handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc='upper right', fontsize=6,
-               ncol=max(1, n_trials // 10), bbox_to_anchor=(1.0, 1.0))
-
-    fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
-    plt.close(fig)
-    print(f"Saved overlay plot → '{output_path}'")
 
 
 def plot_emg_envelopes(df, output_path: str, title: str = '') -> None:
@@ -350,7 +290,8 @@ def main():
         print(f"Saved trial-{t_idx+1} plot     → '{trial_path}'")
 
     # ── Build dataset (classify → envelopes → passive subtract → windows) ─
-    X_train, y_train, X_val, y_val, X_test, y_test, emg_max, passive_entries, _ = \
+    (X_train, y_train, X_val, y_val, X_test, y_test,
+     emg_max, passive_entries, _operating_pos, _pos_range) = \
         build_dataset(trials,
                       test_trial_indices=args.test_trials,
                       retest_trial_indices=args.retest_trials)

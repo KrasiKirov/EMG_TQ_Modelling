@@ -47,10 +47,16 @@ DEFAULT_CHANNEL_NAMES = ['position', 'torque', 'gm', 'gl', 'sol', 'ta']
 # IES01 subject has a different channel order in the raw file
 IES01_CHANNEL_ORDER = [0, 1, 3, 5, 4, 2]   # reorder to: pos, tq, gm, gl, sol, ta
 
-# Map common short names to canonical names used throughout the pipeline
+# Map common short names to canonical names used throughout the pipeline.
+# EMG columns from different FLB files use different naming conventions;
+# this ensures a consistent set of column names across all subjects.
 _CANONICAL_NAMES = {
     'pos': 'position',
     'tq': 'torque',
+    'mg_emg': 'gm',       # medial gastrocnemius
+    'lg_emg': 'gl',       # lateral gastrocnemius
+    'sol_emg': 'sol',      # soleus
+    'ta_emg': 'ta',        # tibialis anterior
 }
 
 
@@ -238,40 +244,3 @@ def read_flb(filepath, subject_id='default', channel_names=None):
     return trials
 
 
-def flb_to_csv(filepath, output_dir=None, subject_id='default'):
-    """
-    Convert all trials in an FLB file to individual CSV files.
-
-    Parameters
-    ----------
-    filepath : str
-        Path to the .flb file.
-    output_dir : str, optional
-        Directory to write CSV files. Defaults to a folder named after the
-        FLB file (without extension) next to the FLB file.
-    subject_id : str
-        Subject identifier (affects channel ordering for IES01).
-
-    Returns
-    -------
-    list of str
-        Paths to the written CSV files.
-    """
-    base_name = os.path.splitext(os.path.basename(filepath))[0]
-
-    if output_dir is None:
-        output_dir = os.path.join(os.path.dirname(filepath), base_name + '_csv')
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    trials = read_flb(filepath, subject_id=subject_id)
-    csv_paths = []
-
-    for i, df in enumerate(trials):
-        csv_name = f"{base_name}_trial{i+1:03d}.csv"
-        csv_path = os.path.join(output_dir, csv_name)
-        df.to_csv(csv_path, index=False)
-        csv_paths.append(csv_path)
-
-    print(f"Saved {len(csv_paths)} CSV files to '{output_dir}'")
-    return csv_paths

@@ -18,11 +18,13 @@ from scipy.signal import butter, sosfiltfilt
 
 # Default parameters 
 
-# Known EMG column names across different FLB files:
-#   Default naming:  gm, gl, sol, ta
-#   File-header naming: ta_emg, mg_emg, sol_emg, lg_emg
-# The user can always override by passing emg_columns explicitly.
-DEFAULT_EMG_COLUMNS = ['gm', 'gl', 'sol', 'ta']
+# Canonical EMG muscle order used across all subjects.
+# flb_reader normalises column names (e.g. mg_emg → gm) so that every
+# subject's DataFrame uses these four names, but detect_emg_columns()
+# also enforces this ordering so the feature array is always
+#     [MG, LG, SOL, TA, position].
+CANONICAL_EMG_ORDER = ['gm', 'gl', 'sol', 'ta']
+DEFAULT_EMG_COLUMNS = CANONICAL_EMG_ORDER
 DEFAULT_FS = 1000.0        # Hz — sampling frequency used in REKLAB experiments
 DEFAULT_BP_LOW = 30.0      # Hz — bandpass lower cutoff
 DEFAULT_BP_HIGH = 300.0    # Hz — bandpass upper cutoff
@@ -41,6 +43,9 @@ def detect_emg_columns(df):
     (e.g. 'emg', 'gm', 'sol') while excluding non-EMG columns
     (e.g. 'time', 'pos', 'torque').
 
+    Returns columns sorted to CANONICAL_EMG_ORDER so that the feature
+    array is always [MG, LG, SOL, TA] regardless of file header order.
+
     Parameters
     ----------
     df : pd.DataFrame
@@ -49,16 +54,21 @@ def detect_emg_columns(df):
     Returns
     -------
     list of str
-        Column names identified as EMG channels.
+        Column names identified as EMG channels, in canonical order.
     """
-    emg_cols = []
+    emg_cols = set()
     for col in df.columns:
         col_lower = col.lower()
         if col_lower in _NON_EMG_NAMES:
             continue
         if any(kw in col_lower for kw in _EMG_KEYWORDS):
-            emg_cols.append(col)
-    return emg_cols
+            emg_cols.add(col)
+
+    # Sort to canonical order: [gm, gl, sol, ta]
+    ordered = [c for c in CANONICAL_EMG_ORDER if c in emg_cols]
+    # Append any unexpected columns that weren't in the canonical list
+    ordered += sorted(emg_cols - set(ordered))
+    return ordered
 
 
 
