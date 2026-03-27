@@ -1,6 +1,7 @@
 *.asv
 *.fig
 *.mat
+*.mldatx
 __pycache__/
 .DS_Store
 *.keras
