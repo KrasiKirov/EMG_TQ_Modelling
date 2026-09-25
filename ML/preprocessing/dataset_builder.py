@@ -52,9 +52,8 @@ TRANSIENT_SAMPLES = 1000         # samples to trim from start of each trial at 1
 TRAIN_FRAC        = 0.80
 VAL_FRAC          = 0.20
 
-# Trials (active or passive) whose torque std exceeds this are passive
-# movement / ramp trials and are excluded from both the training set and
-# the passive torque lookup.
+# Active trials whose torque std exceeds this are likely ramp / dynamic
+# movements (not isometric holds) and are excluded from training.
 _ACTIVE_STD_THRESHOLD  = 30.0   # Nm
 
 
@@ -540,7 +539,8 @@ def build_dataset(trials,
                   train_frac=TRAIN_FRAC,
                   subtract_passive=True,
                   normalize_position=False,
-                  normalize_mvc=False):
+                  normalize_mvc=False,
+                  passive_entries_override=None):
     """
     Full pipeline: classify → normalize EMG → passive-subtract torque
                    → downsample → sliding windows → temporal split → stack.
@@ -643,9 +643,9 @@ def build_dataset(trials,
     # Extract envelopes for retest trials (always needed)
     for df in retest_trials:
         for col in emg_columns:
-            env, rect = extract_envelope(df[col].values,
+            env, stages = extract_envelope(df[col].values,
                                          return_intermediates=True)
-            df[f'{col}_rect'] = rect
+            df[f'{col}_rect'] = stages['rectified']
             df[f'{col}_env'] = env
             df[f'{col}_env_norm'] = env / emg_max[col]
 
@@ -658,13 +658,19 @@ def build_dataset(trials,
     active_trials = trainval_trials + retest_trials
 
     # ── Step 4: Passive torque lookup (position-based) ────────────────────
-    passive_entries = get_passive_torque_map(passive_trials)
-    print(f"\nPassive trials used (std < {_PASSIVE_STD_THRESHOLD} Nm):")
-    if passive_entries:
+    if passive_entries_override is not None:
+        passive_entries = sorted(passive_entries_override, key=lambda x: x[0])
+        print(f"\nPassive torque map (manually overridden — {len(passive_entries)} entries):")
         for pos, tq in passive_entries:
             print(f"  pos ≈ {pos:+.3f} rad → passive torque = {tq:+.3f} Nm")
     else:
-        print("  (none found — proceeding without passive subtraction)")
+        passive_entries = get_passive_torque_map(passive_trials)
+        print(f"\nPassive trials used (std < {_PASSIVE_STD_THRESHOLD} Nm):")
+        if passive_entries:
+            for pos, tq in passive_entries:
+                print(f"  pos ≈ {pos:+.3f} rad → passive torque = {tq:+.3f} Nm")
+        else:
+            print("  (none found — proceeding without passive subtraction)")
 
     # ── Step 4b: MVC normalization map (optional) ──────────────────────────
     mvc_map = None

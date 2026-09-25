@@ -291,7 +291,8 @@ def main():
 
     # ── Build dataset (classify → envelopes → passive subtract → windows) ─
     (X_train, y_train, X_val, y_val, X_test, y_test,
-     emg_max, passive_entries, _operating_pos, _pos_range) = \
+     emg_max, passive_entries, _operating_pos, _pos_range,
+     _mvc_tq_test) = \
         build_dataset(trials,
                       test_trial_indices=args.test_trials,
                       retest_trial_indices=args.retest_trials)
