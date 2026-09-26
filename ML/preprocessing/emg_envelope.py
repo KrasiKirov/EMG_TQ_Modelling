@@ -58,6 +58,8 @@ def detect_emg_columns(df):
     emg_cols = set()
     for col in df.columns:
         col_lower = col.lower()
+        if col_lower.endswith(('_env', '_env_norm', '_rect')):
+            continue
         if col_lower in _NON_EMG_NAMES:
             continue
         if any(kw in col_lower for kw in _EMG_KEYWORDS):
@@ -195,6 +197,9 @@ def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
         ``{column_name: max_used}`` — the global max values used for
         normalization.
     """
+    trials = [df.copy(deep=True) for df in trials]
+    if not trials:
+        raise ValueError('At least one trial is required.')
     if emg_columns is None:
         emg_columns = detect_emg_columns(trials[0])
 
@@ -229,5 +234,4 @@ def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
         print(f"  {col} max used: {max_values[col]:.6f}")
 
     return trials, max_values
-
 

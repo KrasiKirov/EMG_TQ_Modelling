@@ -9,7 +9,7 @@ import os
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 ML_DIR    = os.path.dirname(__file__)
-DATA_DIR  = os.path.join(ML_DIR, 'data')
+DATA_DIR  = os.environ.get('EMG_DATA_DIR', os.path.join(ML_DIR, 'data'))
 MODEL_DIR = os.path.join(ML_DIR, 'checkpoints')
 PLOT_DIR  = os.path.join(ML_DIR, 'plots')
 

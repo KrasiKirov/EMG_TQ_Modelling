@@ -1,6 +1,41 @@
 # Implementation plan: reliable EMG-to-torque modelling with existing data
 
-Status: proposed implementation, not executed. Prepared 2026-09-25.
+Status: core implementation delivered on `ml-pipeline-reliability` in the
+KrasiKirov fork, 2026-09-25. Scientific validation is not complete; see the execution
+record below and `VALIDATION_RESULTS.md` for the exact scope of completed runs.
+
+## Execution record
+
+- M0: original working state preserved in a separate baseline commit; existing
+  environment verified and locked; all five historical checkpoints reconstructed
+  without overwriting them. Their historical preprocessing remains unknown.
+- M1: manifest generation, evidence-backed overrides, signal-quality statistics,
+  ambiguity exclusions, and binary fixture tests implemented. Existing IES/YES
+  calibration metadata was usable; no new recordings were needed. MATLAB-reader
+  parity remains unverified because its helper implementation was not available.
+- M2–M3: explicit torque targets, training-session passive support, train-only
+  normalization, independently filtered raw blocks, and blocked calibration
+  prefixes implemented and regression-tested. Target normalization is training
+  mean/SD for neural optimization, with all predictions returned to Nm.
+- M4: five-subject baseline screen completed (three neural seeds), followed by
+  the frozen reference LSTM over five seeds and deterministic baselines on retest.
+- M5: all five measured-torque LOSO folds and 0/30/60/120-second adaptation
+  conditions completed as a one-seed, 30-epoch pilot. This is not a final
+  multi-seed transfer study or a nested hyperparameter search.
+- M6: sequential sweep runner and acceptance rules implemented; all six stages
+  exercised in a 14-run, one-epoch smoke test. No hyperparameter or sensor change
+  was adopted from that smoke test. The full multi-seed sweep remains pending.
+  Split-safe persistent caching was deferred: measured preprocessing is already
+  under one second per subject; invalidation complexity is not justified yet.
+- M7: complete offline packages, cached-graph inference, fresh-process prediction
+  verification, latency profiling, and 30 regression tests implemented. All 55
+  final/transfer packages reproduced saved predictions exactly. Causal streaming
+  remains explicitly outside this delivery.
+
+The original milestone descriptions below remain the research roadmap, not a
+claim that every optional experiment has been run. `trial_manifest.py` provides
+the audit CLI; `pipeline.py` provides the new split/builder implementation. The
+legacy builder remains available for reconstruction and diagnostics only.
 
 ## Scope and decisions
 

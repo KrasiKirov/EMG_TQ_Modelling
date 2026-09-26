@@ -307,7 +307,7 @@ def plot_per_position_recovery(results, strategy, out_path):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def main():
+def legacy_main():
     os.makedirs(MODEL_DIR, exist_ok=True)
     os.makedirs(PLOT_DIR,  exist_ok=True)
 
@@ -374,6 +374,11 @@ def main():
             print(f'  {direction:<10}  {strategy:<17}  {r2_row}  {ws:7.3f}')
 
     print(f'\nDone.')
+
+
+def main():
+    from ML.training.benchmark import main as audited_main
+    audited_main(default_protocol='adaptation')
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ from tensorflow.keras.layers import Input, LSTM, Dropout, Dense
 
 
 def build_model(n_steps: int = 20, n_features: int = 5,
-                n_units: int = 8) -> Sequential:
+                n_units: int = 8, dropout: float = 0.3) -> Sequential:
     """Two-layer stacked LSTM for ankle torque regression (Nm).
 
     Architecture
@@ -18,9 +18,9 @@ def build_model(n_steps: int = 20, n_features: int = 5,
     model = Sequential([
         Input(shape=(n_steps, n_features)),
         LSTM(n_units, activation='tanh', return_sequences=True),
-        Dropout(0.3),
+        Dropout(dropout),
         LSTM(n_units, activation='tanh', return_sequences=False),
-        Dropout(0.3),
+        Dropout(dropout),
         Dense(1),
     ], name='ankle_torque_lstm')
     return model

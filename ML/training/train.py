@@ -56,7 +56,7 @@ def _parse_passive_map(pos_list, tq_list):
     return list(zip(pos_list, tq_list))
 
 
-def main():
+def legacy_main():
     args = parse_args()
     if args.subject:
         subject_key = args.subject
@@ -202,6 +202,11 @@ def main():
                      known_positions=known_pos)
 
     print(f'\nBest model saved → {ckpt_path}')
+
+
+def main():
+    from ML.training.benchmark import main as audited_main
+    audited_main(default_protocol='within')
 
 
 if __name__ == '__main__':
