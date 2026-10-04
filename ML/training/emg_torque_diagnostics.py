@@ -130,23 +130,25 @@ def _print_summary(X, y_true, y_pred, operating_positions,
     # ── Flags ──────────────────────────────────────────────────────────────
     flags = []
 
-    dorf_pos  = valid_pos[0]   # most dorsiflexed (smallest value)
-    plant_pos = valid_pos[-1]  # most plantarflexed (largest value)
+    # Keep numerical ordering explicit. Anatomical labels are audited
+    # separately and must not silently reverse signed positions.
+    negative_pos = valid_pos[0]
+    positive_pos = valid_pos[-1]
 
     # Dorsiflexion: small-signal artifact check
-    ds = per_pos_stats[dorf_pos]
+    ds = per_pos_stats[negative_pos]
     if ds['iqr'] < 2.0:
         flags.append(
-            f'[INFO] {dorf_pos:+.3f} rad: IQR={ds["iqr"]:.2f} Nm < 2 Nm — '
+            f'[INFO] {negative_pos:+.3f} rad: IQR={ds["iqr"]:.2f} Nm < 2 Nm — '
             f'R²={ds["r2"]:.3f} is likely a small-signal metric artifact. '
             f'NRMSE={ds["nrmse"]*100:.1f}% is a fairer measure.')
 
     # Plantarflexion: systematic bias check
-    ps = per_pos_stats[plant_pos]
+    ps = per_pos_stats[positive_pos]
     if ps['rmse'] > 0 and abs(ps['bias']) > 0.3 * ps['rmse']:
         direction = 'over' if ps['bias'] > 0 else 'under'
         flags.append(
-            f'[WARNING] {plant_pos:+.3f} rad: |bias|={abs(ps["bias"]):.3f} Nm = '
+            f'[WARNING] {positive_pos:+.3f} rad: |bias|={abs(ps["bias"]):.3f} Nm = '
             f'{abs(ps["bias"])/ps["rmse"]*100:.0f}% of RMSE — '
             f'model systematically {direction}-predicts.')
 

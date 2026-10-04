@@ -24,6 +24,9 @@ python -m ML.training.benchmark --protocol adaptation --models lstm --output ML/
 python -m ML.training.sweep --stages history dropout loss stride batch --output ML/runs/sweep
 python -m ML.training.verify_run --run ML/runs/final --output ML/runs/final/reload_verification.json
 python -m ML.training.profile_inference --package ML/runs/final/HM_lstm_seed11 --output ML/runs/final/inference_profile.json
+python -m ML.evaluation.position_diagnostics --run ML/runs/final --project-root . \
+  --output ML/runs/final/position_diagnostic.json \
+  --markdown ML/runs/final/position_diagnostic.md
 ```
 
 Outputs must not already exist. The entry points `ML.training.train`,
@@ -105,6 +108,17 @@ Reports show per-trial/per-position errors, target variation, low-variance flags
 and coverage. The main comparison is equal-position RMSE within each subject,
 then equal-subject averaging. Pooled R² is secondary. A missing position is not a
 zero-error position. Seed variability and subject variability are distinct.
+
+### Signed-position audit
+
+Use `ML.evaluation.position_diagnostics` for the error investigation. It groups
+positions numerically as negative, near-zero, or positive, then attaches the
+project-intended labels as qualified metadata. The original MATLAB sources use
+negative `maxPF` and positive `maxDF`, which supports the intended mapping
+negative = plantarflexion and positive = dorsiflexion. This is not an independent
+verification of physical sensor polarity; that requires a known physical ankle
+reference movement. Do not relabel a raw channel or invert targets based only on
+model error.
 
 The LOSO runner fits on source subjects only and selects ridge strength on
 source-only validation. Neural hyperparameters are fixed by the invocation;

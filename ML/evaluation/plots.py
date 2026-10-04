@@ -337,7 +337,7 @@ def plot_r2_overlay(results, out_path):
                 marker=markers[hash(label) % len(markers)],
                 markersize=6, linewidth=1.5, label=label)
 
-    ax.set_xlabel('Position Index (sorted dorsiflexion \u2192 plantarflexion)', fontsize=10)
+    ax.set_xlabel('Position Index (sorted negative angle \u2192 positive angle)', fontsize=10)
     ax.set_ylabel('R\u00b2', fontsize=10)
     ax.set_title('Cross-Subject Transferability: R\u00b2 per Position', fontsize=11)
     ax.set_xticks(range(1, 9))
