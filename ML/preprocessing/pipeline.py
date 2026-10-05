@@ -8,7 +8,8 @@ import numpy as np
 from scipy.signal import resample_poly
 
 from ML.config import DATA_DIR
-from ML.preprocessing.calibration import PassiveCalibration, fit_passive
+from ML.preprocessing.calibration import (PassiveCalibration, fit_passive,
+                                           fit_passive_session)
 from ML.preprocessing.emg_envelope import extract_envelope
 from ML.preprocessing.trial_manifest import CHANNELS, load_inventory
 
@@ -26,6 +27,7 @@ class PipelineConfig:
     edge_trim_s: float = 1.0
     lp_cutoff: float = 2.0
     target_mode: str = 'active_torque'
+    session_passive_calibration: bool = False
 
     def __post_init__(self):
         if self.target_mode not in ('active_torque', 'measured_torque'):
@@ -142,6 +144,13 @@ def windows(signals, index, record, support, config, passive=None, stride=1):
 def build_bundle(trials, manifest, config=None, data_dir=None):
     config = config or PipelineConfig()
     passive = fit_passive(trials, manifest, data_dir) if config.target_mode == 'active_torque' else None
+    passive_by_session = {'test': passive} if passive is not None else {}
+    if config.target_mode == 'active_torque' and config.session_passive_calibration:
+        passive_by_session['retest'] = fit_passive_session(trials, manifest, session='retest')
+    elif passive is not None:
+        # Preserve the historical source-only behavior unless the opt-in mode
+        # explicitly requests a retest-specific curve.
+        passive_by_session['retest'] = passive
     processed = []
     coverage = []
     for record, frame in zip(manifest['trials'], trials):
@@ -164,15 +173,23 @@ def build_bundle(trials, manifest, config=None, data_dir=None):
     pieces = {s: [] for s in ('train', 'val', 'test')}
     for split, signal, index, record, support in processed:
         signal[:, :4] /= scales
-        data = windows(signal, index, record, support, config, passive,
+        session_passive = passive_by_session.get(record['session'])
+        data = windows(signal, index, record, support, config, session_passive,
                        config.train_stride if split == 'train' else 1)
         pieces[split].append(data)
         coverage.append(dict(trial=record['trial'], position_id=record['position_id'], split=split,
                              windows=len(data.y), status='included' if len(data.y) else 'unavailable',
-                             reason='' if len(data.y) else 'No supported passive calibration'))
+                             reason='' if len(data.y) else
+                             ('No supported session passive calibration'
+                              if config.session_passive_calibration
+                              else 'No supported passive calibration')))
     splits = {s: join_splits(p) if p else empty_split(config) for s, p in pieces.items()}
     metadata = dict(schema_version=1, config=asdict(config), channels=list(CHANNELS),
                     emg_scales=scales.tolist(), passive=passive.to_dict() if passive else None,
+                    passive_by_session={session: calibration.to_dict()
+                                        for session, calibration in passive_by_session.items()},
+                    passive_calibration_mode=('session_specific' if config.session_passive_calibration
+                                              else 'source_only'),
                     position_units='rad', target_units='Nm', normalization='training-block max',
                     mode='offline', edge_policy='independently filtered raw blocks; trimmed both ends',
                     source_sha256=manifest['source_sha256'],

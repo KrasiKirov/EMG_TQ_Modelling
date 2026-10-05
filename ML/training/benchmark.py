@@ -174,7 +174,8 @@ def run(args):
         if len(set(values)) != len(values):
             raise ValueError(f'Duplicate {key} would overwrite run identities')
     config = PipelineConfig(window=args.window, train_stride=args.train_stride, target_mode=args.target_mode,
-                            edge_trim_s=args.edge_trim, gap_s=args.gap, lp_cutoff=args.lp_cutoff)
+                            edge_trim_s=args.edge_trim, gap_s=args.gap, lp_cutoff=args.lp_cutoff,
+                            session_passive_calibration=args.session_passive_calibration)
     root = create_run(args.output, vars(args))
     bundles = {}
     preprocessing_profile = {}
@@ -293,6 +294,9 @@ def parser(default_protocol='within'):
     p.add_argument('--output')
     p.add_argument('--overrides', help='JSON of subject -> one-based trial -> evidence-backed overrides')
     p.add_argument('--target-mode', choices=['measured_torque', 'active_torque'], default='active_torque')
+    p.add_argument('--session-passive-calibration', action='store_true',
+                   help='Use each session\'s passive curve for active-torque targets; '
+                        'missing retest passive support becomes unavailable')
     p.add_argument('--seeds', nargs='+', type=int, default=[11, 23, 37])
     p.add_argument('--epochs', type=int, default=200)
     p.add_argument('--patience', type=int, default=15)

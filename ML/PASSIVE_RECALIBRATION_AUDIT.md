@@ -36,6 +36,38 @@ passive baseline is approximately 3.2 Nm above the source calibration near the
 most negative endpoint. EG's p6 passive drift is small, so its p6 error needs a
 separate EMG/model-bias investigation.
 
+## Target-correction benchmark
+
+The opt-in pipeline mode was evaluated with the same 500 ms LSTM protocol,
+three seeds, and the same source training/validation data. Only retest target
+construction changed.
+
+| Subject | Source-only retest RMSE (Nm) | Session-specific retest RMSE (Nm) | Change |
+| --- | ---: | ---: | ---: |
+| HM | 0.725 | 0.804 | +10.9% |
+| EG | 1.699 | 1.545 | -9.1% |
+| YES | 2.465 | 1.366 | -44.6% |
+
+At p6, YES RMSE fell from 2.507 to 0.747 Nm and bias changed from -2.483 to
++0.660 Nm. The p6 R² remained unstable because the corrected target still has
+very little variation; it changed from -38.640 to -2.584. HM became worse after
+the correction, showing that passive recalibration exposes a real session/model
+mismatch for that subject rather than universally improving the model.
+
+The option is therefore intentionally not the default. It should be used when
+the deployment protocol includes same-session passive calibration, followed by
+subject-level validation of both target stability and model bias.
+
+To enable the target correction in the audited benchmark, add:
+
+```sh
+python -m ML.training.benchmark ... --target-mode active_torque \
+  --session-passive-calibration --evaluate-retest
+```
+
+The flag leaves source training and validation targets unchanged and applies the
+session-specific passive curve only to retest targets.
+
 ## Interpretation and safety
 
 The audit is deliberately diagnostic. A passive difference identifies a changed

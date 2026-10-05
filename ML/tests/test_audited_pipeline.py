@@ -70,6 +70,32 @@ class AuditedPipelineTests(unittest.TestCase):
         self.assertEqual(len(b['train'].y), 0)
         self.assertTrue(any(c.get('reason') == 'No supported passive calibration' for c in b.coverage))
 
+    def test_session_passive_calibration_changes_only_retest_target(self):
+        raw = [trial(0, 'passive test p1', -.1), trial(1, 'passive test p2', .2),
+               trial(2, 'passive retest p1', -.1), trial(3, 'passive retest p2', .2),
+               trial(4, 'active retest p1', -.1), trial(5, 'active test p1', -.1),
+               trial(6, 'active test p2', .2)]
+        raw[0]['torque'] = 1.
+        raw[1]['torque'] = 3.
+        raw[2]['torque'] = 2.
+        raw[3]['torque'] = 4.
+        raw[4]['torque'] = 5.
+        raw[5]['torque'] = 5.
+        raw[6]['torque'] = 5.
+        manifest = inventory('TEST', raw, 'fixture-hash')
+        common = dict(target_mode='active_torque', edge_trim_s=.2, window=10)
+        source_only = build_bundle(raw, manifest, PipelineConfig(**common))
+        session_specific = build_bundle(
+            raw, manifest, PipelineConfig(**common, session_passive_calibration=True))
+
+        np.testing.assert_array_equal(source_only['train'].y, session_specific['train'].y)
+        np.testing.assert_array_equal(source_only['val'].y, session_specific['val'].y)
+        self.assertEqual(len(source_only['test'].y), len(session_specific['test'].y))
+        self.assertAlmostEqual(float(source_only['test'].y.mean()), 4., places=3)
+        self.assertAlmostEqual(float(session_specific['test'].y.mean()), 3., places=3)
+        self.assertEqual(session_specific.preprocessing['passive_calibration_mode'],
+                         'session_specific')
+
     def test_retest_passive_cannot_change_calibration(self):
         raw = [trial(0, 'passive test p1', -.1), trial(1, 'passive test p2', .2),
                trial(2, 'passive retest p1', -.1)]
