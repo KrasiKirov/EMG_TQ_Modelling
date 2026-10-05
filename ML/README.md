@@ -37,10 +37,12 @@ translated into different protocols. Old plotting/diagnostic and capacity script
 still use the historical builder; they are not the audited evaluation path.
 
 The default is three neural seeds, 200 maximum epochs, early stopping, batch 64,
-and training stride 5; evaluation stride remains 1. These are explicit engineering
-defaults, not a claim that the efficiency sweep has selected them. Torque is
-standardized using training mean/SD for neural optimization, then returned to Nm
-for all reports. `history.json` states the standardized loss units.
+50 post-downsampled steps (500 ms at 100 Hz), and training stride 5; evaluation
+stride remains 1. These are explicit engineering defaults, not a claim that the
+efficiency sweep has selected them. Torque is standardized using training mean/SD
+for neural optimization, then returned to Nm for all reports. `history.json` states
+the standardized loss units. The legacy dataset builder retains its historical
+20-step setting for reproducibility and is not the audited evaluation path.
 
 ## Trial identity and calibration
 
@@ -119,6 +121,10 @@ negative = plantarflexion and positive = dorsiflexion. This is not an independen
 verification of physical sensor polarity; that requires a known physical ankle
 reference movement. Do not relabel a raw channel or invert targets based only on
 model error.
+
+The audited default history is 50 steps (500 ms). The five-subject validation
+is documented in `ML/WINDOW50_VALIDATION.md`; the legacy dataset builder remains
+at 20 steps only for historical reproducibility.
 
 The LOSO runner fits on source subjects only and selects ridge strength on
 source-only validation. Neural hyperparameters are fixed by the invocation;

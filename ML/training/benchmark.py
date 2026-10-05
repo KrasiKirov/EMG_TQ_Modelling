@@ -299,7 +299,8 @@ def parser(default_protocol='within'):
     p.add_argument('--batch', type=int, default=64)
     p.add_argument('--lr', type=float, default=.003)
     p.add_argument('--dropout', type=float, default=.3)
-    p.add_argument('--window', type=int, default=20)
+    p.add_argument('--window', type=int, default=50,
+                   help='History length in post-downsampled steps (default: 50 = 500 ms)')
     p.add_argument('--train-stride', type=int, default=5)
     p.add_argument('--edge-trim', type=float, default=1.)
     p.add_argument('--gap', type=float, default=1.)

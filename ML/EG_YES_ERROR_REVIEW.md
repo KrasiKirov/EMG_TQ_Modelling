@@ -43,16 +43,16 @@ the longer-history candidate.
 
 ## Selected corrective change
 
-The safest evidence-based change is **not to change the sign convention**. For
-EG and YES, use the 50-step history as a targeted candidate configuration while
-keeping the 20-step model as the global reference until the full five-subject
-validation is complete.
+The safest evidence-based change is **not to change the sign convention**. The
+50-step history was subsequently validated across all five subjects and is now
+the audited pipeline default. The legacy 20-step path remains available as the
+historical reference.
 
-This is intentionally a gated adoption, because the 50-step model increases
-the measured eager single-window inference time from roughly 25–35 ms to
-roughly 58–60 ms in these runs. The accuracy gain is real and consistent in
-EG/YES, but the latency trade-off must be checked against the deployment
-budget before changing the project-wide default.
+The 50-step model increases the measured eager single-window inference time from
+roughly 25–35 ms to roughly 58–62 ms. The full five-subject run improved the
+equal-subject retest RMSE by 11.3%; HM's worst-position increase was 3.8%, within
+the existing 5% acceptance threshold. End-to-end preprocessing and packaged
+graph timings still need to be checked on the intended deployment hardware.
 
 The validation-only command used for the selected candidate was:
 
@@ -65,7 +65,5 @@ python -m ML.training.benchmark \
   --evaluate-retest --output ML/runs/eg-yes-window50
 ```
 
-The retest artifacts remain local and ignored. Before global adoption, run the
-same configuration for all five subjects and apply the existing acceptance
-rules: validation-only selection, no more than 5% worst-position deterioration,
-and an explicit inference-latency check.
+The retest artifacts remain local and ignored. Full five-subject results are
+recorded in `ML/WINDOW50_VALIDATION.md`.

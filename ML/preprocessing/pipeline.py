@@ -17,7 +17,9 @@ from ML.preprocessing.trial_manifest import CHANNELS, load_inventory
 class PipelineConfig:
     sample_rate: int = 1000
     downsample: int = 10
-    window: int = 20
+    # 50 samples at the 100 Hz post-downsampling rate = 500 ms of history.
+    # The legacy dataset builder retains its historical 20-sample setting.
+    window: int = 50
     train_stride: int = 1
     train_fraction: float = .8
     gap_s: float = 1.0
