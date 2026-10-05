@@ -1,5 +1,6 @@
 # evaluation package — shared metrics and plotting for model assessment
 from .metrics import snap_to_operating_points, compute_metrics, compute_per_position_metrics
+from .passive_recalibration import audit_passive_recalibration
 from .plots import (plot_full_trials, plot_per_position_metrics,
                     plot_r2_summary, plot_r2_overlay,
                     plot_pred_vs_true, plot_training_curves,

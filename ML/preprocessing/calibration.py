@@ -74,26 +74,19 @@ def _documented_ies(data_dir):
                                 'session': 'pre-test calibration', 'precision': 'recorded table values'}])
 
 
-def fit_passive(trials, manifest, data_dir=None):
-    override = manifest.get('passive_calibration')
-    if override:
-        calibration = PassiveCalibration(**override)
-        if not calibration.evidence or any(e.get('session') not in ('test', 'pre-test calibration')
-                                            for e in calibration.evidence):
-            raise ValueError('Fixed passive override requires source-session evidence')
-        for item in calibration.evidence:
-            if not data_dir or file_hash(Path(data_dir) / item['source']) != item['sha256']:
-                raise ValueError('Calibration evidence hash does not match source')
-        return calibration
-    if manifest['subject'] == 'IES' and data_dir:
-        documented = _documented_ies(data_dir)
-        if documented is not None:
-            return documented
+def _collect_passive_points(trials, manifest, session=None):
+    """Extract accepted stationary passive plateaus for one session.
+
+    ``session=None`` preserves the historical source-session behavior. A
+    session-specific value is used only by the recalibration audit; it never
+    changes the production calibration returned by :func:`fit_passive`.
+    """
     points = []
     evidence = []
     for record, frame in zip(manifest['trials'], trials):
         if (record['kind'] != 'passive' or record['status'] != 'included'
-                or record['session'] == 'retest'):
+                or (session is None and record['session'] == 'retest')
+                or (session is not None and record['session'] != session)):
             continue
         fs = round(1 / record['sample_interval_s'])
         # Require contiguous stationary plateaus >=3 s; discard 0.5 s at each edge.
@@ -130,6 +123,10 @@ def fit_passive(trials, manifest, data_dir=None):
                                      torque_sd_nm=float(segment.torque.std()),
                                      emg_rms={c: float(np.std(segment[c])) for c in ('gm', 'gl', 'sol', 'ta')},
                                      relaxation_evidence='passive acquisition label; EMG RMS retained for review'))
+    return points, evidence
+
+
+def _calibration_from_points(points, evidence):
     # Each recorded plateau contributes once (longer recordings do not dominate).
     clusters = []
     for p, t in sorted(points):
@@ -139,3 +136,37 @@ def fit_passive(trials, manifest, data_dir=None):
             clusters.append([(p, t)])
     return PassiveCalibration([float(np.mean([p for p, _ in g])) for g in clusters],
                               [float(np.median([t for _, t in g])) for g in clusters], evidence)
+
+
+def fit_passive(trials, manifest, data_dir=None):
+    override = manifest.get('passive_calibration')
+    if override:
+        calibration = PassiveCalibration(**override)
+        if not calibration.evidence or any(e.get('session') not in ('test', 'pre-test calibration')
+                                            for e in calibration.evidence):
+            raise ValueError('Fixed passive override requires source-session evidence')
+        for item in calibration.evidence:
+            if not data_dir or file_hash(Path(data_dir) / item['source']) != item['sha256']:
+                raise ValueError('Calibration evidence hash does not match source')
+        return calibration
+    if manifest['subject'] == 'IES' and data_dir:
+        documented = _documented_ies(data_dir)
+        if documented is not None:
+            return documented
+    points, evidence = _collect_passive_points(trials, manifest)
+    return _calibration_from_points(points, evidence)
+
+
+def fit_passive_session(trials, manifest, session='retest'):
+    """Fit a passive curve from included plateaus in one recorded session.
+
+    This is intentionally separate from :func:`fit_passive`: it ignores fixed
+    source-session overrides and documented source-session tables. The function
+    is for retrospective/session-calibration audits, where using the recorded
+    retest passive plateaus is the subject of the audit. It does not inspect
+    active trials or active torque values.
+    """
+    if session not in ('test', 'retest'):
+        raise ValueError("session must be 'test' or 'retest'")
+    points, evidence = _collect_passive_points(trials, manifest, session=session)
+    return _calibration_from_points(points, evidence)
