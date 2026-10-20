@@ -7,7 +7,9 @@ Provides common functions used by the training entry points:
 """
 
 import os
+import random
 import numpy as np
+import tensorflow as tf
 
 from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.callbacks import (ReduceLROnPlateau, EarlyStopping,
@@ -15,16 +17,22 @@ from tensorflow.keras.callbacks import (ReduceLROnPlateau, EarlyStopping,
 
 from ML.config import (SUBJECTS, DATA_DIR, LEARNING_RATE, LR_FACTOR,
                         LR_PATIENCE, LR_MIN, EARLY_PATIENCE, BATCH_SIZE,
-                        EPOCHS, N_STEPS, N_FEATURES)
+                        EPOCHS, N_STEPS, N_FEATURES, LSTM_UNITS,
+                        PASSIVE_MAP_SESSION,
+                        PASSIVE_MAP_FALLBACKS, PASSIVE_MAP_FALLBACK_SOURCES,
+                        POSITION_FEATURE_INDEX)
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing.dataset_builder import build_dataset
 from ML.models.lstm import build_model
-from ML.evaluation import compute_metrics, compute_per_position_metrics
+from ML.evaluation import compute_metrics, compute_per_position_metrics, snap_to_operating_points
 
 
 def load_subject(subject_key, normalize_position=False, normalize_mvc=False,
                  test_trial_indices=None, retest_trial_indices=None,
-                 flb_path=None, subject_id=None):
+                 flb_path=None, subject_id=None, passive_entries_override=None,
+                 passive_session=PASSIVE_MAP_SESSION,
+                 yes_eight_positions=False, validation_gap_s=2.0, audit=None,
+                 passive_entries_override_by_session=None):
     """Load one subject's data with optional normalization.
 
     Parameters
@@ -41,35 +49,70 @@ def load_subject(subject_key, normalize_position=False, normalize_mvc=False,
         Override the FLB file path from SUBJECTS registry.
     subject_id : str or None
         Override the subject ID from SUBJECTS registry.
+    validation_gap_s : float or None
+        Raw-session validation gap in seconds. The default 2.0 uses clean
+        raw-segment validation with training-only EMG normalization. Pass
+        ``None`` only to reproduce the historical window-first benchmark.
+    passive_session : str
+        Defaults to the session-matched passive-map protocol: session 1 for
+        training/validation and session 2 for retest. Use ``'retest'`` for
+        the historical shared-map protocol.
+    audit : dict or None
+        Populate aligned endpoint traces and per-trial split provenance.
 
     Returns
     -------
     dict with keys: X_train, y_train, X_val, y_val, X_test, y_test,
                     emg_max, operating_positions, pos_range, mvc_tq_test
     """
-    flb_name, subj_id = SUBJECTS[subject_key]
-    if flb_path is None:
-        flb_path = os.path.join(DATA_DIR, flb_name)
-    if subject_id is None:
-        subject_id = subj_id
+    if flb_path is None or subject_id is None:
+        flb_name, subj_id = SUBJECTS[subject_key]
+        if flb_path is None:
+            flb_path = os.path.join(DATA_DIR, flb_name)
+        if subject_id is None:
+            subject_id = subj_id
 
     print(f'\n{"─"*60}')
     print(f'Loading subject {subject_key}: {flb_path}')
     trials = read_flb(flb_path, subject_id=subject_id)
+    reconstruction = None
+    if yes_eight_positions:
+        if subject_key != 'YES' or passive_session not in ('retest', 'session_specific'):
+            raise ValueError('YES reconstruction requires YES and retest or session-specific passive calibration')
+        if (passive_entries_override is not None or passive_entries_override_by_session is not None
+                or test_trial_indices is not None or retest_trial_indices is not None):
+            raise ValueError('Do not combine the frozen YES reconstruction with other overrides')
+        from ML.preprocessing.yes_reconstruction import reconstruct_yes
+        trials, passive_entries_override, reconstruction = reconstruct_yes(trials, flb_path)
+        if passive_session == 'session_specific':
+            passive_entries_override_by_session = {
+                'test': reconstruction['test_passive_entries'],
+                'retest': passive_entries_override,
+            }
+        print('Using explicitly reconstructed eight-position YES protocol')
 
     (X_train, y_train,
      X_val, y_val,
      X_test, y_test,
      emg_max, passive_entries,
      operating_positions, pos_range,
-     mvc_tq_test) = build_dataset(
+     mvc_tq_test, passive_map_source) = build_dataset(
         trials,
         test_trial_indices=test_trial_indices,
         retest_trial_indices=retest_trial_indices,
         subtract_passive=True,
         normalize_position=normalize_position,
         normalize_mvc=normalize_mvc,
+        passive_entries_override=passive_entries_override,
+        passive_entries_override_by_session=passive_entries_override_by_session,
+        passive_entries_fallback=PASSIVE_MAP_FALLBACKS.get(subject_key),
+        passive_fallback_source=PASSIVE_MAP_FALLBACK_SOURCES.get(subject_key),
+        passive_session=passive_session,
+        validation_gap_s=validation_gap_s,
+        audit=audit,
     )
+    if reconstruction is not None and passive_session == 'retest':
+        passive_map_source = reconstruction['passive_map_source']
     return {
         'X_train': X_train, 'y_train': y_train,
         'X_val': X_val, 'y_val': y_val,
@@ -78,12 +121,64 @@ def load_subject(subject_key, normalize_position=False, normalize_mvc=False,
         'operating_positions': operating_positions,
         'pos_range': pos_range,
         'mvc_tq_test': mvc_tq_test,
+        'passive_session': passive_session,
+        'passive_map_source': passive_map_source,
+        'passive_entries': passive_entries,
+        'window_steps': N_STEPS,
+        'reconstruction': reconstruction,
     }
+
+
+def compute_position_weights(X_train, y_train, operating_positions,
+                              clip_max=5.0):
+    """Per-sample weights inversely proportional to per-position torque IQR.
+
+    Compensates for MSE being dominated by high-torque positions by upweighting
+    small-signal positions (e.g. max plantarflexion IQR ~1.5 Nm vs ~11 Nm at
+    max dorsiflexion).  Weights are normalized so their mean equals 1, preserving
+    the effective learning rate.
+
+    Parameters
+    ----------
+    X_train : np.ndarray, shape (N, n_steps, n_features)
+    y_train : np.ndarray, shape (N,)
+    operating_positions : list of float
+    clip_max : float
+        Maximum upweight factor (default 5.0).
+
+    Returns
+    -------
+    weights : np.ndarray, shape (N,), mean == 1.0
+    """
+    positions = X_train[:, -1, POSITION_FEATURE_INDEX]
+    pos_snapped, valid_pos = snap_to_operating_points(positions, operating_positions)
+
+    iqr_map = {}
+    for p in valid_pos:
+        mask = pos_snapped == p
+        yt = y_train[mask]
+        iqr = float(np.percentile(yt, 75) - np.percentile(yt, 25))
+        iqr_map[p] = max(iqr, 0.1)   # floor to avoid division by zero
+
+    mean_iqr = float(np.mean(list(iqr_map.values())))
+    raw = np.array([mean_iqr / iqr_map[p] for p in pos_snapped], dtype=np.float32)
+    raw = np.clip(raw, 1.0 / clip_max, float(clip_max))
+    return (raw / raw.mean()).astype(np.float32)
+
+
+def set_global_seed(seed):
+    """Set the random seeds used by Python, NumPy, and TensorFlow."""
+    seed = int(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.keras.utils.set_random_seed(seed)
 
 
 def train_model(X_train, y_train, X_val, y_val, label='model',
                 save_path=None, lr=LEARNING_RATE, epochs=EPOCHS,
-                batch_size=BATCH_SIZE, verbose=0):
+                batch_size=BATCH_SIZE, n_units=LSTM_UNITS, verbose=0,
+                sample_weight=None, seed=None, extra_callbacks=None):
     """Train a fresh LSTM model and return it with training history.
 
     Parameters
@@ -94,16 +189,24 @@ def train_model(X_train, y_train, X_val, y_val, label='model',
         Descriptive label for console output.
     save_path : str or None
         If given, save best checkpoint to this path.
-    lr, epochs, batch_size : training hyperparameters
+    lr, epochs, batch_size, n_units : training hyperparameters
     verbose : int
         0 = quiet (for batch/sweep runs), 1 = full output.
+    seed : int or None
+        If provided, reset the Python, NumPy, and TensorFlow RNGs before
+        building the model. Used by repeated-run evaluation.
+    extra_callbacks : list or None
+        Optional observers such as per-epoch timing; default callbacks remain.
 
     Returns
     -------
     model : tensorflow.keras.Model — trained model with best weights restored.
     history : tensorflow.keras.callbacks.History
     """
-    model = build_model(n_steps=N_STEPS, n_features=N_FEATURES)
+    if seed is not None:
+        set_global_seed(seed)
+
+    model = build_model(n_steps=N_STEPS, n_features=N_FEATURES, n_units=n_units)
     model.compile(optimizer=Nadam(learning_rate=lr),
                   loss='mse', metrics=['mae'])
 
@@ -118,6 +221,8 @@ def train_model(X_train, y_train, X_val, y_val, label='model',
         callbacks.append(ModelCheckpoint(save_path, monitor='val_loss',
                                          save_best_only=True,
                                          verbose=verbose))
+    if extra_callbacks:
+        callbacks.extend(extra_callbacks)
 
     print(f'  Training {label}...')
     history = model.fit(
@@ -128,6 +233,7 @@ def train_model(X_train, y_train, X_val, y_val, label='model',
         callbacks=callbacks,
         shuffle=True,
         verbose=verbose,
+        sample_weight=sample_weight,
     )
     return model, history
 
