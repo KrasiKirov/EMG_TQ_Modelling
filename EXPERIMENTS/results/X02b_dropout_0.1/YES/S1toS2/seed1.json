@@ -1,0 +1,84 @@
+{
+ "experiment": "X02b_dropout_0.1",
+ "subject": "YES",
+ "direction": "S1toS2",
+ "seed": 1,
+ "config": {
+  "passive": "legacy",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.1,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null
+ },
+ "hypothesis": "Same as X02a, milder.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -9.292487645900868,
+   -25.165114021106284,
+   -5.640515169481913,
+   -16.828230000752733,
+   -15.168382790368025,
+   -1.44443821748321,
+   -26.81465112301144,
+   -29.05162158934365
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.2516169853768279
+ },
+ "train_info": {
+  "epochs": 58,
+  "best_epoch": 33,
+  "best_val_loss": 0.8403654098510742,
+  "knots": [
+   -0.486,
+   -0.382,
+   -0.277,
+   -0.174,
+   -0.069,
+   0.031,
+   0.137,
+   0.245
+  ],
+  "sd_per_knot": [
+   0.6909417943224883,
+   2.6987763535137224,
+   4.594593225321333,
+   7.573868280246034,
+   8.563633594444772,
+   13.788948518954957,
+   15.161816178932394,
+   13.069513042095384
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 1.876054286956787,
+ "train_s": 5179.715897798538,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

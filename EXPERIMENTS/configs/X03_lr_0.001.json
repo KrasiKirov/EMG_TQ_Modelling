@@ -1,0 +1,9 @@
+{
+ "title": "Learning rate 0.001 (baseline 0.003)",
+ "changes": {
+  "lr": 0.001
+ },
+ "hypothesis": "If training is unstable (large run-to-run differences), a smaller learning rate gives more stable and better solutions.",
+ "motivation": "Optimisation check; baseline runs disagreed strongly for JM.",
+ "id": "X03_lr_0.001"
+}

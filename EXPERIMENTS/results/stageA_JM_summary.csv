@@ -1,0 +1,2 @@
+experiment,status,c1,c2,c3,c4,pf_d_r2,pf_ref_r2,pf_r2,pf_d_rmse,pf_cells_improved,other_min_d_r2,other_mean_d_r2,other_max_d_rmse_pct,ref_noise_sd,supp_pf_d_r2
+X01_clean_passive,not promising,True,False,False,False,0.5706413424748921,-0.1826600350104321,0.38798130746446,-0.12502502938891868,1,-0.09271103433406425,9.291333703061035,15.558752413250199,1.100163646019045,

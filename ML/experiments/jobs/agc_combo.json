@@ -1,0 +1,72 @@
+[
+ {
+  "subject": "JM",
+  "name": "H_agc_pgain_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.gain_snr:agc"
+   ]
+  },
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "H_agc_pgain_moe",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.gain_snr:agc",
+    "ML.experiments.plugins.model_loss:posstats"
+   ]
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "H_agc_pgain_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.gain_snr:agc"
+   ]
+  },
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "H_agc_pgain_moe",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.gain_snr:agc",
+    "ML.experiments.plugins.model_loss:posstats"
+   ]
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

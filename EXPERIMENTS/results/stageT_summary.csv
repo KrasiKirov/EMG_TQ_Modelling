@@ -1,0 +1,2 @@
+experiment,status,c1,c2,c3,c4,pf_d_r2,pf_ref_r2,pf_r2,pf_d_rmse,pf_cells_improved,other_min_d_r2,other_mean_d_r2,other_max_d_rmse_pct,ref_noise_sd,supp_pf_d_r2
+T01_passive_value_input,trade-off,True,True,False,False,0.1857301778588064,0.3440321817948061,0.5297623596536125,-0.21583937600264136,3,-0.05728508274055155,-0.014368244882260073,106.48606615955086,0.17668082176774974,-0.010385663287792307

@@ -1,0 +1,84 @@
+{
+ "experiment": "X00f_baseline_framework",
+ "subject": "EG",
+ "direction": "S2toS1",
+ "seed": 1,
+ "config": {
+  "passive": "legacy",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null
+ },
+ "hypothesis": "Reproduces X00 (frozen original code) exactly; used as the reference for every experiment and for the S2\u2192S1 direction.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -8.989434565329447,
+   -22.82992837298789,
+   -7.610470284768409,
+   -17.471519752412334,
+   -12.629019896498749,
+   -4.428299879985861,
+   -22.514778523219434,
+   -24.045047751962926
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.2779984533183352
+ },
+ "train_info": {
+  "epochs": 46,
+  "best_epoch": 21,
+  "best_val_loss": 1.2479238510131836,
+  "knots": [
+   -0.739,
+   -0.598,
+   -0.458,
+   -0.318,
+   -0.177,
+   -0.038,
+   0.102,
+   0.247
+  ],
+  "sd_per_knot": [
+   2.069461083954512,
+   3.7422085569448513,
+   4.518258423108279,
+   6.4241231520487,
+   8.556673660788878,
+   10.871128287729713,
+   12.796587271170374,
+   12.268521218957279
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 1.839869737625122,
+ "train_s": 3467.4988946914673,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

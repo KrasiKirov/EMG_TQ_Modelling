@@ -1,0 +1,61 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792854994.066338   33316 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792855006.748055   33316 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+C:\Users\dramo\Desktop\Projects\krasi_ml\EMG_TQ_Modelling\.claude\worktrees\dorsiflexion-r2-drop-341137\EXPERIMENTS\baseline\original_code\ML\preprocessing\dataset_builder.py:693: UserWarning: Only 0 passive torque entry/entries found. Extrapolation will be limited to constant value.
+  passive_entries = get_passive_torque_map(test_passive_trials)
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+
+============================================================
+Loading subject IES: C:/Users/dramo/Desktop/Projects/krasi_ml/EMG_TQ_Modelling/ML/subjects\IES_081024.flb
+Read 26 trials from 'IES_081024.flb'
+Trials classified:  MVC=10  passive=0  active=16
+Active trials after std filter (<= 30.0 Nm): 16
+  (no explicit 'test' keyword — unlabelled active trials assigned to test session)
+
+Auto-detected trial split from comments:
+  Train/Val (test session):  [11, 12, 13, 14, 15, 16, 17, 18]
+  Held-out  (retest session): [19, 20, 21, 22, 23, 24, 25, 26]
+Processed 8 trials × 4 EMG channels
+  Bandpass: 30.0–300.0 Hz | Lowpass: 2.0 Hz | Order: 4
+  gm max used: 0.020536
+  gl max used: 0.012048
+  sol max used: 0.015026
+  ta max used: 0.011616
+Retest trials normalized using train/val max (no data leakage)
+
+Test-session passive torques (auto-detected):
+
+Retest-session passive torques (auto-detected):
+  Trial 11 (PUSH, pos indx 1              ) → TRAIN  7112 | VAL  1778
+  Trial 12 (PUSH, pos indx 2              ) → TRAIN  7112 | VAL  1778
+  Trial 13 (PUSH, pos indx 3              ) → TRAIN  7112 | VAL  1778
+  Trial 14 (PUSH, pos indx 4              ) → TRAIN  7112 | VAL  1778
+  Trial 15 (PUSH, pos indx 5              ) → TRAIN  7112 | VAL  1778
+  Trial 16 (PUSH, pos indx 6              ) → TRAIN  7112 | VAL  1778
+  Trial 17 (PUSH, pos indx 7              ) → TRAIN  7112 | VAL  1778
+  Trial 18 (PUSH, pos indx 8              ) → TRAIN  7112 | VAL  1778
+  Trial 19 (PUSH, pos indx 1, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 20 (PUSH, pos indx 2, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 21 (PUSH, pos indx 3, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 22 (PUSH, pos indx 4, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 23 (PUSH, pos indx 5, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 24 (PUSH, pos indx 6, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 25 (PUSH, pos indx 7, Retest      ) → TEST   8891  (retest — fully held out)
+  Trial 26 (PUSH, pos indx 8, Retest      ) → TEST   8891  (retest — fully held out)
+
+Trial-based split:
+  Train/Val trials (1-indexed): [11, 12, 13, 14, 15, 16, 17, 18]
+  Test trials (retest, 1-indexed): [19, 20, 21, 22, 23, 24, 25, 26]
+
+Dataset built at 100 Hz  |  window=20 steps (200 ms)  |  stride=1 step (10 ms)
+  Features : ['gm_env_norm', 'gl_env_norm', 'sol_env_norm', 'ta_env_norm', 'position']
+  Target   : net active torque (Nm)
+  X_train  : (56896, 20, 5)   y_train: (56896,)
+  X_val    : (14224, 20, 5)   y_val:   (14224,)
+  X_test   : (71128, 20, 5)   y_test:  (71128,)
+  Training LSTM8 (IES)...
+Epoch 41: early stopping
+Restoring model weights from the end of the best epoch: 16.
+Read 26 trials from 'IES_081024.flb'
+[X00 IES s6] 41 ep, best 16, 3127s  -0.59:+0.65  -0.48:+0.83  -0.38:+0.91  -0.27:+0.94  -0.17:+0.98  -0.06:+0.93  +0.04:+0.95  +0.14:+0.99

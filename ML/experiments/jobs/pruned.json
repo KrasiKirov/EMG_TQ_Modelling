@@ -1,0 +1,92 @@
+[
+ {
+  "subject": "YES",
+  "name": "ml_moe",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.model_loss:posstats"
+   ]
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos"
+ },
+ {
+  "subject": "JM",
+  "name": "ml_moe",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.model_loss:posstats"
+   ]
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos"
+ },
+ {
+  "subject": "JM",
+  "name": "gain_snr_agc_posw",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.gain_snr:agc"
+   ]
+  },
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "gain_snr_agc_posw",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.gain_snr:agc"
+   ]
+  },
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "EG",
+  "name": "posonly",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "opts": {
+   "drop_emg": true
+  }
+ },
+ {
+  "subject": "HM",
+  "name": "posonly",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "opts": {
+   "drop_emg": true
+  }
+ }
+]

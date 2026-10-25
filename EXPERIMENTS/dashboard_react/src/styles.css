@@ -1,0 +1,425 @@
+:root {
+  --c-a: #2a78d6;
+  --c-b: #eb6834;
+  --c-ink: #1b1b1b;
+  --c-good: #1f8a4c;
+  --c-bad: #c0392b;
+  --c-good-bg: rgba(31, 157, 85, 0.1);
+  --c-bad-bg: rgba(192, 57, 43, 0.09);
+  --app-bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #f8f9fa;
+  --line: #e3e6ea;
+  --text-2: #4d525a;
+  --text-3: #6b7079;
+}
+
+[data-mantine-color-scheme='dark'] {
+  --c-a: #5aa0f0;
+  --c-b: #f08a5d;
+  --c-ink: #eceae4;
+  --c-good: #4cc38a;
+  --c-bad: #ef6b5b;
+  --c-good-bg: rgba(76, 195, 138, 0.12);
+  --c-bad-bg: rgba(239, 107, 91, 0.12);
+  --app-bg: #16191f;
+  --surface: #1d2129;
+  --surface-2: #232730;
+  --line: #313641;
+  --text-2: #c3c7ce;
+  --text-3: #9aa0ab;
+}
+
+html,
+body {
+  background: var(--app-bg);
+}
+
+/* only on the root: overflow on <body> would make it a scroll container and break the sticky tab bar */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-main {
+  background: var(--app-bg);
+  min-width: 0;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.swatch-line {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top-width: 2px;
+  border-top-style: solid;
+  flex: none;
+  vertical-align: middle;
+}
+
+.good {
+  color: var(--c-good);
+}
+
+.bad {
+  color: var(--c-bad);
+}
+
+.model-card {
+  border-left: 3px solid var(--accent);
+}
+
+.param-grid {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 8px;
+}
+
+.param-grid .param-label {
+  font-size: 13px;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.changed-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+/* KPI */
+.kpi-value {
+  font-size: 30px;
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.kpi-delta {
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+/* heat map */
+.heat-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.heat-grid {
+  display: grid;
+  grid-template-columns: 52px repeat(8, minmax(70px, 1fr));
+  gap: 4px;
+  min-width: 640px;
+}
+
+.heat-head {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+  padding: 2px 0 6px;
+  white-space: nowrap;
+}
+
+.heat-head.toes {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.heat-subj {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.heat-cell {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 4px;
+  cursor: pointer;
+  text-align: center;
+  font: inherit;
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+
+.heat-cell:hover {
+  box-shadow: 0 0 0 2px var(--line);
+}
+
+.heat-cell:focus-visible {
+  outline: 2px solid var(--c-a);
+  outline-offset: 1px;
+}
+
+.heat-cell.selected {
+  border-color: currentColor;
+}
+
+.heat-cell .v {
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.heat-cell .p {
+  font-size: 11px;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.heat-cell.empty {
+  cursor: default;
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+/* tables */
+.data-table th {
+  white-space: nowrap;
+}
+
+.data-table td.r,
+.data-table th.r {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table tr.clickable {
+  cursor: pointer;
+}
+
+.sort-btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+/* tab bar: sticky under the header; scrolls sideways on phones instead of wrapping */
+.main-tabs .mantine-Tabs-list {
+  position: sticky;
+  top: var(--app-shell-header-height, 64px);
+  z-index: 20;
+  background: var(--app-bg);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.main-tabs .mantine-Tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.main-tabs .mantine-Tabs-tab {
+  flex: none;
+}
+
+/* chart tooltip (ECharts renders this HTML) */
+.tt {
+  font-size: 13px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+
+.tt b {
+  font-weight: 650;
+}
+
+.tt .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tt .muted {
+  opacity: 0.7;
+}
+
+.tt table {
+  border-collapse: collapse;
+}
+
+.tt td {
+  padding: 2px 12px 2px 0;
+}
+
+.tt td:last-child {
+  padding-right: 0;
+}
+
+.tt td.r {
+  text-align: right;
+}
+
+.legend-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.legend-row > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prose p {
+  margin: 0 0 8px;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* clearer selected segment in dark mode */
+[data-mantine-color-scheme='dark'] .mantine-SegmentedControl-root {
+  background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .mantine-SegmentedControl-indicator {
+  background: var(--mantine-color-dark-4);
+}
+
+/* Mantine tooltips: same card look as the chart tooltips */
+.app-tooltip {
+  background: var(--surface);
+  color: var(--mantine-color-text);
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 24px rgba(20, 25, 35, 0.12);
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+[data-mantine-color-scheme='dark'] .app-tooltip {
+  background: #262a33;
+  border-color: #3a404c;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* horizontal scroll areas: a soft fade at an edge that hides more content (set by useScrollFade) */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-x[data-fade='right'] {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+
+.scroll-x[data-fade='left'] {
+  -webkit-mask-image: linear-gradient(270deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(270deg, #000 calc(100% - 40px), transparent);
+}
+
+.scroll-x[data-fade='both'] {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+
+/* first column stays in view while the table scrolls sideways (narrow screens) */
+.data-table.sticky-first th:first-child,
+.data-table.sticky-first td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  box-shadow: inset -1px 0 0 var(--line);
+}
+
+.data-table.sticky-first tr.selected-row td:first-child {
+  background: var(--surface-2);
+}
+
+.data-table tr.dim td {
+  opacity: 0.55;
+}
+
+.data-table tr.selected-row td {
+  background: var(--surface-2);
+}
+
+.hint-line {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.4;
+}
+
+.summary-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.summary-strip > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* a value with a hover tooltip */
+.has-tip {
+  text-decoration: underline dotted;
+  text-decoration-color: var(--text-3);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
+.changed-dot.inline {
+  display: inline-block;
+  vertical-align: 1px;
+  margin-right: 2px;
+  background: var(--text-3);
+}
+
+.model-card .changed-dot.inline {
+  background: var(--accent);
+}
+
+.settings-toggle {
+  color: var(--text-2);
+}

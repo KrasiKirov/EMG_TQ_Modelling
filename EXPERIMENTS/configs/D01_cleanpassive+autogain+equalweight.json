@@ -1,0 +1,11 @@
+{
+ "id": "D01_cleanpassive+autogain+equalweight",
+ "title": "Best candidate: clean passive table (X01) + auto-gain (X05) + equal weight per position (X04)",
+ "changes": {
+  "passive": "static",
+  "emg": "agc_auto",
+  "balance": "scale"
+ },
+ "hypothesis": "The Stage B best candidate C01 (meets criteria 1-3 on YES+EG, fails the noise criterion because of YES -0.49) plus the JM passive-table bug fix generalises to the 4 subjects not used for screening.",
+ "motivation": "Stage D broader validation. For YES and EG the clean table equals the original one, so their D01 results are identical to C01 (same labels, same seeds)."
+}

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torque Results Explorer</title>
+<style>
+:root {
+  --bg: #f4f3ef; --panel: #ffffff; --panel2: #f8f7f4; --ink: #1b1b1b; --ink2: #55544f; --muted: #8a8984; --line: #e3e1db;
+  --grid: #ecebe6; --a: #2a78d6; --b: #eb6834; --key: #1b1b1b; --good: #1f9d55; --bad: #c0392b; --shade: rgba(235,104,52,.08);
+  --chip: #efede8; --chipOn: #1b1b1b; --chipOnInk: #fff;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12151c; --panel: #1a1e27; --panel2: #202533; --ink: #eceae4; --ink2: #b9b7b0; --muted: #8b8f99; --line: #2c3240;
+  --grid: #262b37; --a: #5aa0f0; --b: #f08a5d; --key: #eceae4; --good: #4cc38a; --bad: #ef6b5b; --shade: rgba(240,138,93,.10);
+  --chip: #262b37; --chipOn: #eceae4; --chipOnInk: #12151c; } }
+:root[data-theme="dark"] {
+  --bg: #12151c; --panel: #1a1e27; --panel2: #202533; --ink: #eceae4; --ink2: #b9b7b0; --muted: #8b8f99; --line: #2c3240;
+  --grid: #262b37; --a: #5aa0f0; --b: #f08a5d; --key: #eceae4; --good: #4cc38a; --bad: #ef6b5b; --shade: rgba(240,138,93,.10);
+  --chip: #262b37; --chipOn: #eceae4; --chipOnInk: #12151c; }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.4 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif }
+header { display: flex; align-items: center; gap: 16px; padding: 14px 22px; border-bottom: 1px solid var(--line); background: var(--panel) }
+header h1 { font-size: 18px; margin: 0; font-weight: 650 }
+header .sub { color: var(--muted); font-size: 12.5px }
+header .sp { flex: 1 }
+button, select { font: inherit; color: var(--ink) }
+.btn { background: var(--chip); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer }
+.btn:hover { border-color: var(--muted) }
+.wrap { display: grid; grid-template-columns: 330px 1fr; gap: 16px; padding: 16px 22px 30px; max-width: 1700px; margin: 0 auto }
+@media (max-width: 1000px) { .wrap { grid-template-columns: 1fr; padding: 12px 16px } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px }
+.panel h2 { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; font-weight: 650 }
+.model { border-left: 4px solid var(--a); padding-left: 12px; margin-bottom: 14px }
+.model.B { border-left-color: var(--b) }
+.model h3 { margin: 0 0 6px; font-size: 15px; display: flex; align-items: center; gap: 8px }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block }
+.row { display: grid; grid-template-columns: 112px 1fr; gap: 6px; align-items: center; margin: 4px 0 }
+.row label { color: var(--ink2); font-size: 12.5px }
+select { width: 100%; background: var(--panel2); border: 1px solid var(--line); border-radius: 7px; padding: 4px 6px }
+.status { font-size: 12.5px; margin-top: 6px; color: var(--ink2) }
+.status.miss { color: var(--bad) }
+.chips { display: flex; flex-wrap: wrap; gap: 5px }
+.chip { background: var(--chip); border: 1px solid transparent; border-radius: 999px; padding: 4px 10px; cursor: pointer; font-size: 13px; user-select: none }
+.chip.on { background: var(--chipOn); color: var(--chipOnInk) }
+.chip.dis { opacity: .35; cursor: default }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px }
+@media (max-width: 1250px) { .kpis { grid-template-columns: repeat(2, 1fr) } }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px }
+.kpi .t { font-size: 12.5px; color: var(--ink2); margin-bottom: 4px }
+.kpi .v { display: flex; align-items: baseline; gap: 10px; font-variant-numeric: tabular-nums }
+.kpi .v b { font-size: 22px; font-weight: 650 }
+.kpi .d { font-size: 13px; font-weight: 600 }
+.good { color: var(--good) } .bad { color: var(--bad) }
+.chart { width: 100%; position: relative }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink2); margin: 4px 0 8px }
+.legend span { display: inline-flex; align-items: center; gap: 6px }
+.sw { width: 18px; height: 4px; border-radius: 2px; display: inline-block }
+.tip { position: fixed; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px;
+       font-size: 12.5px; box-shadow: 0 6px 20px rgba(0,0,0,.15); display: none; z-index: 9; max-width: 320px; font-variant-numeric: tabular-nums }
+.small { font-size: 12.5px; color: var(--ink2) }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px }
+@media (max-width: 1250px) { .grid2 { grid-template-columns: 1fr } }
+.mult { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px }
+@media (max-width: 1250px) { .mult { grid-template-columns: repeat(2, 1fr) } }
+@media (max-width: 700px) { .mult { grid-template-columns: 1fr } }
+.mult h4 { margin: 2px 0 0; font-size: 13px }
+table.runs { border-collapse: collapse; width: 100%; font-size: 12.5px; font-variant-numeric: tabular-nums }
+table.runs th, table.runs td { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: right }
+table.runs th:first-child, table.runs td:first-child { text-align: left }
+.ctl { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 8px }
+.ctl .lab { font-size: 12.5px; color: var(--ink2); margin-right: 4px }
+input[type=range] { width: 160px; accent-color: var(--b) }
+.note { font-size: 12.5px; color: var(--muted); margin-top: 6px }
+details summary { cursor: pointer; color: var(--ink2) }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>EMG → ankle torque · results explorer</h1>
+  <div class="sub" id="built"></div></div>
+  <div class="sp"></div>
+  <button class="btn" id="swap" title="swap model A and B">⇄ swap A / B</button>
+  <button class="btn" id="theme">◐ theme</button>
+</header>
+<div class="wrap">
+<aside>
+  <div class="panel">
+    <h2>Compare two models</h2>
+    <div id="mA" class="model"></div>
+    <div id="mB" class="model B"></div>
+    <div class="note">Pick a preset or set each parameter. If a combination was never trained, it says so.
+    For everyone except JM the original and clean passive tables are identical, so either one is accepted.</div>
+  </div>
+  <div class="panel">
+    <h2>View</h2>
+    <div class="row"><label>Person</label><div class="chips" id="subj"></div></div>
+    <div class="row"><label>Direction</label><div class="chips" id="dir"></div></div>
+    <div class="row"><label>Metric</label><div class="chips" id="met"></div></div>
+    <div class="row"><label>R² below 0</label><div class="chips" id="flr"></div></div>
+  </div>
+  <div class="panel small">
+    <h2>Definitions</h2>
+    <b>Answer key</b>: measured torque − passive torque from the passive trials of the tested session (IES has none: nothing subtracted).<br>
+    <b>R²</b> per position: 1 = perfect, 0 = as good as predicting the trial's average. <b>MAE</b>: mean absolute error (Nm).
+    <b>Demeaned</b>: each trial's mean removed from both curves (shape only). <b>Bias</b>: mean of prediction − measured.<br>
+    <b>Spread</b>: over training runs (random seeds); the test trials are always the same. Box = 25–75 %, whiskers = 5–95 %, line = median.<br>
+    <b>Toes-down</b>: the 2 most negative (plantarflexed) positions of each person.
+  </div>
+</aside>
+<main>
+  <div class="kpis" id="kpis"></div>
+  <div class="panel">
+    <h2 id="ppTitle">Per position</h2>
+    <div class="legend" id="ppLegend"></div>
+    <div id="pp"></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Difference B − A (median over runs), every person × position</h2>
+      <div id="heat"></div>
+      <div class="note">Click a cell to open that person and position in the waveform viewer. Green = B better.</div>
+    </div>
+    <div class="panel">
+      <h2>Runs at the selected position</h2>
+      <div id="runs"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2 id="wvTitle">Waveform</h2>
+    <div class="ctl">
+      <span><span class="lab">Position</span><span class="chips" id="wpos" style="display:inline-flex"></span></span>
+    </div>
+    <div class="ctl">
+      <span><span class="lab">Run A</span><select id="runA" style="width:auto"></select></span>
+      <span><span class="lab">Run B</span><select id="runB" style="width:auto"></select></span>
+      <span><span class="lab">From</span><input type="range" id="t0" min="0" max="88" step="1" value="0"> <span id="t0v"></span></span>
+      <span><span class="lab">Length</span><input type="range" id="tl" min="5" max="88" step="1" value="88"> <span id="tlv"></span></span>
+    </div>
+    <div class="legend" id="wvLegend"></div>
+    <div class="chart" id="wv"></div>
+  </div>
+</main>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+const DATA = /*__DATA__*/null;
+const $ = id => document.getElementById(id);
+const C = DATA.cols, IX = Object.fromEntries(C.map((c, i) => [c, i]));
+const ROWS = DATA.rows;
+const SUBJ = DATA.subjects;
+const PNAMES = { code: 'Code', passive: 'Passive table', emg: 'EMG scaling', weighting: 'Position weighting', window: 'Window', dropout: 'Dropout', lr: 'Learning rate', extra: 'Extra input' };
+const PLABEL = { code: { original: 'original code (frozen copy)', framework: 'our framework (same data)' },
+  passive: { original: 'original table', clean: 'clean table (still part only)' }, emg: { max: '÷ training max (last semester)', autogain: 'auto-gain' },
+  weighting: { none: 'none (Nm²)', equal: 'equal per position' }, extra: { none: 'none', passive: 'passive value (rejected, circular)' } };
+const fmtP = (k, v) => (PLABEL[k] && PLABEL[k][v]) || (k === 'window' ? v + ' s (' + Math.round(v * 100) + ' samples)' : String(v));
+$('built').textContent = 'data built ' + DATA.built + ' · ' + ROWS.length + ' run × position scores · answer key: passive trials of the tested session';
+
+// ── state ────────────────────────────────────────────────────────────────
+const EXPS = DATA.experiments;
+const S = { subj: 'All', dir: 'S1toS2', met: 'r2', floor: true, pos: null, wsubj: 'YES',
+  A: { ...EXPS['X00_baseline'].params }, B: { ...EXPS['D01_cleanpassive+autogain+equalweight'].params } };
+try { const t = localStorage.getItem('dash_theme'); if (t) document.documentElement.dataset.theme = t } catch (e) {}
+
+// ── data helpers ─────────────────────────────────────────────────────────
+const same = (p, q, skipPassive) => Object.keys(PNAMES).every(k => (skipPassive && k === 'passive') || p[k] === q[k]);
+function resolve(p, s, d) {               // experiment id that matches the settings for this person/direction
+  const has = e => ROWS.some(r => r[0] === e && r[1] === s && r[2] === d);
+  let ids = Object.keys(EXPS).filter(e => same(EXPS[e].params, p, false) && has(e));
+  if (!ids.length && s !== 'JM') ids = Object.keys(EXPS).filter(e => same(EXPS[e].params, p, true) && has(e));
+  return ids[0] || null;
+}
+function runs(e, s, d) { return ROWS.filter(r => r[0] === e && r[1] === s && r[2] === d) }
+function q(arr, p) { if (!arr.length) return NaN; const a = [...arr].sort((x, y) => x - y); const i = (a.length - 1) * p; const lo = Math.floor(i), hi = Math.ceil(i); return a[lo] + (a[hi] - a[lo]) * (i - lo) }
+const med = a => q(a, .5);
+const METS = { r2: { col: 'r2', lab: 'R²', hi: true }, mae: { col: 'mae', lab: 'MAE (Nm)', hi: false }, r2_demeaned: { col: 'r2_demeaned', lab: 'R² demeaned', hi: true }, bias: { col: 'bias', lab: 'bias (Nm)', hi: null } };
+function val(r, m) { let v = r[IX[METS[m].col]]; if ((m === 'r2' || m === 'r2_demeaned') && S.floor) v = Math.max(v, 0); return v }
+function positions(s, d) { return DATA.positions[s + '|' + d] || [] }
+function niceTicks(lo, hi, n) {           // round tick values (1, 2, 5 × 10^k steps)
+  const raw = (hi - lo) / (n || 5), mag = Math.pow(10, Math.floor(Math.log10(raw))), e = raw / mag;
+  const step = (e >= 7.5 ? 10 : e >= 3.5 ? 5 : e >= 1.5 ? 2 : 1) * mag, out = [];
+  for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(10));
+  return { ticks: out, dec: Math.max(0, -Math.floor(Math.log10(step) + 1e-9)) };
+}
+function near(a, b) { return Math.abs(a - b) < 0.005 }
+
+// ── controls ─────────────────────────────────────────────────────────────
+function chips(el, items, cur, on) {
+  el.innerHTML = '';
+  items.forEach(([v, lab, dis]) => { const c = document.createElement('span'); c.className = 'chip' + (v === cur ? ' on' : '') + (dis ? ' dis' : ''); c.textContent = lab;
+    if (!dis) c.onclick = () => on(v); el.appendChild(c) });
+}
+function optionsFor(k) { return [...new Set(Object.values(EXPS).map(e => e.params[k]))].sort((a, b) => (a > b) - (a < b)) }
+function modelPanel(which) {
+  const el = $('m' + which), p = S[which];
+  const presets = Object.values(EXPS).map(e => `<option value="${e.id}">${e.id.replace(/_/g, ' ')}</option>`).join('');
+  let h = `<h3><span class="dot" style="background:var(--${which.toLowerCase()})"></span>Model ${which}</h3>
+    <div class="row"><label>Preset</label><select data-k="preset"><option value="">— choose —</option>${presets}</select></div>`;
+  for (const k of Object.keys(PNAMES)) {
+    h += `<div class="row"><label>${PNAMES[k]}</label><select data-k="${k}">` + optionsFor(k).map(v => `<option value="${v}" ${v === p[k] ? 'selected' : ''}>${fmtP(k, v)}</option>`).join('') + '</select></div>';
+  }
+  h += `<div class="status" id="st${which}"></div>`;
+  el.innerHTML = h;
+  el.querySelectorAll('select').forEach(sel => sel.onchange = () => {
+    const k = sel.dataset.k;
+    if (k === 'preset') { if (sel.value) S[which] = { ...EXPS[sel.value].params } }
+    else { const o = optionsFor(k).find(v => String(v) === sel.value); S[which][k] = o }
+    modelPanel(which); render();
+  });
+  const subs = S.subj === 'All' ? SUBJ : [S.subj];
+  const found = subs.map(s => [s, resolve(p, s, S.dir)]);
+  const ok = found.filter(f => f[1]);
+  const st = $('st' + which);
+  if (!ok.length) { st.className = 'status miss'; st.textContent = 'This combination was not trained for this person/direction.' +
+    (p.code === 'original' ? ' The original code only ran learn 1 → test 2: set Code to "our framework" (same data and model).' : '') }
+  else {
+    const ids = [...new Set(ok.map(f => f[1]))];
+    const n = ok.map(([s, e]) => new Set(runs(e, s, S.dir).map(r => r[3])).size);
+    st.className = 'status' + (ok.length < subs.length ? ' miss' : '');
+    st.innerHTML = '→ ' + ids.join(', ') + ` · ${Math.min(...n) === Math.max(...n) ? n[0] : Math.min(...n) + '–' + Math.max(...n)} runs per person` + (ok.length < subs.length ? ` · missing for ${found.filter(f => !f[1]).map(f => f[0]).join(', ')}` : '') +
+      (EXPS[ids[0]].hypothesis ? `<details><summary>why this was tried</summary>${EXPS[ids[0]].hypothesis}</details>` : '');
+  }
+}
+function controls() {
+  chips($('subj'), [['All', 'All'], ...SUBJ.map(s => [s, s])], S.subj, v => { S.subj = v; if (v !== 'All') S.wsubj = v; S.pos = null; modelPanel('A'); modelPanel('B'); render() });
+  chips($('dir'), [['S1toS2', 'learn 1 → test 2'], ['S2toS1', 'learn 2 → test 1']], S.dir, v => { S.dir = v; S.pos = null; modelPanel('A'); modelPanel('B'); render() });
+  chips($('met'), Object.entries(METS).map(([k, m]) => [k, m.lab]), S.met, v => { S.met = v; render() });
+  chips($('flr'), [[true, 'show as 0'], [false, 'show raw']], S.floor, v => { S.floor = v; render() });
+}
+$('swap').onclick = () => { [S.A, S.B] = [S.B, S.A]; modelPanel('A'); modelPanel('B'); render() };
+$('theme').onclick = () => { const r = document.documentElement; const cur = r.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  r.dataset.theme = cur === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('dash_theme', r.dataset.theme) } catch (e) {} render() };
+
+// ── tooltip ──────────────────────────────────────────────────────────────
+const tip = $('tip');
+function showTip(ev, html) { tip.innerHTML = html; tip.style.display = 'block'; const x = Math.min(ev.clientX + 14, innerWidth - 330); tip.style.left = x + 'px'; tip.style.top = (ev.clientY + 14) + 'px' }
+function hideTip() { tip.style.display = 'none' }
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const f2 = v => (v === undefined || isNaN(v)) ? '–' : v.toFixed(2);
+
+// ── KPIs ─────────────────────────────────────────────────────────────────
+function pooled(which, toes) {
+  const subs = S.subj === 'All' ? SUBJ : [S.subj]; const vals = [];
+  for (const s of subs) { const e = resolve(S[which], s, S.dir); if (!e) continue;
+    for (const r of runs(e, s, S.dir)) if (r[IX.toes_down] === toes) vals.push(val(r, S.met)) }
+  return vals;
+}
+function kpis() {
+  const m = METS[S.met]; const el = $('kpis'); el.innerHTML = '';
+  const cards = [['toes-down positions', 1], ['other 6 positions', 0]];
+  for (const [lab, t] of cards) {
+    const a = med(pooled('A', t)), b = med(pooled('B', t)); const d = b - a;
+    const better = m.hi === null ? null : (m.hi ? d > 0 : d < 0);
+    const box = document.createElement('div'); box.className = 'kpi';
+    box.innerHTML = `<div class="t">Median ${m.lab} · ${lab}</div><div class="v"><b style="color:var(--a)">${f2(a)}</b><span>→</span><b style="color:var(--b)">${f2(b)}</b>
+      <span class="d ${better === null ? '' : better ? 'good' : 'bad'}">${isNaN(d) ? '' : (d > 0 ? '+' : '') + d.toFixed(2)}</span></div>`;
+    el.appendChild(box);
+    const pa = pooled('A', t), pb = pooled('B', t);
+    const box2 = document.createElement('div'); box2.className = 'kpi';
+    box2.innerHTML = `<div class="t">5th–95th percentile of runs · ${lab}</div><div class="v"><span style="color:var(--a)">${f2(q(pa, .05))}–${f2(q(pa, .95))}</span><span>→</span>
+      <span style="color:var(--b)">${f2(q(pb, .05))}–${f2(q(pb, .95))}</span></div><div class="small">1st–99th: ${f2(q(pa, .01))}–${f2(q(pa, .99))} → ${f2(q(pb, .01))}–${f2(q(pb, .99))}</div>`;
+    el.appendChild(box2);
+  }
+}
+
+// ── per-position box plots ───────────────────────────────────────────────
+function boxChart(s, small) {
+  const pos = positions(s, S.dir); const m = METS[S.met];
+  const W = small ? 420 : 1100, H = small ? 210 : 330, L = small ? 36 : 48, R = 10, T = 10, B = small ? 34 : 44;
+  const series = ['A', 'B'].map(w => { const e = resolve(S[w], s, S.dir); return { w, e, rs: e ? runs(e, s, S.dir) : [] } });
+  let all = []; series.forEach(se => se.rs.forEach(r => all.push(val(r, S.met))));
+  let lo = Math.min(...all), hi = Math.max(...all);
+  if (S.met === 'r2' || S.met === 'r2_demeaned') { hi = 1.02; lo = S.floor ? -0.02 : Math.max(Math.min(lo, 0), -3) }
+  if (!isFinite(lo)) { lo = 0; hi = 1 } if (m.col === 'mae') lo = 0; if (hi - lo < 1e-6) hi = lo + 1;
+  const y = v => T + (H - T - B) * (1 - (Math.min(Math.max(v, lo), hi) - lo) / (hi - lo));
+  const bw = (W - L - R) / Math.max(pos.length, 1);
+  let g = `<svg viewBox="0 0 ${W} ${H}">`;
+  for (let i = 0; i < Math.min(2, pos.length); i++) g += `<rect x="${L + i * bw}" y="${T}" width="${bw}" height="${H - T - B}" fill="var(--shade)"/>`;
+  const nt = niceTicks(lo, hi, small ? 4 : 5);
+  nt.ticks.forEach(v => { g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${v.toFixed(nt.dec)}</text>` });
+  pos.forEach((p, i) => {
+    g += `<text x="${L + (i + .5) * bw}" y="${H - B + 16}" text-anchor="middle" font-size="11.5" fill="var(--ink2)">${p > 0 ? '+' : ''}${p.toFixed(2)}</text>`;
+    series.forEach((se, j) => {
+      const v = se.rs.filter(r => near(r[IX.position_rad], p)).map(r => val(r, S.met)); if (!v.length) return;
+      const cx = L + (i + .5) * bw + (j - .5) * bw * .36, w = bw * .26, col = `var(--${se.w.toLowerCase()})`;
+      const st = { p5: q(v, .05), p25: q(v, .25), p50: q(v, .5), p75: q(v, .75), p95: q(v, .95), p1: q(v, .01), p99: q(v, .99) };
+      const pk = se.rs.find(r => near(r[IX.position_rad], p))[IX.peak_torque];
+      const tipH = `<b>${s} · ${p.toFixed(3)} rad · model ${se.w}</b><br>${se.e}<br>${m.lab}: median <b>${f2(st.p50)}</b><br>5–95 %: ${f2(st.p5)}–${f2(st.p95)} · 1–99 %: ${f2(st.p1)}–${f2(st.p99)}<br>${v.length} runs · peak torque ${pk.toFixed(1)} Nm`;
+      g += `<g class="hov" data-tip="${encodeURIComponent(tipH)}" data-pos="${p}" data-s="${s}" style="cursor:pointer">
+        <rect x="${cx - w / 2 - 4}" y="${T}" width="${w + 8}" height="${H - T - B}" fill="transparent"/>
+        <line x1="${cx}" x2="${cx}" y1="${y(st.p5)}" y2="${y(st.p95)}" stroke="${col}" stroke-width="1.5"/>
+        <rect x="${cx - w / 2}" y="${y(st.p75)}" width="${w}" height="${Math.max(1.5, y(st.p25) - y(st.p75))}" rx="3" fill="${col}" fill-opacity=".35" stroke="${col}"/>
+        <line x1="${cx - w / 2}" x2="${cx + w / 2}" y1="${y(st.p50)}" y2="${y(st.p50)}" stroke="var(--ink)" stroke-width="2"/>`;
+      if (!small) v.forEach((vv, k) => { g += `<circle cx="${cx + (k % 5 - 2) * 1.6}" cy="${y(vv)}" r="2.2" fill="${col}" stroke="var(--panel)" stroke-width=".8"/>` });
+      g += '</g>';
+    });
+  });
+  g += `<text x="${L}" y="${H - 4}" font-size="11" fill="var(--muted)">ankle position (rad) · shaded = 2 most toes-down</text></svg>`;
+  return g;
+}
+function perPosition() {
+  const m = METS[S.met];
+  $('ppTitle').textContent = `${m.lab} per position · ${S.dir === 'S1toS2' ? 'learn session 1 → test session 2' : 'learn session 2 → test session 1'}`;
+  $('ppLegend').innerHTML = `<span><i class="sw" style="background:var(--a)"></i>model A</span><span><i class="sw" style="background:var(--b)"></i>model B</span>
+    <span>box = 25–75 %, whiskers = 5–95 %, black line = median${S.subj === 'All' ? '' : ', dots = runs'}</span>`;
+  const el = $('pp');
+  if (S.subj === 'All') el.innerHTML = '<div class="mult">' + SUBJ.map(s => `<div><h4>${s}${s === 'IES' ? ' (no passive trials)' : ''}</h4><div class="chart">${boxChart(s, true)}</div></div>`).join('') + '</div>';
+  else el.innerHTML = `<div class="chart">${boxChart(S.subj, false)}</div>`;
+  el.querySelectorAll('.hov').forEach(g => { g.onmousemove = ev => showTip(ev, decodeURIComponent(g.dataset.tip)); g.onmouseleave = hideTip;
+    g.onclick = () => { S.wsubj = g.dataset.s; S.pos = +g.dataset.pos; runsTable(); waveform() } });
+}
+
+// ── heatmap of B − A ─────────────────────────────────────────────────────
+function heat() {
+  const m = METS[S.met]; const W = 640, rowH = 30, L = 52, T = 22, cw = (W - L - 6) / 8; const H = T + rowH * SUBJ.length + 6;
+  let g = `<svg viewBox="0 0 ${W} ${H}">`; const cells = [];
+  for (let k = 0; k < 8; k++) g += `<text x="${L + (k + .5) * cw}" y="14" text-anchor="middle" font-size="11" fill="var(--muted)">${k < 2 ? 'toes-down ' + (k + 1) : 'pos ' + (k + 1)}</text>`;
+  SUBJ.forEach((s, i) => {
+    g += `<text x="${L - 8}" y="${T + i * rowH + 19}" text-anchor="end" font-size="12.5" fill="var(--ink)">${s}</text>`;
+    const ea = resolve(S.A, s, S.dir), eb = resolve(S.B, s, S.dir); const pos = positions(s, S.dir);
+    pos.forEach((p, k) => {
+      let d = NaN, a = NaN, b = NaN;
+      if (ea && eb) { a = med(runs(ea, s, S.dir).filter(r => near(r[IX.position_rad], p)).map(r => val(r, S.met))); b = med(runs(eb, s, S.dir).filter(r => near(r[IX.position_rad], p)).map(r => val(r, S.met))); d = b - a }
+      cells.push({ s, p, k, i, d, a, b });
+    });
+  });
+  const span = Math.max(...cells.map(c => Math.abs(c.d)).filter(isFinite), 1e-6);
+  cells.forEach(c => {
+    let fill = 'var(--panel2)';
+    if (isFinite(c.d) && m.hi !== null) { const good = m.hi ? c.d > 0 : c.d < 0; const t = Math.min(1, Math.abs(c.d) / span); fill = `color-mix(in srgb, var(--${good ? 'good' : 'bad'}) ${Math.round(12 + 70 * Math.sqrt(t))}%, var(--panel))` }
+    const sel = S.wsubj === c.s && S.pos !== null && near(S.pos, c.p);
+    g += `<g class="hc" data-s="${c.s}" data-p="${c.p}" data-tip="${encodeURIComponent(`<b>${c.s} · ${c.p.toFixed(3)} rad</b><br>median ${m.lab}: A ${f2(c.a)} → B ${f2(c.b)}<br>B − A: <b>${isFinite(c.d) ? (c.d > 0 ? '+' : '') + c.d.toFixed(3) : 'not available'}</b>`)}" style="cursor:pointer">
+      <rect x="${L + c.k * cw + 1}" y="${T + c.i * rowH + 1}" width="${cw - 2}" height="${rowH - 2}" rx="5" fill="${fill}" stroke="${sel ? 'var(--ink)' : 'none'}" stroke-width="2"/>
+      <text x="${L + (c.k + .5) * cw}" y="${T + c.i * rowH + 19}" text-anchor="middle" font-size="11.5" fill="var(--ink)">${isFinite(c.d) ? (c.d > 0 ? '+' : '') + c.d.toFixed(2) : '–'}</text></g>`;
+  });
+  $('heat').innerHTML = `<div class="chart">${g}</svg></div>`;
+  $('heat').querySelectorAll('.hc').forEach(e => { e.onmousemove = ev => showTip(ev, decodeURIComponent(e.dataset.tip)); e.onmouseleave = hideTip;
+    e.onclick = () => { S.wsubj = e.dataset.s; S.pos = +e.dataset.p; heat(); runsTable(); waveform() } });
+}
+
+// ── runs table ───────────────────────────────────────────────────────────
+function runsTable() {
+  const s = S.wsubj, pos = positions(s, S.dir); if (S.pos === null || !pos.some(p => near(p, S.pos))) S.pos = pos[0];
+  const out = [];
+  for (const w of ['A', 'B']) { const e = resolve(S[w], s, S.dir); if (!e) continue;
+    runs(e, s, S.dir).filter(r => near(r[IX.position_rad], S.pos)).sort((x, y) => x[3] - y[3]).forEach(r => out.push([w, r])) }
+  const fmtR2 = v => f2(S.floor ? Math.max(v, 0) : v);
+  $('runs').innerHTML = `<div class="small" style="margin-bottom:6px">${s} · ${S.pos.toFixed(3)} rad · ${S.dir === 'S1toS2' ? 'learn 1 → test 2' : 'learn 2 → test 1'}</div>
+   <table class="runs"><tr><th>model · seed</th><th>R²</th><th>MAE</th><th>RMSE</th><th>bias</th><th>R² demeaned</th><th>peak (Nm)</th></tr>` +
+    out.map(([w, r]) => `<tr><td><span class="dot" style="background:var(--${w.toLowerCase()})"></span> ${w} · seed ${r[3]}</td><td>${fmtR2(r[IX.r2])}</td><td>${f2(r[IX.mae])}</td><td>${f2(r[IX.rmse])}</td><td>${f2(r[IX.bias])}</td><td>${fmtR2(r[IX.r2_demeaned])}</td><td>${f2(r[IX.peak_torque])}</td></tr>`).join('') + '</table>';
+}
+
+// ── waveform viewer ──────────────────────────────────────────────────────
+const cache = {};
+function dec(b64) { if (cache[b64.slice(0, 40) + b64.length]) return cache[b64.slice(0, 40) + b64.length];
+  const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  const a = new Int16Array(u.buffer), f = new Float32Array(a.length); for (let i = 0; i < a.length; i++) f[i] = a[i] / 100;
+  return (cache[b64.slice(0, 40) + b64.length] = f) }
+function seg(arr, k) { const n = DATA.grid[2]; return arr.slice(k * n, (k + 1) * n) }
+function runChoices(w) {
+  const sel = $('run' + w), e = resolve(S[w], S.wsubj, S.dir); const prev = sel.value; sel.innerHTML = '';
+  if (!e) { sel.innerHTML = '<option>not trained</option>'; return null }
+  const rs = runs(e, S.wsubj, S.dir).filter(r => near(r[IX.position_rad], S.pos)).sort((x, y) => x[IX.r2] - y[IX.r2]);
+  const opts = [['typical', `typical run (median R², seed ${rs[(rs.length - 1) >> 1][3]})`], ['best', `best run (seed ${rs[rs.length - 1][3]})`], ['worst', `worst run (seed ${rs[0][3]})`],
+    ...[...rs].sort((x, y) => x[3] - y[3]).map(r => ['s' + r[3], `seed ${r[3]} · R² ${f2(Math.max(r[IX.r2], S.floor ? 0 : -1e9))}`])];
+  opts.forEach(([v, l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; sel.appendChild(o) });
+  if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+  const v = sel.value; const r = v === 'typical' ? rs[(rs.length - 1) >> 1] : v === 'best' ? rs[rs.length - 1] : v === 'worst' ? rs[0] : rs.find(x => 's' + x[3] === v);
+  return { e, r };
+}
+function waveform() {
+  const s = S.wsubj, pos = positions(s, S.dir); if (!pos.length) { $('wv').innerHTML = '<div class="small">No data.</div>'; return }
+  if (S.pos === null || !pos.some(p => near(p, S.pos))) S.pos = pos[0];
+  chips($('wpos'), pos.map((p, k) => [p, (k < 2 ? '⬇ ' : '') + (p > 0 ? '+' : '') + p.toFixed(2)]), pos.find(p => near(p, S.pos)), v => { S.pos = v; heat(); runsTable(); waveform() });
+  const k = pos.findIndex(p => near(p, S.pos));
+  $('wvTitle').textContent = `Waveform · ${s} · ${S.pos.toFixed(3)} rad · ${S.dir === 'S1toS2' ? 'learn session 1 → test session 2' : 'learn session 2 → test session 1'}`;
+  const key = seg(dec(DATA.key[s + '|' + S.dir]), k);
+  const lines = [{ lab: 'measured voluntary torque', col: 'var(--key)', y: key, w: 1.3 }];
+  for (const w of ['A', 'B']) { const c = runChoices(w); if (!c) continue; const b = DATA.wave[`${c.e}|${s}|${S.dir}|${c.r[3]}`]; if (!b) continue;
+    lines.push({ lab: `model ${w}: ${c.e} · seed ${c.r[3]} · R² ${f2(S.floor ? Math.max(c.r[IX.r2], 0) : c.r[IX.r2])} · MAE ${f2(c.r[IX.mae])} Nm`, col: `var(--${w.toLowerCase()})`, y: seg(dec(b), k), w: 1.1 }) }
+  $('wvLegend').innerHTML = lines.map(l => `<span><i class="sw" style="background:${l.col}"></i>${l.lab}</span>`).join('');
+  const t0 = +$('t0').value, tl = +$('tl').value; $('t0v').textContent = t0 + ' s'; $('tlv').textContent = tl + ' s';
+  const [g0, dt, n] = DATA.grid; const i0 = Math.max(0, Math.round((t0 - g0) / dt) + 0), i1 = Math.min(n, i0 + Math.round(tl / dt));
+  const W = 1100, H = 300, L = 48, R = 10, T = 10, B = 30;
+  let lo = Infinity, hi = -Infinity; lines.forEach(l => { for (let i = i0; i < i1; i++) { lo = Math.min(lo, l.y[i]); hi = Math.max(hi, l.y[i]) } });
+  const pad = (hi - lo) * .06 || 1; lo -= pad; hi += pad;
+  const x = i => L + (W - L - R) * (i - i0) / Math.max(1, i1 - i0 - 1), y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
+  let g = `<svg viewBox="0 0 ${W} ${H}" id="wsvg">`;
+  const yt = niceTicks(lo, hi, 5);
+  yt.ticks.forEach(v => { g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${v.toFixed(yt.dec)}</text>` });
+  const xt = niceTicks(g0 + i0 * dt, g0 + (i1 - 1) * dt, 10);
+  xt.ticks.forEach(tv => { const i = Math.round((tv - g0) / dt); if (i >= i0 && i < i1) g += `<text x="${x(i)}" y="${H - 10}" text-anchor="middle" font-size="11" fill="var(--muted)">${tv.toFixed(xt.dec)} s</text>` });
+  g += `<text x="12" y="${T + 12}" font-size="11" fill="var(--muted)">Nm</text>`;
+  lines.forEach(l => { let d = ''; for (let i = i0; i < i1; i++) d += (i === i0 ? 'M' : 'L') + x(i).toFixed(1) + ',' + y(l.y[i]).toFixed(1); g += `<path d="${d}" fill="none" stroke="${l.col}" stroke-width="${l.w}" stroke-linejoin="round"/>` });
+  g += `<line id="xh" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="var(--muted)" stroke-dasharray="3 3" style="display:none"/><rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" id="wov"/></svg>`;
+  $('wv').innerHTML = g;
+  const svg = $('wsvg'), ov = $('wov'), xh = $('xh');
+  ov.onmousemove = ev => { const r = svg.getBoundingClientRect(); const px = (ev.clientX - r.left) * W / r.width; const i = Math.round(i0 + (px - L) / (W - L - R) * (i1 - i0 - 1));
+    if (i < i0 || i >= i1) return; xh.setAttribute('x1', x(i)); xh.setAttribute('x2', x(i)); xh.style.display = '';
+    showTip(ev, `<b>${(g0 + i * dt).toFixed(1)} s</b><br>` + lines.map(l => `<span style="color:${l.col}">■</span> ${l.lab.split(':')[0]}: ${l.y[i].toFixed(2)} Nm`).join('<br>')) };
+  ov.onmouseleave = () => { xh.style.display = 'none'; hideTip() };
+}
+['runA', 'runB'].forEach(id => $(id).onchange = waveform);
+['t0', 'tl'].forEach(id => $(id).oninput = waveform);
+
+function render() { controls(); kpis(); perPosition(); heat(); runsTable(); waveform() }
+modelPanel('A'); modelPanel('B'); render();
+</script>
+</body>
+</html>

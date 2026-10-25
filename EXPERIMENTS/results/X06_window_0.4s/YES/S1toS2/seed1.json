@@ -1,0 +1,84 @@
+{
+ "experiment": "X06_window_0.4s",
+ "subject": "YES",
+ "direction": "S1toS2",
+ "seed": 1,
+ "config": {
+  "passive": "legacy",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 40,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null
+ },
+ "hypothesis": "A longer history gives the model more context for small, slow pushes.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -9.291166148776274,
+   -25.176118094598003,
+   -5.6402163190681796,
+   -16.825288474529167,
+   -15.168385076423558,
+   -1.44443821748321,
+   -26.771443690852337,
+   -29.05162158934365
+  ],
+  "n_windows": {
+   "train": 56768,
+   "val": 14200,
+   "test": 70968
+  },
+  "rest_frac_train": 0.25193771138669674
+ },
+ "train_info": {
+  "epochs": 46,
+  "best_epoch": 21,
+  "best_val_loss": 0.6331755518913269,
+  "knots": [
+   -0.486,
+   -0.382,
+   -0.277,
+   -0.174,
+   -0.069,
+   0.031,
+   0.137,
+   0.245
+  ],
+  "sd_per_knot": [
+   0.6913706314109254,
+   2.6917298749069496,
+   4.59452819147472,
+   7.574592436221559,
+   8.566486496892946,
+   13.785285593654153,
+   15.168593102467801,
+   13.081176192504623
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56768,
+  "val": 14192,
+  "test": 70968
+ },
+ "prep_s": 1.9975619316101074,
+ "train_s": 5813.914148807526,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

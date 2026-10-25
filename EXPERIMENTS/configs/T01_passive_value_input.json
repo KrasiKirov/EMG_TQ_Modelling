@@ -1,0 +1,9 @@
+{
+ "id": "T01_passive_value_input",
+ "title": "Passive-trial value of each trial as an extra input (Tier 2)",
+ "changes": {
+  "extra_input": "passive_trial_value"
+ },
+ "hypothesis": "Under the passive-trial key, the relaxed (resting) level of the target at the toes-down positions shifts between sessions by up to 0.72 Nm (YES -0.49), because the passive-trial value changes between sessions while the relaxed torque inside the trial changes less (report 1: relaxed ~0.8 x passive). Giving the model the passive-trial value of the trial (measured before the trial, so available at prediction time) lets it learn how the resting target depends on that value across angles, and apply it to the new session.",
+ "motivation": "Phase 2 offset diagnosis (offset 54-72 % of MSE at problematic positions) and the offset-ceiling analysis (results/offset_ceiling.txt). Position-conditioned inputs: Liu, Liu & Clancy 2015; Kizyte et al. 2023 (angle-dependent EMG-torque relation). Tier 2 because it changes the model input."
+}
