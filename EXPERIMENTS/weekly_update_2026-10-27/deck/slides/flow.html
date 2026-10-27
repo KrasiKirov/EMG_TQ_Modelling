@@ -1,0 +1,21 @@
+<section id="flow" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B45309">01 · Last week’s method · the whole picture</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">One person, start to finish</h2>
+</div>
+<p style="position:absolute;right:128px;top:160px;width:640px;font-size:24px;line-height:1.35;color:#4A5568;text-align:right">Real data: EG at −0.04 rad, one trained model.<br>Passive map → target only, never a model input.</p>
+<img src="/_blob/28c21c1d09f26a68cc17caae4a849901" alt="Pipeline tree with real data from EG at −0.04 rad. Top lane, session 1 (test), trains the model: a raw push trial (4 muscles, ankle angle and torque at 1 kHz) is band-passed 30–300 Hz, rectified, smoothed below 2 Hz, sampled at 100 Hz and divided by each muscle’s session-1 maximum, cut into 0.5 s windows of 50 steps × 5 inputs, and fed to a 2-layer LSTM of 8 units that outputs one torque value. Its target comes from relaxed passive trials: the median of each still hold gives one point, 8 angles give the session 1 passive map (−3.5 Nm here), which is subtracted from the measured torque to give active torque; the training error adjusts the weights. Bottom lane, session 2 (retest): same preprocessing with the session-1 maximum, every window, the same frozen LSTM; its prediction is scored against measured torque minus the session 2 passive map (−2.6 Nm here): R² 0.98, MAE 1.1 Nm." style="position:absolute;left:128px;top:236px;width:1664px;height:700px;object-fit:contain">
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">8</p>
+</div>
+<aside>This picture puts last week’s method together, with real data from one person, EG, at −0.04 rad. Read it from the left: one person, two sessions. The blue lane is session 1, which trains the model. The orange lane is session 2, which only scores it.
+
+The middle rows are the model’s path. A push trial is recorded at 1 kHz: four muscles, the ankle angle and the torque. Each muscle is band-passed 30 to 300 Hz, rectified and smoothed below 2 Hz; we keep every 10th sample (100 Hz) and divide by that muscle’s maximum in the session-1 training data. The model input is the four envelopes plus the ankle angle. We cut it into half-second windows, 50 steps by 5 inputs; each heat map is one window. The LSTM reads the 50 steps in order through two layers of 8 units and outputs one number: the active torque at the end of the window.
+
+The outer rows are the answer key, and this is the only place the passive map is used. In a relaxed passive trial the device holds one angle; the first still hold (at least 3 s, torque steady within 0.5 Nm) gives one point, its median torque. Eight angles give the passive map. At every 10 ms sample we read the map at the measured ankle angle (straight lines between the points) and subtract it from the measured torque. That is the target, the active torque. Session 1’s map builds the training target; session 2’s own map, the retest map, builds the scoring target. Here they differ: −3.5 against −2.6 Nm. The model never sees either map.
+
+In session 1 the prediction is compared with the target and the error adjusts the weights, up to 60 epochs, stopping once the held-out last 20% of each trial stops improving for 12 epochs. Then the weights are frozen and used on session 2: same preprocessing, still divided by the session-1 maximum, every window 10 ms apart. The score at this angle is R² 0.98 and MAE 1.1 Nm. We do this for all 8 angles, 6 people and 10 seeds.
+
+One exception: IES has no passive trials, so both of its sessions use the lab’s passive table.</aside>
+</section>

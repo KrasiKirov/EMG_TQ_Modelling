@@ -21,7 +21,7 @@
 <p style="font-size:24px;line-height:1.35;color:#6B7280">Idea: Tanaka T, Nambu I, Maruyama Y, Wada Y (2022). Sliding-window normalization to improve the performance of machine-learning models for real-time motion prediction using electromyography. <i>Sensors</i> 22(13):5005.</p>
 <div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
 <p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
-<p style="font-size:24px;color:#6B7280">9</p>
+<p style="font-size:24px;color:#6B7280">10</p>
 </div>
 <aside>Think of auto-gain as the automatic volume control on a phone call: if the signal is weaker today, it is turned up, so the network sees the same scale as in training. The figure shows JM at −0.64 rad, session 1 on the left and session 2 on the right. The pushes at the bottom are about the same in both sessions, but the calf EMG at the top is about half the size in session 2. For every muscle we track two running levels: the floor, the 10th percentile of the past 20 seconds, which is the relaxed level, and the top, the 95th percentile of the past 45 seconds, a strong push. The scaled signal is (EMG − floor) ÷ (top − floor), kept between 0 and 2, and the range is never allowed below 0.35 of the training range so noise is not blown up. It starts from session-1 values, updates every half second and only looks backwards, never at torque, so a live device could run it. It switches off for CH, who pushes in both directions. The idea comes from Tanaka et al. 2022, who used sliding-window normalisation for real-time motion prediction from EMG; they used it for classification across people, not for torque across sessions, which is what we test.</aside>
 </section>

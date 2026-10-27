@@ -14,7 +14,7 @@
 <p style="font-size:26px;line-height:1.4;color:#4A5568">The two main changes are explained next. The other rows come with the new pipeline’s defaults.</p>
 <div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
 <p style="font-size:24px;color:#4A5568">EMG → ankle torque · weekly update</p>
-<p style="font-size:24px;color:#4A5568">8</p>
+<p style="font-size:24px;color:#4A5568">9</p>
 </div>
 <aside>The new method keeps the same idea, one small recurrent model per person that learns from session 1 and is scored on session 2, but changes two things on purpose: how the muscle signals are scaled (auto-gain instead of a fixed session-1 maximum) and how the training loss treats the angles (every angle counts the same). To be transparent, three other settings also differ because they come with the new pipeline: it uses a 0.2 s input history instead of 0.5 s, a much larger training budget, and its passive maps are built from the still holds in the same spirit. When we compare results, keep in mind that these come along.</aside>
 </section>
