@@ -23,7 +23,7 @@
 <p style="font-size:28px;font-weight:600;color:#16615B;background:#DDEDEA;border-radius:999px;padding:14px 32px;align-self:start">Accuracy for both methods: next, in the dashboard</p>
 <div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
 <p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
-<p style="font-size:24px;color:#6B7280">13</p>
+<p style="font-size:24px;color:#6B7280">8</p>
 </div>
 <aside>What the two changes are meant to achieve, with numbers measured on the recordings themselves rather than on model results. First, auto-gain keeps the EMG size more consistent between sessions: at the toes-down angles, the share of muscle-and-angle cases where session 2’s EMG size per newton-metre is off by more than 25% drops from 53% to 30%, across the five people it applies to; over all angles it goes from 32% to 18%. It does not fix every case, and a few get worse. Second, balancing makes the toes-down angles count: for YES their share of the training loss goes from about 1% to 25%. Third, everything is causal, so a live device could do the same. Whether this improves accuracy is the question for the results, next.</aside>
 </section>

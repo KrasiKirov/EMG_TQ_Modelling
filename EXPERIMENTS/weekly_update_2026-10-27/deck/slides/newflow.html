@@ -1,0 +1,17 @@
+<section id="newflow" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1F7A72">02 · The new method · the whole picture</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">Same picture, new method</h2>
+</div>
+<p style="position:absolute;right:128px;top:160px;width:640px;font-size:24px;line-height:1.35;color:#4A5568;text-align:right">Same person and angle as slide 3.<br><span style="color:#1F7A72"><b>Teal boxes</b></span> = what the new method changes.</p>
+<img src="/_blob/d113d4a4c1922c116fd65903c790a566" alt="The same pipeline tree as slide 3 for the new method, real data from EG at −0.04 rad. Unchanged: raw recording, filters, passive holds and passive maps (session 1 map to train, session 2 map to score), the 2-layer LSTM of 8 units. New, in teal: auto-gain rescales each muscle from its own recent past (live in session 2); 0.2 s windows of 20 steps instead of 0.5 s; a balanced loss where each angle’s target is divided by its session-1 swing (10.9 Nm at this angle) so all 8 angles count the same; a larger training budget (every window, batch 8, up to 200 epochs, stop after 25 flat epochs). Score at this angle for the seed-0 model: R² 0.99 and MAE 0.8 Nm, against 0.98 and 1.1 Nm last week." style="position:absolute;left:128px;top:236px;width:1664px;height:700px;object-fit:contain">
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">5</p>
+</div>
+<aside>This is the same picture as slide 3, same person (EG), same angle (−0.04 rad), so you can compare box by box. Everything not highlighted is unchanged: the raw recording, the filters, the passive trials and passive maps (session 1’s map builds the training target, session 2’s own map builds the scoring target, exactly as last week), and the LSTM itself, two layers of 8 units.
+
+What changes is in teal. First, auto-gain: instead of dividing each muscle by one fixed session-1 maximum, each muscle is rescaled from its own recent past, so in session 2 it adapts to that session’s signal size. The next slide zooms into exactly this box. Second, the windows are 0.2 s, 20 steps, instead of 0.5 s. Third, the loss is balanced: each angle’s target is divided by how much the torque swings at that angle in session 1 (10.9 Nm here, about 2 Nm at the most toes-down angle), so every angle counts the same in training; predictions are multiplied back afterwards. Fourth, a bigger training budget: every window instead of every 5th, batch 8, up to 200 epochs, stopping after 25 epochs without improvement.
+
+For this one angle and one seed, the score goes from R² 0.98 and MAE 1.1 Nm last week to R² 0.99 and MAE 0.8 Nm. That is one example only; the full comparison over all people, angles and seeds is in the dashboard.</aside>
+</section>

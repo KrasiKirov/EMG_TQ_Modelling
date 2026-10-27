@@ -1,0 +1,21 @@
+<section id="agczoom" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1F7A72">02 · The new method · zoom on auto-gain</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">Auto-gain, step by step</h2>
+</div>
+<p style="position:absolute;right:128px;top:160px;width:640px;font-size:24px;line-height:1.35;color:#4A5568;text-align:right">Real data: JM, soleus, −0.36 rad.<br>Idea: Tanaka et al. 2022, <i>Sensors</i> 22:5005.</p>
+<img src="/_blob/ab4f60c2a4bd3d522fcbfc266b49a361" alt="Auto-gain in four steps for JM’s soleus at −0.36 rad. 1: with last week’s fixed session-1 maximum, the session-2 signal is 0.38 times as big as session 1’s for the same pushes (3.6 and 3.3 Nm swing). 2: auto-gain tracks two running levels of the session-2 signal from past samples only: the top, the 95th percentile of the past 45 s, and the floor, the 10th percentile of the past 20 s, updated every 0.5 s. 3: each sample is rescaled as (now − floor) ÷ (top − floor); at the example moment 0.260 with floor 0.092 and top 0.316 gives 0.75. 4: after auto-gain both sessions are on one scale: 0.98 times as big for the same push (GM 0.36 to 0.91, GL 0.83 to 1.04, SOL 0.38 to 0.98)." style="position:absolute;left:128px;top:236px;width:1664px;height:700px;object-fit:contain">
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">6</p>
+</div>
+<aside>This zooms into the auto-gain box of the previous slide, with real data from JM’s soleus at −0.36 rad, where the problem is clearest.
+
+Step 1, last week: every muscle is divided by its session-1 maximum, one fixed number. JM pushes the same in both sessions (3.6 and 3.3 Nm of torque swing, bottom traces), but the soleus signal in session 2 is only 0.38 times as big. With a fixed scale, the model reads that as a much weaker push.
+
+Step 2: auto-gain follows two running levels of the signal, using only past samples: the top, the 95th percentile of the last 45 seconds (a strong push), and the floor, the 10th percentile of the last 20 seconds (the relaxed level). They are recomputed every half second. At the start of a trial they lean on session-1 values and hand over to the trial’s own signal within a few seconds.
+
+Step 3: every sample is rescaled as (now − floor) ÷ (top − floor). At the marked moment the signal is 0.260, the floor 0.092 and the top 0.316, so the model receives 0.75. The value is kept between 0 and 2, and the range is never allowed below 0.35 of the session-1 range, so noise is not blown up.
+
+Step 4: after auto-gain, session 2 is 0.98 times the session-1 size for the same push (GM 0.36 to 0.91, GL 0.83 to 1.04). Why it works: a quieter session has a lower floor and a lower top too, so the ratio stays the same. Everything is causal and never uses torque, so a live device could run it. It is switched off for CH, who pushes in both directions. Across the five people it is on for, toes-down cases where session-2 EMG size is off by more than 25% drop from 53% to 30%; it does not fix every case. The idea comes from Tanaka et al. 2022 (Sensors 22:5005), sliding-window normalisation for real-time EMG motion prediction.</aside>
+</section>

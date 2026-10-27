@@ -7,7 +7,7 @@
 <img src="/_blob/28c21c1d09f26a68cc17caae4a849901" alt="Pipeline tree with real data from EG at −0.04 rad. Top lane, session 1 (test), trains the model: a raw push trial (4 muscles, ankle angle and torque at 1 kHz) is band-passed 30–300 Hz, rectified, smoothed below 2 Hz, sampled at 100 Hz and divided by each muscle’s session-1 maximum, cut into 0.5 s windows of 50 steps × 5 inputs, and fed to a 2-layer LSTM of 8 units that outputs one torque value. Its target comes from relaxed passive trials: the median of each still hold gives one point, 8 angles give the session 1 passive map (−3.5 Nm here), which is subtracted from the measured torque to give active torque; the training error adjusts the weights. Bottom lane, session 2 (retest): same preprocessing with the session-1 maximum, every window, the same frozen LSTM; its prediction is scored against measured torque minus the session 2 passive map (−2.6 Nm here): R² 0.98, MAE 1.1 Nm." style="position:absolute;left:128px;top:236px;width:1664px;height:700px;object-fit:contain">
 <div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
 <p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
-<p style="font-size:24px;color:#6B7280">8</p>
+<p style="font-size:24px;color:#6B7280">3</p>
 </div>
 <aside>This picture puts last week’s method together, with real data from one person, EG, at −0.04 rad. Read it from the left: one person, two sessions. The blue lane is session 1, which trains the model. The orange lane is session 2, which only scores it.
 

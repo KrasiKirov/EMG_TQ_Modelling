@@ -6,11 +6,13 @@ of the "0.5 s window + retest map" collection. Writes a self-contained HTML page
 1664 x 700; render it to PNG with headless Edge (see README).
 
 Usage (repository root on PYTHONPATH):
-    python pipeline_tree.py <data dir> <overrides.json> <EG run folder> <output.html>
+    python pipeline_tree.py <data dir> <overrides.json> <EG run folder> <output.html> [new_method_EG.npz]
+With the .npz (from new_method_data.py) it draws the same tree for the new method instead.
 """
 import json
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -88,6 +90,34 @@ for s in D:
           f"{d['hold']['position']:+.3f} rad {d['hold']['torque']:+.2f} Nm, preds {len(d['pred'])}, "
           f"target check {np.nanmax(abs(np.interp(d['pred_t'], d['t'], d['target']) - d['true'])):.3f} Nm")
 print(f"score trial {PUSH['retest']}: R2 {score['r2']:.3f}, MAE {score['mae']:.2f} Nm")
+
+# New method (optional 5th argument, the .npz from new_method_data.py): auto-gained inputs,
+# 0.2 s windows, its own passive table and the predictions of its seed-0 model replace the
+# model path; the raw recording, filter stages and passive holds stay as above.
+NEW = len(sys.argv) > 5
+OLD_SCORE = score
+if NEW:
+    z = np.load(sys.argv[5])
+    for session, s in (('test', 'S1'), ('retest', 'S2')):
+        d, t = D[session], z[f'{s}_t']
+        lo, hi = SPAN[session]
+        keep = (t >= lo) & (t <= hi)
+        end = int(np.argmin(abs(t - WINDOW_END[session])))
+        feats = np.column_stack([z[f'{s}_agc'], z[f'{s}_pos']])
+        steps = 20
+        idx, ang, mean, dur = z[f'{s}_holds'][0]
+        d.update(t=t[keep], env=z[f'{s}_agc'][keep], angle=z[f'{s}_pos'][keep], measured=z[f'{s}_tq'][keep],
+                 passive=z[f'{s}_passive'][keep], target=z[f'{s}_target'][keep],
+                 window=feats[end - steps + 1:end + 1], window_t=(t[end - steps + 1], t[end]),
+                 hold=dict(position=float(ang), torque=float(mean), interval=[0, dur * 1000], stat='mean'),
+                 angle_now=float(np.median(z[f'{s}_pos'][keep])), map_now=float(np.median(z[f'{s}_passive'][keep])))
+        maps[session] = SimpleNamespace(positions=z[f'map_{s}'][:, 0], torques=z[f'map_{s}'][:, 1])
+    pk = (z['S2_pred_t'] >= SPAN['retest'][0]) & (z['S2_pred_t'] <= SPAN['retest'][1])
+    D['retest'].update(pred_t=z['S2_pred_t'][pk], pred=z['S2_pred'][pk], true=z['S2_pred_target'][pk])
+    score = dict(r2=float(z['S2_r2']), mae=float(z['S2_mae']))
+    KNOTS, SD = z['knots'], z['sd']
+    print(f"new method: map {D['test']['map_now']:+.2f} / {D['retest']['map_now']:+.2f} Nm, "
+          f"R2 {score['r2']:.3f}, MAE {score['mae']:.2f} Nm, swing here {SD[np.argmin(abs(KNOTS - D['test']['angle_now']))]:.2f} Nm")
 
 # ----------------------------------------------------------------------------- svg helpers
 def xy(t, y, box, xlim, ylim):
@@ -205,8 +235,8 @@ def env_plot(s, h, shade=True):
 def window_plot(s, h):
     d = D[s]
     W = d['window']
-    lab, cols, rows = 26, 50, 5
-    cell_w = 3.4
+    lab, cols, rows = 26, len(W), 5
+    cell_w = 170 / cols
     cell_h = (h - 34) / rows
     cw, ch = cols * cell_w, rows * cell_h
     body = []
@@ -225,11 +255,11 @@ def window_plot(s, h):
     body.append(f'<rect x="{lab}" y="{y0:.1f}" width="{cw}" height="{ch - 0.8:.1f}" fill="none" stroke="{INK}" stroke-width="1" rx="1"/>')
     yb = y0 + ch + 6
     body.append(f'<path d="M{lab} {yb} v4 H{lab + cw} v-4" fill="none" stroke="{MUTED}" stroke-width="1"/>')
-    body.append(text(lab + cw / 2, yb + 15, '50 steps = 0.5 s', 10.5, INK, 'middle', 600))
+    body.append(text(lab + cw / 2, yb + 15, f'{cols} steps = {cols / 100:.1f} s', 10.5, INK, 'middle', 600))
     return svg(PW, h, body)
 
 
-def lstm_plot(h, frozen=False):
+def lstm_plot(h, frozen=False, steps=50):
     stroke = '#7E8A99' if frozen else S1
     fill1, fill2 = ('#E6E9ED', '#D3D8DE') if frozen else ('#DCE7F5', '#B9CFEC')
     xs = [24, 56, 112, 144]
@@ -246,7 +276,7 @@ def lstm_plot(h, frozen=False):
         body.append(f'<rect x="{x}" y="{yl1:.1f}" width="{cw}" height="{ch}" rx="4" fill="{fill1}" stroke="{stroke}" stroke-width="1.2"/>')
         body.append(f'<line x1="{x + cw / 2}" y1="{yl1:.1f}" x2="{x + cw / 2}" y2="{yl2 + ch + 1:.1f}" {arrow}/>')
         body.append(f'<rect x="{x}" y="{yl2:.1f}" width="{cw}" height="{ch}" rx="4" fill="{fill2}" stroke="{stroke}" stroke-width="1.2"/>')
-        body.append(text(x + cw / 2, h - 1, ['t−49', 't−48', 't−1', 't'][k], 9.5, MUTED, 'middle', 600))
+        body.append(text(x + cw / 2, h - 1, [f't−{steps - 1}', f't−{steps - 2}', 't−1', 't'][k], 9.5, MUTED, 'middle', 600))
     for x0, x1 in ((xs[0], xs[1]), (xs[2], xs[3])):
         for y in (yl1, yl2):
             body.append(f'<line x1="{x0 + cw}" y1="{y + ch / 2:.1f}" x2="{x1 - 1}" y2="{y + ch / 2:.1f}" {arrow}/>')
@@ -309,8 +339,33 @@ def hold_plot(s, h):
         f'<rect x="{X[0]:.1f}" y="2" width="{X[1] - X[0]:.1f}" height="{h - 4}" fill="{AMBER}" opacity="0.10" rx="3"/>',
         band(d['hold_t'], d['hold_torque'], box, xlim, ylim, MUTED, 150, 0.9),
         hline(X[0], X[1], ym[0], AMBER, 2, '5 3'),
-        text(X[0] + 6, ym[0] - 7, f'median {med:+.2f} Nm'.replace('-', '−'), 10.5, AMBER, weight=700),
+        text(X[0] + 6, ym[0] - 7, f'{hold.get("stat", "median")} {med:+.2f} Nm'.replace('-', '−'), 10.5, AMBER, weight=700),
     ])
+
+
+def balance_plot(h, w):
+    """New method: each angle's target divided by its session-1 swing (SD)."""
+    d = D['test']
+    now = int(np.argmin(abs(KNOTS - d['angle_now'])))
+    bw, gap, top = 15, 6, 14
+    bh = h - top - 13
+    body = []
+    for j, s in enumerate(SD):
+        x, hh = j * (bw + gap), s / SD.max() * bh
+        body.append(f'<rect x="{x}" y="{top + bh - hh:.1f}" width="{bw}" height="{hh:.1f}" rx="2" '
+                    f'fill="{TEAL if j == now else "#C9D1DB"}"/>')
+    xn = now * (bw + gap) + bw / 2
+    body.append(text(xn, top + bh - SD[now] / SD.max() * bh - 3, f'{SD[now]:.1f} Nm', 10, TEAL, 'middle', 700))
+    body.append(text(0, h - 1, 'swing per angle, toes down → up', 9, MUTED, weight=600))
+    x0 = 8 * (bw + gap) + 30
+    body.append(text(x0 - 15, h / 2 + 8, '÷', 24, TEAL, 'middle', 700))
+    box = (x0 + 6, 16, w - x0 - 8, h - 20)
+    xlim, ylim = SPAN['test'], (-2.1, 0.3)
+    _, y0 = xy([0], [0], box, xlim, ylim)
+    body.append(hline(box[0], w - 2, y0[0], LINE))
+    body.append(path(d['t'], d['target'] / SD[now], box, xlim, ylim, TEAL, 2.2))
+    body.append(text(box[0], 10, f'target ÷ {SD[now]:.1f} Nm: what this angle trains on', 10, TEAL, weight=700))
+    return svg(w, h, body)
 
 
 def map_plot(s, h):
@@ -371,36 +426,61 @@ def node(col, row, title, plot, caption, span=1, kind='', tag=''):
 
 
 p1, p2, p3, p4 = (plot_h(r) for r in ('R1', 'R2', 'R3', 'R4'))
+NEWTAG = '<span class="newtag">NEW</span>'
+STEPS = 20 if NEW else 50
+HOLD_RULE = 'still ≥ 5 s, SD < 1 Nm → mean' if NEW else 'still ≥ 3 s, ±0.5 Nm → median'
 # Session 1: the answer key (outer row) and the model path (inner row).
-node(0, 'R1', 'Relaxed passive trial', hold_plot('test', p1), 'still ≥ 3 s, ±0.5 Nm → median', kind='key')
-node(1, 'R1', 'Passive map', map_plot('test', p1), '8 holds, read at the angle', kind='key map', tag='SESSION 1')
+node(0, 'R1', 'Relaxed passive trial', hold_plot('test', p1), HOLD_RULE, kind='key')
+node(1, 'R1', 'Passive map', map_plot('test', p1), 'same idea as last week' if NEW else '8 holds, read at the angle',
+     kind='key map', tag='SESSION 1')
 node(2, 'R1', 'Measured − passive', measured_plot('test', p1), 'subtract, every 10 ms', kind='key')
 node(3, 'R1', 'Target: active torque', trace_plot('test', p1, ('target',)), 'what the muscles add', kind='key')
-node(4, 'R1', 'Training: compare, adjust <span class="legend"><i class="sw t"></i>target <i class="sw p"></i>prediction</span>',
-     trace_plot('test', p1, ('target', 'pred'), w=CW * 2 + 22 - 20), 'error → adjust weights · ≤ 60 epochs, early stop on the held-out 20%', span=2, kind='loss')
+if NEW:
+    node(4, 'R1', f'Balanced loss {NEWTAG}', balance_plot(p1, CW * 2 + 22 - 20),
+         'each angle ÷ its session-1 swing → all 8 angles count the same', span=2, kind='loss new')
+else:
+    node(4, 'R1', 'Training: compare, adjust <span class="legend"><i class="sw t"></i>target <i class="sw p"></i>prediction</span>',
+         trace_plot('test', p1, ('target', 'pred'), w=CW * 2 + 22 - 20), 'error → adjust weights · ≤ 60 epochs, early stop on the held-out 20%', span=2, kind='loss')
 node(0, 'R2', 'Push trial · raw 1 kHz', raw_plot('test', p2), '80% trains · last 20% checks')
 node(1, 'R2', 'Preprocessing (SOL)', stage_plot('test', p2), '→ 100 Hz · ÷ session-1 max')
-node(2, 'R2', 'Model input · 100 Hz', env_plot('test', p2), '4 envelopes + ankle angle')
-node(3, 'R2', 'Cut into 0.5 s windows', window_plot('test', p2), 'every 5th window trains')
-node(4, 'R2', 'LSTM', lstm_plot(p2), '2 layers × 8 units → 1 value')
-node(5, 'R2', 'Prediction', trace_plot('test', p2, ('pred',)), 'active torque at window end')
+if NEW:
+    node(2, 'R2', f'Auto-gain {NEWTAG}', env_plot('test', p2), 'rescaled from its own past', kind='new')
+    node(3, 'R2', f'0.2 s windows {NEWTAG}', window_plot('test', p2), 'every window trains', kind='new')
+    node(4, 'R2', 'LSTM', lstm_plot(p2, steps=STEPS), '2 layers × 8 units → 1 value')
+    nodes.append(
+        f'<div class="node new budget" style="left:{COL[5]}px;top:{ROWS["R2"][0]}px;width:{CW}px;height:{ROWS["R2"][1]}px">'
+        f'<div class="title">Training budget {NEWTAG}</div><div class="rows">'
+        '<p><b>every</b> window<span>was every 5th</span></p><p>batch <b>8</b><span>was 64</span></p>'
+        '<p>up to <b>200</b> epochs<span>was 60</span></p><p>stop after <b>25</b> flat<span>was 12</span></p></div>'
+        '<div class="cap">same LSTM, trained longer</div></div>')
+else:
+    node(2, 'R2', 'Model input · 100 Hz', env_plot('test', p2), '4 envelopes + ankle angle')
+    node(3, 'R2', 'Cut into 0.5 s windows', window_plot('test', p2), 'every 5th window trains')
+    node(4, 'R2', 'LSTM', lstm_plot(p2), '2 layers × 8 units → 1 value')
+    node(5, 'R2', 'Prediction', trace_plot('test', p2, ('pred',)), 'active torque at window end')
 # Session 2: the model path (inner row) and the answer key (outer row).
 node(0, 'R3', 'Push trial · retest', raw_plot('retest', p3), 'all 90 s · never trained on')
 node(1, 'R3', 'Same preprocessing', stage_plot('retest', p3), '→ 100 Hz · ÷ the session-1 max')
-node(2, 'R3', 'Model input · 100 Hz', env_plot('retest', p3), '4 envelopes + ankle angle')
-node(3, 'R3', 'Every 0.5 s window', window_plot('retest', p3), 'every window, 10 ms apart')
-node(4, 'R3', 'Same LSTM · frozen', lstm_plot(p3, frozen=True), 'weights fixed after session 1', kind='frozen')
-node(5, 'R3', 'Prediction', trace_plot('retest', p3, ('pred',)), 'active torque, every 10 ms')
+if NEW:
+    node(2, 'R3', f'Auto-gain, live {NEWTAG}', env_plot('retest', p3), 'adapts to session 2’s own past', kind='new')
+    node(3, 'R3', f'Every 0.2 s window {NEWTAG}', window_plot('retest', p3), 'every window, 10 ms apart', kind='new')
+else:
+    node(2, 'R3', 'Model input · 100 Hz', env_plot('retest', p3), '4 envelopes + ankle angle')
+    node(3, 'R3', 'Every 0.5 s window', window_plot('retest', p3), 'every window, 10 ms apart')
+node(4, 'R3', 'Same LSTM · frozen', lstm_plot(p3, frozen=True, steps=STEPS), 'weights fixed after session 1', kind='frozen')
+node(5, 'R3', 'Prediction', trace_plot('retest', p3, ('pred',)),
+     '× the angle’s swing → Nm' if NEW else 'active torque, every 10 ms')
 node(0, 'R4', 'Relaxed passive trial', hold_plot('retest', p4), 'same rule, session 2 holds', kind='key')
 node(1, 'R4', 'Passive map', map_plot('retest', p4), 'the retest map', kind='key map s2', tag='SESSION 2')
 node(2, 'R4', 'Measured − passive', measured_plot('retest', p4), 'subtract, every 10 ms', kind='key')
 node(3, 'R4', 'Target: active torque', trace_plot('retest', p4, ('target',)), 'the answer key', kind='key')
 r2, mae = score['r2'], score['mae']
+was = (f'<p class="was">last week {OLD_SCORE["r2"]:.2f} · {OLD_SCORE["mae"]:.1f} Nm</p>' if NEW else '')
 nodes.append(
     f'<div class="node score" style="left:{COL[4]}px;top:{ROWS["R4"][0]}px;width:{CW * 2 + 22}px;height:{ROWS["R4"][1]}px">'
     f'<div class="title">Score at this angle <span class="legend"><i class="sw t"></i>target <i class="sw p"></i>prediction</span></div>'
-    f'<div class="scorebody"><div class="plot">{score_plot(p4)}</div>'
-    f'<div class="nums"><div><b>{r2:.2f}</b><span>R²</span></div><div><b>{mae:.1f}</b><span>MAE, Nm</span></div></div></div>'
+    f'<div class="scorebody"><div class="plot">{score_plot(p4)}</div><div class="numcol">'
+    f'<div class="nums"><div><b>{r2:.2f}</b><span>R²</span></div><div><b>{mae:.1f}</b><span>MAE, Nm</span></div></div>{was}</div></div>'
     f'<div class="cap">same for all 8 angles · 6 people × 10 seeds</div></div>')
 
 
@@ -427,7 +507,7 @@ def short(p, q, gap=3):
 
 links = []
 for row, color in (('R2', INK), ('R3', INK), ('R1', AMBER), ('R4', AMBER)):
-    last = 5 if row in ('R2', 'R3') else 3
+    last = (4 if NEW and row == 'R2' else 5) if row in ('R2', 'R3') else 3
     for c in range(last):
         a, b = mid(c, row, 'r'), mid(c + 1, row, 'l')
         links.append(arrow([a, short(a, b)], color, 1.8, marker='a' if color == INK else 'k'))
@@ -436,13 +516,20 @@ a, b = mid(3, 'R1', 'r'), mid(4, 'R1', 'l')
 links.append(arrow([a, short(a, b)], AMBER, 1.8, marker='k'))
 a, b = mid(3, 'R4', 'r'), mid(4, 'R4', 'l')
 links.append(arrow([a, short(a, b)], AMBER, 1.8, marker='k'))
-a, b = mid(5, 'R2', 't'), mid(5, 'R2', 't')
-links.append(arrow([a, short(a, (a[0], ROWS['R1'][0] + ROWS['R1'][1]))], INK, 1.8))
 a = mid(5, 'R3', 'b')
 links.append(arrow([a, short(a, (a[0], ROWS['R4'][0]))], INK, 1.8))
-# Training loop: the error goes back into the LSTM.
 x = COL[4] + CW / 2
-links.append(arrow([(x, ROWS['R1'][0] + ROWS['R1'][1]), short((x, 150), (x, ROWS['R2'][0]))], TEAL, 2.4, marker='g'))
+r1b, r2t = ROWS['R1'][0] + ROWS['R1'][1], ROWS['R2'][0]
+if NEW:
+    # Training loop: the LSTM's output goes up into the balanced loss, the error comes back down.
+    xu, xd = COL[4] + 56, COL[4] + CW - 56
+    links.append(arrow([(xu, r2t), short((xu, r2t), (xu, r1b))], INK, 1.8))
+    links.append(arrow([(xd, r1b), short((xd, r1b), (xd, r2t))], TEAL, 2.4, marker='g'))
+else:
+    a = mid(5, 'R2', 't')
+    links.append(arrow([a, short(a, (a[0], r1b))], INK, 1.8))
+    # Training loop: the error goes back into the LSTM.
+    links.append(arrow([(x, r1b), short((x, 150), (x, r2t))], TEAL, 2.4, marker='g'))
 # Measured torque from the push trial to the subtraction, in the gap between the rows.
 xs, xm = COL[0] + CW - 36, COL[2] + CW / 2
 gy1 = (ROWS['R1'][0] + ROWS['R1'][1] + ROWS['R2'][0]) / 2 + 4
@@ -453,6 +540,8 @@ links.append(arrow([(xs, ROWS['R3'][0] + ROWS['R3'][1]), (xs, gy2), (xm, gy2), s
 links.append(arrow([(x, ROWS['R2'][0] + ROWS['R2'][1]), short((x, 340), (x, ROWS['R3'][0]))], INK, 3, '6 4', marker='w'))
 
 labels = [
+    (f'<div class="lbl" style="left:{xu - 106}px;top:{r1b + 6}px;width:98px;text-align:right;color:{INK}">ŷ (÷ swing)</div>'
+     f'<div class="lbl" style="left:{xd + 8}px;top:{r1b + 6}px;width:118px;color:{TEAL}">adjust weights</div>') if NEW else
     f'<div class="lbl" style="left:{x - 128}px;top:{ROWS["R1"][0] + ROWS["R1"][1] + 3}px;width:118px;text-align:right;color:{TEAL}">adjust weights</div>',
     f'<div class="lbl" style="left:{x + 12}px;top:{ROWS["R2"][0] + ROWS["R2"][1] + 13}px;width:220px;color:{INK}">trained weights, frozen</div>',
     f'<div class="lbl" style="left:{xs + 10}px;top:{gy1 - 17}px;width:200px;color:{MUTED}">measured torque</div>',
@@ -500,6 +589,15 @@ svg text {{ font-family: 'Public Sans', Arial, sans-serif; }}
 .node.loss {{ border: 1.5px solid {TEAL}; }}
 .node.score {{ border: 2px solid {INK}; }}
 .node.frozen {{ background: #F7F8FA; }}
+.node.new {{ border: 2px solid {TEAL}; box-shadow: 0 0 0 4px rgba(31,122,114,.14); }}
+.newtag {{ font-size: 10.5px; font-weight: 800; letter-spacing: 1px; color: #fff; background: {TEAL}; border-radius: 4px; padding: 1px 6px; line-height: 16px; }}
+.budget .rows {{ flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }}
+.budget .rows p {{ font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; align-items: baseline; gap: 6px;
+                  border-bottom: 1px solid #E6E1D8; padding-bottom: 3px; }}
+.budget .rows b {{ font-weight: 800; color: {TEAL}; }}
+.budget .rows span {{ margin-left: auto; font-size: 12px; font-weight: 600; color: {MUTED}; }}
+.numcol {{ display: flex; flex-direction: column; gap: 4px; }}
+.was {{ font-size: 12px; font-weight: 600; color: {MUTED}; }}
 .tag {{ font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #fff; background: {S1}; border-radius: 4px; padding: 1px 6px; line-height: 16px; }}
 .s2 .tag {{ background: {S2}; }}
 .legend {{ margin-left: auto; font-size: 12px; font-weight: 600; color: {MUTED}; display: flex; align-items: center; gap: 5px; }}
