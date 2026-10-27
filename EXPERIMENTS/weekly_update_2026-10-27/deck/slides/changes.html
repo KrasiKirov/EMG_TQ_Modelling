@@ -1,0 +1,20 @@
+<section id="changes" data-transition="fade" style="background:#EDEAE3;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1F7A72">02 · The new method</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">What changes in the new method</h2>
+</div>
+<table style="font-size:26px;color:#1B2430">
+<tr><th style="width:26%;text-align:left"></th><th style="width:37%;text-align:left">Last week</th><th style="width:37%;text-align:left;color:#16615B">New method</th></tr>
+<tr style="background:#DDEDEA"><td><b>Muscle-signal scaling</b> · main change 1</td><td>Fixed: each muscle’s session-1 maximum</td><td><b>Auto-gain:</b> rescaled from its own recent past</td></tr>
+<tr style="background:#DDEDEA"><td><b>Training loss</b> · main change 2</td><td>Plain: big-torque angles dominate</td><td><b>Balanced:</b> every angle counts the same</td></tr>
+<tr><td>Input history</td><td>0.5 s (50 samples)</td><td>0.2 s (20 samples)</td></tr>
+<tr><td>Training budget</td><td>Every 5th window, batch 64, up to 60 epochs</td><td>Every window, batch 8, up to 200 epochs</td></tr>
+<tr><td>Passive maps</td><td>Session 1 to train, session 2 to score</td><td>Same idea, from the still holds</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">The two main changes are explained next. The other rows come with the new pipeline’s defaults.</p>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#4A5568">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#4A5568">8</p>
+</div>
+<aside>The new method keeps the same idea, one small recurrent model per person that learns from session 1 and is scored on session 2, but changes two things on purpose: how the muscle signals are scaled (auto-gain instead of a fixed session-1 maximum) and how the training loss treats the angles (every angle counts the same). To be transparent, three other settings also differ because they come with the new pipeline: it uses a 0.2 s input history instead of 0.5 s, a much larger training budget, and its passive maps are built from the still holds in the same spirit. When we compare results, keep in mind that these come along.</aside>
+</section>

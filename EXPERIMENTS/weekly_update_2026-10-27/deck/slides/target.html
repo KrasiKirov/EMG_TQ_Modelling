@@ -1,0 +1,22 @@
+<section id="target" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B45309">01 · Last week’s method</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">What it learns to predict: active torque</h2>
+</div>
+<p style="font-size:36px;font-weight:600;line-height:1.3;background:#FFFDF9;border-left:6px solid #B45309;padding:24px 32px">active torque = measured torque − passive torque at this angle</p>
+<div style="display:flex;gap:48px;align-items:start">
+<img src="/_blob/cdc2192781ef9545e67c228cec0ed86f" alt="EG’s passive maps: resting torque against ankle angle for session 1 and session 2; the two curves separate most at the toes-up end" style="width:700px;height:500px;object-fit:contain">
+<div style="flex:1;display:flex;flex-direction:column;gap:22px">
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">Passive torque</h3>
+<p style="font-size:28px;line-height:1.4">The torque the ankle makes with the muscles relaxed: stretched tissue pulls back, more toward the ends of the range.</p>
+<p style="font-size:28px;line-height:1.4">Measured in separate passive trials. The device holds each angle and we keep the first still hold: at least 3 s, torque steady within 0.5 Nm.</p>
+<p style="font-size:28px;line-height:1.4">One value per angle gives the <b>passive map</b>. Subtracting it leaves what the muscles produce.</p>
+<p style="font-size:24px;line-height:1.4;color:#6B7280">Shown: EG’s passive maps from session 1 and session 2.</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">5</p>
+</div>
+<aside>The model does not predict the raw torque. Even with the muscles fully relaxed, the ankle produces torque that depends on the angle, because stretched tissue pulls back. That part is not muscle effort, so we subtract it. We measure it in separate passive trials: the device moves to each angle and holds it, and we take the first still hold, at least 3 seconds with the torque steady within half a newton-metre. One value per angle gives the passive map, shown here for EG in both sessions. Whatever is left after subtracting it is the active torque, which is what the model learns to predict.</aside>
+</section>

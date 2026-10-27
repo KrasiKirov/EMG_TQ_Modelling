@@ -1,0 +1,20 @@
+<section id="balance" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1F7A72">02 · The new method</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">Change 2: every angle counts the same</h2>
+</div>
+<div style="display:flex;gap:48px;align-items:start">
+<img src="/_blob/63dd900e8da13619f86680b74827c5d0" alt="YES, session 1: share of the training loss per ankle angle. With a plain loss the two toes-down angles carry 0.1% and 1.0% while the toes-up angles carry up to 30%; balanced, every angle carries 12.5%" style="width:1000px;height:552px;object-fit:contain">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px">
+<h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">The problem</h3>
+<p style="font-size:26px;line-height:1.4">Torque swings are tiny toes down: YES moves 0.7 Nm at −0.49 rad but 15 Nm at +0.14 rad. With a plain loss, the two toes-down angles make up about 1% of training, so the model can ignore them.</p>
+<h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">How it works</h3>
+<p style="font-size:26px;line-height:1.4">Divide each angle’s torque by its typical swing in session 1, train, then multiply the prediction back. Each angle then carries the same 12.5% of the loss.</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">11</p>
+</div>
+<aside>Problem two: the toes-down angles are where the active torque is smallest. For YES, the torque swings by about 0.7 Nm at −0.49 rad but by 15 Nm at +0.14 rad. A plain squared-error loss is dominated by the big swings, so the two toes-down angles together make up about 1% of what training cares about, and the model can do badly there at almost no cost. The fix is simple: divide each angle’s target by its typical swing, its standard deviation in session 1, train on that, and multiply the prediction back by the same number. Every angle then carries the same share of the loss, 12.5% each with 8 angles. Nothing about session 2 is used.</aside>
+</section>

@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": {"v": 1, "at": "2026-10-27T01:55:00Z"},
+  "lists": "css",
+  "title": "EMG Torque Weekly Update",
+  "order": ["cover", "agenda", "data", "pipeline", "target", "retest", "evaluation", "changes", "autogain", "autogain-effect", "balance", "achieve", "dashboard"],
+  "sections": {
+    "intro": {"description": "Cover and today’s plan", "start": "cover"},
+    "lastweek": {"description": "Last week’s method: the 0.5 s window and the retest passive map", "start": "data"},
+    "newmethod": {"description": "The new method: auto-gain and balanced angles", "start": "changes"},
+    "results": {"description": "Results in the new dashboard", "start": "dashboard"}
+  },
+  "faces": {
+    "libre-baskerville": {"family": "Libre Baskerville", "href": "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap"},
+    "public-sans": {"family": "Public Sans", "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"}
+  },
+  "designSystems": []
+}

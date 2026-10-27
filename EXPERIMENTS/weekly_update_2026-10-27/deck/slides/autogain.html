@@ -1,0 +1,27 @@
+<section id="autogain" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1F7A72">02 · The new method</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">Change 1: auto-gain (EMG volume control)</h2>
+</div>
+<div style="display:flex;gap:44px;align-items:start">
+<img src="/_blob/567bb535b4873706593846d7eb67bb2b" alt="JM at minus 0.64 rad, session 1 next to session 2. Top: calf EMG with its running relaxed level (floor) and strong-push level (top); in session 2 the same pushes give a signal about half the size. Middle: after auto-gain both sessions span 0 to 1. Bottom: the voluntary pushes, similar in both sessions" style="width:930px;height:560px;object-fit:contain">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px">
+<h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">The problem</h3>
+<p style="font-size:26px;line-height:1.4">Same pushes (bottom), but JM’s calf signal in session 2 is about half its session-1 size (top).</p>
+<h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">How it works</h3>
+<p style="font-size:26px;font-weight:600;line-height:1.3;background:#DDEDEA;border-radius:10px;padding:14px 20px">scaled = (EMG − floor) ÷ (top − floor)</p>
+<ul style="font-size:26px;line-height:1.35">
+<li><b>floor</b>: 10th percentile of the past 20 s, the relaxed level</li>
+<li><b>top</b>: 95th percentile of the past 45 s, a strong push</li>
+<li>Updated every 0.5 s from past samples only</li>
+<li>Off for people who push both ways (CH)</li>
+</ul>
+</div>
+</div>
+<p style="font-size:24px;line-height:1.35;color:#6B7280">Idea: Tanaka T, Nambu I, Maruyama Y, Wada Y (2022). Sliding-window normalization to improve the performance of machine-learning models for real-time motion prediction using electromyography. <i>Sensors</i> 22(13):5005.</p>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">9</p>
+</div>
+<aside>Think of auto-gain as the automatic volume control on a phone call: if the signal is weaker today, it is turned up, so the network sees the same scale as in training. The figure shows JM at −0.64 rad, session 1 on the left and session 2 on the right. The pushes at the bottom are about the same in both sessions, but the calf EMG at the top is about half the size in session 2. For every muscle we track two running levels: the floor, the 10th percentile of the past 20 seconds, which is the relaxed level, and the top, the 95th percentile of the past 45 seconds, a strong push. The scaled signal is (EMG − floor) ÷ (top − floor), kept between 0 and 2, and the range is never allowed below 0.35 of the training range so noise is not blown up. It starts from session-1 values, updates every half second and only looks backwards, never at torque, so a live device could run it. It switches off for CH, who pushes in both directions. The idea comes from Tanaka et al. 2022, who used sliding-window normalisation for real-time motion prediction from EMG; they used it for classification across people, not for torque across sessions, which is what we test.</aside>
+</section>

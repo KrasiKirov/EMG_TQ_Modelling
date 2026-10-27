@@ -1,0 +1,48 @@
+<section id="pipeline" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#B45309">01 · Last week’s method</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">From raw EMG to a torque prediction</h2>
+</div>
+<div style="display:flex;gap:20px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF9;border:1px solid #D6D1C6;border-radius:16px;padding:28px">
+<p style="font-size:24px;font-weight:700;color:#B45309">1</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">Raw EMG</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">4 muscles, 1000 samples per second</p>
+</div>
+<x-shape kind="arrow-right" style="width:44px;height:24px;background:#B45309;align-self:center"></x-shape>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF9;border:1px solid #D6D1C6;border-radius:16px;padding:28px">
+<p style="font-size:24px;font-weight:700;color:#B45309">2</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">Envelope</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Band-pass 30–300 Hz, rectify, smooth below 2 Hz</p>
+</div>
+<x-shape kind="arrow-right" style="width:44px;height:24px;background:#B45309;align-self:center"></x-shape>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF9;border:1px solid #D6D1C6;border-radius:16px;padding:28px">
+<p style="font-size:24px;font-weight:700;color:#B45309">3</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">100 Hz, scaled</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Divide by each muscle’s session-1 maximum</p>
+</div>
+<x-shape kind="arrow-right" style="width:44px;height:24px;background:#B45309;align-self:center"></x-shape>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF9;border:1px solid #D6D1C6;border-radius:16px;padding:28px">
+<p style="font-size:24px;font-weight:700;color:#B45309">4</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">0.5 s window</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Last 50 samples × 5 inputs: 4 muscles + ankle angle</p>
+</div>
+<x-shape kind="arrow-right" style="width:44px;height:24px;background:#B45309;align-self:center"></x-shape>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFF4E8;border:2px solid #B45309;border-radius:16px;padding:28px">
+<p style="font-size:24px;font-weight:700;color:#B45309">5</p>
+<h3 style="font-size:32px;font-weight:700;line-height:1.2">LSTM</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">2 layers of 8 units, 30% dropout → torque now</p>
+</div>
+</div>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">The envelope is a smooth measure of how strongly each muscle is working. The model only ever sees muscle activity and ankle angle, never torque.</p>
+<div style="display:flex;gap:24px">
+<p style="flex:1;font-size:28px;font-weight:600;background:#EDEAE3;border-radius:12px;padding:20px 28px">A new prediction every 10 ms</p>
+<p style="flex:1;font-size:28px;font-weight:600;background:#EDEAE3;border-radius:12px;padding:20px 28px">One model per person</p>
+<p style="flex:1;font-size:28px;font-weight:600;background:#EDEAE3;border-radius:12px;padding:20px 28px">Same steps in both sessions</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · weekly update</p>
+<p style="font-size:24px;color:#6B7280">4</p>
+</div>
+<aside>Step by step. The raw EMG is noisy and fast, so we turn it into an envelope: band-pass 30 to 300 Hz where the muscle signal lives, rectify, and smooth below 2 Hz. We keep every 10th sample (100 Hz) and divide each muscle by its maximum in session 1. The model input is the last half second: 50 samples of the four muscles plus the ankle angle. A small LSTM, two layers of 8 units with 30% dropout, outputs the torque at the end of that window. It slides along every 10 ms, and each person has their own model.</aside>
+</section>
