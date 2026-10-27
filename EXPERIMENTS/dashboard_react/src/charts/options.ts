@@ -18,17 +18,6 @@ function sw(color: string, line = false): string {
     : `<span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${color}"></span>`;
 }
 
-/** Vertical zoom for box plots: a slim slider on the right edge, plus Shift + mouse wheel over the plot.
- *  filterMode 'none' keeps every box and point; only the visible range changes. */
-export function yZoom(t: ChartTokens, top: number, bottom: number) {
-  return [
-    { type: 'slider', yAxisIndex: 0, filterMode: 'none', width: 12, right: 4, top, bottom, showDetail: false, showDataShadow: false,
-      brushSelect: false, moveHandleSize: 0, borderColor: t.grid, backgroundColor: 'transparent', fillerColor: alpha(t.a, 0.18),
-      handleStyle: { color: t.surface, borderColor: t.textMuted } },
-    { type: 'inside', yAxisIndex: 0, filterMode: 'none', zoomOnMouseWheel: 'shift', moveOnMouseWheel: false, moveOnMouseMove: false },
-  ];
-}
-
 function base(t: ChartTokens) {
   return {
     backgroundColor: 'transparent',
@@ -286,8 +275,7 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
   const peakText = (pk: number) => (shortPeak ? fmt(pk, pk < 10 ? 1 : 0) : `${fmt(pk, 1)} Nm`);
   const option = {
     ...base(t),
-    grid: { left: compact ? 6 : 10, right: compact ? 24 : 30, top: compact ? 10 : 30, bottom: compact ? 4 : 22, containLabel: true },
-    dataZoom: yZoom(t, compact ? 10 : 30, compact ? 30 : showPeak ? 74 : 56),
+    grid: { left: compact ? 6 : 10, right: compact ? 8 : 14, top: compact ? 10 : 30, bottom: compact ? 4 : 22, containLabel: true },
     tooltip: { ...base(t).tooltip, trigger: 'axis', axisPointer: { type: 'shadow', shadowStyle: { color: alpha(t.dark ? '#ffffff' : '#000000', 0.035) } }, formatter: tooltipFormatter },
     xAxis: [
       {
@@ -318,11 +306,11 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
       nameGap: 12,
       nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' },
       splitNumber: compact ? 4 : 5,
-      // no fixed interval: ticks must keep up when the reader zooms close to R² = 1
+      interval: md.floorable && lo !== undefined && hi !== undefined ? (hi - lo <= 1.01 ? 0.25 : hi - lo <= 2.01 ? 0.5 : 1) : undefined,
       axisLabel: {
         color: t.textMuted,
         fontSize: compact ? 11 : 12,
-        formatter: (v: number) => String(+v.toFixed(3)),
+        formatter: (v: number) => String(+v.toFixed(2)),
       },
     }),
     series: [shade, boxSeries('A', t.a), boxSeries('B', t.b), dotSeries('A', t.a), dotSeries('B', t.b), clipMarkers('A', t.a), clipMarkers('B', t.b)],
