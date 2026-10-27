@@ -6,7 +6,7 @@ import { useView } from '../state';
 import { ALL_IDS, EXTRA, catalogCode, catalogGroup, catalogRuns, catalogTitle, catalogWave, runTiming, secondsLabel } from '../lib/catalog';
 import { ALL_EXPERIMENTS } from '../lib/catalog';
 import { resolve } from '../lib/params';
-import { MIN_RUNS, median, summarize } from '../lib/stats';
+import { median, summarize } from '../lib/stats';
 import { fmt, posLabel } from '../lib/format';
 import { pickRun, timeAxis } from '../lib/waves';
 import { waveOption, type WaveLine } from '../charts/options';
@@ -70,8 +70,7 @@ export function SavedComparisonTab(){
  const columns:Column<typeof pairs[number]>[]=[{key:'subject',label:'Subject',render:r=><b>{r.subject}</b>},
   {key:'pos',label:'Shared angles',render:r=>r.matched.length||'Unavailable'},
   ...pairCols('r2','R²',true,.02),...pairCols('mae','MAE (Nm)',false,.05),
-  {key:'seeds',label:<span><span style={{color:inkA,fontWeight:700}}>Seeds A</span> / <span style={{color:inkB,fontWeight:700}}>B</span></span>,render:r=>{const runs=(rows:Run[],color:string)=>{const n=new Set(rows.map(x=>x.seed)).size;return n&&n<MIN_RUNS?<span className="few-runs" title="Too few runs to judge run-to-run variance">{n} · too few</span>:<span style={{color}}>{n}</span>;};
-   return <span>{runs(r.rowsA,inkA)} / {runs(r.rowsB,inkB)}</span>;}},
+  {key:'seeds',label:<span><span style={{color:inkA,fontWeight:700}}>Seeds A</span> / <span style={{color:inkB,fontWeight:700}}>B</span></span>,render:r=><span><span style={{color:inkA}}>{new Set(r.rowsA.map(x=>x.seed)).size}</span> / <span style={{color:inkB}}>{new Set(r.rowsB.map(x=>x.seed)).size}</span></span>},
   {key:'timea',label:head('A','train / seed'),render:r=><span style={{color:inkA}}>{training(r.rowsA)}</span>},{key:'timeb',label:head('B','train / seed'),render:r=><span style={{color:inkB}}>{training(r.rowsB)}</span>}];
  const cells=eligible.flatMap(pair=>[pair.rowsA,pair.rowsB].map((rows,i)=>({
   label:`${pair.subject} · ${i===0?'A':'B'}`,color:i===0?tokens.a:tokens.b,

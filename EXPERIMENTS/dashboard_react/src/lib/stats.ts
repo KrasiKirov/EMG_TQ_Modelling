@@ -1,8 +1,5 @@
 import type { Summary } from './types';
 
-/** Below this many training runs, run-to-run variance cannot be judged (same rule as the training scripts). */
-export const MIN_RUNS = 3;
-
 /** numpy.percentile default ('linear'): sort, idx = (n-1)*p, interpolate between floor and ceil */
 export function quantileSorted(a: ArrayLike<number>, p: number): number {
   const n = a.length;

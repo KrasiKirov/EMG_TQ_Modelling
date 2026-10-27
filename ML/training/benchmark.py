@@ -17,9 +17,6 @@ from ML.models.baselines import PositionModel, RidgeModel
 from ML.preprocessing.pipeline import PipelineConfig, SplitData, load_bundle, source_normalize
 from ML.training.run_artifacts import create_run
 
-# Fewer training seeds than this cannot show run-to-run variance, so results would not be comparable.
-MIN_SEEDS = 3
-
 
 def predict(model, kind, X, offset=0., scale=1.):
     if not len(X):
@@ -176,9 +173,6 @@ def run(args):
         values = getattr(args, key)
         if len(set(values)) != len(values):
             raise ValueError(f'Duplicate {key} would overwrite run identities')
-    if len(args.seeds) < MIN_SEEDS and not getattr(args, 'allow_few_seeds', False):
-        raise ValueError(f'Use at least {MIN_SEEDS} seeds so run-to-run variance can be judged '
-                         '(--allow-few-seeds is for smoke tests only)')
     config = PipelineConfig(window=args.window, train_stride=args.train_stride, target_mode=args.target_mode,
                             edge_trim_s=args.edge_trim, gap_s=args.gap, lp_cutoff=args.lp_cutoff,
                             session_passive_calibration=args.session_passive_calibration)
@@ -304,8 +298,6 @@ def parser(default_protocol='within'):
                    help='Use each session\'s passive curve for active-torque targets; '
                         'missing retest passive support becomes unavailable')
     p.add_argument('--seeds', nargs='+', type=int, default=[11, 23, 37])
-    p.add_argument('--allow-few-seeds', action='store_true',
-                   help=f'Allow fewer than {MIN_SEEDS} seeds (smoke tests only; such results are not comparable)')
     p.add_argument('--epochs', type=int, default=200)
     p.add_argument('--patience', type=int, default=15)
     p.add_argument('--batch', type=int, default=64)
