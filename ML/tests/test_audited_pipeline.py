@@ -96,6 +96,23 @@ class AuditedPipelineTests(unittest.TestCase):
         self.assertEqual(session_specific.preprocessing['passive_calibration_mode'],
                          'session_specific')
 
+    def test_missing_retest_passive_falls_back_to_source_calibration(self):
+        raw = [trial(0, 'passive test p1', -.1), trial(1, 'passive test p2', .2),
+               trial(2, 'active retest p1', -.1), trial(3, 'active test p1', -.1),
+               trial(4, 'active test p2', .2)]
+        raw[0]['torque'] = 1.
+        raw[1]['torque'] = 3.
+        for frame in raw[2:]:
+            frame['torque'] = 5.
+        manifest = inventory('TEST', raw, 'fixture-hash')
+        b = build_bundle(raw, manifest, PipelineConfig(target_mode='active_torque', edge_trim_s=.2, window=10,
+                                                       session_passive_calibration=True))
+        self.assertGreater(len(b['test'].y), 0)
+        self.assertAlmostEqual(float(b['test'].y.mean()), 4., places=3)
+        self.assertEqual(b.preprocessing['passive_by_session']['retest'],
+                         b.preprocessing['passive_by_session']['test'])
+        self.assertEqual(b.preprocessing['passive_calibration_mode'], 'session_specific_source_fallback')
+
     def test_retest_passive_cannot_change_calibration(self):
         raw = [trial(0, 'passive test p1', -.1), trial(1, 'passive test p2', .2),
                trial(2, 'passive retest p1', -.1)]

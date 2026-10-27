@@ -145,8 +145,13 @@ def build_bundle(trials, manifest, config=None, data_dir=None):
     config = config or PipelineConfig()
     passive = fit_passive(trials, manifest, data_dir) if config.target_mode == 'active_torque' else None
     passive_by_session = {'test': passive} if passive is not None else {}
+    retest_fallback = False
     if config.target_mode == 'active_torque' and config.session_passive_calibration:
-        passive_by_session['retest'] = fit_passive_session(trials, manifest, session='retest')
+        retest = fit_passive_session(trials, manifest, session='retest')
+        # A recording without retest passive plateaus (IES) keeps the documented
+        # source-session table for its retest trials instead of losing all of them.
+        retest_fallback = len(retest.positions) < 2 and passive is not None and len(passive.positions) >= 2
+        passive_by_session['retest'] = passive if retest_fallback else retest
     elif passive is not None:
         # Preserve the historical source-only behavior unless the opt-in mode
         # explicitly requests a retest-specific curve.
@@ -188,8 +193,9 @@ def build_bundle(trials, manifest, config=None, data_dir=None):
                     emg_scales=scales.tolist(), passive=passive.to_dict() if passive else None,
                     passive_by_session={session: calibration.to_dict()
                                         for session, calibration in passive_by_session.items()},
-                    passive_calibration_mode=('session_specific' if config.session_passive_calibration
-                                              else 'source_only'),
+                    passive_calibration_mode=('source_only' if not config.session_passive_calibration
+                                              else 'session_specific_source_fallback' if retest_fallback
+                                              else 'session_specific'),
                     position_units='rad', target_units='Nm', normalization='training-block max',
                     mode='offline', edge_policy='independently filtered raw blocks; trimmed both ends',
                     source_sha256=manifest['source_sha256'],

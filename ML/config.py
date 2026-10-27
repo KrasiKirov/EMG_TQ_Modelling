@@ -20,7 +20,8 @@ SUBJECTS = {
     'EG':  ('EG_121224.flb',  'default'),
     'IES': ('IES_081024.flb', 'default'),
     'JM':  ('JM_140325.flb',  'default'),
-    'YES': ('YES_281124.flb', 'default')
+    'YES': ('YES_281124.flb', 'default'),
+    'CH':  ('CH_151224.flb',  'default')
 }
 
 # ── Training hyperparameters ─────────────────────────────────────────────────
