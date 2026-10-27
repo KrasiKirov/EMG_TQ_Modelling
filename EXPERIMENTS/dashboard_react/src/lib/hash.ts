@@ -46,12 +46,22 @@ export function parseHashParams(hash: string): Record<string, string> {
   return out;
 }
 
+/** short names in the URL for long experiment ids */
+const ALIASES: Record<string, string> = {
+  'D01_cleanpassive+autogain+equalweight': 'D01',
+  'C01_autogain+equalweight': 'C01',
+};
+const UNALIAS = Object.fromEntries(Object.entries(ALIASES).map(([id, a]) => [a, id]));
+const alias = (id: string) => ALIASES[id] ?? id;
+const unalias = (s: string | undefined) => (s === undefined ? s : UNALIAS[s] ?? s);
+
 export function encodeParams(ds: Dataset, p: Params): string {
   const id = exactExperiment(ds, p);
-  return id ?? 'p:' + PARAM_KEYS.map((k) => String(p[k])).join(',');
+  return id ? alias(id) : 'p:' + PARAM_KEYS.map((k) => String(p[k])).join(',');
 }
 
 export function decodeParams(ds: Dataset, s: string | undefined): Params | null {
+  s = unalias(s);
   if (!s) return null;
   if (ds.experiments[s]) return { ...ds.experiments[s].params };
   if (s.startsWith('p:')) {
@@ -69,6 +79,7 @@ export function decodeParams(ds: Dataset, s: string | undefined): Params | null 
 
 export function stateFromHash(ds: Dataset, hash: string, base: ViewState): ViewState {
   const q = parseHashParams(hash);
+  (['exp', 'ca', 'cb'] as const).forEach((k) => q[k] !== undefined && (q[k] = unalias(q[k]) as string));
   const s: ViewState = { ...base };
   if (q.tab && (TABS as readonly string[]).includes(q.tab)) s.tab = q.tab as TabKey;
   if (q.exp && ALL_EXPERIMENTS[q.exp]) s.experiment = q.exp;
@@ -93,9 +104,9 @@ export function stateFromHash(ds: Dataset, hash: string, base: ViewState): ViewS
 export function hashFromState(ds: Dataset, s: ViewState, theme: string | null): string {
   const parts: [string, string][] = [
     ['tab', s.tab],
-    ['exp', s.experiment],
-    ['ca',s.compareA],
-    ['cb',s.compareB],
+    ['exp', alias(s.experiment)],
+    ['ca', alias(s.compareA)],
+    ['cb', alias(s.compareB)],
     ['subj', s.subj],
     ['dir', s.dir],
     ['metric', s.metric],

@@ -1,7 +1,7 @@
 import { Badge, Button, Group, Stack, Text, Title } from '@mantine/core';
 import { DS } from '../dataset';
 import { STORIES, STUDY_ORDER } from '../lib/experimentStory';
-import { PARAM_KEYS, paramShort, shortId, resolve } from '../lib/params';
+import { SHOWN_KEYS, paramShort, shortId, resolve } from '../lib/params';
 import { runsOf } from '../lib/data';
 import { useView } from '../state';
 import { DataTable, type Column } from '../components/common';
@@ -12,7 +12,7 @@ export function ControlledTab(){
  const open=(id:string)=>{set({experiment:id,tab:'overview',runA:'typical'});window.scrollTo({top:0});};
  const columns:Column<typeof rows[number]>[]=[
   {key:'id',label:'Experiment',render:r=><div><Text fw={600} size="sm">{STORIES[r.id]?.title??r.e.title}</Text><Text size="xs" c="dimmed">{shortId(r.id)}</Text></div>},
-  {key:'change',label:'Changed from original',render:r=><Group gap={5}>{PARAM_KEYS.filter(k=>k!=='code'&&String(base[k])!==String(r.e.params[k])).map(k=><Badge key={k} variant="light" color="gray" fw={500}>{paramShort(k,r.e.params[k])}</Badge>)}{PARAM_KEYS.every(k=>k==='code'||String(base[k])===String(r.e.params[k]))&&<Text size="xs" c="dimmed">Reference settings</Text>}</Group>},
+  {key:'change',label:'Changed from original',render:r=><Group gap={5}>{SHOWN_KEYS.filter(k=>k!=='code'&&String(base[k])!==String(r.e.params[k])).map(k=><Badge key={k} variant="light" color="gray" fw={500}>{paramShort(k,r.e.params[k])}</Badge>)}{SHOWN_KEYS.every(k=>k==='code'||String(base[k])===String(r.e.params[k]))&&<Text size="xs" c="dimmed">Reference settings</Text>}</Group>},
   {key:'subjects',label:'Subjects',render:r=>r.subjects.join(', ')||'Not run'},
   {key:'runs',label:'Seeds / subject',align:'right',render:r=>{const counts=r.subjects.map(subject=>{const res=resolve(DS,r.e.params,subject,s.dir);return new Set(res?runsOf(DS,res.exp,subject,s.dir).map(x=>x.seed):[]).size;});return counts.length?[...new Set(counts)].sort((a,b)=>a-b).join('–'):'—';}},
   {key:'open',label:'',render:r=><Button size="xs" variant="subtle" onClick={event=>{event.stopPropagation();open(r.id);}}>View results →</Button>}

@@ -1,3 +1,4 @@
+import { hiddenFromDisplay } from './experimentStory';
 // Aggregations behind the KPI cards, box plots, heat map and tables. Pure functions, no React.
 import { near, peakOf, positionsOf, runsOf, seedsOf, tableRows, type Dataset } from './data';
 import { compareValue, deltaVerdict, floorR2, metricValue, shownDelta } from './metrics';
@@ -323,7 +324,7 @@ export function experimentsTable(ds: Dataset, dir: Dir, floor: boolean): Experim
     const i = PRESET_ORDER.indexOf(id);
     return i < 0 ? PRESET_ORDER.length + ds.expIds.indexOf(id) : i;
   };
-  const rows: ExperimentRow[] = ds.expIds.map((id) => {
+  const rows: ExperimentRow[] = ds.expIds.filter((id) => !hiddenFromDisplay(id, ds.experiments[id].title)).map((id) => {
     const e = ds.experiments[id];
     const here = runCountRange(ds, id, dir);
     const there = runCountRange(ds, id, other);
@@ -526,7 +527,7 @@ export function round2Table(ds: Dataset, dir: Dir, floor: boolean): GroupRow[] {
       pos: Number(g('position_rad')),
       peak: NaN,
     };
-  }).filter((r) => r.dir === dir);
+  }).filter((r) => r.dir === dir && !hiddenFromDisplay(r.id, ROUND2_NAMES[r.id] ?? ''));
   // round 2 was re-scored on the same answer key, so the peaks are the same as in the main data
   const peakCache = new Map<string, number>();
   rows.forEach((r) => {

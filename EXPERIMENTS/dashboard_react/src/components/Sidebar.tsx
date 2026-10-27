@@ -1,3 +1,4 @@
+import { hiddenFromDisplay } from '../lib/experimentStory';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { AppShell, Badge, Button, Card, Collapse, Divider, Group, ScrollArea, SegmentedControl, Select, Stack, Switch, Text, Title, UnstyledButton } from '@mantine/core';
 import { IconAlertTriangle, IconArrowsExchange, IconCheck, IconChevronRight, IconCircleX } from '../icons';
@@ -10,7 +11,7 @@ import {
   friendly,
   modelStatus,
   modelTitle,
-  PARAM_KEYS,
+  SHOWN_KEYS,
   PARAM_NAMES,
   paramLabel,
   paramMedium,
@@ -116,7 +117,7 @@ function presetData() {
     // any experiment not listed above (future data) still shows up
     (() => {
       const listed = new Set(PRESET_GROUPS.flatMap((g) => g.ids));
-      const rest = DS.expIds.filter((id) => !listed.has(id));
+      const rest = DS.expIds.filter((id) => !listed.has(id) && !hiddenFromDisplay(id, DS.experiments[id].title));
       return rest.length ? [{ group: 'Other', items: rest.map((id) => ({ value: id, label: friendly(id) })) }] : [];
     })(),
   );
@@ -130,7 +131,7 @@ function ModelCard({ which }: { which: 'A' | 'B' }) {
   const base = DS.experiments[DEFAULT_A_ID]?.params;
   const data = useMemo(presetData, []);
   const accent = which === 'A' ? 'var(--c-a)' : 'var(--c-b)';
-  const nChanged = base ? PARAM_KEYS.filter((k) => String(base[k]) !== String(p[k])).length : 0;
+  const nChanged = base ? SHOWN_KEYS.filter((k) => String(base[k]) !== String(p[k])).length : 0;
   // the single settings are folded away while a preset is picked; a custom combination shows them
   const [openState, setOpen] = useState<boolean | null>(null);
   const open = openState ?? !exact;
@@ -180,7 +181,7 @@ function ModelCard({ which }: { which: 'A' | 'B' }) {
         </UnstyledButton>
         <Collapse in={open}>
           <div className="param-grid">
-            {PARAM_KEYS.map((k) => {
+            {SHOWN_KEYS.map((k) => {
               const changed = base && String(base[k]) !== String(p[k]);
               return (
                 <ParamRow
