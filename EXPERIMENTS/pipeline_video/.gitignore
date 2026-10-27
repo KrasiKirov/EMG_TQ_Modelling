@@ -1,0 +1,7 @@
+# rendered media and audio stay out of git (rebuild with build.py)
+audio/
+renders/
+media/
+# arrays derived from the recordings; facts_*.json and code_excerpts.json are kept
+data/*.npz
+__pycache__/

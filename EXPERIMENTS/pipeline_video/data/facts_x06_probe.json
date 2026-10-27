@@ -1,0 +1,60 @@
+{
+ "x06_probe": {
+  "best_epoch": 13,
+  "best_val_loss": 0.014504178427159786,
+  "checks": {
+   "best_epoch": true,
+   "best_val_loss": true,
+   "epochs": true,
+   "predictions": true
+  },
+  "epochs": 38,
+  "max_abs_pred_diff_Nm": 0.0,
+  "max_abs_target_diff_Nm": 0.0,
+  "n_params": 1001,
+  "seconds": 2458.4046375751495,
+  "steps_per_epoch": 7112,
+  "tf": "2.21.0",
+  "weight_names": [
+   "lstm_experiment/lstm/lstm_cell/kernel",
+   "lstm_experiment/lstm/lstm_cell/recurrent_kernel",
+   "lstm_experiment/lstm/lstm_cell/bias",
+   "lstm_experiment/lstm_1/lstm_cell/kernel",
+   "lstm_experiment/lstm_1/lstm_cell/recurrent_kernel",
+   "lstm_experiment/lstm_1/lstm_cell/bias",
+   "lstm_experiment/dense/kernel",
+   "lstm_experiment/dense/bias"
+  ],
+  "weight_shapes": [
+   [
+    5,
+    32
+   ],
+   [
+    8,
+    32
+   ],
+   [
+    32
+   ],
+   [
+    8,
+    32
+   ],
+   [
+    8,
+    32
+   ],
+   [
+    32
+   ],
+   [
+    8,
+    1
+   ],
+   [
+    1
+   ]
+  ]
+ }
+}

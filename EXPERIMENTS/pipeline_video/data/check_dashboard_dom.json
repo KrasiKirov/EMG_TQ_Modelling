@@ -1,0 +1,50 @@
+{
+ "source": "EXPERIMENTS/dashboard_react/dist/index.html, Balanced positions page, train S1 -> test S2, all positions; dumped with msedge --headless=new --dump-dom on 2026-10-27",
+ "single_r2": "0.98",
+ "single_mae_Nm": "0.57",
+ "subjects": {
+  "CH": {
+   "dashboard_r2": "0.99",
+   "dashboard_mae": "1.25",
+   "x08_r2": 0.9866,
+   "x08_mae": 1.2532,
+   "same": true
+  },
+  "EG": {
+   "dashboard_r2": "0.98",
+   "dashboard_mae": "0.83",
+   "x08_r2": 0.9757,
+   "x08_mae": 0.8344,
+   "same": true
+  },
+  "HM": {
+   "dashboard_r2": "0.97",
+   "dashboard_mae": "0.48",
+   "x08_r2": 0.9721,
+   "x08_mae": 0.4777,
+   "same": true
+  },
+  "IES": {
+   "dashboard_r2": "0.99",
+   "dashboard_mae": "0.62",
+   "x08_r2": 0.9856,
+   "x08_mae": 0.6173,
+   "same": true
+  },
+  "JM": {
+   "dashboard_r2": "0.90",
+   "dashboard_mae": "0.36",
+   "x08_r2": 0.8965,
+   "x08_mae": 0.3643,
+   "same": true
+  },
+  "YES": {
+   "dashboard_r2": "0.98",
+   "dashboard_mae": "0.57",
+   "x08_r2": 0.9842,
+   "x08_mae": 0.5746,
+   "same": true
+  }
+ },
+ "headline_same": true
+}

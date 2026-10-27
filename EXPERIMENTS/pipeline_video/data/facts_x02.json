@@ -1,0 +1,29 @@
+{
+ "x02": {
+  "bp": [
+   30.0,
+   300.0
+  ],
+  "check_decimated_vs_bundle": 0.0,
+  "check_env_vs_extract_envelope": 0.0,
+  "decimate_taps": 201,
+  "imp90": [
+   -0.376,
+   0.376
+  ],
+  "imp99": [
+   -0.874,
+   0.874
+  ],
+  "lp": 2.0,
+  "mean_offset": -0.018731064153432054,
+  "n_100hz": 8910,
+  "order": 4,
+  "piece_s": [
+   3.73,
+   6.73
+  ],
+  "seconds_100hz": 89.1,
+  "trial_idx": 21
+ }
+}
