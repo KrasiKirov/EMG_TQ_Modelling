@@ -7,12 +7,12 @@ import { positionsOf, runsOf } from './data';
 import { keyWave, runWave } from './waves';
 import type { Dir, Experiment, Run } from './types';
 export interface ExtraExperiment extends Experiment {
-  group:string; kind:'family'|'research'|'report'|'teammate'; native:string; model:string; purpose:string; target:string; protocol:string;
+  group:string; kind:'family'|'research'|'report'|'retest-map'; native:string; model:string; purpose:string; target:string; protocol:string;
   config?:Record<string,unknown>; revision?:string; sessionPassive?:boolean; reportText?:string;
   reportRows?:{subject:string;rmse:number;worst?:number;sourceRmse?:number}[];
-  handoff?: {
-    date:string; status:string; runs:number; rows:number; archive:string; historicalNote:string;
-    coverage:Record<string,{positions:number;seeds:number[];positionIds:string[]}>;
+  collection?: {
+    date:string; runs:number; rows:number; notes:string[];
+    coverage:Record<string,{positions:number;seeds:number[];positionIds:string[];passiveMode:string}>;
     unavailable:Record<string,{reason:string}>;
     environment:{cpu_count_visible:number;platform:string;concurrency:string;threads_per_job:string;training_duration_definition:string};
     native:{subject:string;seed:number;rmse:number;worst:number}[];

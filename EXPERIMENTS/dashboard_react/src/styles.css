@@ -520,6 +520,7 @@ body { font-variant-numeric: tabular-nums; }
 .settings-list { border-top: 1px solid var(--line); }
 .settings-list > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
 .settings-list span { color: var(--text-3); }
+.method-notes { margin: 14px 0 10px; padding-left: 18px; display: grid; gap: 6px; }
 .single-stat { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 22px; display: grid; gap: 12px; }
 .single-stat strong { font-size: 36px; line-height: 1.1; letter-spacing: -.04em; font-weight: 550; }
 .single-stat small { font-size: 16px; font-weight: 400; color: var(--text-3); letter-spacing: 0; }

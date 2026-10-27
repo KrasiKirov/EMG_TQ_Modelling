@@ -12,14 +12,13 @@ for field in ['positions','targets','predictions']:
 pool=set(data['targets'].values());data['targetPool']={k:v for k,v in data['targetPool'].items() if k in pool}
 for field in ['means','times']:
  data[field]={k:v for k,v in data[field].items() if not k.startswith(('research/','family/')) or k.startswith('family/F_gru8|')}
-# A catalogue refresh must not revert an imported teammate collection to report-only data.
-teammate='main/session-passive'
-if existing.get('experiments',{}).get(teammate,{}).get('handoff'):
- data['experiments'][teammate]=existing['experiments'][teammate]
- data['rows']=[r for r in data['rows'] if r['exp']!=teammate]+[r for r in existing['rows'] if r['exp']==teammate]
+# A catalogue refresh must not revert the imported 0.5 s + retest map runs to report-only data.
+retest_map='main/session-passive'
+if existing.get('experiments',{}).get(retest_map,{}).get('collection'):
+ data['experiments'][retest_map]=existing['experiments'][retest_map]
+ data['rows']=[r for r in data['rows'] if r['exp']!=retest_map]+[r for r in existing['rows'] if r['exp']==retest_map]
  for field in ['positions','targets','predictions','means','times']:
-  data[field].update({k:v for k,v in existing[field].items() if k.startswith(teammate+'|')})
- data['targetPool'].update({v:existing['targetPool'][v] for k,v in existing['targets'].items() if k.startswith(teammate+'|')})
- data['teammateImported']=existing.get('teammateImported')
+  data[field].update({k:v for k,v in existing[field].items() if k.startswith(retest_map+'|')})
+ data['targetPool'].update({v:existing['targetPool'][v] for k,v in existing['targets'].items() if k.startswith(retest_map+'|')})
 (root/'src/data/presentation-catalog.json').write_text(json.dumps(data,separators=(',',':')),encoding='utf-8')
 print('Focused catalogue saved. Earlier studies remain archived on disk.')
