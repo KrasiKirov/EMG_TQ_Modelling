@@ -24,9 +24,9 @@ from ML.config import DATA_DIR, SUBJECTS
 
 REPO = Path(__file__).resolve().parents[2]
 # The method's settings, spelled out instead of relying on benchmark defaults.
-METHOD_ARGS = ['--protocol', 'within', '--models', 'lstm', '--epochs', '60', '--patience', '12',
-               '--batch', '64', '--window', '50', '--train-stride', '5',
-               '--session-passive-calibration', '--evaluate-retest']
+# The epoch cap and early-stopping patience come from --epochs / --patience.
+METHOD_ARGS = ['--protocol', 'within', '--models', 'lstm', '--batch', '64', '--window', '50',
+               '--train-stride', '5', '--session-passive-calibration', '--evaluate-retest']
 
 
 def worker(argv):
@@ -46,6 +46,7 @@ def run_job(subject, seed, args):
     if folder.exists():
         shutil.rmtree(folder)  # left behind by an interrupted attempt
     command = [sys.executable, '-m', 'ML.training.parallel_benchmark', '--worker', *METHOD_ARGS,
+               '--epochs', str(args.epochs), '--patience', str(args.patience),
                '--subjects', subject, '--seeds', str(seed), '--output', str(folder),
                '--data-dir', str(args.data_dir)]
     if args.overrides:
@@ -65,6 +66,8 @@ def main():
     p.add_argument('--subjects', nargs='+', choices=list(SUBJECTS), default=list(SUBJECTS))
     p.add_argument('--seeds', nargs='+', type=int, default=list(range(10)))
     p.add_argument('--workers', type=int, default=8)
+    p.add_argument('--epochs', type=int, default=60, help='epoch cap')
+    p.add_argument('--patience', type=int, default=12, help='early-stopping patience in epochs')
     p.add_argument('--data-dir', type=Path, default=Path(DATA_DIR))
     p.add_argument('--overrides', type=Path)
     args = p.parse_args()
