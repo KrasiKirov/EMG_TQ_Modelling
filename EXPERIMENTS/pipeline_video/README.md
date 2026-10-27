@@ -8,7 +8,22 @@ audio are not in git; `build.py` rebuilds them.
 
 ## Chapters
 
-<!-- CHAPTERS -->
+Total 20:08 (1920 × 1080, 30 fps, H.264 + AAC, 73 MB). Times from `renders/chapters.md`, written by `build.py concat`.
+
+| # | Chapter | Starts at | Length |
+|---|---|---|---|
+| 1 | The data | 0:00 | 1.9 min |
+| 2 | The problem | 1:56 | 1.2 min |
+| 3 | The pipeline in one picture | 3:06 | 0.9 min |
+| 4 | Preprocessing, step by step | 3:59 | 1.3 min |
+| 5 | EMG scaling and auto-gain | 5:15 | 2.7 min |
+| 6 | Passive map and target | 7:59 | 1.7 min |
+| 7 | Windows and splits | 9:40 | 1.7 min |
+| 8 | Balanced positions | 11:23 | 1.5 min |
+| 9 | Inside the LSTM | 12:53 | 3.6 min |
+| 10 | Prediction | 16:31 | 0.7 min |
+| 11 | Evaluation, every number | 17:11 | 1.9 min |
+| 12 | Last week's pipeline, and recap | 19:07 | 1.0 min |
 
 ## How every number gets on screen
 
