@@ -72,7 +72,7 @@ function Shell() {
       <AppShell.Main className="app-main" id="main-content" tabIndex={-1}>
         <Tabs value={comparing ? 'comparison' : s.tab} onChange={(v) => v && setTab(v as TabKey)} className="main-tabs" keepMounted={false}>
           <Tabs.List px={{ base: 'md', sm: 'lg' }} pt="xs" ref={tabsRef} className="scroll-x">
-            {TABS.filter(k => k !== 'waveforms' && k !== 'training').map((k) => {
+            {TABS.filter(k => k !== 'waveforms' && k !== 'training' && k !== 'about').map((k) => {
               const Icon = TAB_META[k].icon;
               return (
                 <Tabs.Tab key={k} value={k} leftSection={<Icon size={16} stroke={1.7} />} data-testid={`tab-${k}`}>
