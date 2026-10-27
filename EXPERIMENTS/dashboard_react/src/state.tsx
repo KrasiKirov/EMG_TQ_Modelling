@@ -9,6 +9,9 @@ import { chartTokens, type ChartTokens } from './theme';
 
 const DEFAULT_STATE: ViewState = {
   tab: 'overview',
+  experiment: DEFAULT_B_ID,
+  compareA: 'main/session-passive',
+  compareB: 'D01_cleanpassive+autogain+equalweight',
   subj: 'All',
   dir: 'S1toS2',
   metric: 'r2',

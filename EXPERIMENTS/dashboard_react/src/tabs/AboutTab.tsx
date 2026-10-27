@@ -26,7 +26,7 @@ export function AboutTab() {
           A small LSTM network (1,001 parameters, 0.2 s input window) predicts the <b>voluntary</b> ankle torque (measured torque minus passive torque)
           from 4 surface-EMG signals and the ankle angle, for 6 people (YES, EG, JM, IES, CH, HM). Each person has 2 sessions; one model per person is
           trained on one session and tested on the other. Training is repeated with different random seeds (runs) and the spread over runs is shown
-          everywhere. Pick two models in the left panel and compare them.
+          everywhere. Choose one experiment to inspect its method, all-subject scores and waveforms. Use the separate Comparison tab to compare two models.
         </Text>
       </SectionCard>
 
@@ -53,7 +53,7 @@ export function AboutTab() {
         </SectionCard>
 
         <Stack gap="md">
-          <SectionCard title="Display rules">
+          <SectionCard title="Comparison display rules">
             <List size="sm" spacing={6}>
               <List.Item>
                 R² below 0 is shown as 0 by default (switch in the left panel to see raw values). Each run&apos;s R² is set to 0 first, then medians and

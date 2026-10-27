@@ -1,14 +1,18 @@
 // URL hash <-> view state, e.g. #tab=waveforms&subj=JM&dir=S1toS2&metric=mae&floor=1&a=X00_baseline&b=D01_...&pos=-0.787&theme=dark
+import { ALL_EXPERIMENTS } from './catalog';
 import type { Dataset } from './data';
 import { METRIC_KEYS } from './metrics';
 import { coerceParam, exactExperiment, PARAM_KEYS } from './params';
 import type { Dir, MetricKey, Params } from './types';
 
-export const TABS = ['overview', 'waveforms', 'training', 'experiments', 'about'] as const;
+export const TABS = ['overview', 'comparison', 'waveforms', 'training', 'experiments', 'about'] as const;
 export type TabKey = (typeof TABS)[number];
 
 export interface ViewState {
   tab: TabKey;
+  experiment: string;
+  compareA: string;
+  compareB: string;
   subj: string; // 'All' or a person
   dir: Dir;
   metric: MetricKey;
@@ -67,6 +71,9 @@ export function stateFromHash(ds: Dataset, hash: string, base: ViewState): ViewS
   const q = parseHashParams(hash);
   const s: ViewState = { ...base };
   if (q.tab && (TABS as readonly string[]).includes(q.tab)) s.tab = q.tab as TabKey;
+  if (q.exp && ALL_EXPERIMENTS[q.exp]) s.experiment = q.exp;
+  if(q.ca&&ALL_EXPERIMENTS[q.ca])s.compareA=q.ca;
+  if(q.cb&&ALL_EXPERIMENTS[q.cb])s.compareB=q.cb;
   if (q.subj && (q.subj === 'All' || ds.subjects.includes(q.subj))) s.subj = q.subj;
   if (q.dir === 'S1toS2' || q.dir === 'S2toS1') s.dir = q.dir;
   if (q.metric && (METRIC_KEYS as string[]).includes(q.metric)) s.metric = q.metric as MetricKey;
@@ -86,6 +93,9 @@ export function stateFromHash(ds: Dataset, hash: string, base: ViewState): ViewS
 export function hashFromState(ds: Dataset, s: ViewState, theme: string | null): string {
   const parts: [string, string][] = [
     ['tab', s.tab],
+    ['exp', s.experiment],
+    ['ca',s.compareA],
+    ['cb',s.compareB],
     ['subj', s.subj],
     ['dir', s.dir],
     ['metric', s.metric],

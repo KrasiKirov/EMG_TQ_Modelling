@@ -23,15 +23,15 @@ export function OverviewTab() {
   const stA = useMemo(() => modelStatus(DS, s.A, subjects, s.dir), [s.A, subjects, s.dir]);
   const stB = useMemo(() => modelStatus(DS, s.B, subjects, s.dir), [s.B, subjects, s.dir]);
   return (
-    <Stack gap="md">
+    <Stack gap="lg">
       <ComparisonStrip stA={stA} stB={stB} subjects={subjects} />
       <UntrainedAlert stA={stA} stB={stB} />
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md">
         <KpiCard id="toes" title="Toes-down positions" sub="the 2 most plantarflexed positions of each person" g={kpis.toes} k={kpis} stA={stA} stB={stB} metric={s.metric} />
-        <KpiCard id="other" title="Other 6 positions" sub="all remaining test positions" g={kpis.other} k={kpis} stA={stA} stB={stB} metric={s.metric} />
+        <KpiCard id="other" title="Remaining positions" sub="all remaining test positions" g={kpis.other} k={kpis} stA={stA} stB={stB} metric={s.metric} />
       </SimpleGrid>
       <PerPositionCard stA={stA} stB={stB} />
-      <HeatmapCard />
+      <details className="disclosure detail-panel"><summary>Explore differences by participant and position</summary><HeatmapCard /></details>
     </Stack>
   );
 }
@@ -136,12 +136,10 @@ function KpiCard({
       <Stack gap={4} style={{ minWidth: 0 }}>
         <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
           <Swatch which={w} />
-          <Text size="sm" fw={500} style={{ flex: 'none' }}>
+          <Text size="sm" fw={500} title={`${modelTitle(st)} (${codes})`} style={{ flex: 'none' }}>
             Model {w}
           </Text>
-          <Text size="xs" c="dimmed" truncate="end" title={`${modelTitle(st)} (${codes})`} style={{ minWidth: 0 }}>
-            {codes}
-          </Text>
+
         </Group>
         <Text className="kpi-value" data-testid={`kpi-${id}-${w}`}>
           {fmt(q.p50)}
@@ -151,12 +149,7 @@ function KpiCard({
             </Text>
           )}
         </Text>
-        <Text size="xs" c="dimmed" className="num" data-testid={`kpi-${id}-${w}-p5p95`}>
-          5–95 %: {range(q.p5, q.p95)}
-        </Text>
-        <Text size="xs" c="dimmed" className="num" data-testid={`kpi-${id}-${w}-p1p99`}>
-          1–99 %: {range(q.p1, q.p99)}
-        </Text>
+
       </Stack>
     );
   };
@@ -171,11 +164,11 @@ function KpiCard({
   } else if (!k.common.length && (k.onlyA.length || k.onlyB.length)) notes.push('No person in view has both models, so there is no B − A; each model is shown on its own people.');
   return (
     <Card data-testid={`kpi-card-${id}`}>
-      <Group justify="space-between" align="flex-start" mb="md" wrap="nowrap" gap="sm">
+      <Group justify="space-between" align="flex-start" mb="md" wrap="nowrap" gap="sm" className="kpi-heading">
         <Stack gap={2} style={{ minWidth: 0 }}>
           <Title order={3}>{title}</Title>
           <Text size="sm" c="dimmed">
-            {compareLabel(metric)}: median over runs at each position, then over positions · {sub}
+            {compareLabel(metric)} · {sub}
           </Text>
         </Stack>
         <Tooltip
@@ -206,9 +199,16 @@ function KpiCard({
           </Text>
         </Stack>
       </SimpleGrid>
+      <details className="disclosure kpi-details"><summary>Ranges and calculation details</summary>
+      <Text size="xs" c="dimmed" mb="sm">Median over runs at each position, then over positions.</Text>
+      {(['A', 'B'] as const).map((w) => {
+        const q = (w === 'A' ? g.a : g.b).s;
+        return <div key={w} className="range-row"><b>Model {w}</b><Text size="xs" data-testid={`kpi-${id}-${w}-p5p95`}>5–95%: {range(q.p5, q.p95)}</Text><Text size="xs" c="dimmed" data-testid={`kpi-${id}-${w}-p1p99`}>1–99%: {range(q.p1, q.p99)}</Text></div>;
+      })}
       <Text size="xs" c="dimmed" mt="sm" className="num" data-testid={`kpi-${id}-n`}>
         {counts}
       </Text>
+      </details>
       {notes.map((n) => (
         <Group key={n} gap={6} mt="md" wrap="nowrap" align="flex-start" data-testid={`kpi-${id}-scope`}>
           <IconAlertTriangle size={14} style={{ flex: 'none', marginTop: 3, color: 'var(--text-3)' }} />
@@ -217,7 +217,7 @@ function KpiCard({
           </Text>
         </Group>
       ))}
-      <Text size="sm" c="dimmed" mt="md" className="num" data-testid={`kpi-${id}-peak`}>
+      <details className="disclosure"><summary>Torque scale{isBias ? ' and bias' : ''}</summary><Text size="sm" c="dimmed" className="num" data-testid={`kpi-${id}-peak`}>
         Peak voluntary torque at these positions: median {fmt(g.peak.median, 1)} Nm (range {fmt(g.peak.min, 1)} to {fmt(g.peak.max, 1)} Nm)
         {metric === 'mae' || isBias ? ', the scale to read the error against.' : '.'}
       </Text>
@@ -225,7 +225,7 @@ function KpiCard({
         <Text size="xs" c="dimmed" mt={6}>
           Size of the bias (|bias|) per run, so positive and negative offsets do not cancel; the box plots below keep the sign.
         </Text>
-      )}
+      )}</details>
     </Card>
   );
 }
@@ -252,11 +252,11 @@ function PerPositionCard({ stA, stB }: { stA: ModelStatus; stB: ModelStatus }) {
             <Swatch which="B" /> B: {modelName(stB)}
           </span>
         </div>
-        <Text size="xs" c="dimmed" mt={-8}>
+        <details className="disclosure"><summary>How to read this chart</summary><Text size="xs" c="dimmed">
           box = 25–75 % · whiskers = 5–95 % · line in box = median · dots = runs · shaded = toes-down · positions in rad
           {s.metric === 'mae' ? ' · grey number under each position = its peak voluntary torque (Nm)' : ''}
           {s.metric === 'bias' ? ' · line at 0 = no bias' : ''}
-        </Text>
+        </Text></details>
         {all ? (
           <SimpleGrid cols={{ base: 1, lg: 2, xl: 3 }} spacing="lg" verticalSpacing="lg">
             {subjects.map((subj) => (

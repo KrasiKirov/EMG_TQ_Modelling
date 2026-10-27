@@ -326,7 +326,7 @@ export interface WaveLine {
   data: Float32Array;
 }
 
-export function waveOption(time: number[], lines: WaveLine[], zoom: { start: number; end: number }, t: ChartTokens, mobile: boolean): EOption {
+export function waveOption(time: number[], lines: WaveLine[], zoom: { start: number; end: number }, t: ChartTokens, mobile: boolean, demeaned = false): EOption {
   return {
     ...base(t),
     animation: false,
@@ -364,7 +364,7 @@ export function waveOption(time: number[], lines: WaveLine[], zoom: { start: num
       splitLine: { show: false },
       axisLabel: { color: t.textMuted, fontSize: 12, formatter: (v: number) => `${+v.toFixed(1)} s` },
     },
-    yAxis: valueAxis(t, { name: 'voluntary torque (Nm)', nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' }, scale: true }),
+    yAxis: valueAxis(t, { name: demeaned ? 'demeaned torque (Nm)' : 'voluntary torque (Nm)', nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' }, scale: true }),
     dataZoom: [
       { type: 'inside', xAxisIndex: 0, start: zoom.start, end: zoom.end, zoomOnMouseWheel: true, moveOnMouseMove: true, moveOnMouseWheel: false },
       {
@@ -395,7 +395,7 @@ export function waveOption(time: number[], lines: WaveLine[], zoom: { start: num
       lineStyle: { color: l.color, width: l.width, join: 'round', cap: 'round' },
       itemStyle: { color: l.color },
       emphasis: { focus: 'none', lineStyle: { width: l.width } },
-      data: time.map((x, j) => [x, Math.round(l.data[j] * 100) / 100]),
+      data: time.map((x, j) => [x, Number.isFinite(l.data[j]) ? Math.round(l.data[j] * 100) / 100 : null]),
     })),
   };
 }

@@ -233,6 +233,8 @@ export function DataTable<T>({
               key={rowKey(r)}
               data-testid={rowTestId?.(r)}
               className={[onRowClick ? 'clickable' : '', rowClass?.(r) ?? ''].join(' ').trim() || undefined}
+              tabIndex={onRowClick ? 0 : undefined}
+              onKeyDown={onRowClick ? (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onRowClick(r); } } : undefined}
               onClick={onRowClick ? () => onRowClick(r) : undefined}
             >
               {columns.map((c) => (
