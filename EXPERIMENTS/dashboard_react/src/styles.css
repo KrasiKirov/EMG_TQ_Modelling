@@ -525,6 +525,8 @@ body { font-variant-numeric: tabular-nums; }
 .single-stat strong { font-size: 36px; line-height: 1.1; letter-spacing: -.04em; font-weight: 550; }
 .single-stat small { font-size: 16px; font-weight: 400; color: var(--text-3); letter-spacing: 0; }
 .missing-score { color: var(--text-3); font-size: 12px; }
+.few-runs { color: #b4341b; font-weight: 600; white-space: nowrap; }
+[data-mantine-color-scheme='dark'] .few-runs { color: #f08a6c; }
 .provenance { border-top: 1px solid var(--line); padding-top: 6px; }
 .wave-score-strip { display: flex; flex-wrap: wrap; gap: 10px 24px; background: var(--surface-2); padding: 14px 16px; border-radius: 6px; font-size: 12px; color: var(--text-2); }
 .wave-score-strip b { margin-left: 5px; color: var(--mantine-color-text); font-weight: 600; }
@@ -613,3 +615,4 @@ body { font-variant-numeric: tabular-nums; }
 [data-mantine-color-scheme='dark'] [data-tone='teal'] { --accent: #78c9b6; }
 [data-mantine-color-scheme='dark'] [data-tone='violet'] { --accent: #baa8dc; }
 :root .coverage-note { padding: 14px 18px; background: var(--surface-2); border-left: 3px solid #b18345; border-radius: 4px; font-size: 13px; line-height: 1.65; color: var(--text-2); }
+:root .coverage-note.few-runs-note { border-left-color: #b4341b; }

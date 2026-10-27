@@ -21,6 +21,7 @@ import sys
 import time
 
 from ML.config import DATA_DIR, SUBJECTS
+from ML.training.benchmark import MIN_SEEDS
 
 REPO = Path(__file__).resolve().parents[2]
 # The method's settings, spelled out instead of relying on benchmark defaults.
@@ -45,7 +46,8 @@ def run_job(subject, seed, args):
         return name, 'skipped', 0.
     if folder.exists():
         shutil.rmtree(folder)  # left behind by an interrupted attempt
-    command = [sys.executable, '-m', 'ML.training.parallel_benchmark', '--worker', *METHOD_ARGS,
+    # One seed per job; the collection-level minimum is checked in main().
+    command = [sys.executable, '-m', 'ML.training.parallel_benchmark', '--worker', *METHOD_ARGS, '--allow-few-seeds',
                '--epochs', str(args.epochs), '--patience', str(args.patience),
                '--subjects', subject, '--seeds', str(seed), '--output', str(folder),
                '--data-dir', str(args.data_dir)]
@@ -70,7 +72,11 @@ def main():
     p.add_argument('--patience', type=int, default=12, help='early-stopping patience in epochs')
     p.add_argument('--data-dir', type=Path, default=Path(DATA_DIR))
     p.add_argument('--overrides', type=Path)
+    p.add_argument('--allow-few-seeds', action='store_true',
+                   help=f'Allow fewer than {MIN_SEEDS} seeds (smoke tests only; such results are not comparable)')
     args = p.parse_args()
+    if len(set(args.seeds)) < MIN_SEEDS and not args.allow_few_seeds:
+        p.error(f'use at least {MIN_SEEDS} seeds so run-to-run variance can be judged (--allow-few-seeds for smoke tests)')
     args.output = args.output.resolve()
     args.data_dir = args.data_dir.resolve()
     args.overrides = args.overrides.resolve() if args.overrides else None

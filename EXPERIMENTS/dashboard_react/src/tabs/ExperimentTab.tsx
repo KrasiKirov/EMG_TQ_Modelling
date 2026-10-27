@@ -6,7 +6,7 @@ import { useView } from '../state';
 import { near } from '../lib/data';
 import { resolve } from '../lib/params';
 import { STORIES } from '../lib/experimentStory';
-import { median, summarize } from '../lib/stats';
+import { MIN_RUNS, median, summarize } from '../lib/stats';
 import { fmt, posLabel, signed } from '../lib/format';
 import { floorR2 } from '../lib/metrics';
 import { pickRun, timeAxis } from '../lib/waves';
@@ -58,6 +58,7 @@ function SavedExperimentTab(){
   }),[e,s.dir,equivalents]);
   const all=subjects.flatMap(x=>scopeRuns(x.rows,scope));
   const available=subjects.filter(x=>x.rows.length);
+  const fewRuns=available.map(x=>({subject:x.subject,n:new Set(x.rows.map(r=>r.seed)).size})).filter(x=>x.n<MIN_RUNS);
   const chosen=subjects.find(x=>x.subject===s.wsubj)??subjects[0];
   const ps=catalogPositions(e.id,chosen.subject,s.dir);
   const pos=!ps.length?0:s.pos===null?ps[0]:ps.reduce((a,b)=>Math.abs(b-s.pos!)<Math.abs(a-s.pos!)?b:a,ps[0]);
@@ -78,7 +79,7 @@ function SavedExperimentTab(){
     {key:'mae',label:'MAE (Nm)',align:'right',render:r=>fmt(sc(scopeRuns(r.rows,scope),'mae')),sort:r=>sc(scopeRuns(r.rows,scope),'mae')},
     {key:'rmse',label:'RMSE (Nm)',align:'right',render:r=>fmt(sc(scopeRuns(r.rows,scope),'rmse'))},
     {key:'bias',label:'Bias (Nm)',align:'right',render:r=>signed(sc(scopeRuns(r.rows,scope),'bias'))},
-    {key:'runs',label:'Runs',align:'right',render:r=>r.rows.length?new Set(r.rows.map(x=>x.seed)).size:'—'},
+    {key:'runs',label:'Runs',align:'right',render:r=>{const n=new Set(r.rows.map(x=>x.seed)).size;return !n?'—':n<MIN_RUNS?<span className="few-runs" title="Too few runs to judge run-to-run variance">{n} · too few</span>:n;}},
     {key:'positions',label:'Positions',align:'right',render:r=>new Set(r.rows.map(x=>x.pos)).size||'—'},
     {key:'fitTime',label:'Train time / seed',align:'right',render:r=>secondsLabel(median([...new Set(r.rows.map(x=>x.seed))].map(seed=>r.source?runTiming(r.source,r.subject,s.dir,seed)?.seconds??NaN:NaN)))},
     {key:'source',label:'Result source',render:r=>r.source?<span>{shortId(r.source)}{r.equivalent?' · equivalent table':''}</span>:<span className="missing-score" title={extra?.collection?.unavailable[r.subject]?.reason}>Unavailable</span>}
@@ -113,7 +114,7 @@ function SavedExperimentTab(){
       <details className="metric-guide metric-reference"><summary>Metric definitions and worked example</summary><p><b>MAE</b> is the average size of the prediction error in newton-metres (Nm). <b>RMSE</b> also measures error in Nm but gives larger misses more influence. Lower is better for both.</p><p><b>R²</b> compares squared error with predicting the trial’s average torque: 1 is perfect, 0 matches that reference, and negative values are worse. It is not percentage accuracy. <b>Bias</b> is prediction minus target, averaged over time: positive means the model predicts too much torque; negative means too little.</p><details className="disclosure"><summary>A worked example of MAE, RMSE, bias and R²</summary><div className="teaching-demo"><Text size="xs" c="dimmed">Illustrative three-sample example, not an experimental result.</Text><p>Target: [2, 4, 6] Nm. Prediction: [3, 3, 8] Nm. The signed errors are [+1, −1, +2] Nm.</p><p>MAE = (1 + 1 + 2) / 3 = <b>1.33 Nm</b>.<br/>RMSE = √((1² + (−1)² + 2²) / 3) = <b>1.41 Nm</b>.<br/>Bias = (1 − 1 + 2) / 3 = <b>+0.67 Nm</b>.<br/>The target mean is 4 Nm, so R² = 1 − 6 / ((2−4)² + (4−4)² + (6−4)²) = <b>0.25</b>.</p><p>A small Nm error can still give a poor R² when the target barely changes. Read the waveform and the error in Nm alongside R², especially at weak toes-down positions.</p></div></details><details className="disclosure"><summary>How summaries are calculated and what the ranges mean</summary><p>For each subject and position, take the median score across training seeds. Then take the median across the selected positions. The headline applies this to every available subject-position equally. These summaries are medians of per-trial scores, not scores recomputed from one pooled waveform. Run-level metrics appear further down.</p><p>Runs reuse the same recordings and change the training random seed. Their spread describes training variability, not uncertainty across new people. The detailed table keeps the sign of bias, so offsets in opposite directions can cancel in a median summary.</p></details></details>
       {s.floor&&<Text size="xs" c="dimmed">Display rule active: negative R² values are shown as 0 before aggregation. Raw scores remain available in the run table and CSV.</Text>}
       <DataTable columns={summaryCols} rows={subjects} rowKey={r=>r.subject} rowTestId={r=>`subject-summary-${r.subject}`} rowClass={r=>r.subject===chosen.subject?'selected-row':r.rows.length?'':'dim'} onRowClick={r=>chooseSubject(r.subject)} minWidth={730} stickyFirst caption="Selected experiment performance by subject" />
-      <Text size="xs" c="dimmed">Select a subject row to inspect its positions and waveform.</Text>{extra?.collection&&s.dir==='S1toS2'&&<div className="coverage-note"><b>Coverage:</b> {Object.entries(extra.collection.coverage).map(([subject,c])=>`${subject} ${c.positions} positions`).join(' · ')}. IES has no passive recordings, so its documented pre-test passive table is used for both sessions. See How it works for the data fixes.</div>}
+      <Text size="xs" c="dimmed">Select a subject row to inspect its positions and waveform.</Text>{fewRuns.length>0&&<div className="coverage-note few-runs-note"><b>Fewer than {MIN_RUNS} training runs:</b> {fewRuns.map(x=>`${x.subject} (${x.n})`).join(', ')}. That is too few to judge run-to-run variance, so treat these results as preliminary.</div>}{extra?.collection&&s.dir==='S1toS2'&&<div className="coverage-note"><b>Coverage:</b> {Object.entries(extra.collection.coverage).map(([subject,c])=>`${subject} ${c.positions} positions`).join(' · ')}. IES has no passive recordings, so its documented pre-test passive table is used for both sessions. See How it works for the data fixes.</div>}
       {!extra&&<details className="disclosure provenance"><summary>Result sources and equivalent runs</summary><Switch checked={equivalents} onChange={ev=>setEquivalents(ev.currentTarget.checked)} label="Include runs with an equivalent passive table" size="xs"/><Text size="sm" mt="sm">Use the selected experiment’s exact runs first. If absent, the existing project rule can use an experiment differing only in the passive table for subjects other than JM, whose tables are identical. These sources are named in the table. Turn this off to show only the exact experiment’s saved runs.</Text></details>}
       </Stack>
     </section>
