@@ -1,0 +1,3256 @@
+{
+ "y05": {
+  "a_jm": {
+   "active_p7": {
+    "S1": {
+     "angle": -0.07675907325412835,
+     "comment": "active at p7, test",
+     "file_trial": 22,
+     "legacy_P_mean_windowends": 11.25742732606345,
+     "legacy_P_range": [
+      8.31069655418602,
+      11.591046343799663
+     ],
+     "measured_tq_mean_windowends": -4.20054285216625,
+     "measured_tq_sd_windowends": 1.7872005219377118,
+     "shift_mean_windowends": 13.224354676762072,
+     "static_P_mean_windowends": -1.966927350698621,
+     "static_P_range": [
+      -2.330352366031145,
+      -1.8869107468717294
+     ],
+     "target_legacy_mean": -15.4579701782297,
+     "target_static_mean": -2.2336155014676295,
+     "trial_index": 21
+    },
+    "S2": {
+     "angle": -0.07772062724335967,
+     "comment": "active at p7, retest",
+     "file_trial": 38,
+     "legacy_P_mean_windowends": 9.780583943614928,
+     "legacy_P_range": [
+      8.24154611590364,
+      10.032616752521227
+     ],
+     "measured_tq_mean_windowends": -4.479399469678587,
+     "measured_tq_sd_windowends": 1.6693105703648763,
+     "shift_mean_windowends": 11.67737433947064,
+     "static_P_mean_windowends": -1.8967903958557106,
+     "static_P_range": [
+      -2.278644462966691,
+      -1.8164967357873738
+     ],
+     "target_legacy_mean": -14.259983413293517,
+     "target_static_mean": -2.582609073822875,
+     "trial_index": 37
+    }
+   },
+   "legacy_table_S1": [
+    [
+     -0.786445960346146,
+     1.9887711657813532
+    ],
+    [
+     -0.6442233773606334,
+     1.6800154239977176
+    ],
+    [
+     -0.5018698375446852,
+     0.890141102166667
+    ],
+    [
+     -0.35890520041854823,
+     0.5335861592743527
+    ],
+    [
+     -0.2169044179880797,
+     -0.5057436731917349
+    ],
+    [
+     -0.07125468131137835,
+     11.719880671672891
+    ],
+    [
+     0.058721240776688305,
+     -3.3795757637688175
+    ],
+    [
+     0.2004812747566261,
+     -6.159256586387976
+    ]
+   ],
+   "legacy_table_S2": [
+    [
+     -0.7859365619592998,
+     2.478272153370416
+    ],
+    [
+     -0.6431449460330887,
+     1.9760938865035327
+    ],
+    [
+     -0.5009121552510049,
+     1.1846393447610277
+    ],
+    [
+     -0.35853013813199097,
+     0.7695947689796562
+    ],
+    [
+     -0.21693984810985736,
+     -0.3648256176146702
+    ],
+    [
+     -0.0644430599252599,
+     10.748356805331465
+    ],
+    [
+     0.05620442631825879,
+     -3.3705492399225188
+    ],
+    [
+     0.2006275264540715,
+     -5.404779390316104
+    ]
+   ],
+   "methods": {
+    "blocks": "10-s blocks of the raw 1 kHz torque, from t=0 (9 blocks; the last 0.1 s is dropped); mean and SD with ddof=1",
+    "hold_0_20s": "mean / SD (ddof=1) of the raw torque over the first 20 s",
+    "traces_100Hz": "dataset_builder.downsample_trial(factor=10): scipy.signal.decimate(ftype='fir', zero_phase=True); whole passive trial, no 1 s trim; t = index/100 s from the first sample; 9010 samples for the 90.1 s trial"
+   },
+   "note": "file_trial = trial_index + 1 (storyboard '#21' = trial_index 20 = 'passive at p7, test'). Static table has no entry near -0.07 (the p7 passive trial is rejected as a whole: SD 14.6 Nm), so the static rule gives the value interpolated between the neighbouring table entries; the first 20 s of that trial (a real hold) is not used by either rule because the device never steps in this trial, so it is not cut into pieces.",
+   "segments_all": [
+    {
+     "angle_sd_rad": 2.826882699933863e-05,
+     "comment": "passive at p1",
+     "end_s": 30.1,
+     "end_sample": 30100,
+     "file_trial": 9,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.5018698375446852,
+     "mean_tq": 0.890141102166667,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.015144058764970159,
+     "tq_sd_ddof1": 0.015144310333676454,
+     "trial_index": 8
+    },
+    {
+     "angle_sd_rad": 3.238766020558798e-05,
+     "comment": "passive at p2, test",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 11,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": 0.2004812747566261,
+     "mean_tq": -6.159256586387976,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.07257689626169389,
+     "tq_sd_ddof1": 0.07257870172449157,
+     "trial_index": 10
+    },
+    {
+     "angle_sd_rad": 4.502424206770437e-05,
+     "comment": "passive at p2, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 11,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.050469446790931016,
+     "mean_tq": -50.49049454415363,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 46.23261479549969,
+     "tq_sd_ddof1": 46.23294981808904,
+     "trial_index": 10
+    },
+    {
+     "angle_sd_rad": 3.208532998174507e-05,
+     "comment": "passive at p3, test",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 13,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.6442233773606334,
+     "mean_tq": 1.6800154239977176,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.01796601365330741,
+     "tq_sd_ddof1": 0.017966460585746583,
+     "trial_index": 12
+    },
+    {
+     "angle_sd_rad": 0.00010338445249351079,
+     "comment": "passive at p3, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 13,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": 0.019887355869986873,
+     "mean_tq": -202.19171471449258,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 60.518010260461956,
+     "tq_sd_ddof1": 60.518448801534944,
+     "trial_index": 12
+    },
+    {
+     "angle_sd_rad": 3.251475370783141e-05,
+     "comment": "passive at p4, test",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 15,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.2169044179880797,
+     "mean_tq": -0.5057436731917349,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.020275447927818303,
+     "tq_sd_ddof1": 0.020275952311014964,
+     "trial_index": 14
+    },
+    {
+     "angle_sd_rad": 2.0585971856980255e-05,
+     "comment": "passive at p4, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 15,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.06451443942269121,
+     "mean_tq": 7.830248120902241,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 17.63048749360207,
+     "tq_sd_ddof1": 17.630615252146505,
+     "trial_index": 14
+    },
+    {
+     "angle_sd_rad": 2.9798006268390905e-05,
+     "comment": "passive at p5, test",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 17,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.35890520041854823,
+     "mean_tq": 0.5335861592743527,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.019198089510013394,
+     "tq_sd_ddof1": 0.01919856709224937,
+     "trial_index": 16
+    },
+    {
+     "angle_sd_rad": 5.792871727820276e-05,
+     "comment": "passive at p5, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 17,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.021826540214428,
+     "mean_tq": -55.313213538073114,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 30.438788858692806,
+     "tq_sd_ddof1": 30.439009432024104,
+     "trial_index": 16
+    },
+    {
+     "angle_sd_rad": 3.014161526225445e-05,
+     "comment": "passive at p6, test",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 19,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.786445960346146,
+     "mean_tq": 1.9887711657813532,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.06591952784207432,
+     "tq_sd_ddof1": 0.06592116769251283,
+     "trial_index": 18
+    },
+    {
+     "angle_sd_rad": 3.5600661946844416e-05,
+     "comment": "passive at p6, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 19,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.03600789953600885,
+     "mean_tq": -30.76990308877696,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 28.895508398813234,
+     "tq_sd_ddof1": 28.895717788831238,
+     "trial_index": 18
+    },
+    {
+     "angle_sd_rad": 0.0013056629342213602,
+     "comment": "passive at p7, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 21,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.0779949232000655,
+     "mean_tq": 15.60951322244354,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": false,
+     "tq_sd_ddof0": 14.591125342088368,
+     "tq_sd_ddof1": 14.591206314601138,
+     "trial_index": 20
+    },
+    {
+     "angle_sd_rad": 2.9097665205620563e-05,
+     "comment": "passive at p8, test",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 23,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": 0.058721240776688305,
+     "mean_tq": -3.3795757637688175,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.03549243579135813,
+     "tq_sd_ddof1": 0.03549331872071611,
+     "trial_index": 22
+    },
+    {
+     "angle_sd_rad": 6.766840699497905e-05,
+     "comment": "passive at p8, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 23,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.007691053384645046,
+     "mean_tq": -89.01097555541992,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 34.910576847611225,
+     "tq_sd_ddof1": 34.91082982555554,
+     "trial_index": 22
+    },
+    {
+     "angle_sd_rad": 3.882664019362617e-05,
+     "comment": "passive at p1, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 25,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.5009121552510049,
+     "mean_tq": 1.1846393447610277,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.01958495654652663,
+     "tq_sd_ddof1": 0.019585443752679836,
+     "trial_index": 24
+    },
+    {
+     "angle_sd_rad": 0.00011498672467513319,
+     "comment": "passive at p1, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 25,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": 0.005624230390245878,
+     "mean_tq": -158.29307093766806,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 45.58420833390516,
+     "tq_sd_ddof1": 45.58453865784589,
+     "trial_index": 24
+    },
+    {
+     "angle_sd_rad": 3.3459269693676557e-05,
+     "comment": "passive at p2, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 27,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": 0.2006275264540715,
+     "mean_tq": -5.404779390316104,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.08091358609684579,
+     "tq_sd_ddof1": 0.08091559894772603,
+     "trial_index": 26
+    },
+    {
+     "angle_sd_rad": 2.7393622164274662e-05,
+     "comment": "passive at p2, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 27,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.05039487523450584,
+     "mean_tq": -53.867252871803615,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 35.93874110746348,
+     "tq_sd_ddof1": 35.939001535954425,
+     "trial_index": 26
+    },
+    {
+     "angle_sd_rad": 6.043322568930886e-05,
+     "comment": "passive at p3, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 29,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.6431449460330887,
+     "mean_tq": 1.9760938865035327,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.01585140927102339,
+     "tq_sd_ddof1": 0.015851803599400655,
+     "trial_index": 28
+    },
+    {
+     "angle_sd_rad": 7.74871153828531e-05,
+     "comment": "passive at p3, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 29,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": 0.0198639086411753,
+     "mean_tq": -190.86361816030308,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 59.62822110830975,
+     "tq_sd_ddof1": 59.62865320156518,
+     "trial_index": 28
+    },
+    {
+     "angle_sd_rad": 3.7203804659243577e-05,
+     "comment": "passive at p4, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 31,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.21693984810985736,
+     "mean_tq": -0.3648256176146702,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.022563843276635225,
+     "tq_sd_ddof1": 0.022564404587213486,
+     "trial_index": 30
+    },
+    {
+     "angle_sd_rad": 2.12772664902046e-05,
+     "comment": "passive at p4, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 31,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.0644430599252599,
+     "mean_tq": 10.748356805331465,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 15.904938087644751,
+     "tq_sd_ddof1": 15.905053342072067,
+     "trial_index": 30
+    },
+    {
+     "angle_sd_rad": 3.35636456751972e-05,
+     "comment": "passive at p5, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 33,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.35853013813199097,
+     "mean_tq": 0.7695947689796562,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.018673310137444447,
+     "tq_sd_ddof1": 0.01867377466498006,
+     "trial_index": 32
+    },
+    {
+     "angle_sd_rad": 5.170067501412549e-05,
+     "comment": "passive at p5, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 33,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.021839894093033198,
+     "mean_tq": -50.98766977066924,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 26.219823961119054,
+     "tq_sd_ddof1": 26.220013961908638,
+     "trial_index": 32
+    },
+    {
+     "angle_sd_rad": 3.3407201286511385e-05,
+     "comment": "passive at p6, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 35,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.7859365619592998,
+     "mean_tq": 2.478272153370416,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.1731590154396807,
+     "tq_sd_ddof1": 0.1731633230386077,
+     "trial_index": 34
+    },
+    {
+     "angle_sd_rad": 3.908585860325144e-05,
+     "comment": "passive at p6, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 35,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.036031453870074906,
+     "mean_tq": -37.385233080601346,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 25.68889876574084,
+     "tq_sd_ddof1": 25.689084919204586,
+     "trial_index": 34
+    },
+    {
+     "angle_sd_rad": 0.0011881748708866288,
+     "comment": "passive at p7, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 37,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "|mean torque| > 20 Nm",
+     "mean_angle": -0.07804387259562721,
+     "mean_tq": 20.979536020001614,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": false,
+     "tq_sd_ddof0": 15.977279328529416,
+     "tq_sd_ddof1": 15.977367993414687,
+     "trial_index": 36
+    },
+    {
+     "angle_sd_rad": 3.966910646565216e-05,
+     "comment": "passive at p8, retest",
+     "end_s": 20.1,
+     "end_sample": 20100,
+     "file_trial": 39,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": 0.05620442631825879,
+     "mean_tq": -3.3705492399225188,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": true,
+     "tq_sd_ddof0": 0.054411492717870505,
+     "tq_sd_ddof1": 0.054412846288096416,
+     "trial_index": 38
+    },
+    {
+     "angle_sd_rad": 5.113935795881143e-05,
+     "comment": "passive at p8, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 39,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.007776421566460066,
+     "mean_tq": -89.98095952263431,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 32.71560908822208,
+     "tq_sd_ddof1": 32.715846160430026,
+     "trial_index": 38
+    }
+   ],
+   "segments_near_m007": [
+    {
+     "angle_sd_rad": 4.502424206770437e-05,
+     "comment": "passive at p2, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 11,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.050469446790931016,
+     "mean_tq": -50.49049454415363,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 46.23261479549969,
+     "tq_sd_ddof1": 46.23294981808904,
+     "trial_index": 10
+    },
+    {
+     "angle_sd_rad": 2.0585971856980255e-05,
+     "comment": "passive at p4, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 15,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.06451443942269121,
+     "mean_tq": 7.830248120902241,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 17.63048749360207,
+     "tq_sd_ddof1": 17.630615252146505,
+     "trial_index": 14
+    },
+    {
+     "angle_sd_rad": 3.5600661946844416e-05,
+     "comment": "passive at p6, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 19,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.03600789953600885,
+     "mean_tq": -30.76990308877696,
+     "session": "S1",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 28.895508398813234,
+     "tq_sd_ddof1": 28.895717788831238,
+     "trial_index": 18
+    },
+    {
+     "angle_sd_rad": 0.0013056629342213602,
+     "comment": "passive at p7, test",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 21,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.0779949232000655,
+     "mean_tq": 15.60951322244354,
+     "session": "S1",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": false,
+     "tq_sd_ddof0": 14.591125342088368,
+     "tq_sd_ddof1": 14.591206314601138,
+     "trial_index": 20
+    },
+    {
+     "angle_sd_rad": 2.7393622164274662e-05,
+     "comment": "passive at p2, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 27,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.05039487523450584,
+     "mean_tq": -53.867252871803615,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 35.93874110746348,
+     "tq_sd_ddof1": 35.939001535954425,
+     "trial_index": 26
+    },
+    {
+     "angle_sd_rad": 2.12772664902046e-05,
+     "comment": "passive at p4, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 31,
+     "legacy_accepted": true,
+     "legacy_reject_reason": "",
+     "mean_angle": -0.0644430599252599,
+     "mean_tq": 10.748356805331465,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 15.904938087644751,
+     "tq_sd_ddof1": 15.905053342072067,
+     "trial_index": 30
+    },
+    {
+     "angle_sd_rad": 3.908585860325144e-05,
+     "comment": "passive at p6, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 35,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "torque SD > 20 Nm",
+     "mean_angle": -0.036031453870074906,
+     "mean_tq": -37.385233080601346,
+     "session": "S2",
+     "start_s": 21.1,
+     "start_sample": 21100,
+     "static_accepted": false,
+     "tq_sd_ddof0": 25.68889876574084,
+     "tq_sd_ddof1": 25.689084919204586,
+     "trial_index": 34
+    },
+    {
+     "angle_sd_rad": 0.0011881748708866288,
+     "comment": "passive at p7, retest",
+     "end_s": 90.1,
+     "end_sample": 90100,
+     "file_trial": 37,
+     "legacy_accepted": false,
+     "legacy_reject_reason": "|mean torque| > 20 Nm",
+     "mean_angle": -0.07804387259562721,
+     "mean_tq": 20.979536020001614,
+     "session": "S2",
+     "start_s": 0.0,
+     "start_sample": 0,
+     "static_accepted": false,
+     "tq_sd_ddof0": 15.977279328529416,
+     "tq_sd_ddof1": 15.977367993414687,
+     "trial_index": 36
+    }
+   ],
+   "static_table_S1": [
+    [
+     -0.786445960346146,
+     1.9887711657813532
+    ],
+    [
+     -0.6442233773606334,
+     1.6800154239977176
+    ],
+    [
+     -0.5018698375446852,
+     0.890141102166667
+    ],
+    [
+     -0.35890520041854823,
+     0.5335861592743527
+    ],
+    [
+     -0.2169044179880797,
+     -0.5057436731917349
+    ],
+    [
+     0.058721240776688305,
+     -3.3795757637688175
+    ],
+    [
+     0.2004812747566261,
+     -6.159256586387976
+    ]
+   ],
+   "static_table_S2": [
+    [
+     -0.7859365619592998,
+     2.478272153370416
+    ],
+    [
+     -0.6431449460330887,
+     1.9760938865035327
+    ],
+    [
+     -0.5009121552510049,
+     1.1846393447610277
+    ],
+    [
+     -0.35853013813199097,
+     0.7695947689796562
+    ],
+    [
+     -0.21693984810985736,
+     -0.3648256176146702
+    ],
+    [
+     0.05620442631825879,
+     -3.3705492399225188
+    ],
+    [
+     0.2006275264540715,
+     -5.404779390316104
+    ]
+   ],
+   "static_table_has_entry_near_m0.07": false,
+   "static_value_is_interpolation_between": {
+    "S1": [
+     [
+      -0.2169044179880797,
+      -0.5057436731917349
+     ],
+     [
+      0.058721240776688305,
+      -3.3795757637688175
+     ]
+    ],
+    "S2": [
+     [
+      -0.21693984810985736,
+      -0.3648256176146702
+     ],
+     [
+      0.05620442631825879,
+      -3.3705492399225188
+     ]
+    ]
+   },
+   "table_entry_members": {
+    "S1": [
+     {
+      "angle": -0.07125468131137835,
+      "members": [
+       {
+        "file_trial": 21,
+        "start_sample": 0,
+        "trial_index": 20
+       },
+       {
+        "file_trial": 15,
+        "start_sample": 21100,
+        "trial_index": 14
+       }
+      ],
+      "tq": 11.719880671672891
+     }
+    ],
+    "S2": [
+     {
+      "angle": -0.0644430599252599,
+      "members": [
+       {
+        "file_trial": 31,
+        "start_sample": 21100,
+        "trial_index": 30
+       }
+      ],
+      "tq": 10.748356805331465
+     }
+    ]
+   },
+   "table_entry_notes": [
+    "S1 table entry near -0.07 = running mean of 2 accepted pieces: file trial 21 piece starting at sample 0; file trial 15 piece starting at sample 21100",
+    "S2 table entry near -0.07 = running mean of 1 accepted piece(s): file trial 31 piece starting at sample 21100",
+    "the p7 passive trial of S2 (file trial 37) is REJECTED by the legacy |mean| <= 20 Nm test (mean +20.98 Nm, SD 15.98 Nm)"
+   ],
+   "trials": {
+    "S1": {
+     "block_dropped_samples": 100,
+     "block_mean": [
+      -1.8375082087516785,
+      -1.8309143996238708,
+      21.949731392860414,
+      22.27962589263916,
+      13.84126524925232,
+      23.53031826019287,
+      11.799485921859741,
+      23.96974844932556,
+      26.64660711288452
+     ],
+     "block_sd": [
+      0.01685416367140555,
+      0.0185969386255703,
+      11.378882638954162,
+      12.119096572680556,
+      10.600456193639705,
+      12.192734629527603,
+      8.550904881459916,
+      12.971954441651318,
+      13.12723197374996
+     ],
+     "first_s_with_sd_gt_1Nm": 20,
+     "hold0_20s_angle_sd_rad": 2.6933064872973615e-05,
+     "hold0_20s_mean": -1.8342113041877746,
+     "hold0_20s_sd_ddof1": 0.018050176019948384,
+     "legacy_P_mean_windowends": 11.25742732606345,
+     "passive_comment": "passive at p7, test",
+     "passive_idx": 20,
+     "rest_70s_mean_sd_ddof1": [
+      20.586324784963175,
+      12.730374687725295
+     ],
+     "rest_70s_min_max": [
+      -1.8669843673706055,
+      41.841983795166016
+     ],
+     "whole_trial_angle_sd_rad": 0.0013056629342213602,
+     "whole_trial_piece": {
+      "angle_sd_rad": 0.0013056629342213602,
+      "comment": "passive at p7, test",
+      "end_s": 90.1,
+      "end_sample": 90100,
+      "file_trial": 21,
+      "legacy_accepted": true,
+      "legacy_reject_reason": "",
+      "mean_angle": -0.0779949232000655,
+      "mean_tq": 15.60951322244354,
+      "session": "S1",
+      "start_s": 0.0,
+      "start_sample": 0,
+      "static_accepted": false,
+      "tq_sd_ddof0": 14.591125342088368,
+      "tq_sd_ddof1": 14.591206314601138,
+      "trial_index": 20
+     }
+    },
+    "S2": {
+     "block_dropped_samples": 100,
+     "block_mean": [
+      -1.4768277311325073,
+      -1.485391240119934,
+      27.36401253223419,
+      25.355455732345582,
+      30.988059711456298,
+      27.66852855682373,
+      20.55689172744751,
+      28.64403200149536,
+      30.97407774925232
+     ],
+     "block_sd": [
+      0.01692034993165016,
+      0.02137314477496176,
+      11.943290008534142,
+      11.247477477093641,
+      12.530864955214058,
+      12.010994907204962,
+      9.1809396968807,
+      11.356743340353113,
+      11.775099722012653
+     ],
+     "first_s_with_sd_gt_1Nm": 20,
+     "hold0_20s_angle_sd_rad": 4.2394972497388744e-05,
+     "hold0_20s_mean": -1.4811094856262208,
+     "hold0_20s_sd_ddof1": 0.019745139636981913,
+     "legacy_P_mean_windowends": 9.780583943614928,
+     "passive_comment": "passive at p7, retest",
+     "passive_idx": 36,
+     "rest_70s_mean_sd_ddof1": [
+      27.38770877481697,
+      11.962869160936663
+     ],
+     "rest_70s_min_max": [
+      -1.5311002731323242,
+      46.634674072265625
+     ],
+     "whole_trial_angle_sd_rad": 0.0011881748708866288,
+     "whole_trial_piece": {
+      "angle_sd_rad": 0.0011881748708866288,
+      "comment": "passive at p7, retest",
+      "end_s": 90.1,
+      "end_sample": 90100,
+      "file_trial": 37,
+      "legacy_accepted": false,
+      "legacy_reject_reason": "|mean torque| > 20 Nm",
+      "mean_angle": -0.07804387259562721,
+      "mean_tq": 20.979536020001614,
+      "session": "S2",
+      "start_s": 0.0,
+      "start_sample": 0,
+      "static_accepted": false,
+      "tq_sd_ddof0": 15.977279328529416,
+      "tq_sd_ddof1": 15.977367993414687,
+      "trial_index": 36
+     }
+    }
+   }
+  },
+  "audit_item2_check": {
+   "legacy": {
+    "max": 1.972466001608577,
+    "median": 0.6192165384673829,
+    "min": 0.18276812509928497,
+    "n": 20,
+    "n_positive": 20
+   },
+   "note": "table mean minus mean of the in-trial EMG-rest baseline B (truth cache), toes-down cells (2 most negative angles) of CH, EG, HM, JM, YES in both sessions = 20 trials; audit 00_audit.md section 6 item 2 says 'too high in 20 of 20, by 0.6-2 Nm'.",
+   "rows": [
+    {
+     "angle": -0.7398073298798864,
+     "n_rest_segments": 25,
+     "relaxed_B_mean": 3.744000196456909,
+     "session": "S1",
+     "subject": "CH",
+     "table": "legacy",
+     "table_mean": 4.7038085606797,
+     "table_minus_relaxed": 0.9598083642227913
+    },
+    {
+     "angle": -0.7398073298798864,
+     "n_rest_segments": 25,
+     "relaxed_B_mean": 3.744000196456909,
+     "session": "S1",
+     "subject": "CH",
+     "table": "static",
+     "table_mean": 4.7038085606797,
+     "table_minus_relaxed": 0.9598083642227913
+    },
+    {
+     "angle": -0.5974428275479751,
+     "n_rest_segments": 23,
+     "relaxed_B_mean": 2.7361531257629395,
+     "session": "S1",
+     "subject": "CH",
+     "table": "legacy",
+     "table_mean": 3.119292372990314,
+     "table_minus_relaxed": 0.38313924722737447
+    },
+    {
+     "angle": -0.5974428275479751,
+     "n_rest_segments": 23,
+     "relaxed_B_mean": 2.7361531257629395,
+     "session": "S1",
+     "subject": "CH",
+     "table": "static",
+     "table_mean": 3.119292372990314,
+     "table_minus_relaxed": 0.38313924722737447
+    },
+    {
+     "angle": -0.7374427888782636,
+     "n_rest_segments": 17,
+     "relaxed_B_mean": 3.844935894012451,
+     "session": "S2",
+     "subject": "CH",
+     "table": "legacy",
+     "table_mean": 4.26869709393579,
+     "table_minus_relaxed": 0.42376119992333905
+    },
+    {
+     "angle": -0.7374427888782636,
+     "n_rest_segments": 17,
+     "relaxed_B_mean": 3.844935894012451,
+     "session": "S2",
+     "subject": "CH",
+     "table": "static",
+     "table_mean": 4.26869709393579,
+     "table_minus_relaxed": 0.42376119992333905
+    },
+    {
+     "angle": -0.5950669951550223,
+     "n_rest_segments": 20,
+     "relaxed_B_mean": 2.2113780975341797,
+     "session": "S2",
+     "subject": "CH",
+     "table": "legacy",
+     "table_mean": 3.2175612608799846,
+     "table_minus_relaxed": 1.006183163345805
+    },
+    {
+     "angle": -0.5950669951550223,
+     "n_rest_segments": 20,
+     "relaxed_B_mean": 2.2113780975341797,
+     "session": "S2",
+     "subject": "CH",
+     "table": "static",
+     "table_mean": 3.2175612608799846,
+     "table_minus_relaxed": 1.006183163345805
+    },
+    {
+     "angle": -0.7392464201163509,
+     "n_rest_segments": 21,
+     "relaxed_B_mean": 1.7881200313568115,
+     "session": "S1",
+     "subject": "EG",
+     "table": "legacy",
+     "table_mean": 2.5443803950417374,
+     "table_minus_relaxed": 0.7562603636849259
+    },
+    {
+     "angle": -0.7392464201163509,
+     "n_rest_segments": 21,
+     "relaxed_B_mean": 1.7881200313568115,
+     "session": "S1",
+     "subject": "EG",
+     "table": "static",
+     "table_mean": 2.5443803950417374,
+     "table_minus_relaxed": 0.7562603636849259
+    },
+    {
+     "angle": -0.5989645190845755,
+     "n_rest_segments": 20,
+     "relaxed_B_mean": 1.0906169414520264,
+     "session": "S1",
+     "subject": "EG",
+     "table": "legacy",
+     "table_mean": 1.8255231980973254,
+     "table_minus_relaxed": 0.7349062566452991
+    },
+    {
+     "angle": -0.5989645190845755,
+     "n_rest_segments": 20,
+     "relaxed_B_mean": 1.0906169414520264,
+     "session": "S1",
+     "subject": "EG",
+     "table": "static",
+     "table_mean": 1.8255231980973254,
+     "table_minus_relaxed": 0.7349062566452991
+    },
+    {
+     "angle": -0.7393509902746978,
+     "n_rest_segments": 23,
+     "relaxed_B_mean": 1.941186785697937,
+     "session": "S2",
+     "subject": "EG",
+     "table": "legacy",
+     "table_mean": 2.6263264651800053,
+     "table_minus_relaxed": 0.6851396794820683
+    },
+    {
+     "angle": -0.7393509902746978,
+     "n_rest_segments": 23,
+     "relaxed_B_mean": 1.941186785697937,
+     "session": "S2",
+     "subject": "EG",
+     "table": "static",
+     "table_mean": 2.6263264651800053,
+     "table_minus_relaxed": 0.6851396794820683
+    },
+    {
+     "angle": -0.5981862381923245,
+     "n_rest_segments": 23,
+     "relaxed_B_mean": 1.4829068183898926,
+     "session": "S2",
+     "subject": "EG",
+     "table": "legacy",
+     "table_mean": 2.039593118027891,
+     "table_minus_relaxed": 0.5566862996379984
+    },
+    {
+     "angle": -0.5981862381923245,
+     "n_rest_segments": 23,
+     "relaxed_B_mean": 1.4829068183898926,
+     "session": "S2",
+     "subject": "EG",
+     "table": "static",
+     "table_mean": 2.039593118027891,
+     "table_minus_relaxed": 0.5566862996379984
+    },
+    {
+     "angle": -0.7876244419884749,
+     "n_rest_segments": 16,
+     "relaxed_B_mean": 2.904979944229126,
+     "session": "S1",
+     "subject": "HM",
+     "table": "legacy",
+     "table_mean": 3.5700447094147725,
+     "table_minus_relaxed": 0.6650647651856465
+    },
+    {
+     "angle": -0.7876244419884749,
+     "n_rest_segments": 16,
+     "relaxed_B_mean": 2.904979944229126,
+     "session": "S1",
+     "subject": "HM",
+     "table": "static",
+     "table_mean": 3.5700447094147725,
+     "table_minus_relaxed": 0.6650647651856465
+    },
+    {
+     "angle": -0.6465238383038834,
+     "n_rest_segments": 11,
+     "relaxed_B_mean": 1.5514447689056396,
+     "session": "S1",
+     "subject": "HM",
+     "table": "legacy",
+     "table_mean": 1.8361794944963388,
+     "table_minus_relaxed": 0.2847347255906991
+    },
+    {
+     "angle": -0.6465238383038834,
+     "n_rest_segments": 11,
+     "relaxed_B_mean": 1.5514447689056396,
+     "session": "S1",
+     "subject": "HM",
+     "table": "static",
+     "table_mean": 1.8361794944963388,
+     "table_minus_relaxed": 0.2847347255906991
+    },
+    {
+     "angle": -0.7890198862429906,
+     "n_rest_segments": 14,
+     "relaxed_B_mean": 2.5550715923309326,
+     "session": "S2",
+     "subject": "HM",
+     "table": "legacy",
+     "table_mean": 3.023514558703435,
+     "table_minus_relaxed": 0.4684429663725025
+    },
+    {
+     "angle": -0.7890198862429906,
+     "n_rest_segments": 14,
+     "relaxed_B_mean": 2.5550715923309326,
+     "session": "S2",
+     "subject": "HM",
+     "table": "static",
+     "table_mean": 3.023514558703435,
+     "table_minus_relaxed": 0.4684429663725025
+    },
+    {
+     "angle": -0.6475614688221629,
+     "n_rest_segments": 16,
+     "relaxed_B_mean": 1.9875787496566772,
+     "session": "S2",
+     "subject": "HM",
+     "table": "legacy",
+     "table_mean": 2.7161875010138767,
+     "table_minus_relaxed": 0.7286087513571995
+    },
+    {
+     "angle": -0.6475614688221629,
+     "n_rest_segments": 16,
+     "relaxed_B_mean": 1.9875787496566772,
+     "session": "S2",
+     "subject": "HM",
+     "table": "static",
+     "table_mean": 2.7161875010138767,
+     "table_minus_relaxed": 0.7286087513571995
+    },
+    {
+     "angle": -0.786878918015024,
+     "n_rest_segments": 6,
+     "relaxed_B_mean": 1.8070175647735596,
+     "session": "S1",
+     "subject": "JM",
+     "table": "legacy",
+     "table_mean": 1.9897856898728445,
+     "table_minus_relaxed": 0.18276812509928497
+    },
+    {
+     "angle": -0.786878918015024,
+     "n_rest_segments": 6,
+     "relaxed_B_mean": 1.8070175647735596,
+     "session": "S1",
+     "subject": "JM",
+     "table": "static",
+     "table_mean": 1.9897856898728445,
+     "table_minus_relaxed": 0.18276812509928497
+    },
+    {
+     "angle": -0.6450674879113688,
+     "n_rest_segments": 8,
+     "relaxed_B_mean": 1.3781719207763672,
+     "session": "S1",
+     "subject": "JM",
+     "table": "legacy",
+     "table_mean": 1.6818939290840103,
+     "table_minus_relaxed": 0.30372200830764307
+    },
+    {
+     "angle": -0.6450674879113688,
+     "n_rest_segments": 8,
+     "relaxed_B_mean": 1.3781719207763672,
+     "session": "S1",
+     "subject": "JM",
+     "table": "static",
+     "table_mean": 1.6818939290840103,
+     "table_minus_relaxed": 0.30372200830764307
+    },
+    {
+     "angle": -0.7867236040485514,
+     "n_rest_segments": 5,
+     "relaxed_B_mean": 2.1357908248901367,
+     "session": "S2",
+     "subject": "JM",
+     "table": "legacy",
+     "table_mean": 2.481162308667269,
+     "table_minus_relaxed": 0.3453714837771322
+    },
+    {
+     "angle": -0.7867236040485514,
+     "n_rest_segments": 5,
+     "relaxed_B_mean": 2.1357908248901367,
+     "session": "S2",
+     "subject": "JM",
+     "table": "static",
+     "table_mean": 2.481162308667269,
+     "table_minus_relaxed": 0.3453714837771322
+    },
+    {
+     "angle": -0.6443857780918971,
+     "n_rest_segments": 11,
+     "relaxed_B_mean": 1.4753433465957642,
+     "session": "S2",
+     "subject": "JM",
+     "table": "legacy",
+     "table_mean": 1.980545566256795,
+     "table_minus_relaxed": 0.5052022196610308
+    },
+    {
+     "angle": -0.6443857780918971,
+     "n_rest_segments": 11,
+     "relaxed_B_mean": 1.4753433465957642,
+     "session": "S2",
+     "subject": "JM",
+     "table": "static",
+     "table_mean": 1.980545566256795,
+     "table_minus_relaxed": 0.5052022196610308
+    },
+    {
+     "angle": -0.4864838723727353,
+     "n_rest_segments": 7,
+     "relaxed_B_mean": 6.351114749908447,
+     "session": "S1",
+     "subject": "YES",
+     "table": "legacy",
+     "table_mean": 7.883044814563455,
+     "table_minus_relaxed": 1.5319300646550076
+    },
+    {
+     "angle": -0.4864838723727353,
+     "n_rest_segments": 7,
+     "relaxed_B_mean": 6.351114749908447,
+     "session": "S1",
+     "subject": "YES",
+     "table": "static",
+     "table_mean": 7.883044814563455,
+     "table_minus_relaxed": 1.5319300646550076
+    },
+    {
+     "angle": -0.3818133407659487,
+     "n_rest_segments": 16,
+     "relaxed_B_mean": 3.732032060623169,
+     "session": "S1",
+     "subject": "YES",
+     "table": "legacy",
+     "table_mean": 4.305400372372288,
+     "table_minus_relaxed": 0.5733683117491193
+    },
+    {
+     "angle": -0.3818133407659487,
+     "n_rest_segments": 16,
+     "relaxed_B_mean": 3.732032060623169,
+     "session": "S1",
+     "subject": "YES",
+     "table": "static",
+     "table_mean": 4.305400372372288,
+     "table_minus_relaxed": 0.5733683117491193
+    },
+    {
+     "angle": -0.4860310414588209,
+     "n_rest_segments": 13,
+     "relaxed_B_mean": 8.592328071594238,
+     "session": "S2",
+     "subject": "YES",
+     "table": "legacy",
+     "table_mean": 10.564794073202815,
+     "table_minus_relaxed": 1.972466001608577
+    },
+    {
+     "angle": -0.4860310414588209,
+     "n_rest_segments": 13,
+     "relaxed_B_mean": 8.592328071594238,
+     "session": "S2",
+     "subject": "YES",
+     "table": "static",
+     "table_mean": 10.564794073202815,
+     "table_minus_relaxed": 1.972466001608577
+    },
+    {
+     "angle": -0.38124653538309594,
+     "n_rest_segments": 11,
+     "relaxed_B_mean": 5.322187900543213,
+     "session": "S2",
+     "subject": "YES",
+     "table": "legacy",
+     "table_mean": 6.678037619683777,
+     "table_minus_relaxed": 1.355849719140564
+    },
+    {
+     "angle": -0.38124653538309594,
+     "n_rest_segments": 11,
+     "relaxed_B_mean": 5.322187900543213,
+     "session": "S2",
+     "subject": "YES",
+     "table": "static",
+     "table_mean": 6.678037619683777,
+     "table_minus_relaxed": 1.355849719140564
+    }
+   ],
+   "static": {
+    "max": 1.972466001608577,
+    "median": 0.6192165384673829,
+    "min": 0.18276812509928497,
+    "n": 20,
+    "n_positive": 20
+   }
+  },
+  "b_static_hold_sd": {
+   "framework_holds": {
+    "n": 76,
+    "n_sd_le_0.35": 75,
+    "per_subject": {
+     "CH": {
+      "n": 16,
+      "sd_max": 0.7042868854342552,
+      "sd_min": 0.02399174042442747
+     },
+     "EG": {
+      "n": 16,
+      "sd_max": 0.10038671919817069,
+      "sd_min": 0.01814679327240712
+     },
+     "HM": {
+      "n": 14,
+      "sd_max": 0.15341647930263935,
+      "sd_min": 0.019145570067015078
+     },
+     "IES": {
+      "n": 0,
+      "sd_max": NaN,
+      "sd_min": NaN
+     },
+     "JM": {
+      "n": 14,
+      "sd_max": 0.1731590154396807,
+      "sd_min": 0.015144058764970159
+     },
+     "YES": {
+      "n": 16,
+      "sd_max": 0.33309924313673883,
+      "sd_min": 0.03249030276918119
+     }
+    },
+    "sd_max": 0.7042868854342552,
+    "sd_max_without_top1": 0.3428241603128391,
+    "sd_median": 0.04893004644068757,
+    "sd_min": 0.015144058764970159,
+    "sd_min_ddof1": null,
+    "sd_quantiles_5_50_90_95_99": [
+     0.018541680921185116,
+     0.04893004644068757,
+     0.17171460055373117,
+     0.2653999710856802,
+     0.4331898415931931
+    ],
+    "sd_top5": [
+     {
+      "angle": -0.5968630015731451,
+      "sd": 0.7042868854342552,
+      "session": "S2",
+      "subject": "CH"
+     },
+     {
+      "angle": 0.2427756040902873,
+      "sd": 0.3428241603128391,
+      "session": "S2",
+      "subject": "CH"
+     },
+     {
+      "angle": -0.4845553789265528,
+      "sd": 0.33309924313673883,
+      "session": "S2",
+      "subject": "YES"
+     },
+     {
+      "angle": 0.2461713851805145,
+      "sd": 0.33276586755323795,
+      "session": "S1",
+      "subject": "YES"
+     },
+     {
+      "angle": -0.4853502567305517,
+      "sd": 0.24294467226316094,
+      "session": "S1",
+      "subject": "YES"
+     }
+    ]
+   },
+   "legacy_accepted_pieces": {
+    "n": 63,
+    "n_with_sd_gt_1Nm": 3,
+    "sd_ddof1_max": 17.630615252146505,
+    "which_gt_1Nm": [
+     {
+      "file_trial": 15,
+      "mean_angle": -0.06451443942269121,
+      "mean_tq": 7.830248120902241,
+      "session": "S1",
+      "subject": "JM",
+      "tq_sd_ddof1": 17.630615252146505,
+      "trial_index": 14
+     },
+     {
+      "file_trial": 21,
+      "mean_angle": -0.0779949232000655,
+      "mean_tq": 15.60951322244354,
+      "session": "S1",
+      "subject": "JM",
+      "tq_sd_ddof1": 14.591206314601138,
+      "trial_index": 20
+     },
+     {
+      "file_trial": 31,
+      "mean_angle": -0.0644430599252599,
+      "mean_tq": 10.748356805331465,
+      "session": "S2",
+      "subject": "JM",
+      "tq_sd_ddof1": 15.905053342072067,
+      "trial_index": 30
+     }
+    ]
+   },
+   "note": "sd = numpy std (ddof=0), the quantity tested by the static rule (<= 1.0 Nm). 'static_map_pieces' = pieces of passive-classified trials accepted by the rule (these build the static tables); 'framework_holds' = the framework's hold list (every non-active, non-MVC trial, so YES's mis-labelled trials are included). subject index into SUBJ = CH, EG, HM, IES, JM, YES; session 1/2.",
+   "static_map_pieces": {
+    "n": 72,
+    "n_sd_le_0.35": 71,
+    "per_subject": {
+     "CH": {
+      "n": 16,
+      "sd_max": 0.7042868854342552,
+      "sd_min": 0.02399174042442747
+     },
+     "EG": {
+      "n": 16,
+      "sd_max": 0.10038671919817069,
+      "sd_min": 0.01814679327240712
+     },
+     "HM": {
+      "n": 14,
+      "sd_max": 0.15341647930263935,
+      "sd_min": 0.019145570067015078
+     },
+     "IES": {
+      "n": 0,
+      "sd_max": NaN,
+      "sd_min": NaN
+     },
+     "JM": {
+      "n": 14,
+      "sd_max": 0.1731590154396807,
+      "sd_min": 0.015144058764970159
+     },
+     "YES": {
+      "n": 12,
+      "sd_max": 0.33309924313673883,
+      "sd_min": 0.03249030276918119
+     }
+    },
+    "sd_max": 0.7042868854342552,
+    "sd_max_without_top1": 0.3428241603128391,
+    "sd_median": 0.04327002325000053,
+    "sd_min": 0.015144058764970159,
+    "sd_min_ddof1": 0.015144310333676454,
+    "sd_quantiles_5_50_90_95_99": [
+     0.01843637754817765,
+     0.04327002325000053,
+     0.151542044714125,
+     0.2720809279659403,
+     0.447648350598052
+    ],
+    "sd_top5": [
+     {
+      "angle": -0.5968630015731451,
+      "sd": 0.7042868854342552,
+      "session": "S2",
+      "subject": "CH"
+     },
+     {
+      "angle": 0.2427756040902873,
+      "sd": 0.3428241603128391,
+      "session": "S2",
+      "subject": "CH"
+     },
+     {
+      "angle": -0.4845553789265528,
+      "sd": 0.33309924313673883,
+      "session": "S2",
+      "subject": "YES"
+     },
+     {
+      "angle": 0.2461713851805145,
+      "sd": 0.33276586755323795,
+      "session": "S1",
+      "subject": "YES"
+     },
+     {
+      "angle": 0.2438187738556174,
+      "sd": 0.22242961375815076,
+      "session": "S1",
+      "subject": "CH"
+     }
+    ]
+   }
+  },
+  "c_yes_m049": {
+   "S1": {
+    "active_target_windowends": {
+     "mean": -2.1509553683270606,
+     "sd": 0.6568085119892176
+    },
+    "angle": -0.4864838723727353,
+    "comment": "test, p6",
+    "file_trial": 21,
+    "measured_tq_windowends": {
+     "max": 7.522626455763206,
+     "mean": 5.732089446236394,
+     "median": 5.787266218974618,
+     "min": 3.8377150782299836,
+     "p5": 4.601033751168197,
+     "p95": 6.66240613556845,
+     "sd": 0.6497178593536289
+    },
+    "recorded_hold": {
+     "angle": -0.4853502567305517,
+     "dur_s": 30.1,
+     "file_trial": 20,
+     "last5s": 7.65931752204895,
+     "mean": 7.903083927211571,
+     "slope_Nm_per_s": -0.025742643151733923,
+     "start2s": 8.454864609241486
+    },
+    "relaxed_level": {
+     "B_first": 6.667340926936402,
+     "B_last": 6.26276058503069,
+     "B_mean_windowends": 6.351114671641091,
+     "B_min_max": [
+      6.163154485789087,
+      6.667340926936402
+     ],
+     "rest_mean": 6.45828195701425,
+     "rest_median": 6.502125101354702,
+     "rest_seg_medians_min_max": [
+      6.161989994560672,
+      6.723179011307977
+     ]
+    },
+    "rest_fraction": 0.14983164983164984,
+    "rest_n_segments": 7,
+    "rest_segments": [
+     {
+      "end_s": 3.38,
+      "median_tq": 6.723179011307977,
+      "n": 140,
+      "sd_tq": 0.03420684620472361,
+      "start_s": 1.99
+     },
+     {
+      "end_s": 8.28,
+      "median_tq": 6.634229743138416,
+      "n": 224,
+      "sd_tq": 0.0743218095116313,
+      "start_s": 6.05
+     },
+     {
+      "end_s": 13.28,
+      "median_tq": 6.621770817771683,
+      "n": 234,
+      "sd_tq": 0.031959091106467725,
+      "start_s": 10.95
+     },
+     {
+      "end_s": 27.49,
+      "median_tq": 6.5163288836127915,
+      "n": 100,
+      "sd_tq": 0.05299991344237047,
+      "start_s": 26.5
+     },
+     {
+      "end_s": 32.3,
+      "median_tq": 6.287340828898661,
+      "n": 229,
+      "sd_tq": 0.10570217108007307,
+      "start_s": 30.02
+     },
+     {
+      "end_s": 66.28,
+      "median_tq": 6.161989994560672,
+      "n": 78,
+      "sd_tq": 0.007635553143583035,
+      "start_s": 65.51
+     },
+     {
+      "end_s": 89.32,
+      "median_tq": 6.263315717736248,
+      "n": 330,
+      "sd_tq": 0.019839466469925397,
+      "start_s": 86.03
+     }
+    ],
+    "table_mean_windowends": 7.883044814563455,
+    "table_minus_hold_mean": -0.02003911264811631,
+    "table_minus_relaxed": {
+     "vs_B_mean": 1.5319301429223637,
+     "vs_rest_median": 1.380919713208753
+    },
+    "table_range": [
+     2.518881089469592,
+     9.348787181840375
+    ],
+    "trial_index": 20,
+    "worksheet_value_at_m0487": 7.9
+   },
+   "S2": {
+    "active_target_windowends": {
+     "mean": -2.394121298817223,
+     "sd": 0.3965547095989598
+    },
+    "angle": -0.4860310414588209,
+    "comment": "retest, p6",
+    "file_trial": 37,
+    "measured_tq_windowends": {
+     "max": 9.114619215112969,
+     "mean": 8.170672774385592,
+     "median": 8.012348510612574,
+     "min": 7.1893779010052,
+     "p5": 7.69950337699453,
+     "p95": 8.940984136852467,
+     "sd": 0.3930244130193376
+    },
+    "recorded_hold": {
+     "angle": -0.4845553789265528,
+     "dur_s": 30.1,
+     "file_trial": 36,
+     "last5s": 10.218537783622741,
+     "mean": 10.629720546874493,
+     "slope_Nm_per_s": -0.0374054782040589,
+     "start2s": 11.281578648090363
+    },
+    "relaxed_level": {
+     "B_first": 9.004950262507496,
+     "B_last": 8.451980099264405,
+     "B_mean_windowends": 8.592328935716067,
+     "B_min_max": [
+      8.42551397444333,
+      9.004950262507496
+     ],
+     "rest_mean": 8.601972739658953,
+     "rest_median": 8.562304305346652,
+     "rest_seg_medians_min_max": [
+      8.320628110238452,
+      9.080594597919015
+     ]
+    },
+    "rest_fraction": 0.24579124579124578,
+    "rest_n_segments": 13,
+    "rest_segments": [
+     {
+      "end_s": 2.32,
+      "median_tq": 9.080594597919015,
+      "n": 21,
+      "sd_tq": 0.01446918184593378,
+      "start_s": 2.12
+     },
+     {
+      "end_s": 8.31,
+      "median_tq": 9.0341453729635,
+      "n": 324,
+      "sd_tq": 0.017444952164555973,
+      "start_s": 5.08
+     },
+     {
+      "end_s": 15.55,
+      "median_tq": 8.886835119552199,
+      "n": 227,
+      "sd_tq": 0.028969303217716923,
+      "start_s": 13.29
+     },
+     {
+      "end_s": 18.32,
+      "median_tq": 8.673880635531459,
+      "n": 36,
+      "sd_tq": 0.014437700719385455,
+      "start_s": 17.97
+     },
+     {
+      "end_s": 20.31,
+      "median_tq": 8.732858563467879,
+      "n": 34,
+      "sd_tq": 0.009178025982080396,
+      "start_s": 19.98
+     },
+     {
+      "end_s": 30.39,
+      "median_tq": 8.570037203910566,
+      "n": 131,
+      "sd_tq": 0.013473730325347578,
+      "start_s": 29.09
+     },
+     {
+      "end_s": 33.83,
+      "median_tq": 8.581657545069332,
+      "n": 54,
+      "sd_tq": 0.01834996121126398,
+      "start_s": 33.3
+     },
+     {
+      "end_s": 36.39,
+      "median_tq": 8.528579285610567,
+      "n": 90,
+      "sd_tq": 0.021820242334668,
+      "start_s": 35.5
+     },
+     {
+      "end_s": 47.35,
+      "median_tq": 8.574592751809304,
+      "n": 233,
+      "sd_tq": 0.06229634590865847,
+      "start_s": 45.03
+     },
+     {
+      "end_s": 62.38,
+      "median_tq": 8.320628110238452,
+      "n": 392,
+      "sd_tq": 0.026262491846757982,
+      "start_s": 58.47
+     },
+     {
+      "end_s": 67.54,
+      "median_tq": 8.555389199673282,
+      "n": 338,
+      "sd_tq": 0.030530520852541765,
+      "start_s": 64.17
+     },
+     {
+      "end_s": 77.29,
+      "median_tq": 8.329603050737214,
+      "n": 273,
+      "sd_tq": 0.029647208609659404,
+      "start_s": 74.57
+     },
+     {
+      "end_s": 80.44,
+      "median_tq": 8.594083139783091,
+      "n": 37,
+      "sd_tq": 0.02750903906682003,
+      "start_s": 80.08
+     }
+    ],
+    "table_mean_windowends": 10.564794073202815,
+    "table_minus_hold_mean": -0.0649264736716777,
+    "table_minus_relaxed": {
+     "vs_B_mean": 1.9724651374867488,
+     "vs_rest_median": 2.0024897678561633
+    },
+    "table_range": [
+     3.3869773271964627,
+     12.142127217873835
+    ],
+    "trial_index": 36,
+    "worksheet_value_at_m0487": 10.6
+   },
+   "note": "relaxed level = median torque over EMG-detected rest stretches inside the active trial (truth.session_rest, EMG only); B(t) = smooth baseline through them (truth.baseline). The worksheet value is what the baseline subtracts; the recorded hold is the separate trial that preceded the active trial at the same angle.",
+   "session_change_of_table": {
+    "S1": 7.9,
+    "S2": 10.6,
+    "change": 2.6999999999999993
+   },
+   "worksheet_vs_recorded_hold_max_abs_diff_all_positions": 0.1380820435939043
+  },
+  "checks": [
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_CH_S1",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_CH_S2",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_EG_S1",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_EG_S2",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_HM_S1",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_HM_S2",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_JM_S1",
+    "ok": true
+   },
+   {
+    "detail": "table rebuilt from the kept pieces == get_passive_torque_map output",
+    "name": "legacy_table_rebuild_JM_S2",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_CH_S1",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_CH_S2",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_EG_S1",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_EG_S2",
+    "ok": true
+   },
+   {
+    "detail": "7 entries",
+    "name": "legacy_table_frozen_vs_bundle_HM_S1",
+    "ok": true
+   },
+   {
+    "detail": "7 entries",
+    "name": "legacy_table_frozen_vs_bundle_HM_S2",
+    "ok": true
+   },
+   {
+    "detail": "0 entries",
+    "name": "legacy_table_frozen_vs_bundle_IES_S1",
+    "ok": true
+   },
+   {
+    "detail": "0 entries",
+    "name": "legacy_table_frozen_vs_bundle_IES_S2",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_JM_S1",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_JM_S2",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_YES_S1",
+    "ok": true
+   },
+   {
+    "detail": "8 entries",
+    "name": "legacy_table_frozen_vs_bundle_YES_S2",
+    "ok": true
+   },
+   {
+    "detail": "8 entries == cached bundle",
+    "name": "static_table_rebuild_CH_S1",
+    "ok": true
+   },
+   {
+    "detail": "8 entries == cached bundle",
+    "name": "static_table_rebuild_CH_S2",
+    "ok": true
+   },
+   {
+    "detail": "16 holds == cached bundle holds (16)",
+    "name": "framework_holds_rebuild_CH",
+    "ok": true
+   },
+   {
+    "detail": "8 entries == cached bundle",
+    "name": "static_table_rebuild_EG_S1",
+    "ok": true
+   },
+   {
+    "detail": "8 entries == cached bundle",
+    "name": "static_table_rebuild_EG_S2",
+    "ok": true
+   },
+   {
+    "detail": "16 holds == cached bundle holds (16)",
+    "name": "framework_holds_rebuild_EG",
+    "ok": true
+   },
+   {
+    "detail": "7 entries == cached bundle",
+    "name": "static_table_rebuild_HM_S1",
+    "ok": true
+   },
+   {
+    "detail": "7 entries == cached bundle",
+    "name": "static_table_rebuild_HM_S2",
+    "ok": true
+   },
+   {
+    "detail": "14 holds == cached bundle holds (14)",
+    "name": "framework_holds_rebuild_HM",
+    "ok": true
+   },
+   {
+    "detail": "0 holds == cached bundle holds (0)",
+    "name": "framework_holds_rebuild_IES",
+    "ok": true
+   },
+   {
+    "detail": "7 entries == cached bundle",
+    "name": "static_table_rebuild_JM_S1",
+    "ok": true
+   },
+   {
+    "detail": "7 entries == cached bundle",
+    "name": "static_table_rebuild_JM_S2",
+    "ok": true
+   },
+   {
+    "detail": "14 holds == cached bundle holds (14)",
+    "name": "framework_holds_rebuild_JM",
+    "ok": true
+   },
+   {
+    "detail": "16 holds == cached bundle holds (16)",
+    "name": "framework_holds_rebuild_YES",
+    "ok": true
+   },
+   {
+    "detail": "frozen trim+decimate == bundle position and torque",
+    "name": "jm_p7_S1_frozen_downsample_equals_bundle",
+    "ok": true
+   },
+   {
+    "detail": "max abs diff 0.00e+00",
+    "name": "jm_p7_S1_legacy_lookup_frozen_equals_framework",
+    "ok": true
+   },
+   {
+    "detail": "static table from raw recording",
+    "name": "jm_p7_S1_static_lookup_rebuilt_equals_framework",
+    "ok": true
+   },
+   {
+    "detail": "frozen trim+decimate == bundle position and torque",
+    "name": "jm_p7_S2_frozen_downsample_equals_bundle",
+    "ok": true
+   },
+   {
+    "detail": "max abs diff 0.00e+00",
+    "name": "jm_p7_S2_legacy_lookup_frozen_equals_framework",
+    "ok": true
+   },
+   {
+    "detail": "static table from raw recording",
+    "name": "jm_p7_S2_static_lookup_rebuilt_equals_framework",
+    "ok": true
+   },
+   {
+    "detail": "max |measured - legacy S2 table - y_true_original| over 8 trials x 8891 windows = 1.65e-06 Nm",
+    "name": "saved_X00_answer_key_JM",
+    "ok": true
+   },
+   {
+    "detail": "max |measured - legacy S2 table - y_true_original| over 8 trials x 8891 windows = 3.79e-06 Nm",
+    "name": "saved_X00_answer_key_YES",
+    "ok": true
+   },
+   {
+    "detail": "frozen trim+decimate == bundle",
+    "name": "yes_S1_frozen_downsample_equals_bundle",
+    "ok": true
+   },
+   {
+    "detail": "worksheet table lookup",
+    "name": "yes_S1_worksheet_lookup_frozen_equals_framework",
+    "ok": true
+   },
+   {
+    "detail": "max abs diff 2.38e-07 Nm (cache is float32)",
+    "name": "yes_S1_relaxed_baseline_equals_cached_truth",
+    "ok": true
+   },
+   {
+    "detail": "frozen trim+decimate == bundle",
+    "name": "yes_S2_frozen_downsample_equals_bundle",
+    "ok": true
+   },
+   {
+    "detail": "worksheet table lookup",
+    "name": "yes_S2_worksheet_lookup_frozen_equals_framework",
+    "ok": true
+   },
+   {
+    "detail": "max abs diff 4.77e-07 Nm (cache is float32)",
+    "name": "yes_S2_relaxed_baseline_equals_cached_truth",
+    "ok": true
+   },
+   {
+    "detail": "mean per-trial MSE 3.116193 vs history mse_fit at epoch 30 3.116193",
+    "name": "loss_CH_mean_mse_equals_history_mse_fit",
+    "ok": true
+   },
+   {
+    "detail": "mean per-trial MSE 0.928067 vs history mse_fit at epoch 10 0.928067",
+    "name": "loss_EG_mean_mse_equals_history_mse_fit",
+    "ok": true
+   },
+   {
+    "detail": "mean per-trial MSE 0.222485 vs history mse_fit at epoch 53 0.222485",
+    "name": "loss_HM_mean_mse_equals_history_mse_fit",
+    "ok": true
+   },
+   {
+    "detail": "mean per-trial MSE 0.622562 vs history mse_fit at epoch 46 0.622562",
+    "name": "loss_IES_mean_mse_equals_history_mse_fit",
+    "ok": true
+   },
+   {
+    "detail": "mean per-trial MSE 0.205123 vs history mse_fit at epoch 25 0.205123",
+    "name": "loss_JM_mean_mse_equals_history_mse_fit",
+    "ok": true
+   },
+   {
+    "detail": "mean per-trial MSE 0.910624 vs history mse_fit at epoch 30 0.910624",
+    "name": "loss_YES_mean_mse_equals_history_mse_fit",
+    "ok": true
+   },
+   {
+    "detail": "max |worksheet - recorded hold mean| over 16 angle/session pairs = 0.138 Nm",
+    "name": "yes_worksheet_vs_recorded_holds_within_0.15",
+    "ok": true
+   }
+  ],
+  "d_loss_share": {
+   "CH": {
+    "angles": [
+     -0.7398073298798864,
+     -0.5974428275479751,
+     -0.45550996921340203,
+     -0.31175731715918836,
+     -0.18375872614918315,
+     -0.04655310910247957,
+     0.09570428135314359,
+     0.2391068385372145
+    ],
+    "best_epoch": 30,
+    "epochs": 55,
+    "equal_share": 0.125,
+    "mse_per_position": [
+     1.0915551957683673,
+     1.2347483075945123,
+     1.6743970481264807,
+     1.4950475818470814,
+     1.40026804321277,
+     3.332685661557599,
+     7.733719640507947,
+     6.96712648315641
+    ],
+    "n_fit_windows": 56896,
+    "share_squared_error": [
+     0.04378559921913704,
+     0.04952951050247551,
+     0.06716515881852836,
+     0.05997090617686686,
+     0.05616901057973637,
+     0.13368415932243088,
+     0.31022301938115404,
+     0.2794726359996708
+    ],
+    "share_sum_squares_about_zero": [
+     0.005116613059383477,
+     0.02382790304823316,
+     0.03082899215562965,
+     0.06880135384590266,
+     0.08899780396836567,
+     0.2291731927192818,
+     0.30664305273550074,
+     0.24661108846770272
+    ],
+    "share_target_variation_within_position": [
+     0.00735248444023783,
+     0.023147698691631243,
+     0.02621290763962083,
+     0.06231981164909746,
+     0.09552884665914446,
+     0.1999268513963591,
+     0.2791541254616533,
+     0.30635727406225566
+    ],
+    "share_variation_about_global_mean": [
+     0.024645119830661682,
+     0.06079134091189667,
+     0.07327746642349613,
+     0.1277647892845403,
+     0.06353798938183178,
+     0.18191884941010072,
+     0.25543159743522825,
+     0.21263284732224438
+    ],
+    "target_sd_per_position": [
+     4.551289100308784,
+     8.075534488958468,
+     8.593596627417448,
+     13.250444030544015,
+     16.40531724532375,
+     23.733015844101377,
+     28.043963368862837,
+     29.37862489637003
+    ],
+    "toes_down_two": {
+     "angles": [
+      -0.7398073298798864,
+      -0.5974428275479751
+     ],
+     "most_toes_down_only": {
+      "squared_error": 0.04378559921913704,
+      "target_variation": 0.00735248444023783
+     },
+     "squared_error": 0.09331510972161255,
+     "sum_squares_about_zero": 0.028944516107616638,
+     "target_variation_within_position": 0.03050018313186907,
+     "variation_about_global_mean": 0.08543646074255835
+    }
+   },
+   "EG": {
+    "angles": [
+     -0.7392464201163509,
+     -0.5989645190845755,
+     -0.4576809085474474,
+     -0.317498622303378,
+     -0.17788008540602915,
+     -0.03768745205646191,
+     0.10417819955018684,
+     0.2469399829299836
+    ],
+    "best_epoch": 10,
+    "epochs": 35,
+    "equal_share": 0.125,
+    "mse_per_position": [
+     0.11791347613665353,
+     0.3631014113037683,
+     0.28145890592217626,
+     0.29718518469308297,
+     0.8225612982946101,
+     1.7115306585078742,
+     2.3995648832606733,
+     1.431219838744392
+    ],
+    "n_fit_windows": 56896,
+    "share_squared_error": [
+     0.015881596046704208,
+     0.04890560542572354,
+     0.03790929412023175,
+     0.04002744392753577,
+     0.11078959497409586,
+     0.2305235960346877,
+     0.32319393348761394,
+     0.19276893598340716
+    ],
+    "share_sum_squares_about_zero": [
+     0.01243525952854879,
+     0.031667485395256094,
+     0.041581745740584534,
+     0.0735066793528524,
+     0.15242678085231925,
+     0.19786695666925458,
+     0.2943634203535811,
+     0.19615167210760323
+    ],
+    "share_target_variation_within_position": [
+     0.007350243248448569,
+     0.02402516526380195,
+     0.032573268904805795,
+     0.07395171475239926,
+     0.11666103816997181,
+     0.2143127125287266,
+     0.30076376698936375,
+     0.23036209014248213
+    ],
+    "share_variation_about_global_mean": [
+     0.04175106876260061,
+     0.03655506697927033,
+     0.03829193932256886,
+     0.06751074789287718,
+     0.1116086346173919,
+     0.19582587666851903,
+     0.3022396382809797,
+     0.2062170274757923
+    ],
+    "target_sd_per_position": [
+     2.0201834150853286,
+     3.6523562958463827,
+     4.2527574863852875,
+     6.407875568503226,
+     8.048276049733152,
+     10.908471769776375,
+     12.922683365949206,
+     11.309553273367662
+    ],
+    "toes_down_two": {
+     "angles": [
+      -0.7392464201163509,
+      -0.5989645190845755
+     ],
+     "most_toes_down_only": {
+      "squared_error": 0.015881596046704208,
+      "target_variation": 0.007350243248448569
+     },
+     "squared_error": 0.06478720147242775,
+     "sum_squares_about_zero": 0.044102744923804886,
+     "target_variation_within_position": 0.03137540851225052,
+     "variation_about_global_mean": 0.07830613574187094
+    }
+   },
+   "HM": {
+    "angles": [
+     -0.7876244419884749,
+     -0.6465238383038834,
+     -0.5047007686529826,
+     -0.3636416581732506,
+     -0.22198311452079483,
+     -0.08102784399391494,
+     0.05441853470784039,
+     0.19776450866877618
+    ],
+    "best_epoch": 53,
+    "epochs": 78,
+    "equal_share": 0.125,
+    "mse_per_position": [
+     0.04252591944360569,
+     0.09924781628832009,
+     0.0788588908443399,
+     0.20073801955242276,
+     0.21737520605531638,
+     0.3633618642772221,
+     0.33251345291806006,
+     0.4452561548314389
+    ],
+    "n_fit_windows": 56896,
+    "share_squared_error": [
+     0.02389261263411146,
+     0.05576104315634833,
+     0.044305801176105955,
+     0.11278194110453012,
+     0.12212931930671675,
+     0.2041499486142127,
+     0.1868181859474561,
+     0.2501611480605185
+    ],
+    "share_sum_squares_about_zero": [
+     0.012040684540374305,
+     0.04348204656460746,
+     0.0390780936014524,
+     0.11314461683175145,
+     0.19707107462062376,
+     0.16420925101387057,
+     0.21563457231855987,
+     0.21533966050876027
+    ],
+    "share_target_variation_within_position": [
+     0.005282127018219113,
+     0.03421806489463065,
+     0.028357551115173258,
+     0.11588878373920602,
+     0.14736695245974119,
+     0.2081577563323066,
+     0.26139316194174717,
+     0.19933560249897617
+    ],
+    "share_variation_about_global_mean": [
+     0.03560920969021003,
+     0.03937301883941489,
+     0.035131132126499064,
+     0.10480977974186749,
+     0.15687980012792657,
+     0.1883143879242605,
+     0.24098559044081688,
+     0.19889708110900475
+    ],
+    "target_sd_per_position": [
+     0.7814065612737857,
+     1.9888423362783685,
+     1.8105352937020038,
+     3.6601032416226214,
+     4.127363171013993,
+     4.905337941578288,
+     5.496924151847608,
+     4.800263414547551
+    ],
+    "toes_down_two": {
+     "angles": [
+      -0.7876244419884749,
+      -0.6465238383038834
+     ],
+     "most_toes_down_only": {
+      "squared_error": 0.02389261263411146,
+      "target_variation": 0.005282127018219113
+     },
+     "squared_error": 0.0796536557904598,
+     "sum_squares_about_zero": 0.055522731104981765,
+     "target_variation_within_position": 0.03950019191284976,
+     "variation_about_global_mean": 0.07498222852962491
+    }
+   },
+   "IES": {
+    "angles": [
+     -0.5898096733509489,
+     -0.484878522403635,
+     -0.380043602243853,
+     -0.27160609112454903,
+     -0.16979891370776198,
+     -0.061481604212563545,
+     0.038997562316852294,
+     0.14416485977812607
+    ],
+    "best_epoch": 46,
+    "epochs": 71,
+    "equal_share": 0.125,
+    "mse_per_position": [
+     0.24966732766640598,
+     0.23197131445027025,
+     0.3013075879896644,
+     0.34942630620764364,
+     0.42828326851748383,
+     0.3818445881322436,
+     1.2155059547174816,
+     1.822492722416619
+    ],
+    "n_fit_windows": 56896,
+    "share_squared_error": [
+     0.05012897786998337,
+     0.04657591763102458,
+     0.06049746897829397,
+     0.07015889397621777,
+     0.08599203864705726,
+     0.0766679368388567,
+     0.24405304320107224,
+     0.36592572285749403
+    ],
+    "share_sum_squares_about_zero": [
+     0.00836313211627973,
+     0.017503716423659745,
+     0.05672217600326816,
+     0.03134715137933185,
+     0.1439527153355152,
+     0.09013688279597287,
+     0.22453492712411252,
+     0.4274392988218599
+    ],
+    "share_target_variation_within_position": [
+     0.019247793760313648,
+     0.032555953733163404,
+     0.07987428909222369,
+     0.04855898176812145,
+     0.1643558240854917,
+     0.0966855826582425,
+     0.22129726960112509,
+     0.3374243053013187
+    ],
+    "share_variation_about_global_mean": [
+     0.07764493737849316,
+     0.06276034146672142,
+     0.05867440886658409,
+     0.05362599683641816,
+     0.11164022371439726,
+     0.06224642549276065,
+     0.17996708673352488,
+     0.3934405795111004
+    ],
+    "target_sd_per_position": [
+     2.6326256507136994,
+     3.423842996681798,
+     5.3629300588802735,
+     4.18151265933137,
+     7.692919347819914,
+     5.900373306609879,
+     8.926611992726079,
+     11.022670148274202
+    ],
+    "toes_down_two": {
+     "angles": [
+      -0.5898096733509489,
+      -0.484878522403635
+     ],
+     "most_toes_down_only": {
+      "squared_error": 0.05012897786998337,
+      "target_variation": 0.019247793760313648
+     },
+     "squared_error": 0.09670489550100794,
+     "sum_squares_about_zero": 0.025866848539939473,
+     "target_variation_within_position": 0.05180374749347705,
+     "variation_about_global_mean": 0.1404052788452146
+    }
+   },
+   "JM": {
+    "angles": [
+     -0.786878918015024,
+     -0.6450674879113688,
+     -0.5046635461651396,
+     -0.3600248213553751,
+     -0.21820663022815248,
+     -0.07675907325412835,
+     0.0563087722816685,
+     0.1988995638485248
+    ],
+    "best_epoch": 25,
+    "epochs": 50,
+    "equal_share": 0.125,
+    "mse_per_position": [
+     0.08197733908596458,
+     0.06995417217679407,
+     0.11999982750587207,
+     0.11857731367223057,
+     0.13507579791253396,
+     0.48190882513668354,
+     0.24505178976089248,
+     0.38843903022722637
+    ],
+    "n_fit_windows": 56896,
+    "share_squared_error": [
+     0.04995620573767696,
+     0.042629402911067704,
+     0.0731267462229139,
+     0.07225987990924193,
+     0.08231389827892979,
+     0.2936706251234269,
+     0.1493322150020486,
+     0.23671102681469422
+    ],
+    "share_sum_squares_about_zero": [
+     0.004529552187846059,
+     0.006142594401243167,
+     0.0540414913631824,
+     0.02045115457285448,
+     0.02496724636317484,
+     0.7256735776094521,
+     0.08657520904824327,
+     0.07761917445400371
+    ],
+    "share_target_variation_within_position": [
+     0.0124286322113021,
+     0.02359531012225146,
+     0.18533816272651163,
+     0.07233735943661682,
+     0.07980860334831266,
+     0.10318000410527997,
+     0.20971330884946515,
+     0.31359861920026016
+    ],
+    "share_variation_about_global_mean": [
+     0.06018189848818435,
+     0.05871889625010596,
+     0.033367938945217,
+     0.03739860246604486,
+     0.03241955651058713,
+     0.6920279552095963,
+     0.03486730504777533,
+     0.05101784708248919
+    ],
+    "target_sd_per_position": [
+     0.6046058315259701,
+     0.8330546796180135,
+     2.3347645480031853,
+     1.4586194123513219,
+     1.5320943774754079,
+     1.7420412473473283,
+     2.4835542997263853,
+     3.0370205761795592
+    ],
+    "toes_down_two": {
+     "angles": [
+      -0.786878918015024,
+      -0.6450674879113688
+     ],
+     "most_toes_down_only": {
+      "squared_error": 0.04995620573767696,
+      "target_variation": 0.0124286322113021
+     },
+     "squared_error": 0.09258560864874466,
+     "sum_squares_about_zero": 0.010672146589089226,
+     "target_variation_within_position": 0.03602394233355356,
+     "variation_about_global_mean": 0.11890079473829032
+    }
+   },
+   "YES": {
+    "angles": [
+     -0.4864838723727353,
+     -0.3818133407659487,
+     -0.2774759527480375,
+     -0.17418531510579832,
+     -0.06908631039811336,
+     0.03113220486875007,
+     0.1372121867160906,
+     0.24464143128846624
+    ],
+    "best_epoch": 30,
+    "epochs": 55,
+    "equal_share": 0.125,
+    "mse_per_position": [
+     0.06548673569604119,
+     0.14870010119380167,
+     0.22061713530299587,
+     0.2618502154374008,
+     0.44047863020509753,
+     1.211357451007002,
+     2.697691451863799,
+     2.2388092057642766
+    ],
+    "n_fit_windows": 56896,
+    "share_squared_error": [
+     0.00898926798358685,
+     0.02041184439276262,
+     0.030283789990921118,
+     0.03594379431358708,
+     0.06046385433434025,
+     0.16628125734590393,
+     0.370308141642509,
+     0.30731804999638923
+    ],
+    "share_sum_squares_about_zero": [
+     0.0035391107297629847,
+     0.011873492694917493,
+     0.03293795095538402,
+     0.07569802594933282,
+     0.0896074212546777,
+     0.2536726331170354,
+     0.33980644796568776,
+     0.1928649173332017
+    ],
+    "share_target_variation_within_position": [
+     0.0006361962007244791,
+     0.009706036870686368,
+     0.02813210826046995,
+     0.07644404157880956,
+     0.09772918986570794,
+     0.25337889894587035,
+     0.3063448601991092,
+     0.2276286680786219
+    ],
+    "share_variation_about_global_mean": [
+     0.039039316238453095,
+     0.03477935382994598,
+     0.03261925644855466,
+     0.06353268223468381,
+     0.0805096673124682,
+     0.23644056859973725,
+     0.3210690158111769,
+     0.19201013952498003
+    ],
+    "target_sd_per_position": [
+     0.6909417943224883,
+     2.6987763535137224,
+     4.594593225321333,
+     7.573868280246034,
+     8.563633594444772,
+     13.788948518954957,
+     15.161816178932394,
+     13.069513042095384
+    ],
+    "toes_down_two": {
+     "angles": [
+      -0.4864838723727353,
+      -0.3818133407659487
+     ],
+     "most_toes_down_only": {
+      "squared_error": 0.00898926798358685,
+      "target_variation": 0.0006361962007244791
+     },
+     "squared_error": 0.02940111237634947,
+     "sum_squares_about_zero": 0.015412603424680477,
+     "target_variation_within_position": 0.010342233071410847,
+     "variation_about_global_mean": 0.07381867006839907
+    }
+   },
+   "definitions": {
+    "share_squared_error": "mse x n of each position's fit windows / total, from final_per_trial['fit'] at the kept (restored) epoch of the seed-0 X00f run = the share of the fit-set squared error (what the optimiser minimised)",
+    "share_sum_squares_about_zero": "sum of y^2 per position / total: the loss of a network that predicted 0 everywhere",
+    "share_target_variation_within_position": "sum of squared deviations of the fit targets from each POSITION's own mean / total; = what is left to explain once the per-position level is known (the quantity R2 is built on)",
+    "share_variation_about_global_mean": "deviations from the fit set's overall mean (within + between positions)",
+    "targets": "fit targets = measured - legacy session-1 table (X00f passive='legacy'), first 80 % of each session-1 trial, rebuilt with splits.build; trial list, n and angle checked against the json",
+    "toes_down_two": "the two most negative angles of the person"
+   }
+  },
+  "display": {
+   "jm_legacy_entry_S1_S2": [
+    11.72,
+    10.75
+   ],
+   "jm_p7_legacy_vs_static": {
+    "S1": [
+     11.26,
+     -1.97,
+     13.22
+    ],
+    "S2": [
+     9.78,
+     -1.9,
+     11.68
+    ]
+   },
+   "jm_trial21_S1": {
+    "block_means_after_20s": [
+     21.9,
+     22.3,
+     13.8,
+     23.5,
+     11.8,
+     24.0,
+     26.6
+    ],
+    "hold_0_20s": -1.83,
+    "mean": 15.6,
+    "sd": 14.6
+   },
+   "loss_share_toes_down_two_pct": {
+    "CH": {
+     "squared_error": 9.3,
+     "sum_squares_about_zero": 2.9,
+     "target_variation": 3.1
+    },
+    "EG": {
+     "squared_error": 6.5,
+     "sum_squares_about_zero": 4.4,
+     "target_variation": 3.1
+    },
+    "HM": {
+     "squared_error": 8.0,
+     "sum_squares_about_zero": 5.6,
+     "target_variation": 4.0
+    },
+    "IES": {
+     "squared_error": 9.7,
+     "sum_squares_about_zero": 2.6,
+     "target_variation": 5.2
+    },
+    "JM": {
+     "squared_error": 9.3,
+     "sum_squares_about_zero": 1.1,
+     "target_variation": 3.6
+    },
+    "YES": {
+     "squared_error": 2.9,
+     "sum_squares_about_zero": 1.5,
+     "target_variation": 1.0
+    }
+   },
+   "static_hold_sd_range": [
+    0.015,
+    0.704
+   ],
+   "yes_m049": {
+    "measured_mean": [
+     5.73,
+     8.17
+    ],
+    "relaxed_B_mean": [
+     6.35,
+     8.59
+    ],
+    "relaxed_rest_median": [
+     6.5,
+     8.56
+    ],
+    "table": [
+     7.9,
+     10.6
+    ],
+    "table_minus_relaxed": [
+     1.38,
+     2.0
+    ]
+   }
+  },
+  "inputs": {
+   "data_dir": "C:\\Users\\dramo\\Desktop\\Projects\\krasi_ml\\EMG_TQ_Modelling\\ML\\subjects",
+   "framework": "C:\\Users\\dramo\\Desktop\\Projects\\krasi_ml\\EMG_TQ_Modelling\\.claude\\worktrees\\dorsiflexion-r2-drop-341137",
+   "frozen_code": "C:\\Users\\dramo\\Desktop\\Projects\\krasi_ml\\EMG_TQ_Modelling\\.claude\\worktrees\\dorsiflexion-r2-drop-341137\\EXPERIMENTS\\baseline\\original_code"
+  },
+  "npz_arrays": {
+   "framework_holds_angle": [
+    76
+   ],
+   "framework_holds_mean_tq": [
+    76
+   ],
+   "framework_holds_sd": [
+    76
+   ],
+   "framework_holds_session": [
+    76
+   ],
+   "framework_holds_subject": [
+    76
+   ],
+   "jmP7S1_block10_mean": [
+    9
+   ],
+   "jmP7S1_block10_sd": [
+    9
+   ],
+   "jmP7S1_pos": [
+    9010
+   ],
+   "jmP7S1_t": [
+    9010
+   ],
+   "jmP7S1_tq": [
+    9010
+   ],
+   "jmP7S2_block10_mean": [
+    9
+   ],
+   "jmP7S2_block10_sd": [
+    9
+   ],
+   "jmP7S2_pos": [
+    9010
+   ],
+   "jmP7S2_t": [
+    9010
+   ],
+   "jmP7S2_tq": [
+    9010
+   ],
+   "jm_curve_angle": [
+    241
+   ],
+   "jm_curve_legacy_S1": [
+    241
+   ],
+   "jm_curve_legacy_S2": [
+    241
+   ],
+   "jm_curve_static_S1": [
+    241
+   ],
+   "jm_curve_static_S2": [
+    241
+   ],
+   "jm_legacy_S1_pos": [
+    8
+   ],
+   "jm_legacy_S1_tq": [
+    8
+   ],
+   "jm_legacy_S2_pos": [
+    8
+   ],
+   "jm_legacy_S2_tq": [
+    8
+   ],
+   "jm_static_S1_pos": [
+    7
+   ],
+   "jm_static_S1_tq": [
+    7
+   ],
+   "jm_static_S2_pos": [
+    7
+   ],
+   "jm_static_S2_tq": [
+    7
+   ],
+   "jmactS1_P_legacy": [
+    8910
+   ],
+   "jmactS1_P_static": [
+    8910
+   ],
+   "jmactS1_pos": [
+    8910
+   ],
+   "jmactS1_t": [
+    8910
+   ],
+   "jmactS1_tq": [
+    8910
+   ],
+   "jmactS2_P_legacy": [
+    8910
+   ],
+   "jmactS2_P_static": [
+    8910
+   ],
+   "jmactS2_pos": [
+    8910
+   ],
+   "jmactS2_t": [
+    8910
+   ],
+   "jmactS2_tq": [
+    8910
+   ],
+   "legacy_pieces_accepted": [
+    123
+   ],
+   "legacy_pieces_sd_ddof1": [
+    123
+   ],
+   "legacy_pieces_subject": [
+    123
+   ],
+   "loss_CH_angle": [
+    8
+   ],
+   "loss_CH_mse": [
+    8
+   ],
+   "loss_CH_n": [
+    8
+   ],
+   "loss_CH_share_sqerr": [
+    8
+   ],
+   "loss_CH_share_ss0": [
+    8
+   ],
+   "loss_CH_share_ssd": [
+    8
+   ],
+   "loss_CH_share_ssglobal": [
+    8
+   ],
+   "loss_CH_target_sd": [
+    8
+   ],
+   "loss_EG_angle": [
+    8
+   ],
+   "loss_EG_mse": [
+    8
+   ],
+   "loss_EG_n": [
+    8
+   ],
+   "loss_EG_share_sqerr": [
+    8
+   ],
+   "loss_EG_share_ss0": [
+    8
+   ],
+   "loss_EG_share_ssd": [
+    8
+   ],
+   "loss_EG_share_ssglobal": [
+    8
+   ],
+   "loss_EG_target_sd": [
+    8
+   ],
+   "loss_HM_angle": [
+    8
+   ],
+   "loss_HM_mse": [
+    8
+   ],
+   "loss_HM_n": [
+    8
+   ],
+   "loss_HM_share_sqerr": [
+    8
+   ],
+   "loss_HM_share_ss0": [
+    8
+   ],
+   "loss_HM_share_ssd": [
+    8
+   ],
+   "loss_HM_share_ssglobal": [
+    8
+   ],
+   "loss_HM_target_sd": [
+    8
+   ],
+   "loss_IES_angle": [
+    8
+   ],
+   "loss_IES_mse": [
+    8
+   ],
+   "loss_IES_n": [
+    8
+   ],
+   "loss_IES_share_sqerr": [
+    8
+   ],
+   "loss_IES_share_ss0": [
+    8
+   ],
+   "loss_IES_share_ssd": [
+    8
+   ],
+   "loss_IES_share_ssglobal": [
+    8
+   ],
+   "loss_IES_target_sd": [
+    8
+   ],
+   "loss_JM_angle": [
+    8
+   ],
+   "loss_JM_mse": [
+    8
+   ],
+   "loss_JM_n": [
+    8
+   ],
+   "loss_JM_share_sqerr": [
+    8
+   ],
+   "loss_JM_share_ss0": [
+    8
+   ],
+   "loss_JM_share_ssd": [
+    8
+   ],
+   "loss_JM_share_ssglobal": [
+    8
+   ],
+   "loss_JM_target_sd": [
+    8
+   ],
+   "loss_YES_angle": [
+    8
+   ],
+   "loss_YES_mse": [
+    8
+   ],
+   "loss_YES_n": [
+    8
+   ],
+   "loss_YES_share_sqerr": [
+    8
+   ],
+   "loss_YES_share_ss0": [
+    8
+   ],
+   "loss_YES_share_ssd": [
+    8
+   ],
+   "loss_YES_share_ssglobal": [
+    8
+   ],
+   "loss_YES_target_sd": [
+    8
+   ],
+   "static_map_pieces_angle": [
+    72
+   ],
+   "static_map_pieces_mean_tq": [
+    72
+   ],
+   "static_map_pieces_sd": [
+    72
+   ],
+   "static_map_pieces_session": [
+    72
+   ],
+   "static_map_pieces_subject": [
+    72
+   ],
+   "yesS1_B_relaxed": [
+    8910
+   ],
+   "yesS1_P_table": [
+    8910
+   ],
+   "yesS1_hold_t": [
+    3010
+   ],
+   "yesS1_hold_tq": [
+    3010
+   ],
+   "yesS1_pos": [
+    8910
+   ],
+   "yesS1_rest_mask": [
+    8910
+   ],
+   "yesS1_t": [
+    8910
+   ],
+   "yesS1_tq": [
+    8910
+   ],
+   "yesS2_B_relaxed": [
+    8910
+   ],
+   "yesS2_P_table": [
+    8910
+   ],
+   "yesS2_hold_t": [
+    3010
+   ],
+   "yesS2_hold_tq": [
+    3010
+   ],
+   "yesS2_pos": [
+    8910
+   ],
+   "yesS2_rest_mask": [
+    8910
+   ],
+   "yesS2_t": [
+    8910
+   ],
+   "yesS2_tq": [
+    8910
+   ]
+  },
+  "storyboard_comparison": [
+   {
+    "computed": "14.59 / +15.61",
+    "item": "JM p7 passive trial S1: torque SD / mean",
+    "matches": true,
+    "storyboard": "14.6 / +15.6"
+   },
+   {
+    "computed": "+11.72 / +10.75",
+    "item": "JM legacy table entry near -0.07, S1 / S2",
+    "matches": true,
+    "storyboard": "+11.72 / +10.75"
+   },
+   {
+    "computed": "+11.26 / +9.78",
+    "item": "legacy value subtracted at JM p7 active trial S1 / S2",
+    "matches": true,
+    "storyboard": "+11.26 / +9.78"
+   },
+   {
+    "computed": "-1.97 / -1.90",
+    "item": "static value subtracted S1 / S2",
+    "matches": true,
+    "storyboard": "-1.97 / -1.90"
+   },
+   {
+    "computed": "13.22 / 11.68",
+    "item": "shift S1 / S2",
+    "matches": true,
+    "storyboard": "13.22 / 11.68"
+   },
+   {
+    "computed": "0.015-0.704 Nm (n=72)",
+    "item": "static clean-hold torque SD range (static-map pieces)",
+    "matches": false,
+    "storyboard": "0.02-0.33 Nm"
+   },
+   {
+    "computed": "0.015-0.704 Nm (n=76)",
+    "item": "static clean-hold torque SD range (framework holds incl. YES)",
+    "matches": false,
+    "storyboard": "0.02-0.33 Nm"
+   },
+   {
+    "computed": "-1.834 Nm (S2 -1.481)",
+    "item": "JM trial first 20 s hold level",
+    "matches": true,
+    "storyboard": "-1.8 Nm"
+   },
+   {
+    "computed": "S1 11.8-26.6; S2 20.6-31.0; union 11.8-31.0",
+    "item": "JM trial #21 (S1) 10-s block means after 20 s",
+    "matches": false,
+    "storyboard": "12-31 Nm (S1 trial)"
+   },
+   {
+    "computed": "S2 trial mean +20.98 Nm > 20: rejected; S2 entry +10.75 comes from file trial 31 only; S1 entry is the mean of file trials [21, 15]",
+    "item": "JM p7 passive trial S2 (#37) accepted by legacy rule",
+    "matches": false,
+    "storyboard": "implied: 'this trial passed' (both sessions wrong in nearly the same way)"
+   },
+   {
+    "computed": "7.88 / 10.56 (table entries 7.9 / 10.6)",
+    "item": "YES worksheet passive at -0.487 S1 / S2",
+    "matches": true,
+    "storyboard": "7.9 / 10.6"
+   },
+   {
+    "computed": "0.65 (S1) / 0.39 (S2)",
+    "item": "YES active torque spread at -0.49",
+    "matches": true,
+    "storyboard": "0.4 Nm"
+   },
+   {
+    "computed": "squared error at kept epoch 2.94 %; target variation 1.03 %; sum of squares about 0 1.54 %  (only the target-variation definition gives about 1 %)",
+    "item": "YES two most toes-down positions' share of the loss",
+    "matches": false,
+    "storyboard": "about 1 %"
+   },
+   {
+    "computed": "legacy table: 20 of 20 positive, 0.18 to 1.97 Nm",
+    "item": "table too high vs relaxed level at toes-down",
+    "matches": false,
+    "storyboard": "20 of 20, by 0.6-2 Nm"
+   }
+  ]
+ }
+}

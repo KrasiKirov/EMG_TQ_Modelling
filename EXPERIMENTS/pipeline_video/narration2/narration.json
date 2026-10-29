@@ -1,0 +1,1235 @@
+{
+ "voice": "af_sarah",
+ "speed": 1.0,
+ "gap_s": 0.6,
+ "chapters": [
+  {
+   "id": "c01",
+   "title": "A puzzle",
+   "beats": [
+    "c01_b01",
+    "c01_b02",
+    "c01_b03",
+    "c01_b04"
+   ]
+  },
+  {
+   "id": "c02",
+   "title": "The experiment",
+   "beats": [
+    "c02_b01",
+    "c02_b02",
+    "c02_b03",
+    "c02_b04",
+    "c02_b05",
+    "c02_b06",
+    "c02_b07"
+   ]
+  },
+  {
+   "id": "c03",
+   "title": "What the model must predict",
+   "beats": [
+    "c03_b01",
+    "c03_b02",
+    "c03_b03",
+    "c03_b04",
+    "c03_b05",
+    "c03_b06",
+    "c03_b07"
+   ]
+  },
+  {
+   "id": "c04",
+   "title": "From raw EMG to a smooth envelope",
+   "beats": [
+    "c04_b01",
+    "c04_b02",
+    "c04_b03",
+    "c04_b04",
+    "c04_b05",
+    "c04_b06",
+    "c04_b07",
+    "c04_b08"
+   ]
+  },
+  {
+   "id": "c05",
+   "title": "One scale per muscle",
+   "beats": [
+    "c05_b01",
+    "c05_b02",
+    "c05_b03"
+   ]
+  },
+  {
+   "id": "c06",
+   "title": "Cutting the recording into windows",
+   "beats": [
+    "c06_b01",
+    "c06_b02",
+    "c06_b03",
+    "c06_b04"
+   ]
+  },
+  {
+   "id": "c07",
+   "title": "Who learns from what",
+   "beats": [
+    "c07_b01",
+    "c07_b02",
+    "c07_b03",
+    "c07_b04",
+    "c07_b05",
+    "c07_b06"
+   ]
+  },
+  {
+   "id": "c08",
+   "title": "The network, from far away",
+   "beats": [
+    "c08_b01",
+    "c08_b02",
+    "c08_b03",
+    "c08_b04",
+    "c08_b05"
+   ]
+  },
+  {
+   "id": "c09",
+   "title": "Training: epochs and early stopping",
+   "beats": [
+    "c09_b01",
+    "c09_b02",
+    "c09_b03",
+    "c09_b04",
+    "c09_b05",
+    "c09_b06",
+    "c09_b07",
+    "c09_b08"
+   ]
+  },
+  {
+   "id": "c10",
+   "title": "Seeds: same code, different answers",
+   "beats": [
+    "c10_b01",
+    "c10_b02",
+    "c10_b03",
+    "c10_b04",
+    "c10_b05",
+    "c10_b06",
+    "c10_b07",
+    "c10_b08"
+   ]
+  },
+  {
+   "id": "c11",
+   "title": "Scoring a prediction",
+   "beats": [
+    "c11_b01",
+    "c11_b02",
+    "c11_b03",
+    "c11_b04",
+    "c11_b05",
+    "c11_b06",
+    "c11_b07",
+    "c11_b08",
+    "c11_b09"
+   ]
+  },
+  {
+   "id": "c12",
+   "title": "The offset trap",
+   "beats": [
+    "c12_b01",
+    "c12_b02",
+    "c12_b03",
+    "c12_b04",
+    "c12_b05",
+    "c12_b06",
+    "c12_b07",
+    "c12_b08"
+   ]
+  },
+  {
+   "id": "c13",
+   "title": "Overfitting, or a different session?",
+   "beats": [
+    "c13_b01",
+    "c13_b02",
+    "c13_b03",
+    "c13_b04",
+    "c13_b05",
+    "c13_b06",
+    "c13_b07",
+    "c13_b08"
+   ]
+  },
+  {
+   "id": "c14",
+   "title": "Why toes-down is hard",
+   "beats": [
+    "c14_b01",
+    "c14_b02",
+    "c14_b03",
+    "c14_b04",
+    "c14_b05",
+    "c14_b06",
+    "c14_b07",
+    "c14_b08",
+    "c14_b09"
+   ]
+  },
+  {
+   "id": "c15",
+   "title": "Bugs and loose ends",
+   "beats": [
+    "c15_b01",
+    "c15_b02",
+    "c15_b03",
+    "c15_b04",
+    "c15_b05",
+    "c15_b06",
+    "c15_b07",
+    "c15_b08"
+   ]
+  },
+  {
+   "id": "c16",
+   "title": "Potential techniques: auto-gain",
+   "beats": [
+    "c16_b01",
+    "c16_b02",
+    "c16_b03",
+    "c16_b04",
+    "c16_b05",
+    "c16_b06",
+    "c16_b07",
+    "c16_b08",
+    "c16_b09"
+   ]
+  },
+  {
+   "id": "c17",
+   "title": "Potential techniques: equal weight and longer windows",
+   "beats": [
+    "c17_b01",
+    "c17_b02",
+    "c17_b03",
+    "c17_b04",
+    "c17_b05",
+    "c17_b06",
+    "c17_b07",
+    "c17_b08",
+    "c17_b09",
+    "c17_b10"
+   ]
+  },
+  {
+   "id": "c18",
+   "title": "What the papers did differently",
+   "beats": [
+    "c18_b01",
+    "c18_b02",
+    "c18_b03",
+    "c18_b04",
+    "c18_b05",
+    "c18_b06",
+    "c18_b07",
+    "c18_b08",
+    "c18_b09",
+    "c18_b10"
+   ]
+  },
+  {
+   "id": "c19",
+   "title": "Summary and next steps",
+   "beats": [
+    "c19_b01",
+    "c19_b02",
+    "c19_b03",
+    "c19_b04",
+    "c19_b05",
+    "c19_b06",
+    "c19_b07",
+    "c19_b08"
+   ]
+  }
+ ],
+ "beats": [
+  {
+   "id": "c01_b01",
+   "chapter": "c01",
+   "vis": "Title card \"EMG → ankle torque: what the baseline really does\", subtitle \"and why it struggles with the toes down\". Then one plot fades in: YES, session 2, position −0.486 rad, the 30 s piece 14–44 s (y03 window_yes_m486_start_end_s); answer key (white) and the baseline's prediction (green, seed 1). Torque in Nm with its raw sign (pushes go down).",
+   "text": "Here is a prediction from last semester's model. The white line is our best estimate of the torque a person's muscles produced: the measured torque, minus a relaxed part we will explain soon. The green line is what the model predicted, from the electrical activity of four leg muscles, plus the ankle angle. It moves with every push, and comes back when they relax. It looks pretty good.",
+   "src": "X00 YES seed 1, results/X00_baseline/YES/S1toS2/seed1.npz (cell −0.486 rad); y03 yes_m486_key, yes_m486_pred[1]."
+  },
+  {
+   "id": "c01_b02",
+   "chapter": "c01",
+   "vis": "A badge drops onto the plot: \"R² = −0.26 (whole trial, this run)\". Below it, small: \"9 of the 10 runs at this position are below zero\". A large question mark.",
+   "text": "And yet, by the score we usually report, R², this prediction does worse than a flat line drawn at the true average. Its R² is negative: minus 0.26 in this run, and lower still in most other runs at this position. We will define R² properly later. Low scores like this turn up mostly where the toes point down: there, the typical R² is about 0.77, against 0.97 elsewhere. By the end of this video, you will know the main reasons why, and what we could do about it.",
+   "src": "y03 YES_minus0p486_seed1 r2 −0.263; y03 n_seeds_negative (YES −0.486: 9 of 10)."
+  },
+  {
+   "id": "c01_b03",
+   "chapter": "c01",
+   "vis": "Road map, four blocks appearing one by one: \"1 · The experiment and the data\", \"2 · Inputs: cleaning, cutting, splitting, feeding\", \"3 · Training and scoring\", \"4 · Why toes-down is hard · bugs · potential techniques · the papers · next steps\".",
+   "text": "We will go slowly. First, the experiment and the data. Second, how the raw signals are cleaned, cut up, split and fed to the network. Third, how the network is trained, and how it is scored. And fourth, why the toes-down positions are hard. That last block also covers the bugs we found, the new techniques we tried, what the papers did differently, and what to try next.",
+   "src": "—"
+  },
+  {
+   "id": "c01_b04",
+   "chapter": "c01",
+   "vis": "Ground-rule card: \"The baseline = last semester's model, the reference for everything else. Code as found in the working copy, frozen, rerun with 10 fixed seeds. Most numbers come from those saved runs; when one does not, we say so. Where the code does something odd, we say so.\"",
+   "text": "One ground rule. The baseline is last semester's model: the reference we compare everything against. Until the potential techniques, everything is about it: last semester's code, as we found it in the working copy, frozen and rerun ten times with fixed seeds. Most numbers on screen come from those saved runs, and when one does not, we will say so. And where the code does something odd, we will say so, rather than invent a reason for it.",
+   "src": "EXPERIMENTS/baseline/original_code (working copy, 00_audit.md:4, 62-64); run_original_baseline.py (seeds 0–9)."
+  },
+  {
+   "id": "c02_b01",
+   "chapter": "c02",
+   "vis": "Simple schematic (no posture details): a lower leg and foot, the foot strapped to a pedal whose axis lines up with the ankle; the pedal attached to a box labelled \"dynamometer: holds the angle, measures the torque\". Curved arrow around the ankle labelled \"torque (Nm)\".",
+   "text": "Here is the setup. A person's foot is strapped to a pedal, with the pedal's axis lined up with the ankle. The pedal belongs to a dynamometer: a machine that holds the ankle at a chosen angle, and measures the twisting force, the torque, that the person applies to it. Torque is measured in newton metres.",
+   "src": "notes/final_pipeline/presentation/src_v2/build_deck_v2.js:86 (setup description)."
+  },
+  {
+   "id": "c02_b02",
+   "chapter": "c02",
+   "vis": "Four electrode dots appear on the leg in their colours: GM and GL (the two bulges of the calf), soleus (lower, under them), TA (front of the shin). Side labels: \"calf: pushes the toes down\", \"shin: pulls the toes up\".",
+   "text": "On the leg sit four surface electrodes. They record the EMG, short for electromyography: the tiny electrical signal a muscle gives off when it is told to contract. Three are on the calf: the two bulges of the calf muscle, called GM and GL, and the soleus underneath them. These three push the toes down. The fourth sits on the shin: the tibialis anterior, or TA. It pulls the toes up.",
+   "src": "channel header [Position, Torque, TA EMG, MG EMG, Sol EMG, LG EMG] (facts_x01 eg_channel_names)."
+  },
+  {
+   "id": "c02_b03",
+   "chapter": "c02",
+   "vis": "The pedal rotates through eight settings, each drawn in the angle colour ramp, labelled with EG's session-1 angles in rad (−0.739 … +0.247). Two arrows: \"negative = toes down (plantarflexion)\", \"positive = toes up (dorsiflexion)\". The word \"position\" appears under the eight settings. EG's peak torques per position as small bars under each setting (4 → 40 Nm), toes-down labelled \"weak\", toes-up \"strong\".",
+   "text": "The angle is fixed during a recording, but it changes between recordings, to eight different settings. We call each setting a position. Angles are in radians. Negative means toes down, which is called plantarflexion. Positive means toes up, called dorsiflexion. For EG, the eight positions run from about minus 0.74 to plus 0.25 radians. With the toes down, the calf can push the least, so we call those the weak positions. With the toes up, people push hardest: the strong positions.",
+   "src": "facts_x01 eg_S1_angles, eg_S1_peak_abs_tq_Nm (4.3 Nm at −0.739 … 40.4 Nm at +0.247)."
+  },
+  {
+   "id": "c02_b04",
+   "chapter": "c02",
+   "vis": "Six person badges (CH, EG, HM, IES, JM, YES). Below, a timeline of one visit with two blocks: \"session 1 (files: 'test')\" and \"session 2 (files: 'retest')\", note \"same visit · electrodes left on (audit notes)\". Then the core question in large type: \"Learn from session 1 → predict session 2?\"",
+   "text": "We have recordings from six people, and we only use their codes. Each was recorded in two sessions, during the same visit. According to our audit notes, the electrodes stayed on in between. The files call the sessions test and retest; we will call them session 1 and session 2. The whole project rests on one question: if a model learns from session 1, can it predict session 2?",
+   "src": "6 .flb files in ML/subjects; 00_audit.md §5 item 9 and FINAL_REPORT.md:189 (\"same visit with the electrodes left on\"); dataset_builder.py session keywords."
+  },
+  {
+   "id": "c02_b05",
+   "chapter": "c02",
+   "vis": "Timeline of EG's file: first a block \"MVC ×8 · 30 s · maximum effort · recorded once · not used by the baseline\" (greyed, stamp \"unused\"); then session 1 with \"8 passive + 8 active\", session 2 with \"8 passive + 8 active\". A passive card: \"first 20–30 s: relaxed, foot held still · after that: something else, must be cut away\". An active card: \"90 s of repeated pushes at one position\".",
+   "text": "There are three kinds of trial. First, maximum-effort trials, called MVC: thirty seconds each, recorded once at the start of the visit. The baseline does not use them. Then, in each session, passive and active trials. A passive trial begins with twenty to thirty seconds where the person relaxes and the machine holds the foot still. What follows is not a relaxed hold, and the code has to cut it away. And the active trials are the ones we model: ninety seconds of repeated pushes, one trial per position, so eight per session.",
+   "src": "EG trial listing (idx 0–7 'mvc', no session; 8–23 test; 24–39 retest) via flb_reader; normalize_mvc=False (training/__init__.py:26); facts_x04 eg_pieces (20.1 s holds, later pieces rejected)."
+  },
+  {
+   "id": "c02_b06",
+   "chapter": "c02",
+   "vis": "EG session-1 active trial at −0.038 rad, full 89 s at 100 Hz: torque (white) with 22 downward dips; angle (light grey) drawn above as a flat line with the label \"moves by a few mrad\". Counter \"22 pushes\". Label: \"size of a push = how deep the dip goes\".",
+   "text": "This is one active trial: EG at minus 0.04 radians. On this machine, a calf push shows up as negative torque, so each push is a dip. There are twenty-two of them in ninety seconds. When we talk about how strong a push is, we mean how deep the dip goes. On top, the angle is flat: the pedal barely moves, by only a few thousandths of a radian. These are called isometric contractions: the muscles work, but the joint does not move.",
+   "src": "facts_x01 eg_push_count 22, eg_angle_sd_mrad 2.04 (range ≈ 6 mrad, fact-check); eg_tq_min_Nm −32.6 (torque always negative)."
+  },
+  {
+   "id": "c02_b07",
+   "chapter": "c02",
+   "vis": "Zoom into 2 s of the same trial at 1 kHz: four raw EMG traces (GM, GL, soleus, TA in their colours) stacked under the torque. A bracket on one push: \"bigger push → bigger scribble\". Small label \"1 sample = 1 recorded value; 1,000 per second\".",
+   "text": "And this is the raw EMG behind two seconds of that trial. It is recorded as a thousand values per second, and each value is called a sample. The EMG looks like noise, because it is the sum of many tiny electrical spikes. What matters is its size: push harder, and the scribble gets bigger. Turning that scribble into a smooth measure of effort is the first step of the pipeline, the chain of steps from raw signals to a prediction.",
+   "src": "x01.npz raw_* (EG trial 21, 4.43–6.43 s); sampling interval 1 ms (flb_reader.py:205-209)."
+  },
+  {
+   "id": "c03_b01",
+   "chapter": "c03",
+   "vis": "Stacked cartoon of the measured torque = \"active (muscles contracting)\" + \"passive (relaxed reading)\". An ankle drawing with a spring across it (\"stretched tendons, muscles, skin\") and a small weight icon on the foot (\"weight of the foot and pedal\"). With the person relaxed, the measured torque is not zero: the passive part remains.",
+   "text": "Before we touch the EMG, we need to be precise about what the model has to predict. The sensor at the pedal measures the total torque. Part of that comes from the muscles contracting. We call it the active torque. But some torque is there even when the person is completely relaxed. Stretched tendons, muscles and skin pull back, a bit like a rubber band, and the weight of the foot and the pedal adds to it. We call that whole relaxed reading the passive torque.",
+   "src": "notes/final_pipeline/presentation/questions_and_answers_v2.md:21 (tissue + weight of foot and footplate, Anderson 2010); next_steps_checkup.md:20."
+  },
+  {
+   "id": "c03_b02",
+   "chapter": "c03",
+   "vis": "Arrow from the EMG traces pointing only to the \"active\" layer; a crossed-out arrow to the \"passive\" layer: \"a stretched tendon gives off no EMG\". Equation: \"target = measured torque − passive torque\". Small note: \"a design choice; the code states no reason\".",
+   "text": "The EMG mainly reflects the active part: a stretched tendon gives off no electrical signal. That is probably the idea behind the baseline's design, although the code never states its reasons. It does not ask the network for the total torque. It asks for the active torque only: the measured torque, minus the passive torque.",
+   "src": "dataset_builder.py:17-20 (design choice listed, no rationale), :489 (target = torque − passive)."
+  },
+  {
+   "id": "c03_b03",
+   "chapter": "c03",
+   "vis": "An EG passive trial: angle and torque during its first 20 s still hold, nearly flat; a dot marks its average. Then the dots of all positions assemble into the session-1 passive table (passive torque vs angle, joined by straight lines), and the session-2 table appears beside it in the session-2 colour.",
+   "text": "Where does the passive torque come from? From the start of the passive trials. The machine holds the relaxed foot still, and the code takes the average torque over that hold: roughly one number per position. Join those numbers with straight lines, and you get the passive table: passive torque against angle. Between two measured angles, the code reads along the line. Each session gets its own table, built from its own passive trials.",
+   "src": "x04.npz p20_* (EG hold, 20.1 s); y02 passive_s1 / passive_s2; dataset_builder.py:194-222 (segment means, 0.05 rad clustering), 248-271 (interpolation), 687-708 (one table per session)."
+  },
+  {
+   "id": "c03_b04",
+   "chapter": "c03",
+   "vis": "EG session-1 active trial at −0.038 rad: measured torque (white), the passive value as a grey line (almost flat, ≈ −3.5 Nm), and the target after subtraction. Side note: \"session 2 at this position: ≈ −2.6 Nm\".",
+   "text": "Then, for every sample of an active trial, the code looks up the passive torque at the measured angle, and subtracts it. Because the angle barely moves, that value is almost constant. For EG at this position, it is about minus 3.5 newton metres in session 1. In session 2 it is minus 2.6. What remains is the target: the active torque.",
+   "src": "y02 display eg_passive_S1_Nm −3.49, eg_passive_S2_Nm −2.60; y02 s1_torque, s1_passive, s1_target."
+  },
+  {
+   "id": "c03_b05",
+   "chapter": "c03",
+   "vis": "Mini diagram: \"network → active torque (Nm)\". A second arrow \"+ passive → total torque\" is drawn and crossed out. Below: \"answer key (ground truth) = measured torque in session 2 − session 2's passive table\". A small footnote card: \"for scoring: the session-2 table rebuilt from the still holds only · identical for 5 people · differs for JM\".",
+   "text": "A question we get a lot: does the network predict the total torque? No. It outputs the active torque directly. Nothing is added back, and the total torque is never predicted. The ground truth, which we will also call the answer key, is built the same way: the torque measured in session 2, minus session 2's own passive table. One detail: for every score in this video, that table is rebuilt from the still, relaxed holds only. That changes nothing for five people, and changes JM's table, which we will come back to.",
+   "src": "training/__init__.py:168-177 (nothing added back); score.py:5-12, 96-114 (passive_trial key = y_true_original + legacy_S2 − static_S2); y03 passive_correction_by_subject (zero for all but JM)."
+  },
+  {
+   "id": "c03_b06",
+   "chapter": "c03",
+   "vis": "Two caveat cards. \"IES: no passive trials → nothing is subtracted → the target for IES is the total torque.\" \"YES: passive values typed in from the lab worksheet; they agree with the recorded holds within 0.15 Nm.\"",
+   "text": "Two data caveats, right away. IES has no passive trials at all, so nothing is subtracted, and the target for IES is the total torque. For YES, the passive values were typed in by hand from the lab worksheet. They agree with the holds in the recording to within 0.15 newton metres.",
+   "src": "IES: 26 trials, 10 MVC + 16 PUSH, empty tables (dataset_builder.py:223-228, 481-487); YES PASSIVE_TORQUE_OVERRIDES within 0.138 Nm of the recorded holds (fact-check)."
+  },
+  {
+   "id": "c03_b07",
+   "chapter": "c03",
+   "vis": "One card, full screen: \"The ground truth is a measurement minus an estimate. Any error in the passive table goes straight into the answer key.\"",
+   "text": "And now the one that matters most. The ground truth is not a pure measurement. It is a measurement, minus an estimate. Any error in the passive table goes straight into the answer key. Keep that in mind: it will matter a lot.",
+   "src": "—"
+  },
+  {
+   "id": "c04_b01",
+   "chapter": "c04",
+   "vis": "A strip of six step boxes across the top: \"remove the average\" → \"band-pass 30–300 Hz\" → \"rectify\" → \"low-pass 2 Hz\" → \"trim 1 s\" → \"1000 → 100 samples/s\". Below, 3 s of raw soleus (EG trial 21, 3.73–6.73 s). The active box lights up at each step.",
+   "text": "Now, the EMG. Each electrode gives one signal, which we call a channel. Every channel goes through the same six steps, shown along the top. We will follow three seconds of the soleus channel through each one.",
+   "src": "emg_envelope.py:120-144; dataset_builder.py:737-739, 396-417; x02.npz piece_*."
+  },
+  {
+   "id": "c04_b02",
+   "chapter": "c04",
+   "vis": "Step 1: the raw piece with a dashed line at its average; the trace shifts so the line sits at zero.",
+   "text": "Step one: remove the average. The amplifier can add a small constant level to the signal, so the code subtracts the average of the whole trial. The signal is now centred on zero.",
+   "src": "emg_envelope.py:28-32 (whole-trial mean); x02 piece_demeaned."
+  },
+  {
+   "id": "c04_b03",
+   "chapter": "c04",
+   "vis": "Step 2: a small gain-versus-frequency plot with the 30–300 Hz band shaded (\"kept\"); below 30 Hz labelled \"cable and skin movement\". The piece after band-pass replaces the raw piece. Small tag: \"same band as Zhang et al. 2022\".",
+   "text": "Step two: a band-pass filter, from 30 to 300 hertz. Think of it as a sieve for wiggle speeds. Very slow wiggles are where cable and skin movement shows up. Most of the muscle's signal sits in the middle range, so the code keeps 30 to 300 hertz, the same band as one of the papers we built on. Some genuine muscle signal above 300 hertz is thrown away, too.",
+   "src": "4th-order Butterworth 30–300 Hz (facts_x02 bp, order); emg_envelope.py:7, 29-30; Zhang 2022 p.601 (30–300 Hz); Ranaldi 2022 p4 (25–450 Hz); x02 gain_bp, piece_band."
+  },
+  {
+   "id": "c04_b04",
+   "chapter": "c04",
+   "vis": "Step 3: negative parts of the trace flip upward (animated mirror at zero).",
+   "text": "Step three: rectify. The signal swings positive and negative, but the sign carries no information about effort. Only the size does. So every negative value is flipped to positive.",
+   "src": "x02 piece_rect."
+  },
+  {
+   "id": "c04_b05",
+   "chapter": "c04",
+   "vis": "Step 4: a smooth curve is drawn through the rectified spikes: the envelope (soleus colour, thick). Label \"envelope\". Small inset of the 2 Hz low-pass gain curve.",
+   "text": "Step four: a low-pass filter at 2 hertz. It keeps only slow changes, and draws a smooth curve through the rectified spikes. That curve is called the envelope. It rises when the muscle works harder, and falls when it relaxes. This is the signal the network will actually see.",
+   "src": "facts_x02 lp 2.0; x02 piece_env, gain_lp."
+  },
+  {
+   "id": "c04_b06",
+   "chapter": "c04",
+   "vis": "The 2 Hz filter's weighting curve centred on \"now\", reaching both into the past and the future; the part to the right of \"now\" is shaded and labelled \"future\". Badge: \"forward + backward → no delay, but it reaches about 0.4 s into the future (a faint tail to ≈ 0.9 s) → offline only\".",
+   "text": "A detail that matters later. Both filters are run forwards over the whole trial, and then backwards. That cancels the delay a filter normally adds. But it also means the envelope at any moment is partly built from the next few tenths of a second. That is fine for analysing recordings. A real-time device could not do it. So every result in this video is an offline result.",
+   "src": "sosfiltfilt (emg_envelope.py:130, 137); facts_x02 imp90 ±0.376 s, imp99 ±0.874 s."
+  },
+  {
+   "id": "c04_b07",
+   "chapter": "c04",
+   "vis": "Step 5: the first second of the trial is shaded and cut; the end of the trial is marked \"not trimmed\" with a small question mark.",
+   "text": "Step five. The first second of each trial is cut off. The code's comment says this removes a start-up effect of the filters. Oddly, the end of the trial, where the same kind of effect can appear, is not trimmed.",
+   "src": "dataset_builder.py TRANSIENT_SAMPLES = 1000 ('discards EMG envelope filter startup artifact'); df.iloc[1000:] (start only)."
+  },
+  {
+   "id": "c04_b08",
+   "chapter": "c04",
+   "vis": "Step 6: a dense row of dots (1000 per second) thins to a sparse row (100 per second) over the envelope. Counters: \"90.1 s → 89.1 s\", \"8,910 samples\". Angle and torque rows are thinned the same way, staying aligned.",
+   "text": "Step six: everything is downsampled, from a thousand samples per second to a hundred. The code smooths slightly, then keeps one value in ten. The envelope is already smooth, so nothing important is lost. A ninety-second trial becomes 8,910 samples. The angle and the torque are downsampled the same way, so all the signals stay lined up.",
+   "src": "dataset_builder.py:396-417 (scipy decimate ×10, 201-tap FIR, zero-phase); facts_x02 n_100hz 8910."
+  },
+  {
+   "id": "c05_b01",
+   "chapter": "c05",
+   "vis": "EG's four session-1 envelopes for trial 21, drawn at their raw sizes (very different heights). A dashed reference line per channel: \"largest value over all 8 session-1 trials\". After dividing, the four share a 0–1 axis; this trial's curves stay visibly below 1 (≈ 0.09, 0.64, 0.67, 0.34). Footnote: \"in the code this division happens at 1000 samples/s, before the trim and the downsampling\".",
+   "text": "The four envelopes come out at very different sizes, depending on the muscle, the electrode and the skin. So that the network sees comparable numbers, the baseline divides each channel by the single largest value it reached anywhere in session 1's eight active trials. Across session 1, every channel now tops out at one. A single trial, like this one, usually stays well below it.",
+   "src": "dataset_builder.py:660-672; y02 s1_raw_* and s1_* (EG trial 21 peaks ≈ 0.09 / 0.64 / 0.67 / 0.34 of the S1 maximum); y02 eg_max."
+  },
+  {
+   "id": "c05_b02",
+   "chapter": "c05",
+   "vis": "Bar chart for JM at −0.36 rad, titled \"EMG size per newton metre of push, session 2 ÷ session 1\": GM 0.36, GL 0.83, soleus 0.38, TA 0.92, with a dashed line at 1.0 \"same as session 1\".",
+   "text": "Session 2 is divided by the same session-1 numbers. That is the honest choice, because it uses nothing from the session being tested. But it has a consequence. For the same push, a muscle's signal can come out smaller, or larger, in session 2, and the model has no way of knowing. And this happens. Each bar here is session 2's EMG size per newton metre of push, divided by session 1's. One would mean no change. For JM at minus 0.36 radians, GM and the soleus come out at only about a third of their session-1 size. GL drops less, to about four fifths.",
+   "src": "facts_x03 size_ratio JM −0.36 before [0.363, 0.829, 0.384, 0.916], reproduced with the frozen chain (fact-check); measure = envelope p95−p10 per Nm of torque p95−p5 (extract/x03_scaling.py size())."
+  },
+  {
+   "id": "c05_b03",
+   "chapter": "c05",
+   "vis": "Two small notes. \"Each maximum is one single sample. For 5 of the 24 person × muscle pairs it lies in the validation part.\" \"The fifth input, the angle, goes in raw, in radians, unscaled.\"",
+   "text": "Two small things worth knowing. Each maximum is one single sample, so one spike could set the scale of a whole channel. And for five of the twenty-four person-and-muscle pairs, that maximum falls in the last fifth of one of the session-1 trials: the part held back for validation, which we will meet in a moment. And the fifth input, the angle, goes in raw, in radians, with no scaling.",
+   "src": "y02 n_max_in_validation_part = 5 (CH sol, EG gm, IES gl, IES sol, YES ta), confirmed by the fact-check rerun; config.py:82-86, normalize_position False."
+  },
+  {
+   "id": "c06_b01",
+   "chapter": "c06",
+   "vis": "Ten seconds of EG's session-1 trial at −0.038 rad, five aligned rows at 100 Hz: GM, GL, soleus, TA envelopes (0–1) and the angle; below them the target (active torque, Nm).",
+   "text": "We now have five signals, at a hundred samples per second: four muscle envelopes, and the angle. Below them is the target: the active torque. How do we turn this into examples the network can learn from?",
+   "src": "y02 s1_gm, s1_gl, s1_sol, s1_ta, s1_angle, s1_target (EG trial 21, baseline settings)."
+  },
+  {
+   "id": "c06_b02",
+   "chapter": "c06",
+   "vis": "On \"short windows\", a highlighted box 20 samples wide spans all five rows; at its right edge a dot sits on the target. Label: \"input: 20 time steps × 5 signals → answer: active torque at the last step\". On \"a little table\", the box's contents lift out into a 20 × 5 grid of coloured cells (a heat map of y02 window).",
+   "text": "By cutting it into short windows. Each window is twenty samples long, which is 0.2 seconds, and it spans all five signals. So one example is a little table: twenty time steps, by five numbers. Its answer is the active torque at the window's last time step. In plain words: given the last fifth of a second of muscle activity, and the angle, what is the torque right now?",
+   "src": "config.py:82-86 (window 20); dataset_builder.py:501-507 (target at last step); y02 window, window_target (−17.3 Nm, samples 419–438)."
+  },
+  {
+   "id": "c06_b03",
+   "chapter": "c06",
+   "vis": "The box slides right one sample at a time (accelerating); each step drops a new dot on the target. A counter runs up to \"8,891 windows in this trial\". Side note: \"neighbouring windows share 19 of 20 samples\".",
+   "text": "Then the window slides forward by one sample, ten milliseconds, and we get the next example. Neighbouring windows share nineteen of their twenty samples, so they are nearly identical. A trial of 8,910 samples gives 8,891 windows.",
+   "src": "stride 1; 8910 − 20 + 1 = 8891 (y02 counts)."
+  },
+  {
+   "id": "c06_b04",
+   "chapter": "c06",
+   "vis": "An arrow \"time →\" under the window: all inputs are at or before the target's moment. Small reminder on the envelope rows: \"the smoothing filters used a little of the future: ≈ 0.4 s (envelope), ≈ 0.1 s (downsampling)\".",
+   "text": "Notice that each window only looks backwards in time, from the recent past up to the present moment. The moment-by-moment peeks into the future come from the filters: mainly the forward-backward envelope filter, and a much shorter one, about a tenth of a second, from the downsampling step. Two constants, the trial's average and session 1's maximum, are also taken over the whole recording.",
+   "src": "dataset_builder.py:501-507; decimate 201-tap zero-phase FIR (facts_x02 decimate_taps)."
+  },
+  {
+   "id": "c07_b01",
+   "chapter": "c07",
+   "vis": "Session 1 as eight horizontal bars, one per position (angle colour ramp). Each bar splits at 80 %: the left part \"fit\" (session-1 blue), the right part \"validation\" (yellow). Numbers per bar: \"7,112 fit\", \"1,778 validation\", and a sliver at the very end \"1 window unused\".",
+   "text": "Now, the most important bookkeeping in the whole pipeline: which windows are used for what. In session 1, each of the eight trials is cut in time. The first 80 percent of its windows are used to fit the network. Fitting is the same as training. That is 7,112 windows per trial. The next 1,778, about the last eighteen seconds, are held back for validation. Because of rounding, the very last window of each trial is not used at all.",
+   "src": "dataset_builder.py _temporal_split (int(N·0.8) = 7112, int(N·0.2) = 1778, third slice discarded); y02 boundary dropped_window_index 8890."
+  },
+  {
+   "id": "c07_b02",
+   "chapter": "c07",
+   "vis": "Session 2 as eight bars, all \"test\" (session-2 orange). Totals: the fit and validation totals sit on the session-1 bars, the test total on the session-2 bars: \"per person: fit 56,896 · validation 14,224 · test 71,128 windows (the same for all six people)\".",
+   "text": "Session 2 is never used for training at all. All eight of its trials are the test. Now add up the windows, for one person. Fit: 56,896. Validation: 14,224. Test: 71,128. The numbers are the same for all six people.",
+   "src": "X00 seed jsons n_windows {train 56896, val 14224, test 71128} for every person."
+  },
+  {
+   "id": "c07_b03",
+   "chapter": "c07",
+   "vis": "Small note: \"Later experiments also run the reverse: learn session 2 → test session 1. The baseline runs here: session 1 → session 2 only.\"",
+   "text": "Some later experiments also run the split the other way round, learning from session 2 and testing on session 1. The baseline runs we use here only go from session 1 to session 2.",
+   "src": "results/X00_baseline/*/S1toS2 only."
+  },
+  {
+   "id": "c07_b04",
+   "chapter": "c07",
+   "vis": "Three role cards with icons. Fit (wrench): \"the network adjusts itself on these\". Validation (stopwatch): \"checked after every pass: when to slow down, when to stop, which version to keep\". Test (flag): \"used only at the very end, to score\".",
+   "text": "Each set has one job. The network adjusts itself using the fit windows. The validation windows are only looked at, after each pass through the data, to decide when to slow down, when to stop, and which version of the network to keep. And the test windows are used only at the very end, to score the finished model.",
+   "src": "training/__init__.py:122-147 (ReduceLROnPlateau and EarlyStopping on val_loss, restore_best_weights=True); session 2 used only in evaluate_model."
+  },
+  {
+   "id": "c07_b05",
+   "chapter": "c07",
+   "vis": "Zoom on one fit/validation boundary: the last fit window (samples 7111–7130) and the first validation window (7112–7131) as overlapping boxes; 19 shared samples highlighted. Label \"no gap · affects only the first few dozen of 1,778 validation windows\".",
+   "text": "Zoom into the boundary between fit and validation, and you find a small issue: there is no gap. The last fit window and the first validation window share nineteen of their twenty samples. The filters have also blurred the signal across the boundary. Only the first few dozen validation windows of each trial are affected, so the effect is probably tiny, and it never touches the test.",
+   "src": "y02 boundary (last fit 7111–7130, first val 7112–7131, 19 shared); facts_x02 imp90 ±0.376 s (≈ 40 samples of smear)."
+  },
+  {
+   "id": "c07_b06",
+   "chapter": "c07",
+   "vis": "Key-point card: \"Validation = the end of the SAME trials. Same moment, same electrode contact, same passive table, same angle per trial. It cannot see what changes between sessions.\" Two arrows: a short solid arrow \"fit → validation (same session)\" and a long dashed arrow \"session 1 → session 2\" with a question mark.",
+   "text": "The bigger point is this. Validation is just the end of the same trials, a few seconds later: the same moment of the visit, the same electrode contact, the same passive table, the same angle for each trial. So validation can tell us whether the model fits session 1. It cannot tell us anything about what changes between sessions. Hold on to that, because it explains a lot.",
+   "src": "dataset_builder.py:520-528."
+  },
+  {
+   "id": "c08_b01",
+   "chapter": "c08",
+   "vis": "Block diagram, left to right: the 20 × 5 window → \"LSTM layer · 8 memory cells\" → \"LSTM layer · 8 memory cells\" → \"output: 1 number = active torque (Nm)\". Footer: \"1,001 adjustable numbers (weights)\". (Dropout is added in b04.)",
+   "text": "Now the network itself, from far away. It is a neural network called an LSTM, short for long short-term memory, a type built for sequences. It reads the window one time step at a time, oldest first, and keeps a small memory that it updates at every step. The baseline stacks two of these layers. Each has a memory of just eight numbers. After them comes a single output: the predicted active torque, in newton metres. In total, the network has 1,001 adjustable numbers, called weights.",
+   "src": "models/lstm.py:17-24; n_params 1001 in all 60 X00 jsons."
+  },
+  {
+   "id": "c08_b02",
+   "chapter": "c08",
+   "vis": "Animation: the 20 columns of the window enter the first layer one at a time; its 8 memory squares change brightness at each step and pass a sequence to the second layer; after the 20th step the second layer's memory feeds one output number that pops out.",
+   "text": "You can picture it like reading a sentence, word by word. After each word, you update your sense of what is going on. After the twentieth time step, the network's memory is boiled down into one number. That is the prediction for that window.",
+   "src": "LSTM(8, return_sequences) → LSTM(8) → Dense(1)."
+  },
+  {
+   "id": "c08_b03",
+   "chapter": "c08",
+   "vis": "After the output pops out, the 8 memory squares fade to blank; the next window (from a different trial and time, since batches are shuffled) slides in and starts from blank squares. Label: \"memory starts empty for every window: the network sees 0.2 s, nothing else\".",
+   "text": "An important detail: that memory starts empty for every window. Nothing is carried over from one window to the next, and since the windows are shuffled, the network would not even see them in order. Each prediction is made from those twenty time steps, a fifth of a second, and nothing else.",
+   "src": "models/lstm.py (Keras LSTM, stateful=False default); build_windows makes independent windows; model.fit(shuffle=True)."
+  },
+  {
+   "id": "c08_b04",
+   "chapter": "c08",
+   "vis": "Two dropout boxes appear: one after each LSTM layer (the second just before the output). During \"training\", about 30 % of the signals leaving each layer flicker off at random, different ones every batch; the rest brighten slightly (\"scaled up\"). A switch flips to \"checking or predicting\" and everything stays on.",
+   "text": "After each of the two layers sits dropout, set to 0.3. During training, on every batch, each signal leaving that layer has a thirty percent chance of being switched off, and the rest are scaled up to make up for it. So the network cannot rely on any single path, which pushes it towards sturdier solutions. When the model is checked, or used for prediction, dropout is turned off, and everything is used.",
+   "src": "models/lstm.py:17-24 (Dropout after LSTM 1 and after LSTM 2); Keras inverted dropout (×1/0.7)."
+  },
+  {
+   "id": "c08_b05",
+   "chapter": "c08",
+   "vis": "Three bars for \"memory cells per layer\": ours 8, Zhang et al. 2022: 50, Kim et al. 2020: 200.",
+   "text": "For scale: eight memory cells is tiny. The LSTM papers we built on used fifty, and two hundred. We will come back to whether size matters.",
+   "src": "Zhang 2022 p.602 (50 units, 2–4 layers); Kim 2020 p.3820 (200 hidden units)."
+  },
+  {
+   "id": "c09_b01",
+   "chapter": "c09",
+   "vis": "One window → prediction vs answer; the error drawn as a vertical gap, then squared (a square whose side is the gap). Three squares: \"miss 1 → cost 1\", \"miss 2 → cost 4\", \"miss 3 → cost 9\". Many squares averaged into one number: \"loss = mean squared error (Nm²)\".",
+   "text": "Training means finding values for those 1,001 weights that make the predictions good. \"Good\" is measured by the loss. For each window, take the error, the prediction minus the answer, and square it. A miss of one costs one. A miss of two costs four. A miss of three costs nine. Then average over many windows. This is the mean squared error, in newton metres squared. Squaring means a big miss costs far more than a small one.",
+   "src": "loss 'mse' (config.py:73-79)."
+  },
+  {
+   "id": "c09_b02",
+   "chapter": "c09",
+   "vis": "One training step: 8 windows drawn at random from the fit set (from different trials and times) → 8 predictions → loss → small arrows nudge all the weights. Labels: \"batch = 8 windows\", \"optimiser: Nadam (a variant of Adam)\", \"learning rate (step size) 0.003\".",
+   "text": "One training step works like this. Pick eight windows at random from the fit set. That group of eight is called a batch. Predict all eight, measure the loss, and nudge every weight a little, in the direction that would have made the loss smaller. The rule that decides the nudge is called the optimiser. Here it is Nadam, a variant of the well-known Adam. And the size of the nudge is set by the learning rate: 0.003.",
+   "src": "Nadam(lr 0.003), batch 8, shuffle=True (config.py:73-79; training/__init__.py:122-147)."
+  },
+  {
+   "id": "c09_b03",
+   "chapter": "c09",
+   "vis": "A progress bar fills through 56,896 fit windows, eight at a time: \"7,112 steps = 1 epoch = every fit window seen once\". Small note: \"7,112 again: 8 trials and batches of 8\". At its end, a \"quiz\" stamp on the validation set: \"validation error checked · no learning\".",
+   "text": "There are 56,896 fit windows, and we take eight at a time. Do that 7,112 times, and every fit window has been seen once. That is one epoch: one full pass through the training data. The same 7,112 as the windows per trial is just a coincidence of the arithmetic: eight trials, and batches of eight. At the end of each epoch, the model is checked on the validation windows. No learning happens there. It is just a quiz.",
+   "src": "56896 / 8 = 7112 (y04 steps_per_epoch)."
+  },
+  {
+   "id": "c09_b04",
+   "chapter": "c09",
+   "vis": "A real learning curve (HM, rebuilt copy X00f, seed 0): validation error per epoch, a steep drop over the first epochs, then jumping up and down around a slowly falling level. A re-shuffle icon between epochs. Label \"rebuilt copy of the baseline, HM, one seed\".",
+   "text": "Then it all starts again, with the windows in a new random order. Epoch after epoch, the model gets better, quickly at first, then more and more slowly. Here is a real run, from the rebuilt copy of the baseline, for HM. The validation error drops steeply over the first few epochs. After that, it jumps up and down from one epoch to the next, around a level that falls only slowly.",
+   "src": "y04 x00f_HM_* (78 epochs, best 53; val MSE 0.87 → 0.41 by epoch 3, best 0.261)."
+  },
+  {
+   "id": "c09_b05",
+   "chapter": "c09",
+   "vis": "Vertical markers on the curve where the learning rate was cut (\"× 0.7\"), at epochs 20, 30, 44, 63 and 73, with a small staircase plot of the learning rate underneath.",
+   "text": "Two rules watch that validation number. The first: if it has not improved for ten epochs, the learning rate is multiplied by 0.7. Smaller nudges, for finer adjustments. You can see where that happened in this run.",
+   "src": "ReduceLROnPlateau(factor 0.7, patience 10); y04 x00f_HM_lr, x00f_HM_lr_cut_triggered."
+  },
+  {
+   "id": "c09_b06",
+   "chapter": "c09",
+   "vis": "Early stopping on the same curve: a star at the best validation epoch (53); a bracket \"25 epochs of patience\" after it; a stop sign at epoch 78; an arrow back to the star \"restore the best weights\".",
+   "text": "The second rule is early stopping. If validation has not improved for twenty-five epochs, training stops, and the weights from the best epoch are put back. So the model we keep is the one from the best validation epoch, not the last one.",
+   "src": "EarlyStopping(patience 25, restore_best_weights=True); y04 x00f_HM_best_epoch 53, 78 epochs."
+  },
+  {
+   "id": "c09_b07",
+   "chapter": "c09",
+   "vis": "A strip of the 60 baseline runs (6 people × 10 seeds): one horizontal line per run from epoch 0 to its stop, a dot at its best epoch; a faint dashed line at 200 \"upper limit\". Labels: \"stopped after 32–115 epochs · best epoch 7–90\".",
+   "text": "The limit is two hundred epochs, but no baseline run came close. Across all sixty runs, training stopped between 32 and 115 epochs, and the best epoch fell between 7 and 90.",
+   "src": "y04 x00_epochs_run, x00_best_epoch (min/max 32/115, 7/90; epochs_run = best + 25 in all 60)."
+  },
+  {
+   "id": "c09_b08",
+   "chapter": "c09",
+   "vis": "Recap card: \"The model we keep = the best validation epoch. Validation = the end of session 1's trials.\"",
+   "text": "And remember what validation is: the end of session 1's trials. So the slowing down, the stopping, and the choice of which version to keep, are all decided by how well the model fits session 1.",
+   "src": "—"
+  },
+  {
+   "id": "c10_b01",
+   "chapter": "c10",
+   "vis": "Three dice, each labelled: \"starting weights\", \"order of the windows\", \"which signals dropout switches off\". A key labelled \"seed\" locks all three.",
+   "text": "Training involves luck, in three places. The weights start at random values. The order in which the windows are drawn is random. And dropout's switching is random. A seed is a number that fixes all of that luck, so that a run can be repeated.",
+   "src": "tf.keras.utils.set_random_seed seeds Python, NumPy and TF (run_original_baseline.py:60)."
+  },
+  {
+   "id": "c10_b02",
+   "chapter": "c10",
+   "vis": "Card: \"Last semester's code set no seed → its runs cannot be reproduced exactly.\" Then: \"Rerun with seeds 0–9, nothing else changed = X00 (what this video shows).\"",
+   "text": "Last semester's code set no seed at all, so its exact runs can never be reproduced. To study the baseline, it was rerun with ten fixed seeds, zero to nine, and no other change. That set of runs is called X00, and it is what this video shows.",
+   "src": "grep finds no seed in original_code; run_original_baseline.py:60."
+  },
+  {
+   "id": "c10_b03",
+   "chapter": "c10",
+   "vis": "Two panels, 20 s each, ten thin green prediction lines (one per seed) over the white answer key. Left: YES at +0.138 rad, where its torque swings most (tight bundle). Each panel carries a y-scale tag (its height in Nm), so the different zoom is visible. Right: YES at −0.486 rad (the ten lines follow the pushes but sit at different heights, all above the truth, and some swing more than the truth).",
+   "text": "Here is what the luck does. On the left, ten seeds at the YES position where the torque swings most: the ten predictions look almost on top of each other. On the right, the same ten seeds at its most toes-down position. They all follow the timing of the pushes, but they sit at different heights, every one of them too high, and some swing much more than the truth. Mind the scales, though: the right panel is zoomed in far more. In newton metres, the lines on the left are spread at least as widely.",
+   "src": "y03 yes_strong_* (+0.138 rad, R² 0.965–0.978), yes_m486_* (bias +0.21 to +0.62 Nm, prediction SD 0.36–0.68 vs truth 0.40; fact-check)."
+  },
+  {
+   "id": "c10_b04",
+   "chapter": "c10",
+   "vis": "Strip plot: for each of the 48 cells, ten dots (one per seed) of R² (axis clipped at −2 for display, JM −0.078 drawn as an arrow off the bottom); toes-down cells highlighted. Labels: \"best minus worst of 10 seeds, typical cell: other positions 0.02 · toes-down 0.42\"; YES −0.486 called out \"−2.0 to 0.01\".",
+   "text": "Now all forty-eight cells. A cell is one person at one position: six people, eight positions. By toes-down we mean each person's two most toes-down positions. At the other positions, the ten seeds barely disagree: in a typical cell, the best and the worst differ by only about 0.02 in R². At the toes-down cells, the typical gap is 0.42. And at YES's most toes-down position, the ten seeds range from minus 2.0 to about zero.",
+   "src": "y03 r2_range (median toes-down 0.423, other 0.019); y03 display yes_m486_min −2.0, max 0.01."
+  },
+  {
+   "id": "c10_b05",
+   "chapter": "c10",
+   "vis": "Second small strip under the first: \"the same spread in newton metres: typical seed-to-seed wobble of the error · toes-down 0.17 Nm · other 0.14 Nm\". The R² strip dims slightly: \"R² magnifies the wobble where there is little to predict\".",
+   "text": "But measure the same spread in newton metres, and the gap almost disappears. Across seeds, the typical error wobbles by about 0.17 newton metres at toes-down, and by 0.14 elsewhere. The luck is about the same size everywhere. R² simply magnifies it where there is little to predict, the effect at the heart of this video, which we will take apart in chapter twelve.",
+   "src": "facts_y01 F X00 MAE SD 0.166 (toes-down) vs 0.140 Nm (other); fact-check c10_b06 (bias SD 0.17 vs 0.20 Nm)."
+  },
+  {
+   "id": "c10_b06",
+   "chapter": "c10",
+   "vis": "Two runs side by side, same seed: \"frozen code (X00)\" and \"rebuilt copy (X00f)\". Their data differ by a few millionths of a Nm (rounding). Their per-position R² differ (e.g. JM −0.787, seed 0: 0.66 vs −1.92). A third pair, IES: \"identical data → identical scores (4 decimals)\".",
+   "text": "It is even more fragile than that. We rebuilt the same model in our newer code. It produces the same data, apart from rounding differences of a few millionths of a newton metre. With the same seeds, the results still came out different, sometimes by more than the seed-to-seed spread. Only IES, whose data came out exactly identical, gave the same scores. Training is chaotic: tiny changes lead to a different final model.",
+   "src": "fact-check c10_b05 (targets differ by 1.9e-6 to 7.6e-6 Nm; IES identical, R² equal to 4 decimals; JM −0.787 seed 0 0.66 vs −1.92); baseline_code facts §7."
+  },
+  {
+   "id": "c10_b07",
+   "chapter": "c10",
+   "vis": "YES's loss pie: each position's share of the training loss; the two toes-down slices are slivers labelled \"≈ 1 % of the push variation · ≈ 3 % of the remaining error (rebuilt copy, one run)\"; a dashed outline shows the \"equal share = 25 %\". Note: \"equal weight per position (rebuilt copy, 3 seeds): seed wobble of the error roughly halved, more at toes-down\".",
+   "text": "The loss may make it a little worse at toes-down. For YES, in one run of the rebuilt copy, the two most toes-down positions hold only about one percent of the push variation in the training data, and about three percent of the error left after training, where an equal share would be a quarter. So training barely cares where the prediction sits there. In line with that, a later test in the rebuilt copy, which weighted every position equally, roughly halved the seed-to-seed wobble of the error overall, and cut it further at toes-down, on three seeds.",
+   "src": "y05 display loss_share_toes_down_two_pct YES (target variation 1.0 %, squared error at the kept epoch 2.9 %, X00f seed 0); weekly_update_2026-10-27 README 'Seed consistency' (0.6×); fact-check recompute (toes-down 0.39×, X04 vs X00 seeds 0–2)."
+  },
+  {
+   "id": "c10_b08",
+   "chapter": "c10",
+   "vis": "Lesson card: \"One run says very little. Compare over many seeds; report the median and the spread.\"",
+   "text": "The lesson: a single run tells you very little, especially at the toes-down positions. Any comparison needs many seeds, and should report the middle value, and the spread.",
+   "src": "—"
+  },
+  {
+   "id": "c11_b01",
+   "chapter": "c11",
+   "vis": "A session-2 trial; the kept model (badge \"dropout off\") slides over its windows and leaves one green dot per window, building the prediction curve; counter \"8,891 predictions per trial · one every 10 ms\". The eight session-2 trials then sort into eight position bins. Footer: \"scored against the answer key (still-hold passive table)\".",
+   "text": "Once training stops, the kept model is run over every window of session 2, with dropout off. That gives one predicted active torque every ten milliseconds: 8,891 per trial. The predictions are then grouped by position, one trial each, and each group is compared with the answer key.",
+   "src": "evaluate_model; per-position grouping by snapped angle (0 wrongly snapped windows, baseline_code facts §7)."
+  },
+  {
+   "id": "c11_b02",
+   "chapter": "c11",
+   "vis": "Truth and prediction for a few seconds; vertical error bars between them; their absolute lengths average into \"MAE = average size of the miss (Nm)\".",
+   "text": "The simplest score is the mean absolute error, MAE: the average size of the miss, in newton metres. It is easy to read. An MAE of 0.5 means the prediction is typically half a newton metre off.",
+   "src": "evaluation/metrics.py; presentation_metrics.py:81-88."
+  },
+  {
+   "id": "c11_b03",
+   "chapter": "c11",
+   "vis": "The truth with a flat dashed line at its own average: \"lazy guess\". Squared errors of the lazy guess (big squares) next to those of the model (small squares). Formula in words: \"R² = 1 − (sum of model's squared errors ÷ sum of lazy guess's squared errors)\". A scale: 1 = perfect · 0 = no better than the flat line · below 0 = worse than the flat line. Small warning tag on the flat line: \"knows the true average of this very trial\".",
+   "text": "The score we report most is R². It compares the model with a lazy guess: a flat line at the trial's own average torque. Add up the model's squared errors. Add up the lazy guess's squared errors. Divide the first by the second, and take that away from one. If the model is perfect, R² is one. If it is no better than the flat line, zero. And if it is worse than the flat line, it goes negative. Note that this lazy guess is handed the true average of the very trial being scored, which the model never sees. So zero does not mean no skill.",
+   "src": "metrics.py:13-77 (R² = 1 − SS_res/SS_tot with the local mean, per position)."
+  },
+  {
+   "id": "c11_b04",
+   "chapter": "c11",
+   "vis": "The same error band (same size in Nm) drawn twice: over a strong position with big swings (the lazy guess is far off → R² ≈ 0.99) and over a toes-down position with small swings (the lazy guess is already close → R² collapses).",
+   "text": "Here is the catch. The lazy guess is very good when the torque hardly moves, and very bad when it swings a lot. So the same error in newton metres can give an excellent R² at a strong position, and a terrible one at a weak position. R² is a score relative to how much there was to predict.",
+   "src": "—"
+  },
+  {
+   "id": "c11_b05",
+   "chapter": "c11",
+   "vis": "Left: one big badge \"the old code's R², all 8 positions pooled · YES: 0.97–0.98 in all 10 seeds\". Right: YES's eight per-position R² bars for the same runs, the −0.486 bar plunging below zero (\"−2.0 to 0.01\"). Footer: \"pooled, typical run: ≈ 0.94–0.99 per person\".",
+   "text": "Last semester's code also printed one R² for all eight positions pooled together. That number looks excellent: for YES, 0.97 or 0.98 in every seed, while YES's most toes-down position ranges from minus 2 to zero. Pooling counts the big differences between strong and weak positions as explained, so a failure at one weak position barely moves it. That is why we score each position on its own.",
+   "src": "y07 pooled per_subject (YES 0.974–0.981; CH 0.987–0.992; EG 0.958–0.972; HM 0.939–0.957; IES 0.958–0.972; JM 0.784–0.948, median 0.937); y07 yes_m486 range."
+  },
+  {
+   "id": "c11_b06",
+   "chapter": "c11",
+   "vis": "Aggregation diagram: per run, any negative R² shown as 0; per cell, ten seed values → median; then the median over cells. Two groups: \"toes-down: 12 cells\", \"other positions: 36 cells\".",
+   "text": "On the dashboard, the numbers are summarised like this. Any negative R² is shown as zero, so that a single terrible cell cannot drag everything down. Then, for each cell, we take the median over the ten seeds, the middle value, and then the median over the cells. Remember: toes-down means each person's two most toes-down positions, twelve cells. The other thirty-six are the rest.",
+   "src": "dashboard_react/src/lib/aggregate.ts:34-56, 296-297 (floor per run, then medians); facts_y01 caveats (toes_down column)."
+  },
+  {
+   "id": "c11_b07",
+   "chapter": "c11",
+   "vis": "Baseline R² bars: toes-down 0.77, other positions 0.97.",
+   "text": "Here is the baseline. At the thirty-six other cells, R² is 0.97. At the twelve toes-down cells, it drops to 0.77.",
+   "src": "facts_y01 B (X00, 10 seeds): toes-down 0.769, other 0.972."
+  },
+  {
+   "id": "c11_b08",
+   "chapter": "c11",
+   "vis": "MAE bars: toes-down 0.83 Nm, other 1.07 Nm. Then peak bars: typical peak 6 Nm vs 19 Nm (\"peak = deepest point of a push\"). Then \"each cell's MAE ÷ its own peak, typical cell: 13 % vs 4.6 %\".",
+   "text": "But look at the error in newton metres. At toes-down it is actually smaller: 0.83, against 1.07. The pushes there are just much weaker. A typical peak, the deepest point of a push, is six newton metres, against nineteen. If you take each cell's error as a share of its own peak, the typical toes-down cell misses by thirteen percent, nearly three times the four and a half percent elsewhere.",
+   "src": "facts_y01 B: MAE 0.833 / 1.072 Nm, peak 6.05 / 19.0 Nm, median per-cell MAE/peak 13.1 % / 4.6 %."
+  },
+  {
+   "id": "c11_b09",
+   "chapter": "c11",
+   "vis": "Warning card: \"Showing R² < 0 as 0 hides how bad a cell is: JM at −0.078 rad has R² ≈ −54. The dashboard shows 0.00 by default.\"",
+   "text": "One warning about that zero floor: it hides how bad a cell really is. One of JM's cells has an R² of about minus 54, and with the dashboard's default setting it simply reads zero. The reason is a bug, which we will reach in the bugs section.",
+   "src": "facts_y01 C: JM −0.078 median R² −54.30."
+  },
+  {
+   "id": "c12_b01",
+   "chapter": "c12",
+   "vis": "Back to the opening plot (YES −0.486 rad, session 2, seed 1). Annotations appear one at a time, each with its own colour and position: the truth's spread as a band \"standard deviation 0.40 Nm\"; the average gap between the two curves \"offset +0.38 Nm\"; \"MAE 0.40 Nm\". A bracket joins offset and MAE: \"almost the same number\".",
+   "text": "Now we can solve the puzzle from the start. This is YES at minus 0.49 radians. The torque here barely moves. Its standard deviation, the typical distance from its own average, is just 0.4 newton metres. The prediction follows the pushes, but on average it sits 0.38 too high. Its typical miss, the MAE, is 0.40. Notice that the miss and the offset are almost the same number: nearly the whole error is the offset.",
+   "src": "y03 YES_minus0p486_seed1 (sd 0.397, bias +0.380, MAE 0.402; bias = mean(pred − key), prediction above)."
+  },
+  {
+   "id": "c12_b02",
+   "chapter": "c12",
+   "vis": "The green curve slides down until its average matches the truth; the two curves now overlap much better. New badge \"shape-only R² = 0.66\" next to the old \"R² = −0.26\". Small tag under it: \"= VAF 66 %, already printed by the old code\".",
+   "text": "Now slide the prediction down, until its average matches the truth. Nothing else changes. The R² of the shifted curve, the shape-only score, is 0.66, up from minus 0.26. So in this run the shape is decent, and what pushed the score below zero was mostly a constant offset: a wrong level. Last semester's code already computed this shape-only score, under the name VAF, and printed it next to every R².",
+   "src": "y03 r2_shape 0.657; y07 vaf (YES −0.486 seed 1 VAF 65.7 %, metrics.py vaf = 1 − var(e)/var(y))."
+  },
+  {
+   "id": "c12_b03",
+   "chapter": "c12",
+   "vis": "The rule in words: \"R² = shape-only R² − (offset ÷ spread)²\". The numbers drop in: 0.657 − (0.380 ÷ 0.397)² = 0.657 − 0.920 = −0.263. The penalty term is highlighted.",
+   "text": "There is a simple rule behind this. R² equals the shape-only score, minus a penalty. To get the penalty, divide the offset by the spread of the truth, and square it. Here the offset, 0.38, is almost as large as the spread, 0.4. So the ratio is nearly one, and the penalty is about 0.9. Take 0.9 away from 0.66, and you land below zero.",
+   "src": "y03 YES_minus0p486_seed1 penalty 0.920, identity residual 1e-16."
+  },
+  {
+   "id": "c12_b04",
+   "chapter": "c12",
+   "vis": "The same 0.38 Nm offset placed on a strong position whose truth has a spread of about 10 Nm: penalty (0.38 ÷ 10)² ≈ 0.0014, invisible. Side note: \"typical offset size: about half a Nm, at toes-down and elsewhere\".",
+   "text": "Put the same offset at a strong position, where the truth spreads by about ten newton metres, and the penalty is about a thousandth. Nobody would notice. That is why, apart from the JM bug cell, negative R² shows up almost only at toes-down. The offsets there are not bigger: about half a newton metre, just like everywhere else. What is smaller is the spread.",
+   "src": "fact-check c12_b04 (per-run median |bias| 0.575 toes-down vs 0.579 other; 26 negative runs: 15 toes-down, 10 JM −0.078, 1 JM −0.36)."
+  },
+  {
+   "id": "c12_b05",
+   "chapter": "c12",
+   "vis": "Bar per toes-down cell (12 cells), the shortfall from a perfect score (1 − R²) split into \"offset\" and \"shape\" parts. Summary: \"typical toes-down run: offset ≈ half of the shortfall · elsewhere ≈ a fifth (JM bug aside)\". Then: \"remove the offsets: toes-down median 0.77 → 0.91\".",
+   "text": "Now look at how far R² falls short of a perfect one, in every run. In a typical toes-down run, the constant offset accounts for about half of that shortfall. At the other positions, leaving aside the JM bug, it is about a fifth. And if you removed the offsets, the toes-down median would go from 0.77 to about 0.91.",
+   "src": "facts_y01 D (median per run 0.547 toes-down, 0.208 other, runs with R² > −5); B shape-only R² toes-down 0.910 vs 0.769."
+  },
+  {
+   "id": "c12_b06",
+   "chapter": "c12",
+   "vis": "Honesty card: \"Offset is the biggest problem, not the only one.\" Three cells with their shape-only R² (medians over seeds): YES −0.486 0.42, JM −0.644 0.59, EG −0.739 0.69. Under EG \"push size too big (×1.5)\", under JM \"too small (×0.4)\", under YES \"part of the wiggle not followed\". Note: \"timing right: best lag ≤ 0.03 s\".",
+   "text": "But to be fair, offset is not the whole story. At the three worst toes-down cells, even the shape-only score is only between 0.42 and 0.69. The predictions rise and fall with the pushes, with essentially no time lag. But for EG and JM, the size of each push is off: too big for EG, too small for JM. And for YES, part of the wiggle is simply not followed. Offset is the biggest problem, not the only one.",
+   "src": "facts_y01 C (0.416, 0.590, 0.690); fact-check c12_b06 (slopes EG 1.46, JM 0.40, YES ≈ 1.0; 02_diagnostics_tables.md lag −2…+3 samples)."
+  },
+  {
+   "id": "c12_b07",
+   "chapter": "c12",
+   "vis": "Per toes-down cell, two bars of error (RMSE, Nm): grey \"guess: session 1's average at this position, no EMG\" and green \"baseline LSTM (median of 10 seeds)\". Highlights: HM −0.789 (0.77 vs 0.40), EG −0.739 (2.07 vs 1.94), YES −0.486 (0.47 vs 0.51: the grey bar is lower). Caption: \"a guess the model could have made\".",
+   "text": "Here is a fairer reference than the lazy guess: one the model could actually have made. At each position, predict session 1's average active torque there, with no EMG at all. The baseline beats that guess clearly at most positions: at HM's most toes-down position, its typical error is 0.40 newton metres, against 0.77. At EG's, it is only a little better: 1.94 against 2.07. And at YES's, the constant guess wins: 0.47 against 0.51. At those cells, across sessions, the EMG adds little or nothing.",
+   "src": "y07 ref (REF_train_mean, score.py:117-131, passive_trial key; R² median −0.01; RMSE vs X00 10-seed median: HM −0.789 0.774 / 0.400, EG −0.739 2.067 / 1.942, YES −0.486 0.466 / 0.515; REF also better at JM −0.078)."
+  },
+  {
+   "id": "c12_b08",
+   "chapter": "c12",
+   "vis": "JM at −0.078 rad (seed 0): the prediction has a reasonable shape but sits far below the truth. Labels \"seed 0: offset −12.6 Nm · R² −55.6 (median of 10 seeds: −54)\", \"pushes peak at ≈ 5 Nm\". Sticker: \"a bug → bugs section\".",
+   "text": "And the most extreme example of all is that JM cell, with an R² of about minus 54. Its prediction has a reasonable shape, but it sits about twelve and a half newton metres too low, at a position where the pushes peak at only about five. That one is not a modelling problem. It is a bug, and we will get to it in the bugs section.",
+   "src": "y03 JM_minus0p078_seed0 (bias −12.59, R² −55.6, shape-only 0.856, peak 5.14); median over seeds −54.3, bias −12.40."
+  },
+  {
+   "id": "c13_b01",
+   "chapter": "c13",
+   "vis": "Cartoon of overfitting: a wiggly curve threading every training point exactly, then missing new points from the same source. Caption: \"memorising instead of learning\".",
+   "text": "A question we get every week: is the model overfitting? Overfitting means the model memorises its training data, including its noise, instead of learning the general relationship. The tell-tale sign is a gap: excellent on the data it trained on, and much worse on similar data it has not seen.",
+   "src": "—"
+  },
+  {
+   "id": "c13_b02",
+   "chapter": "c13",
+   "vis": "Three bars of MAE at the kept epoch, dropout off (rebuilt copy X00f, seed 0, median over the 6 people): fit 0.58 Nm, validation 0.59 Nm, test (session 2) 1.18 Nm. Label \"rebuilt copy · one seed per person\".",
+   "text": "So let us measure three errors, at the epoch the model keeps, with dropout off. These come from the rebuilt copy of the baseline, which logs all three, one seed per person. On the fit windows, the typical miss is 0.58 newton metres. On the validation windows, which the model never trained on, it is 0.59. Almost the same. On session 2, the test, it is 1.18: about twice as large.",
+   "src": "y04 kept_x00f_median_mae_fit_val_test [0.576, 0.594, 1.184]; facts_y01 E."
+  },
+  {
+   "id": "c13_b03",
+   "chapter": "c13",
+   "vis": "The three bars with two brackets: fit ≈ validation \"not memorising individual windows\"; validation → test \"the drop happens between sessions\" labelled \"session shift\". A faint note on the validation bar: \"shares session 1's moment, passive table, angles\".",
+   "text": "Fit and validation are nearly equal, so the model is not memorising individual windows. But validation is just the end of the same trials. It shares everything specific to that moment of session 1: the electrode contact, the passive table, the angle of each trial. So if the model had learned session 1's quirks, validation could not tell. What we can say is that the big drop comes only with session 2. Something changes between sessions, and the model was never shown that change.",
+   "src": "facts_y01 E (val/fit 0.96–1.15); learning_curves.py docstring."
+  },
+  {
+   "id": "c13_b04",
+   "chapter": "c13",
+   "vis": "Per-person bars \"test error ÷ validation error\": JM 6.0 (flag \"inflated by the passive-table bug\"), EG 2.1, IES 1.9, HM 1.7, YES 1.4, CH 1.2; a dashed line at 1.",
+   "text": "This holds for all six people. The test error is larger than the validation error for every one of them: from 1.2 times for CH, to 6 times for JM, whose number is inflated by the bug we keep promising.",
+   "src": "y04 display ratios_test_over_val (CH 1.19, EG 2.06, HM 1.67, IES 1.85, JM 5.99, YES 1.36)."
+  },
+  {
+   "id": "c13_b05",
+   "chapter": "c13",
+   "vis": "Small multiples, one per cell: EG −0.739, IES −0.591, HM −0.789, YES −0.486; each with three R² bars \"fit · validation · test\" (X00f seed 0): EG 0.97 / 0.97 / 0.01; IES 0.96 / 0.96 / 0.16; HM 0.93 / 0.96 / 0.86; YES 0.86 / 0.60 / −0.52. Caption: \"one run of the rebuilt copy\".",
+   "text": "Look at the toes-down cells on their own, and the picture gets sharper. At EG's most toes-down position, the kept model scores an R² of 0.97 on session 1's held-back seconds, and 0.01 on session 2. For IES, 0.96, then 0.16. For HM, 0.96, then 0.86. So the small spread at toes-down is not, by itself, what makes the scores bad: inside session 1, the same positions score well. It magnifies whatever goes wrong when the session changes. YES at minus 0.49 radians is the exception: it already drops to 0.60 within session 1.",
+   "src": "y07 per_trial (X00f seed 0 final_per_trial: EG 0.971 / 0.975 / 0.006; IES 0.964 / 0.957 / 0.158; HM 0.930 / 0.959 / 0.858; YES 0.863 / 0.596 / −0.518)."
+  },
+  {
+   "id": "c13_b06",
+   "chapter": "c13",
+   "vis": "Learning curves for EG (X00f seed 0) with three lines over the epochs: fit, validation, test MAE; star at the kept epoch (10); a small marker where the test error was lowest (epoch 3).",
+   "text": "You can see it over the epochs, too. Here is EG. Fit and validation fall together, while the test sits well above them the whole time. In five of the six people, the test error was lowest at an earlier epoch than the one kept, usually only a few percent lower, but for IES about a quarter lower. We cannot choose the epoch using the test, of course: that would let the test shape the model. It only hints that validation is a poor guide to session 2.",
+   "src": "y04 x00f_EG_* (best 10, test-min epoch 3; test/val 1.6–2.5 at every epoch); facts_y01 E (IES test 0.90 at epoch 25 vs 1.17 at kept epoch 46; YES the exception)."
+  },
+  {
+   "id": "c13_b07",
+   "chapter": "c13",
+   "vis": "Side panel: \"loss printed during training (dropout on) vs real fit error (dropout off), at the kept epoch: 4.6 to 11.6 times larger\". Small bars for HM 4.6× and CH 11.6×.",
+   "text": "A practical tip. If you open a training log, the training loss printed there is measured with dropout on. For this tiny network, that makes it about five to twelve times larger than the real fit error. So a training loss far above the validation loss is not a warning sign. It is dropout.",
+   "src": "y07 dropout_loss (keras_loss / mse_fit at the kept epoch: CH 11.6, EG 5.5, HM 4.6, IES 6.4, JM 6.4, YES 7.4)."
+  },
+  {
+   "id": "c13_b08",
+   "chapter": "c13",
+   "vis": "Toes-down MAE bars (YES + EG, 2 seeds, dashboard format): dropout 0: 1.11, 0.1: 1.35, 0.3 \"rebuilt baseline\": 0.93, 0.5: 1.25 Nm. Closing statement: \"Within session 1: no general sign of overfitting. Across sessions: no transfer, and validation cannot see it.\"",
+   "text": "One more piece of evidence. If overfitting were the problem, more dropout should help. On two people and two seeds, raising dropout to 0.5, or lowering it to 0 or 0.1, made the toes-down error in newton metres larger, not smaller, while the R² only moved around within the seed noise. A small test, but it points the same way. Within session 1, there is no general sign of overfitting. Across sessions, the model fails to transfer, and our validation set cannot see that.",
+   "src": "y06 display dropout toes-down MAE 1.11 / 1.35 / 0.93 / 1.25; stageA_X02a-c reports (matched seeds 0–1, mean R² 0.344 → 0.17 / 0.16 / 0.17)."
+  },
+  {
+   "id": "c14_b01",
+   "chapter": "c14",
+   "vis": "Scatter of all 48 cells: x = standard deviation of the true torque (log scale, Nm), y = baseline R² (median over seeds, axis clipped at −1, JM −0.078 drawn as an arrow off the bottom); toes-down cells highlighted. Title: \"five reasons\".",
+   "text": "Let us gather the reasons the baseline struggles at toes-down. There are five. First, a picture. Every dot here is one cell, with the spread of its true torque along the bottom, and its R² up the side. The low scores cluster on the left, where there is little to predict.",
+   "src": "y03 sd_truth, r2_med (Spearman 0.82, scatter_summary)."
+  },
+  {
+   "id": "c14_b02",
+   "chapter": "c14",
+   "vis": "Reason 1 card \"Little to predict\". Spreads of the true torque: YES −0.486 0.40 Nm, JM −0.787 0.60, EG −0.739 2.1 · typical other position ≈ 7 Nm · each person's strongest ≈ 12 Nm (3–28). Inset: the ankle with the toes down, calf drawn short: \"short muscle → weak: a maximum effort here reaches only 15–28 % of the person's peak\".",
+   "text": "Reason one: there is very little to predict. At the toes-down positions with the smallest pushes, the torque spreads by under a newton metre, and at EG's worst by about two. At a typical other position, the spread is about seven, and at each person's strongest position about twelve, up to twenty-eight for CH. With the toes down, the calf muscles are already short, and a short muscle produces much less force. Small pushes also mean small EMG signals, closer to the noise. As we just saw, this does not break the model inside session 1. It makes every later error look much bigger.",
+   "src": "y03 sd_truth (YES 0.397, JM −0.787 0.601, EG −0.739 2.062; other cells median 7.0, quartiles 4.2–12.3; per-person strongest 11.8–28.3); notes/dorsiflexion_investigation.md:14-15 (active insufficiency, MVC 15–28 % of peak)."
+  },
+  {
+   "id": "c14_b03",
+   "chapter": "c14",
+   "vis": "Reason 2 card \"The answer key has offsets\". YES −0.49 rad, session 1: measured torque over the trial with the passive-table value (dashed, 7.9 Nm) and the relaxed level between pushes (solid, ≈ 6.5 Nm, median of the rest stretches); the gap highlighted. Bullet: \"table above the relaxed level in 20 of 20 toes-down trials: typically ≈ 0.6 Nm, up to 2 Nm\".",
+   "text": "Reason two: the answer key itself carries offsets. Remember, the passive torque is measured in a separate trial. But the relaxed level between pushes, inside the active trial, is not the same number. At the toes-down positions, the table was above the relaxed level in all twenty trials checked, typically by about 0.6 newton metres, and by up to 2.",
+   "src": "y05 c_yes_m049 (S1 table 7.9, relaxed ≈ 6.35–6.50 Nm); answer_key_review_summary.md §3 (20 of 20, median +0.64, max +2.03 Nm); 00_audit.md §6 item 2."
+  },
+  {
+   "id": "c14_b04",
+   "chapter": "c14",
+   "vis": "The same plot for session 2 beside it: table 10.6 Nm, relaxed level ≈ 8.6 Nm. Gap labels: \"1.4 Nm (session 1)\" vs \"2.0 Nm (session 2)\". Result line: \"the answer key's resting level moves by ≈ 0.6 Nm between sessions · the active torque spreads by 0.4\".",
+   "text": "And the mismatch differs between sessions. For YES at minus 0.49 radians, the passive hold went from 7.9 newton metres in session 1 to 10.6 in session 2, and the table overshoots the relaxed level by about 1.4 in session 1, and 2 in session 2. So the answer key's resting level moves by more than half a newton metre between sessions, while the active torque there spreads by only 0.4. A model that learned session 1's level is bound to sit at the wrong height. And the relaxed level even drifts within a trial.",
+   "src": "y05 display yes_m049 (table 7.9 / 10.6, relaxed 6.35 / 8.59, table − relaxed 1.38 / 2.00); notes M1/M2 (rest-level shift ≈ 0.7 Nm, drift within a trial)."
+  },
+  {
+   "id": "c14_b05",
+   "chapter": "c14",
+   "vis": "Dot plot over the 12 toes-down cells: x = \"how far the true average moved between sessions\" (Nm), y = \"model offset\" (median of 10 seeds). A diagonal line \"offset fully explained by the move\". YES −0.486 (+0.25, +0.41) near it; EG −0.739 (−0.15, −1.57), EG −0.598 (+0.10, −1.26), IES −0.591 (+0.04, −1.49), IES −0.484 (+0.06, −1.34) far from it.",
+   "text": "But the answer key does not explain every offset. Compare the model's offset with how far the true average actually moved between sessions. At YES, it moved by a quarter of a newton metre, and the model is 0.4 off: the key explains a good part. But at EG's two toes-down positions, the true average moved by 0.15 or less, and the model is 1.3 to 1.6 too low. IES has no passive subtraction at all, and is still about 1.3 to 1.5 off. There, the offset comes from the model itself, reacting to session-2 inputs that changed. Which brings us to reason three.",
+   "src": "y07 shift (s1_minus_s2_mean vs median bias: YES −0.486 +0.245 / +0.411; EG −0.739 −0.146 / −1.572; EG −0.598 +0.102 / −1.260; IES −0.591 +0.039 / −1.488; IES −0.484 +0.060 / −1.339)."
+  },
+  {
+   "id": "c14_b06",
+   "chapter": "c14",
+   "vis": "Reason 3 card \"The EMG changes size between sessions\", with the JM bars from chapter 5 (GM 0.36, GL 0.83, soleus 0.38). \"Dividing by session 1's maximum cannot correct this.\" Small: \"JM's predicted pushes are too small: ×0.7 at −0.36 rad, ×0.4 at −0.64 rad\".",
+   "text": "Reason three: the EMG changes size between sessions, as we saw for JM, and dividing by session 1's maximum cannot correct that. When a muscle reads weaker in session 2, the model under-predicts the push. JM's predicted pushes come out at about 0.7 and 0.4 times their true size at two of its weak positions.",
+   "src": "facts_x03 size_ratio; fact-check c12_b06 / confirmed (slopes JM −0.36 0.70, JM −0.644 0.40, X00 10 seeds)."
+  },
+  {
+   "id": "c14_b07",
+   "chapter": "c14",
+   "vis": "Reason 4 card \"The loss is dominated by strong positions\": YES's loss pie from chapter 10 (≈ 1 % / ≈ 3 % vs an equal 25 %).",
+   "text": "Reason four: the loss is in newton metres squared, so the strong positions dominate it. For YES, the two most toes-down positions hold about one percent of the push variation, and about three percent of the remaining error. The network spends its tiny capacity where the loss is, and the weak positions get whatever is left.",
+   "src": "as c10_b07."
+  },
+  {
+   "id": "c14_b08",
+   "chapter": "c14",
+   "vis": "\"Checked and ruled out\" card with three ticks: \"predictions line up in time with the truth (best shift ≤ 0.03 s at toes-down)\"; \"not reading torque from tiny angle-sensor movements (angle → fixed set value: strong positions unchanged, earlier screening setup)\"; \"training does not fail (every run converges and stops normally)\".",
+   "text": "For completeness, three things were checked and ruled out. Timing: the predictions line up with the truth to within a few hundredths of a second. The angle sensor: it moves slightly as people push, but in an earlier screening setup, replacing the measured angle with its fixed set value left the strong positions unchanged, for YES, HM and EG, so the network is not reading torque from it. And training does not fail: every baseline run converges, and stops normally.",
+   "src": "02_diagnostics_tables.md lag column (toes-down −2…+3 samples); notes 'Not a cause (tested)' (fast protocol, batch 64, 3 seeds); y04 x00_runs."
+  },
+  {
+   "id": "c14_b09",
+   "chapter": "c14",
+   "vis": "Reason 5 card \"Data problems for specific people\": JM's passive table, IES's total-torque target, YES's hand-typed values → \"next chapter\".",
+   "text": "Reason five: a few data problems, which hit specific people. Those deserve their own chapter.",
+   "src": "—"
+  },
+  {
+   "id": "c15_b01",
+   "chapter": "c15",
+   "vis": "JM's session-1 passive trial #21 at −0.078 rad: 90 s of angle (flat, grey) and torque. First 20 s: a flat relaxed hold at −1.8 Nm. Then 70 s of large swings (10-s block means 12–27 Nm) while the angle stays put. Label on the swings: \"not relaxed\".",
+   "text": "The biggest bug is in JM's passive table. Here is a passive trial at about minus 0.08 radians, the same position as the JM cell we saw. The first twenty seconds are a proper relaxed hold, at minus 1.8 newton metres. Then, for seventy seconds, the torque swings wildly, while the angle stays put. Whatever was happening there, the person was not relaxed.",
+   "src": "y05 a_jm (#21 'passive at p7, test': hold −1.83 Nm, block means 11.8–26.6 Nm after 20 s, angle range 3.3 mrad)."
+  },
+  {
+   "id": "c15_b02",
+   "chapter": "c15",
+   "vis": "Side by side: an EG passive trial (an angle step after the hold, the code cuts there, the later piece is rejected \"SD 39.8 > 20\") and JM's trial (no angle step, no cut, one piece: \"SD 14.6 ≤ 20, average 15.6 ≤ 20 → accepted\"). Comparison strip: \"real relaxed holds: SD 0.015–0.70 Nm, typically 0.05\". Tag: \"average limit: 10 Nm in git → 20 Nm in the working copy · SD limit 20 in both\".",
+   "text": "Why did the code not throw this part away? It cuts each passive trial wherever the angle jumps, then rejects any piece whose torque has a standard deviation above 20 newton metres, or an average beyond 20. Usually the move after the hold makes a jump, and the later part is cut off and rejected. This JM trial has no jump, so it stays in one piece, and its swings were just small enough to pass. A real relaxed hold varies by a few hundredths of a newton metre, so those limits are dozens to hundreds of times too loose. In the git version of the code, the limit on the average was 10, which would have rejected this trial, though not the other bad piece we are about to see. In the working copy that was run, it is 20.",
+   "src": "dataset_builder.py:130-134, 137-229 (split at > 5 rad/s jumps; std ≤ 20, |mean| ≤ 20); facts_x04 eg_pieces (later piece SD 39.8, keep False); y05 b_static_hold_sd (0.015–0.704, median 0.049); 00_audit.md §5 item 1 (10 → 20 Nm)."
+  },
+  {
+   "id": "c15_b03",
+   "chapter": "c15",
+   "vis": "JM's session-1 passive table: legacy (with a spike to +11.7 Nm near −0.07 rad) vs clean (≈ −2 Nm, interpolated). Note: \"+11.7 = this trial averaged with the non-relaxed second half of another passive trial\".",
+   "text": "This trial passed, and so did the second half of another passive trial, which was not relaxed either. Averaged together, they put JM's table at plus 11.7 newton metres near this position, where the relaxed value is about minus 2.",
+   "src": "y05 display jm_legacy_entry_S1_S2 [11.72, 10.75]; fact-check c15_b02 (#21 + #15 second segment, −0.065 rad, +7.83 Nm)."
+  },
+  {
+   "id": "c15_b04",
+   "chapter": "c15",
+   "vis": "Consequence panel: \"training targets at this position shifted by 13.2 Nm · session-2 targets by 11.7 Nm\". Two dot strips for the ten seeds: \"against its own (buggy) targets: median R² 0.38, 3 of 10 below zero (lowest −8.5)\" and \"against the clean answer key: every seed −45 to −58 (median −54)\". Lesson banner: \"Grading against labels built like the training labels can hide a labelling error.\"",
+   "text": "The result: JM's training targets at that position are shifted by 13.2 newton metres, and the session-2 targets by 11.7. Both are wrong in nearly the same way, so the old code, which scored the model against its own targets, often saw an acceptable score: a median R² of 0.38 over the ten seeds, though three were negative. Against a clean answer key, every seed is hugely negative: between about minus 45 and minus 58. The lesson: grading a model against labels built the same way as its training labels can hide a labelling error.",
+   "src": "y05 display jm_p7_legacy_vs_static (13.22 / 11.68); y07 own_target (per seed 0.55, −8.47, 0.56, −2.51, 0.52, −0.12, 0.31, 0.39, 0.70, 0.37; median 0.38); facts_y01 C (−54.30)."
+  },
+  {
+   "id": "c15_b05",
+   "chapter": "c15",
+   "vis": "Checklist \"already met\": \"no random seed: runs not reproducible [high]\"; \"IES target = total torque [medium]\"; \"validation = end of the same trials, no gap [medium]\"; \"filters use the future: offline only [medium]\".",
+   "text": "Here are the other issues. Four we have already met. No random seed, so last semester's runs cannot be reproduced. The target for IES is the total torque. Validation is the end of the same trials, with no gap. And the filters use the future, so everything is offline.",
+   "src": "baseline_code issues list."
+  },
+  {
+   "id": "c15_b06",
+   "chapter": "c15",
+   "vis": "Checklist \"smaller\": \"each muscle's scale = one sample, sometimes from validation [low]\"; \"the downsampling filter wobbles at the end of each trial [low]\"; \"only 8 angles: the angle input can act as a trial label [low]\"; \"CH, −0.33 rad: pulled the toes up in session 1, pushed them down in session 2 [low]\".",
+   "text": "And four smaller ones. Each muscle's scale comes from one single sample, sometimes from the validation part. The downsampling filter wobbles at the very end of each trial, nudging the last few targets. With only eight angles, the angle input works like a label for the trial, so the network can learn a separate offset per angle, which can quietly absorb passive-table errors. And at about minus 0.33 radians, CH pulled the toes up in session 1 but pushed them down in session 2. A guess from session 1's average scores minus 5 there, the baseline 0.92: so the network really is reading the muscles.",
+   "src": "baseline_code issues (max sample; decimation edge ringing; angle as trial identifier); notes 'CH protocol flip'; y07 ch_flip (REF R² −5.10, X00 median 0.924)."
+  },
+  {
+   "id": "c15_b07",
+   "chapter": "c15",
+   "vis": "Housekeeping card: \"The code in git cannot have produced last semester's results (it handles only 2 people) · the baseline uses the uncommitted working copy · needs confirming\"; \"Comments that do not match the code (e.g. 'passive matched by position tags': the tags are never used)\"; \"YES: trial numbers typed into the code; labels mixed up both ways in the file\".",
+   "text": "Then some housekeeping. The code in git cannot have produced last semester's results: it only handles two people. The baseline uses the uncommitted copy that was on disk, and we still need confirmation that this is what was run. Several comments describe things the code does not do: for example, passive values are said to be matched by position tags, which are never used. And for YES, the trial numbers are typed in by hand, because the file's labels are mixed up both ways: some pushing trials are labelled passive, and some non-pushing trials look like pushes.",
+   "src": "00_audit.md §5 item 1, lines 61-64; dataset_builder.py:22-23 vs classify_trials; config.py:29-36; dataset_builder.py:590-609."
+  },
+  {
+   "id": "c15_b08",
+   "chapter": "c15",
+   "vis": "Reporting card: \"Showing R² < 0 as 0 hides failures\"; \"Two baselines: frozen code (X00) and its rebuild (X00f) give different numbers\"; \"Documents summarise differently (floor at −1, at 0, or none)\". Footer: \"When you quote a number: which baseline? which seeds? which summary?\"",
+   "text": "Last, the reporting. Showing negative R² as zero hides the worst cells. There are two versions of the baseline, the frozen code and its rebuild in the newer code. They give different numbers, partly because training is chaotic, and partly because they were run with different seeds: ten for the frozen code, three for the rebuild. And different documents summarise in different ways. When someone quotes a number, it is worth asking: which baseline, which seeds, and which summary?",
+   "src": "reports issues 'Two baselines and two NRMSE definitions'; presentation_metrics floor; fact-check confirmed (floors at −1, 0 or none)."
+  },
+  {
+   "id": "c16_b01",
+   "chapter": "c16",
+   "vis": "Section title \"Potential techniques\". Three cards: \"auto-gain → the EMG changes size\", \"equal weight per position → the loss ignores weak positions\", \"longer window → too little context\". Under the title, four questions: \"What problem? How? Why might it work? Is it cheating?\"",
+   "text": "That was the baseline. Now, the potential techniques: changes we tried this semester, to address those problems. There are three: auto-gain, equal weight per position, and a longer window. For each one, we will ask four questions. What problem does it solve? How does it work? Why might it help? And could it be cheating? By cheating we mean: does it let information from the test session sneak into the model?",
+   "src": "—"
+  },
+  {
+   "id": "c16_b02",
+   "chapter": "c16",
+   "vis": "The JM size bars from chapter 5 again: \"same push, different EMG size\". A small radio icon with a volume knob turning itself.",
+   "text": "First, auto-gain, the code's adaptive gain control: like a radio that adjusts its own volume. The problem it targets is the one we saw for JM: the same push gives a smaller or larger EMG in session 2, and a fixed session-1 scale cannot follow that.",
+   "src": "—"
+  },
+  {
+   "id": "c16_b03",
+   "chapter": "c16",
+   "vis": "JM's session-2 soleus envelope (−0.36 rad) with two running lines drawn over it as time advances: a \"floor\" (low percentile of the last 20 s) and a \"top\" (high percentile of the last 45 s), both stepping every 0.5 s. A look-back bracket shows they only use the past. Then the rescaled signal: floor → 0, top → 1. Note: \"applied to every trial, training trials included\".",
+   "text": "The idea is simple. For each muscle, the code keeps a running estimate of two levels, looking only backwards in time. A floor, what the muscle reads when quiet: a low point of the last twenty seconds. And a top, what it reads during strong pushes: a high point of the last forty-five seconds. Every half second, both are updated, and the signal is rescaled so the floor maps to zero and the top to one. This is done to every trial, training trials included, so the network also learns on rescaled signals.",
+   "src": "emg_agc.py:25-33, 36-51, 94-105 (10th percentile / 20 s, 95th / 45 s, every 0.5 s); emg_norm.py agc applied to every trial; x03.npz jm_lo, jm_top, jm_agc."
+  },
+  {
+   "id": "c16_b04",
+   "chapter": "c16",
+   "vis": "The start of a trial: a curve of the weight given to the trial's own data, rising to one half after 5 s and levelling off at 0.8–0.9; the rest comes from session-1 values. Three safeguard icons: \"minimum range (a nearly silent muscle is not blown up)\", \"clip to 0–2\", \"spikes replaced by the last good value\".",
+   "text": "At the start of a trial there is no history yet, so it starts from values learned in session 1. The trial's own data takes half the weight after about five seconds, and levels off at eighty to ninety percent, so session 1 always keeps a small share. A few safeguards stop it going wild: a minimum range, so a nearly silent muscle is not blown up, a clip between zero and two, and spikes replaced by the last good value.",
+   "src": "emg_agc.py:27-29, 43-50, 55 (w = n/(n+500), windows 20/45 s); facts_x03 jm_example w_lo 0.80, w_hi 0.82; x03 w_n, w; RMIN 0.35 × prior range, clip 0–2, despike."
+  },
+  {
+   "id": "c16_b05",
+   "chapter": "c16",
+   "vis": "JM −0.36 bars, before → after auto-gain: GM 0.36 → 0.91, GL 0.83 → 1.04, soleus 0.38 → 0.98. Then a summary over 5 people, calf muscles only: \"cases off by more than a quarter: 32 % → 18 % (all positions), 53 % → 30 % (toes-down)\", small note \"separate check, last week's settings\".",
+   "text": "Does it fix the size problem? For JM at minus 0.36 radians, session 2's sizes for GM, GL and the soleus go from 0.36, 0.83 and 0.38 of session 1, to 0.91, 1.04 and 0.98. Across five people, looking at the three calf muscles, the share of cases where the session-2 size is off by more than a quarter falls from 32 percent to 18 over all positions, and from 53 percent to 30 at toes-down.",
+   "src": "facts_x03 size ratios (after auto-gain 0.91 / 1.04 / 0.98); weekly_update_2026-10-27 README:55-56 and scripts/agc_summary.py (GM/GL/SOL, |log2 ratio| > log2 1.25, last week's pipeline settings)."
+  },
+  {
+   "id": "c16_b06",
+   "chapter": "c16",
+   "vis": "\"Is it cheating?\" checklist: \"uses only the past EMG of the trial being predicted ✓\", \"never uses torque from session 2 ✓\", \"starting values from session 1's fit part only ✓\", \"on/off decision uses session-1 torque only ✓\". Caveat line: \"the envelope underneath still uses the future → offline\".",
+   "text": "Is it cheating? No, as far as the code audit could tell. At test time it uses only the past EMG of the trial being predicted, never any torque from session 2, and its starting values come only from session 1's fit part. A real device could do the same, with one catch: the envelope underneath still uses the forward-backward filters, so it all stays offline until those are replaced.",
+   "src": "emg_norm.py:106 (priors from the training part), 141-151 (push directions from training torque); code_audit_2026-10-24.md (no leakage); emg_agc.py:19-20 vs emg_envelope.py:130, 137."
+  },
+  {
+   "id": "c16_b07",
+   "chapter": "c16",
+   "vis": "CH's session-1 push directions as arrows up and down (+18, −55, +16, −32 … Nm): \"pushes both ways → auto-gain off\". Note: \"rule designed after seeing CH fail\".",
+   "text": "It is switched off for one person, CH, who pushes in both directions. For someone who pushes both ways, the network probably needs the real size of each muscle's signal to tell which muscle, calf or shin, is doing the work, and auto-gain, which rescales every muscle to its own range, would erase that. The exact mechanism was never isolated. The rule that decides this uses only session-1 torque, but we designed it after seeing CH fail: a mild form of tuning on the test.",
+   "src": "facts_x03 per_subject CH push_directions; emg_norm.py:52, 96-102 (±2 Nm rule); techniques issue (E32 post-hoc)."
+  },
+  {
+   "id": "c16_b08",
+   "chapter": "c16",
+   "vis": "First four headline bars, auto-gain (X05) vs the rebuilt baseline (X00f), 6 people, seeds 0–2: toes-down R² 0.81 → 0.90, MAE 0.79 → 0.58 Nm. On the last sentence, per-person toes-down R² pairs appear: EG 0.42 → 0.93, JM 0.60 → 0.84, IES 0.68 → 0.90, YES 0.37 → 0.43, HM 0.84 → 0.84, CH unchanged (off).",
+   "text": "The result, against the rebuilt baseline with the same three seeds: the toes-down R² goes from 0.81 to 0.90, and the error from 0.79 to 0.58 newton metres. The other positions improve too. EG, JM and IES gain the most. YES and HM barely change, and CH is unchanged, because auto-gain is off for CH.",
+   "src": "y06 display X05 (0.81 → 0.90, 0.79 → 0.58; other 0.971 → 0.977, 1.01 → 0.74; per person); fact-check confirmed (CH X05 = X00f exactly)."
+  },
+  {
+   "id": "c16_b09",
+   "chapter": "c16",
+   "vis": "Caveat card: \"assumes a similar range of effort in both sessions\"; \"can amplify noise where a muscle barely activates: YES at −0.49 got worse (seeds 0.16, −1.44, −3.16 vs −0.52, 0.12, −1.36)\"; \"removes most size differences between positions → the angle has to carry the scale (our reading)\"; \"failed the pre-written rules (YES + EG): gain not clearly above the noise; reverse direction slightly worse\".",
+   "text": "The caveats. Auto-gain assumes a similar range of effort in both sessions: if someone pushed more gently in session 2, it would stretch those pushes back up. Where a muscle barely activates, it can amplify noise, the likely reason YES at minus 0.49 radians got worse. It also removes much of the size difference between strong and weak positions, so, in our reading, the angle has to tell the network how big a push is. And on the two screening people, YES and EG, it did not pass our pre-written rules: with three seeds the gain was not clearly above the noise, and learning from session 2 instead, their toes-down score got slightly worse.",
+   "src": "emg_norm.py:132-137; y06 yes_m486 X05 vs X00f seeds; stageB_X05_autogain.md (S1toS2 rule 4 ✘; S2toS1 0.649 → 0.587); FINAL_REPORT §3."
+  },
+  {
+   "id": "c17_b01",
+   "chapter": "c17",
+   "vis": "YES's loss pie again, strong positions dominating: \"problem: the loss ignores weak positions\". A naming note: \"dashboard: this alone = 'equal weight per position' · 'Balanced positions' = the final combined model\".",
+   "text": "Second: scaling each position by its spread, which the dashboard lists as equal weight per position. Careful with names: on the dashboard, balanced positions is the title of the final combined model, not of this change alone. The problem it targets is reason four: in the loss, the strong positions drown out the weak ones.",
+   "src": "dashboard_react/src/lib/experimentStory.ts:10, 13, 15 (X04 'Balance the ankle positions' / 'Equal weight per position'; D01 'Balanced positions')."
+  },
+  {
+   "id": "c17_b02",
+   "chapter": "c17",
+   "vis": "EG's eight training-target spreads as bars (≈ 2.0 Nm at the most toes-down position up to ≈ 12.9 Nm). Each target is divided by its position's bar; the network learns the scaled targets; at the end, predictions are multiplied back by the spread of the nearest training position. Footer: \"spread 6× bigger → about 40× more weight in squared error; after scaling, every position counts about equally\".",
+   "text": "How it works. For each position, compute the standard deviation of the training targets: how much the torque typically swings there. For EG, that runs from about 2 newton metres at the most toes-down position, to about 13 at the strongest. Divide every target by its position's number, train on those, and at the end, multiply the predictions back. Why does this matter? The loss squares the errors, so a spread six times bigger counts about forty times more. After this change, every position counts about equally.",
+   "src": "train.py:150-154, 183-184 (balance='scale', floor 0.1 Nm); facts_x05 sd 2.02 … 12.92 Nm, sd2_ratio_max_min 40.9."
+  },
+  {
+   "id": "c17_b03",
+   "chapter": "c17",
+   "vis": "\"Is it cheating?\" checklist: \"spreads computed from session 1's fit part only ✓\", \"at test, the multiplier is picked by the angle, which is already an input ✓\".",
+   "text": "Is it cheating? No. The standard deviations come only from the fit part of session 1, and at test time the multiplier is picked using the angle, which is already an input.",
+   "src": "train.py:144-150 (sd from y_tr; k_te from the snapped test angle)."
+  },
+  {
+   "id": "c17_b04",
+   "chapter": "c17",
+   "vis": "Result bars, equal weight (X04) vs X00f, seeds 0–2: toes-down R² 0.81 → 0.87, MAE 0.79 → 0.54 Nm. A red flag for JM: \"toes-down 0.60 → 0.47; at −0.36 rad 0.39 → 0.03\". Caveat: \"wrong levels in the labels stay wrong: JM bug cell ≈ −54, YES −0.49 still negative\".",
+   "text": "The result, against the same rebuilt baseline and seeds: toes-down R² from 0.81 to 0.87, and the error from 0.79 to 0.54 newton metres. But not for everyone. For JM, toes-down got worse, and one position collapsed from 0.39 to almost zero. And it cannot fix a wrong level in the labels: the JM cell with the passive-table bug still scores about minus 54, and YES at minus 0.49 radians stays negative.",
+   "src": "y06 display X04 (0.81 → 0.87, 0.79 → 0.54; JM 0.60 → 0.47; JM −0.36 0.39 → 0.03); fact-check c17_b04 (X04 JM −0.078 −54.2; YES −0.486 negative)."
+  },
+  {
+   "id": "c17_b05",
+   "chapter": "c17",
+   "vis": "Two cards titled \"Not techniques\". 1) \"Clean passive table: accept only still, steady holds → changes only JM's broken entry → a bug fix.\" 2) \"Retest passive table: session 2's own passive trials for session 2's answer key → only the answer key changes; the trained networks are identical; the baseline already did this.\"",
+   "text": "Two other changes are often listed as techniques, but are not. The clean passive table only accepts still, steady holds. It changes nothing but JM's broken entry, so it is a bug fix. And last week's retest passive table uses session 2's own passive trials for session 2's answer key. That changes the answer key, not the model: the trained networks are identical with and without it. The baseline already built its session-2 answer key that way.",
+   "src": "techniques facts §4–5; fact-check confirmed (clean = legacy except JM; retest table changes only retest targets; dataset_builder.py:687-708, 740-748)."
+  },
+  {
+   "id": "c17_b06",
+   "chapter": "c17",
+   "vis": "Combined candidate \"D01 = clean table + auto-gain + equal weight per position (the dashboard's 'Balanced positions'; identical C01 runs used for EG and YES)\" vs the baseline (X00), 10 seeds each: toes-down R² 0.77 → 0.94, MAE 0.83 → 0.44 Nm; other R² 0.97 → 0.98, MAE 1.07 → 0.67 Nm; toes-down seed spread 0.42 → 0.03.",
+   "text": "So we put the clean table, auto-gain and equal weight together. That gives our current candidate, D zero one, which the dashboard calls balanced positions. One more naming trap: the dashboard's description of it mentions only the clean table and equal weight, but the model does include auto-gain. Against the baseline, with ten seeds each, and using the identical C01 runs for EG and YES: the toes-down R² goes from 0.77 to 0.94. The error goes from 0.83 to 0.44 newton metres. And the seed spread at toes-down shrinks from 0.42 to 0.03.",
+   "src": "y06 display D01 vs X00 (0.769 → 0.937, 0.833 → 0.444; other 0.972 → 0.981, 1.072 → 0.667; spread 0.423 → 0.026); D01 folder has CH, HM, IES, JM only."
+  },
+  {
+   "id": "c17_b07",
+   "chapter": "c17",
+   "vis": "Caveat card: \"no single change passed the pre-written rules · chosen by judgment after seeing session-2 results · only IES and HM never used for any decision · YES at −0.49 got worse: −0.68 → −0.97, all 10 seeds below zero\".",
+   "text": "But be careful how you describe it. No single change passed the rules we wrote in advance. The combination was chosen by judgment, after looking at session-2 results for some of the same people, and only IES and HM never influenced a decision. And YES at minus 0.49 radians got worse, from about minus 0.68 with the baseline to about minus 0.97, with all ten seeds below zero.",
+   "src": "FINAL_REPORT §3–4; code_audit_2026-10-24.md finding 1 (only IES and HM unused); y06 yes_m486_c01_median_10 −0.97, yes_m486_x00_median_10 −0.684."
+  },
+  {
+   "id": "c17_b08",
+   "chapter": "c17",
+   "vis": "A fourth idea, tested on top of D01: a window box over an envelope showing one push cycle (pushes ≈ 4 s apart), first 20 samples wide (0.2 s: a short, almost straight piece), then growing to 50 samples (0.5 s: shows the start of the rise).",
+   "text": "One more idea, tested on top of D zero one: a longer window, 0.5 seconds instead of 0.2. The argument goes like this. The envelope is so smooth that 0.2 seconds of it is almost a straight line. It tells the network the current level and whether it is rising or falling, but little about the shape of the push. Half a second shows more of that shape.",
+   "src": "reasoning, not a measured result; EG pushes ≈ 90 s / 22 ≈ 4 s apart (facts_x01)."
+  },
+  {
+   "id": "c17_b09",
+   "chapter": "c17",
+   "vis": "Evidence panel: \"0.5 s on top of D01 (D02, 6 people, 3 seeds, one direction): toes-down MAE 0.45 → 0.40 Nm, R² 0.939 → 0.944\". \"0.4 s on the plain baseline (X06, YES + EG, 2 seeds): 3 of 4 toes-down cells worse, error up → dropped\". \"Last week's 0.5 s: chosen by looking at session-2 scores\".",
+   "text": "The evidence is modest. On top of D zero one, 0.5 seconds lowered the toes-down error from 0.45 to 0.40 newton metres, with almost no change in R², on three seeds and one direction only. On the plain baseline, a 0.4 second window made three of the four toes-down positions worse, and was dropped. And last week's 0.5 second choice was picked by looking at session-2 scores.",
+   "src": "y06 display D02 vs D01 (0.455 → 0.396, 0.939 → 0.944); stageA_X06_window_0.4s.md (1 of 4 cells improved, problematic R² 0.344 → −0.209); WINDOW50_VALIDATION.md, code_audit 'retrospective'."
+  },
+  {
+   "id": "c17_b10",
+   "chapter": "c17",
+   "vis": "\"Is it cheating?\" \"still looks only backwards ✓\", \"nothing from session 2 enters training ✓\". Then a softer warning sign: \"choosing a setting by its test score = selection bias: no leak into the model, but an optimistic score\".",
+   "text": "A longer window is not cheating in itself: it still only looks backwards, and nothing from session 2 enters training. But picking any setting because it scored best on the test session is a softer problem, called selection bias. Nothing leaks into the model, but the reported score is optimistic, because the choice was fitted to that test.",
+   "src": "techniques issue 'tuned on test-session results'."
+  },
+  {
+   "id": "c18_b01",
+   "chapter": "c18",
+   "vis": "Four paper cards: \"Zhang et al. 2022 · LSTM · hip, knee, ankle torque in walking, jumps, squats\"; \"Kim et al. 2020 · LSTM · wrist angle and torque\"; \"Zhang et al. 2019 · high-density EMG · elbow force\"; \"Ranaldi et al. 2022 · how to compute the EMG envelope\". Small note on the last: \"file name says 'Renaldi'\".",
+   "text": "Finally, the four papers our approach was based on. Two train LSTMs: Zhang and colleagues, 2022, predicting hip, knee and ankle torques, and Kim and colleagues, 2020, predicting wrist angle and torque. Two are about EMG processing: Zhang and colleagues, 2019, on high-density EMG for elbow force, and Ranaldi and colleagues, 2022, on how the envelope is computed.",
+   "src": "paper citations (scratchpad wf1 paper_*.md; PDFs)."
+  },
+  {
+   "id": "c18_b02",
+   "chapter": "c18",
+   "vis": "One row at a time at large size (earlier rows collapse to one-word labels down the left). Difference 1, \"sessions\": ours \"2 sessions: learn one, test the other\"; Kim 2020 \"a new 80 s phase after a 2-min break\"; Zhang 2022 \"held-back part of the same recordings, new people, new movements\"; Zhang 2019 \"other repetitions of the same trial\"; Ranaldi \"no model\". The row glows.",
+   "text": "Difference one, the most important: none of the four tests on a separate session. Kim comes closest, testing on a new eighty-second phase after a two-minute break. The others test on held-back parts of the same recordings, or, in Zhang 2022, also on new people and movements. Our two sessions are in the same visit too, but the EMG size and the passive levels still shift between them, and none of the papers studies that shift. So we should not expect to match their scores.",
+   "src": "Zhang 2022 pp.601-603; Kim 2020 p.3821 (80 s phases, 2-min breaks); Zhang 2019 p.1925 (within one trial); Ranaldi §2 (no model)."
+  },
+  {
+   "id": "c18_b03",
+   "chapter": "c18",
+   "vis": "Difference 2, \"target\": ours \"active = measured − passive table\"; Zhang 2022 \"total joint torque (motion capture + force plates)\"; Kim 2020 \"measured net torque\"; Zhang 2019 \"total force\"; Ranaldi \"no model\".",
+   "text": "Difference two: none subtracts a passive torque. The three modelling papers predict the total torque, or force, directly. Our subtraction, which brings the passive table and its offsets into the answer key, is our own design choice. The papers neither support it nor rule it out.",
+   "src": "Zhang 2022 p.601 (inverse dynamics); Kim 2020 p.3820 (net torque); Zhang 2019 p.1923 (total force); Ranaldi (no model)."
+  },
+  {
+   "id": "c18_b04",
+   "chapter": "c18",
+   "vis": "Difference 3, \"score\": ours \"R² per position (punishes offsets)\"; Zhang 2022 \"error per kg · error ÷ torque range\"; Kim 2020 \"variance accounted for (formula not given; usually ignores offsets)\"; Ranaldi \"correlation at the best lag (ignores offset and scale) + error after normalising\"; Zhang 2019 (next beat).",
+   "text": "Difference three: how performance is scored. Zhang 2022 reports the error per kilogram of body mass, and as a fraction of the torque range. Kim reports the variance accounted for, which usually ignores a constant offset. Ranaldi mainly uses correlation at the best time lag, which ignores both offset and scale.",
+   "src": "Zhang 2022 p.604; Kim 2020 p.3822 (VAF, formula not given); Ranaldi §2.3."
+  },
+  {
+   "id": "c18_b05",
+   "chapter": "c18",
+   "vis": "Two notes in the score row: Kim 2020 \"torque not scored in the zero-resistance condition: mostly noise\"; Zhang 2019 \"R² per force level: best method 0.93 at 60 % of maximum effort → 0.84 at 20 %\".",
+   "text": "Two more points on scoring. Kim did not score torque at all in the condition where it was meant to be zero, because what remained was mostly noise. Our toes-down positions are a milder version of that problem: real pushes, but small. And Zhang 2019 scored each force level separately, like our per-position R², and found R² falling as the force gets weaker, for every method: their best went from 0.93 at 60 percent of maximum effort, to 0.84 at 20 percent.",
+   "src": "Kim 2020 p.3822 (CASE 1 torque not evaluated); Zhang 2019 p.1926 (method 1 R² 0.932 / 0.901 / 0.840)."
+  },
+  {
+   "id": "c18_b06",
+   "chapter": "c18",
+   "vis": "Difference 4, \"network\": ours \"2 layers × 8 cells · dropout 0.3 · batch 8 · 0.2 s windows\"; Zhang 2022 \"2–4 layers × 50 cells · dropout 0.4 · batch 50 · input slices of only 5 time steps\"; Kim 2020 \"1 layer × 200 cells · dropout 0.5 · one participant: shuffling training data in short chunks hurt, mostly for the angle\"; Zhang 2019 \"a cubic polynomial, 4 numbers, fitted per person and force level\".",
+   "text": "Difference four: the network. Zhang 2022 used two to four layers of fifty cells, Kim one layer of two hundred; ours has two layers of eight. Zhang 2022 fed even shorter input slices than ours, five time steps each. Kim found, for one participant, that shuffling the training data in chunks of five seconds or less made predictions worse, mostly for the angle, which hints that longer context helps. And Zhang 2019 reached an R² of 0.84 to 0.93 with a four-number polynomial, but fitted per person and force level, and tested on repeats of the same trial.",
+   "src": "Zhang 2022 p.602 (Fig. 2 caption: five time steps; 50 units; dropout 0.4; batch 50); Kim 2020 pp.3820-3823 (200 units, dropout 0.5; Table 2 subject 3, CASE 3); Zhang 2019 pp.1924-1926 (cubic polynomial; train on 1 of 5 segments)."
+  },
+  {
+   "id": "c18_b07",
+   "chapter": "c18",
+   "vis": "Difference 5, \"envelope\": ours \"30–300 Hz · rectify · 2 Hz\"; Zhang 2022 \"30–300 Hz · rectify · 6 Hz\"; Zhang 2019 \"20–400 Hz · cut-off tuned per person and force level: 1–3 Hz, most often 1 Hz, the lowest allowed\"; Ranaldi \"25–450 Hz + 50 Hz notch · slow smoothing (200–500 ms) scored highest on their correlation measure, which favours smooth envelopes; an adaptive envelope was comparable\"; Kim \"size (RMS) + frequency-shape features over 100 ms\".",
+   "text": "Difference five: the EMG processing. Our band-pass matches Zhang 2022's, and our 2 hertz smoothing is in the usual range: Zhang 2022 used 6. Zhang 2019 tuned the smoothing per person and force level, and the best cut-off fell between 1 and 3 hertz, most often at 1, the lowest they allowed. Kim used different features: the signal's size, plus the shape of its frequency content. Unlike the size, that shape does not change when the whole signal is scaled, which could matter when the EMG changes size between sessions.",
+   "src": "Zhang 2022 p.601; Zhang 2019 p.1926, p.1929 (1–2.5 Hz at 20/40 %, 1–3 Hz at 60 %; 'left border of range as 1 Hz'); Ranaldi §2.2–3.3; Kim 2020 p.3820 (RMS + AR(6)); AR coefficients are unchanged by scaling (our observation)."
+  },
+  {
+   "id": "c18_b08",
+   "chapter": "c18",
+   "vis": "Row \"scaling\": ours \"÷ session-1 maximum, also applied to session 2\"; Zhang 2022 \"÷ maximum over all its trials (same recording as the test)\"; Zhang 2019 \"MVC only sets the target force levels\"; Kim \"none described\"; Ranaldi \"not described\". Side note: \"tried here earlier: ÷ MVC did worse than auto-gain\".",
+   "text": "And scaling. A textbook answer is to divide the EMG by a maximum-effort contraction, but none of the four papers does. Zhang 2022 divides by the largest value over all its trials, so in a single-session study, the scale comes from the recording being tested. Zhang 2019 uses maximum effort only to set target forces, and Kim describes no scaling. So the papers say nothing about keeping a scale fixed across sessions. We did try maximum-effort scaling in an earlier round: it did worse than auto-gain, which fits with our MVC trials being recorded only once.",
+   "src": "Zhang 2022 p.601; Zhang 2019 p.1922; Kim (normalisation not stated); round2_report.md §7 (E10 0.887, E11 0.904 vs E03 0.925, batch-64 protocol); emg_norm.py:229-242."
+  },
+  {
+   "id": "c18_b09",
+   "chapter": "c18",
+   "vis": "Two-column verdict card. \"Follows Zhang 2022 closely: LSTM on EMG envelopes + joint angle · same band-pass · squared-error loss · early stopping.\" \"Our own choices: passive subtraction · 8 cells · applying session 1's scale to session 2 (a problem none of the papers faced).\"",
+   "text": "So, does our method follow the literature? The honest answer has two halves. The general recipe follows Zhang 2022 closely: an LSTM on EMG envelopes and the joint angle, the same band-pass, a squared-error loss, early stopping. But the passive subtraction and the tiny network are our own choices. And applying session 1's scale to session 2 is a problem none of these papers faced, because none tested across sessions.",
+   "src": "Zhang 2022 pp.601-603; Kim 2020 p.3820 (inputs RMS + AR(6); outputs angle and torque)."
+  },
+  {
+   "id": "c18_b10",
+   "chapter": "c18",
+   "vis": "Zhang 2022's transfer-learning result as two bars: \"new person, no calibration: worst-case error ≈ 20 % of the range\" → \"pre-trained network, last layers replaced, retrained on that person's recordings (all layers gently adjusted): worst case ≈ 10 %\".",
+   "text": "One result from Zhang 2022 stands out. For a new person, with no calibration, their error reached up to about twenty percent of the torque range in the worst movements, roughly double the worst within-person error, much like our drop to session 2. They then took the network trained on other people, replaced its last layers, and retrained it on recordings from the new person, gently adjusting the other layers too. That brought the worst-case error down to about ten percent: the closest thing in these papers to a fix for our problem, though it needs labelled data from the new person.",
+   "src": "Zhang 2022 p.602 §II-C, pp.604-606 (UW-inter 21 %, SW-inter 19.5 %; UWT 10.1 %, UBT 9.9 %; intra 8.7 %)."
+  },
+  {
+   "id": "c19_b01",
+   "chapter": "c19",
+   "vis": "The whole pipeline as one line of icons: four EMG envelopes + angle → 0.2 s windows → small LSTM (2 × 8) → active torque (Nm). Below: \"learn session 1 → test session 2\".",
+   "text": "Let us sum up. The baseline turns four muscle signals into smooth envelopes. It cuts them, together with the angle, into windows a fifth of a second long, and trains a very small LSTM on session 1 to predict the active torque: the measured torque, minus a passive table. Then it is tested on session 2.",
+   "src": "—"
+  },
+  {
+   "id": "c19_b02",
+   "chapter": "c19",
+   "vis": "Summary bullets appearing one by one: \"other positions: R² 0.97\"; \"toes-down: R² 0.77, though the error in Nm is smaller there\"; \"little to predict → offsets are over half of the lost score\"; \"offsets come from the answer key (YES) and from the model reacting to changed EMG (EG, IES)\"; \"not overfitting session 1: a session shift that validation cannot see\"; \"at toes-down, the R² depends heavily on the seed\".",
+   "text": "At the thirty-six cells that are not toes-down, it works well, with an R² of 0.97. At toes-down it drops to 0.77, not because the errors are bigger in newton metres, but because there is so little to predict that small offsets are over half of the lost score. Those offsets come partly from the answer key, as for YES, and partly from the model reacting to changed session-2 EMG, as for EG and IES. Validation sees neither. The model is not overfitting session 1; it faces a different session. And at toes-down, R² depends heavily on the seed.",
+   "src": "facts_y01 B, D (0.547); y07 shift; chapters 11–14."
+  },
+  {
+   "id": "c19_b03",
+   "chapter": "c19",
+   "vis": "\"Next steps · how we measure\": \"1 · report MAE, offset and shape-only R² (VAF, already computed) next to R²; flag negative values\" · \"2 · compare against a guess the model could make: session 1's average per position\" · \"3 · many seeds: at least 5 (as the report says), ideally 10; fully repeatable runs\".",
+   "text": "Now, what to do next. Start with how we measure: it is cheap, and it changes how every result reads. Step one: for every cell, report the error in newton metres, the offset and the shape-only score, VAF, next to R², and flag negative values instead of hiding them. Step two: compare every cell against a guess the model could have made, like session 1's average at that position. Step three: use many seeds, at least five as our report recommends, ideally ten as here, and make runs fully repeatable.",
+   "src": "y07 vaf, ref; FINAL_REPORT.md:197-198 (5 or more seeds); paper_zhang_lstm / paper_zhang_hdsemg suggestions."
+  },
+  {
+   "id": "c19_b04",
+   "chapter": "c19",
+   "vis": "\"Next steps · the answer key and the data\": \"4 · confirm which code produced last semester's numbers\" · \"5 · a short relaxed hold right after each active trial\" · \"6 · try predicting the total torque, as the three modelling papers do\" · \"7 · a third session on a different day · fix the comparisons in advance · keep some people only for confirmation\".",
+   "text": "Then the answer key and the data. Step four: confirm which code produced last semester's numbers. Step five: record a short relaxed hold right after each active trial, so the passive value is measured within seconds of the pushes. Step six: try predicting the total torque, as the three modelling papers do, and check whether the offsets shrink. IES already uses the total torque and is still more than a newton metre off at toes-down, so this is a real test, not a sure fix. Step seven: record a third session on a different day, decide the comparisons before looking at the results, and keep some people aside purely for confirmation.",
+   "src": "00_audit.md open question; FINAL_REPORT.md:201 (short relaxed hold after each pushing trial; different-day session); paper_kim suggestion (net-torque A/B); memory: third session wanted."
+  },
+  {
+   "id": "c19_b05",
+   "chapter": "c19",
+   "vis": "\"Next steps · the model (1/2)\": \"8 · a clean within-session ceiling: a held-back block with a gap, never used for stopping\" · \"9 · fine-tune on a little labelled data from the new session (Zhang 2022's idea), e.g. the first 15–20 s of each trial (our choice); score only the rest\" · \"10 · sweep the envelope smoothing from below 1 Hz up to 6 Hz (Zhang 2019, Zhang 2022)\".",
+   "text": "And the model. Step eight: measure the within-session ceiling properly. Hold back a block of each trial, with a gap, never used to decide when to stop, and score it exactly like the test. Our validation numbers already suggest that most of the gap is the session change; this would confirm it cleanly. Step nine: borrow Zhang 2022's idea of fine-tuning on a little labelled data from the new session, say the first fifteen to twenty seconds of each trial, a choice of ours, scoring only the rest, and report it as a separate method. Step ten: sweep the envelope smoothing, from a little below one hertz up to six.",
+   "src": "paper_zhang_hdsemg / paper_kim suggestions (within-session ceiling); Zhang 2022 §II-C, II-E; Zhang 2019 p.1929 (optimum at the 1 Hz border); Zhang 2022 p.601 (6 Hz)."
+  },
+  {
+   "id": "c19_b06",
+   "chapter": "c19",
+   "vis": "\"Next steps · the model (2/2)\": \"11 · more memory cells (both LSTM papers used far more than 8); longer context (Kim hints; Zhang 2022 used shorter slices; so far mixed: 0.4 s worse on the baseline, 0.5 s on D01 slightly better)\" · \"12 · a simple per-position model as a standing reference (Zhang 2019; an earlier ridge version exists)\" · \"13 · auto-gain only for clearly active muscles\".",
+   "text": "Step eleven: try more memory cells, since both LSTM papers used far more than eight, and longer context, which Kim hints at. The evidence on context so far is mixed: 0.4 seconds made the plain baseline worse, 0.5 seconds on top of D zero one helped a little, and Zhang 2022 used even shorter slices. So test it with many seeds. Step twelve: re-run a simple per-position model, like Zhang 2019's polynomial, on the current pipeline and all six people, as a standing reference. And step thirteen: apply auto-gain only to muscles that are clearly active.",
+   "src": "Zhang 2022 p.602; Kim 2020 pp.3822-3823; stageA_X06; Zhang 2019 §II-E; FINAL_REPORT next steps (auto-gain only for clearly active muscles)."
+  },
+  {
+   "id": "c19_b07",
+   "chapter": "c19",
+   "vis": "A grey \"already tried in an earlier round (3 people, faster training settings)\" strip: \"straight-line correction from the first seconds of each session-2 trial: old pipeline 0.57 → 0.90 with 30 s; newer pipelines +0.01 to +0.02, worse with 5–10 s\" · \"ridge regression: well behind without auto-gain, ≈ 0.05 behind with it\" · \"pre-training on the other 5 people: worse\" · \"extra weight on toes-down (×3, ×10): no help\" · \"random EMG-size augmentation: helps without auto-gain, adds nothing with it\".",
+   "text": "Some related ideas were already tried, in an earlier round, on three people, with faster settings. A straight-line correction fitted on the first seconds of each session-2 trial lifted the old pipeline from about 0.57 to 0.90 with half a minute of calibration, but added only one or two hundredths to the newer pipelines, and hurt them with five or ten seconds. A ridge regression trailed the LSTM clearly without auto-gain, and by about five hundredths with it. Pre-training on the other five people made things worse. Extra weight on toes-down did not help. And random EMG-size changes during training helped only without auto-gain.",
+   "src": "notes/report2/round2_report.md §7 (calibration Fig. 6; E27 ridge 0.62 vs E02 0.83; E20 pre-train −0.03; E13/E14 ×3/×10; E18 augmentation +0.03, E16 adds nothing on top of auto-gain); fact-check c19_b06."
+  },
+  {
+   "id": "c19_b08",
+   "chapter": "c19",
+   "vis": "Closing card: \"When asked about our method: what the code does · what we tested · what was a choice · what we don't know yet.\" Fade to the title.",
+   "text": "And when the next methodology question comes, the best answer is often the plain one: here is what the code does, here is what we tested, here is what was a choice, and here is what we do not know yet. Thanks for watching.",
+   "src": "—"
+  }
+ ]
+}

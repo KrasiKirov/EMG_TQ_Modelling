@@ -1,0 +1,674 @@
+# Data index for the v2 scenes
+
+Load arrays with `load(name)` (data2 first, then data) and facts with `facts()[name]`, e.g. `facts()["y03"]["YES_minus0p486_seed1"]` or `facts()["y01"]["B_group_summaries"]` (scenes2/style2.py).
+Facts JSON files hold more detail than listed here: open them. Shapes below are numpy shapes.
+
+## data2/y02.npz
+- `s1_t` float64 (8910,)
+- `s1_gm` float64 (8910,)
+- `s1_gl` float64 (8910,)
+- `s1_sol` float64 (8910,)
+- `s1_ta` float64 (8910,)
+- `s1_angle` float64 (8910,)
+- `s1_torque` float64 (8910,)
+- `s1_passive` float64 (8910,)
+- `s1_target` float32 (8910,)
+- `s1_raw_gm` float64 (8910,)
+- `s1_raw_gl` float64 (8910,)
+- `s1_raw_sol` float64 (8910,)
+- `s1_raw_ta` float64 (8910,)
+- `s2_t` float64 (8910,)
+- `s2_gm` float64 (8910,)
+- `s2_gl` float64 (8910,)
+- `s2_sol` float64 (8910,)
+- `s2_ta` float64 (8910,)
+- `s2_angle` float64 (8910,)
+- `s2_torque` float64 (8910,)
+- `s2_passive` float64 (8910,)
+- `s2_target` float32 (8910,)
+- `s2_raw_gm` float64 (8910,)
+- `s2_raw_gl` float64 (8910,)
+- `s2_raw_sol` float64 (8910,)
+- `s2_raw_ta` float64 (8910,)
+- `passive_s1` float64 (8, 2)
+- `passive_s2` float64 (8, 2)
+- `emg_max` float64 (6, 4)
+- `emg_max_trial_idx` int64 (6, 4)
+- `emg_max_raw_sample` int64 (6, 4)
+- `emg_max_code` int64 (6, 4)
+- `emg_max_next_best_other_trial` float64 (6, 4)
+- `emg_max_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `emg_max_channels` <U3 (4,) = ['gm', 'gl', 'sol', 'ta']
+- `window` float32 (20, 5)
+- `window_target` float32 () = -17.33277130126953
+- `window_index` int64 () = 419
+- `window_first_sample` int64 () = 419
+- `window_last_sample` int64 () = 438
+- `window_t` float64 (20,)
+- `fit_val_split_index` int64 () = 7112
+- `push_start_samples` int64 (22,)
+- `push_end_samples` int64 (22,)
+- facts_y02.json keys: `all_subjects_same_counts`, `array_keys`, `boundary`, `checks`, `conventions`, `counts`, `display`, `eg_S1_passive_subtracted`, `eg_S1_trial`, `eg_S2_passive_subtracted`, `eg_S2_trial`, `eg_counts`, `eg_max`, `eg_max_in_trial21`, `emg_max_code_legend`, `example_window`, `fit_val_split`, `max_definition`, `max_in_discarded_tail_list`, `max_in_trimmed_first_second_list`, `max_in_validation_list`, `max_touching_validation_list`, `max_where_counts`, `maxima`, `n_dropped_window_per_s1_trial_note`, `n_max_in_validation_part`, `n_max_touching_validation_windows`, `normalised_peaks_100hz`, `normalised_peaks_note`, `passive_tables`, `passive_tables_note`, `pushes`, `seed_note`, `storyboard_claim_check`
+
+## data2/y03.npz
+- `subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `seeds` int64 (10,)
+- `positions_rad` float64 (6, 8)
+- `positions_snapped_rad` float64 (6, 8)
+- `toes_down` int64 (6, 8)
+- `r2` float64 (6, 10, 8)
+- `r2_shape` float64 (6, 10, 8)
+- `bias` float64 (6, 10, 8)
+- `mae` float64 (6, 10, 8)
+- `corr` float64 (6, 10, 8)
+- `mae_shape` float64 (6, 10, 8)
+- `sd_truth` float64 (6, 8)
+- `peak_truth` float64 (6, 8)
+- `r2_med` float64 (6, 8)
+- `r2_floor0_med` float64 (6, 8)
+- `r2_shape_med` float64 (6, 8)
+- `bias_med` float64 (6, 8)
+- `mae_med` float64 (6, 8)
+- `corr_med` float64 (6, 8)
+- `r2_min` float64 (6, 8)
+- `r2_max` float64 (6, 8)
+- `r2_range` float64 (6, 8)
+- `n_seeds_negative` int64 (6, 8)
+- `t_window_s` float64 (8891,)
+- `t_trial_s` float64 (8891,)
+- `yes_m486_key` float64 (8891,)
+- `yes_m486_pred` float64 (10, 8891)
+- `yes_m486_position` float64 () = -0.486
+- `yes_strong_key` float64 (8891,)
+- `yes_strong_pred` float64 (10, 8891)
+- `yes_strong_position` float64 () = 0.138
+- `jm_m078_key` float64 (8891,)
+- `jm_m078_pred_seed0` float64 (8891,)
+- `jm_m078_y_true_original` float64 (8891,)
+- `eg_m739_key` float64 (8891,)
+- `eg_m739_pred_seed4` float64 (8891,)
+- `window_yes_m486_start_end_s` float64 (2,) = [14.0, 44.0]
+- facts_y03.json keys: `docstring`, `subjects`, `seeds`, `n_windows_per_trial`, `seconds_per_window`, `conventions`, `passive_correction_by_subject`, `npz_arrays_note`, `cross_check_results_json`, `groups`, `named_cells`, `cells`, `scatter_summary`, `YES_minus0p486_seed1`, `YES_minus0p486_across_seeds`, `bundle_YES_minus0p486`, `bundle_YES_strong`, `YES_strong_cell`, `JM_minus0p078_seed0`, `EG_minus0p739_seed4`, `suggested_30s_window_YES_minus0p486`, `display`, `checks`, `storyboard_mismatches`, `npz_arrays`
+
+## data2/y04.npz
+- `x00f_CH_epoch` float64 (55,)
+- `x00f_CH_keras_loss` float64 (55,)
+- `x00f_CH_keras_val_loss` float64 (55,)
+- `x00f_CH_lr` float64 (55,)
+- `x00f_CH_mae_fit` float64 (55,)
+- `x00f_CH_mae_val` float64 (55,)
+- `x00f_CH_mae_test` float64 (55,)
+- `x00f_CH_mse_fit` float64 (55,)
+- `x00f_CH_mse_val` float64 (55,)
+- `x00f_CH_mse_test` float64 (55,)
+- `x00f_CH_best_epoch` int64 () = 30
+- `x00f_CH_lr_cut_triggered` int64 (3,) = [20, 40, 50]
+- `x00f_CH_lr_cut_first_new_epoch` int64 (3,) = [21, 41, 51]
+- `x00f_CH_epoch_min_mae_test` int64 () = 9
+- `x00f_EG_epoch` float64 (35,)
+- `x00f_EG_keras_loss` float64 (35,)
+- `x00f_EG_keras_val_loss` float64 (35,)
+- `x00f_EG_lr` float64 (35,)
+- `x00f_EG_mae_fit` float64 (35,)
+- `x00f_EG_mae_val` float64 (35,)
+- `x00f_EG_mae_test` float64 (35,)
+- `x00f_EG_mse_fit` float64 (35,)
+- `x00f_EG_mse_val` float64 (35,)
+- `x00f_EG_mse_test` float64 (35,)
+- `x00f_EG_best_epoch` int64 () = 10
+- `x00f_EG_lr_cut_triggered` int64 (2,) = [20, 30]
+- `x00f_EG_lr_cut_first_new_epoch` int64 (2,) = [21, 31]
+- `x00f_EG_epoch_min_mae_test` int64 () = 3
+- `x00f_HM_epoch` float64 (78,)
+- `x00f_HM_keras_loss` float64 (78,)
+- `x00f_HM_keras_val_loss` float64 (78,)
+- `x00f_HM_lr` float64 (78,)
+- `x00f_HM_mae_fit` float64 (78,)
+- `x00f_HM_mae_val` float64 (78,)
+- `x00f_HM_mae_test` float64 (78,)
+- `x00f_HM_mse_fit` float64 (78,)
+- `x00f_HM_mse_val` float64 (78,)
+- `x00f_HM_mse_test` float64 (78,)
+- `x00f_HM_best_epoch` int64 () = 53
+- `x00f_HM_lr_cut_triggered` int64 (5,) = [20, 30, 44, 63, 73]
+- `x00f_HM_lr_cut_first_new_epoch` int64 (5,) = [21, 31, 45, 64, 74]
+- `x00f_HM_epoch_min_mae_test` int64 () = 20
+- `x00f_IES_epoch` float64 (71,)
+- `x00f_IES_keras_loss` float64 (71,)
+- `x00f_IES_keras_val_loss` float64 (71,)
+- `x00f_IES_lr` float64 (71,)
+- `x00f_IES_mae_fit` float64 (71,)
+- `x00f_IES_mae_val` float64 (71,)
+- `x00f_IES_mae_test` float64 (71,)
+- `x00f_IES_mse_fit` float64 (71,)
+- `x00f_IES_mse_val` float64 (71,)
+- `x00f_IES_mse_test` float64 (71,)
+- `x00f_IES_best_epoch` int64 () = 46
+- `x00f_IES_lr_cut_triggered` int64 (4,) = [32, 42, 56, 66]
+- `x00f_IES_lr_cut_first_new_epoch` int64 (4,) = [33, 43, 57, 67]
+- `x00f_IES_epoch_min_mae_test` int64 () = 25
+- `x00f_JM_epoch` float64 (50,)
+- `x00f_JM_keras_loss` float64 (50,)
+- `x00f_JM_keras_val_loss` float64 (50,)
+- `x00f_JM_lr` float64 (50,)
+- `x00f_JM_mae_fit` float64 (50,)
+- `x00f_JM_mae_val` float64 (50,)
+- `x00f_JM_mae_test` float64 (50,)
+- `x00f_JM_mse_fit` float64 (50,)
+- `x00f_JM_mse_val` float64 (50,)
+- `x00f_JM_mse_test` float64 (50,)
+- `x00f_JM_best_epoch` int64 () = 25
+- `x00f_JM_lr_cut_triggered` int64 (3,) = [16, 35, 45]
+- `x00f_JM_lr_cut_first_new_epoch` int64 (3,) = [17, 36, 46]
+- `x00f_JM_epoch_min_mae_test` int64 () = 1
+- `x00f_YES_epoch` float64 (55,)
+- `x00f_YES_keras_loss` float64 (55,)
+- `x00f_YES_keras_val_loss` float64 (55,)
+- `x00f_YES_lr` float64 (55,)
+- `x00f_YES_mae_fit` float64 (55,)
+- `x00f_YES_mae_val` float64 (55,)
+- `x00f_YES_mae_test` float64 (55,)
+- `x00f_YES_mse_fit` float64 (55,)
+- `x00f_YES_mse_val` float64 (55,)
+- `x00f_YES_mse_test` float64 (55,)
+- `x00f_YES_best_epoch` int64 () = 30
+- `x00f_YES_lr_cut_triggered` int64 (3,) = [25, 40, 50]
+- `x00f_YES_lr_cut_first_new_epoch` int64 (3,) = [26, 41, 51]
+- `x00f_YES_epoch_min_mae_test` int64 () = 34
+- `d01_CH_epoch` float64 (45,)
+- `d01_CH_keras_loss` float64 (45,)
+- `d01_CH_keras_val_loss` float64 (45,)
+- `d01_CH_lr` float64 (45,)
+- `d01_CH_mae_fit` float64 (45,)
+- `d01_CH_mae_val` float64 (45,)
+- `d01_CH_mae_test` float64 (45,)
+- `d01_CH_mse_fit` float64 (45,)
+- `d01_CH_mse_val` float64 (45,)
+- `d01_CH_mse_test` float64 (45,)
+- `d01_CH_best_epoch` int64 () = 20
+- `d01_CH_lr_cut_triggered` int64 (2,) = [30, 40]
+- `d01_CH_lr_cut_first_new_epoch` int64 (2,) = [31, 41]
+- `d01_CH_epoch_min_mae_test` int64 () = 43
+- `d01_EG_epoch` float64 (38,)
+- `d01_EG_keras_loss` float64 (38,)
+- `d01_EG_keras_val_loss` float64 (38,)
+- `d01_EG_lr` float64 (38,)
+- `d01_EG_mae_fit` float64 (38,)
+- `d01_EG_mae_val` float64 (38,)
+- `d01_EG_mae_test` float64 (38,)
+- `d01_EG_mse_fit` float64 (38,)
+- `d01_EG_mse_val` float64 (38,)
+- `d01_EG_mse_test` float64 (38,)
+- `d01_EG_best_epoch` int64 () = 13
+- `d01_EG_lr_cut_triggered` int64 (2,) = [23, 33]
+- `d01_EG_lr_cut_first_new_epoch` int64 (2,) = [24, 34]
+- `d01_EG_epoch_min_mae_test` int64 () = 10
+- `d01_HM_epoch` float64 (68,)
+- `d01_HM_keras_loss` float64 (68,)
+- `d01_HM_keras_val_loss` float64 (68,)
+- `d01_HM_lr` float64 (68,)
+- `d01_HM_mae_fit` float64 (68,)
+- `d01_HM_mae_val` float64 (68,)
+- `d01_HM_mae_test` float64 (68,)
+- `d01_HM_mse_fit` float64 (68,)
+- `d01_HM_mse_val` float64 (68,)
+- `d01_HM_mse_test` float64 (68,)
+- `d01_HM_best_epoch` int64 () = 43
+- `d01_HM_lr_cut_triggered` int64 (3,) = [24, 53, 63]
+- `d01_HM_lr_cut_first_new_epoch` int64 (3,) = [25, 54, 64]
+- `d01_HM_epoch_min_mae_test` int64 () = 36
+- `d01_IES_epoch` float64 (78,)
+- `d01_IES_keras_loss` float64 (78,)
+- `d01_IES_keras_val_loss` float64 (78,)
+- `d01_IES_lr` float64 (78,)
+- `d01_IES_mae_fit` float64 (78,)
+- `d01_IES_mae_val` float64 (78,)
+- `d01_IES_mae_test` float64 (78,)
+- `d01_IES_mse_fit` float64 (78,)
+- `d01_IES_mse_val` float64 (78,)
+- `d01_IES_mse_test` float64 (78,)
+- `d01_IES_best_epoch` int64 () = 53
+- `d01_IES_lr_cut_triggered` int64 (3,) = [36, 63, 73]
+- `d01_IES_lr_cut_first_new_epoch` int64 (3,) = [37, 64, 74]
+- `d01_IES_epoch_min_mae_test` int64 () = 16
+- `d01_JM_epoch` float64 (39,)
+- `d01_JM_keras_loss` float64 (39,)
+- `d01_JM_keras_val_loss` float64 (39,)
+- `d01_JM_lr` float64 (39,)
+- `d01_JM_mae_fit` float64 (39,)
+- `d01_JM_mae_val` float64 (39,)
+- `d01_JM_mae_test` float64 (39,)
+- `d01_JM_mse_fit` float64 (39,)
+- `d01_JM_mse_val` float64 (39,)
+- `d01_JM_mse_test` float64 (39,)
+- `d01_JM_best_epoch` int64 () = 14
+- `d01_JM_lr_cut_triggered` int64 (2,) = [24, 34]
+- `d01_JM_lr_cut_first_new_epoch` int64 (2,) = [25, 35]
+- `d01_JM_epoch_min_mae_test` int64 () = 36
+- `d01_YES_epoch` float64 (67,)
+- `d01_YES_keras_loss` float64 (67,)
+- `d01_YES_keras_val_loss` float64 (67,)
+- `d01_YES_lr` float64 (67,)
+- `d01_YES_mae_fit` float64 (67,)
+- `d01_YES_mae_val` float64 (67,)
+- `d01_YES_mae_test` float64 (67,)
+- `d01_YES_mse_fit` float64 (67,)
+- `d01_YES_mse_val` float64 (67,)
+- `d01_YES_mse_test` float64 (67,)
+- `d01_YES_best_epoch` int64 () = 42
+- `d01_YES_lr_cut_triggered` int64 (3,) = [20, 52, 62]
+- `d01_YES_lr_cut_first_new_epoch` int64 (3,) = [21, 53, 63]
+- `d01_YES_epoch_min_mae_test` int64 () = 12
+- `x00_epochs_run` int64 (6, 10)
+- `x00_best_epoch` int64 (6, 10)
+- `x00_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `x00_eg_seed0_train_loss` float64 (78,)
+- `x00_eg_seed0_val_loss` float64 (78,)
+- `x00_eg_seed0_epoch` int64 (78,)
+- `kept_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `kept_x00f_mae_fit_val_test` float64 (6, 3)
+- `kept_x00f_ratio_test_over_val` float64 (6,) = [1.1949879149876752, 2.0614995477051044, 1.6670007974390266, 1.8519745020775906, 5.9924106106933275, 1.3570836429607012]
+- `kept_x00f_median_mae_fit_val_test` float64 (3,) = [0.5762616070554739, 0.5935036510532745, 1.1841449810921403]
+- facts_y04.json keys: `source`, `epoch_convention`, `hyperparameters`, `x00f_available_subjects`, `x00f_experiment`, `x00f_curves`, `d01_available_subjects`, `d01_experiment`, `d01_curves`, `steps_per_epoch`, `total_weight_updates_example`, `x00_runs`, `x00_eg_seed0`, `kept_epoch_x00f_seed0`, `kept_epoch_d01_seed0`, `epochs_visual_candidates_x00f`, `epochs_visual_recommendation`, `storyboard_cross_check`, `storyboard_mismatches`, `display`, `checks`, `n_checks`, `all_checks_ok`
+
+## data2/y05.npz
+- `jmP7S1_t` float64 (9010,)
+- `jmP7S1_pos` float64 (9010,)
+- `jmP7S1_tq` float64 (9010,)
+- `jmP7S1_block10_mean` float64 (9,)
+- `jmP7S1_block10_sd` float64 (9,)
+- `jmP7S2_t` float64 (9010,)
+- `jmP7S2_pos` float64 (9010,)
+- `jmP7S2_tq` float64 (9010,)
+- `jmP7S2_block10_mean` float64 (9,)
+- `jmP7S2_block10_sd` float64 (9,)
+- `static_map_pieces_sd` float64 (72,)
+- `static_map_pieces_mean_tq` float64 (72,)
+- `static_map_pieces_angle` float64 (72,)
+- `static_map_pieces_subject` int64 (72,)
+- `static_map_pieces_session` int64 (72,)
+- `framework_holds_sd` float64 (76,)
+- `framework_holds_mean_tq` float64 (76,)
+- `framework_holds_angle` float64 (76,)
+- `framework_holds_subject` int64 (76,)
+- `framework_holds_session` int64 (76,)
+- `legacy_pieces_sd_ddof1` float64 (123,)
+- `legacy_pieces_accepted` bool (123,)
+- `legacy_pieces_subject` int64 (123,)
+- `jm_legacy_S1_pos` float64 (8,) = [-0.786445960346146, -0.6442233773606334, -0.5018698375446852, -0.35890520041854823, -0.2169044179880797, -0.07125468131137835, 0.058721240776688305, 0.2004812747566261]
+- `jm_legacy_S1_tq` float64 (8,) = [1.9887711657813532, 1.6800154239977176, 0.890141102166667, 0.5335861592743527, -0.5057436731917349, 11.719880671672891, -3.3795757637688175, -6.159256586387976]
+- `jm_static_S1_pos` float64 (7,) = [-0.786445960346146, -0.6442233773606334, -0.5018698375446852, -0.35890520041854823, -0.2169044179880797, 0.058721240776688305, 0.2004812747566261]
+- `jm_static_S1_tq` float64 (7,) = [1.9887711657813532, 1.6800154239977176, 0.890141102166667, 0.5335861592743527, -0.5057436731917349, -3.3795757637688175, -6.159256586387976]
+- `jm_legacy_S2_pos` float64 (8,) = [-0.7859365619592998, -0.6431449460330887, -0.5009121552510049, -0.35853013813199097, -0.21693984810985736, -0.0644430599252599, 0.05620442631825879, 0.2006275264540715]
+- `jm_legacy_S2_tq` float64 (8,) = [2.478272153370416, 1.9760938865035327, 1.1846393447610277, 0.7695947689796562, -0.3648256176146702, 10.748356805331465, -3.3705492399225188, -5.404779390316104]
+- `jm_static_S2_pos` float64 (7,) = [-0.7859365619592998, -0.6431449460330887, -0.5009121552510049, -0.35853013813199097, -0.21693984810985736, 0.05620442631825879, 0.2006275264540715]
+- `jm_static_S2_tq` float64 (7,) = [2.478272153370416, 1.9760938865035327, 1.1846393447610277, 0.7695947689796562, -0.3648256176146702, -3.3705492399225188, -5.404779390316104]
+- `jm_curve_angle` float64 (241,)
+- `jm_curve_legacy_S1` float64 (241,)
+- `jm_curve_static_S1` float64 (241,)
+- `jm_curve_legacy_S2` float64 (241,)
+- `jm_curve_static_S2` float64 (241,)
+- `jmactS1_t` float64 (8910,)
+- `jmactS1_tq` float64 (8910,)
+- `jmactS1_pos` float64 (8910,)
+- `jmactS1_P_legacy` float64 (8910,)
+- `jmactS1_P_static` float64 (8910,)
+- `jmactS2_t` float64 (8910,)
+- `jmactS2_tq` float64 (8910,)
+- `jmactS2_pos` float64 (8910,)
+- `jmactS2_P_legacy` float64 (8910,)
+- `jmactS2_P_static` float64 (8910,)
+- `yesS1_t` float64 (8910,)
+- `yesS1_tq` float64 (8910,)
+- `yesS1_pos` float64 (8910,)
+- `yesS1_P_table` float64 (8910,)
+- `yesS1_B_relaxed` float64 (8910,)
+- `yesS1_rest_mask` bool (8910,)
+- `yesS1_hold_tq` float64 (3010,)
+- `yesS1_hold_t` float64 (3010,)
+- `yesS2_t` float64 (8910,)
+- `yesS2_tq` float64 (8910,)
+- `yesS2_pos` float64 (8910,)
+- `yesS2_P_table` float64 (8910,)
+- `yesS2_B_relaxed` float64 (8910,)
+- `yesS2_rest_mask` bool (8910,)
+- `yesS2_hold_tq` float64 (3010,)
+- `yesS2_hold_t` float64 (3010,)
+- `loss_CH_angle` float64 (8,) = [-0.7398073298798864, -0.5974428275479751, -0.45550996921340203, -0.31175731715918836, -0.18375872614918315, -0.04655310910247957, 0.09570428135314359, 0.2391068385372145]
+- `loss_CH_mse` float64 (8,) = [1.0915551957683673, 1.2347483075945123, 1.6743970481264807, 1.4950475818470814, 1.40026804321277, 3.332685661557599, 7.733719640507947, 6.96712648315641]
+- `loss_CH_n` float64 (8,) = [7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0]
+- `loss_CH_share_sqerr` float64 (8,) = [0.04378559921913704, 0.04952951050247551, 0.06716515881852836, 0.05997090617686686, 0.05616901057973637, 0.13368415932243088, 0.31022301938115404, 0.2794726359996708]
+- `loss_CH_share_ssd` float64 (8,) = [0.00735248444023783, 0.023147698691631243, 0.02621290763962083, 0.06231981164909746, 0.09552884665914446, 0.1999268513963591, 0.2791541254616533, 0.30635727406225566]
+- `loss_CH_share_ss0` float64 (8,) = [0.005116613059383477, 0.02382790304823316, 0.03082899215562965, 0.06880135384590266, 0.08899780396836567, 0.2291731927192818, 0.30664305273550074, 0.24661108846770272]
+- `loss_CH_share_ssglobal` float64 (8,) = [0.024645119830661682, 0.06079134091189667, 0.07327746642349613, 0.1277647892845403, 0.06353798938183178, 0.18191884941010072, 0.25543159743522825, 0.21263284732224438]
+- `loss_CH_target_sd` float64 (8,) = [4.551289100308784, 8.075534488958468, 8.593596627417448, 13.250444030544015, 16.40531724532375, 23.733015844101377, 28.043963368862837, 29.37862489637003]
+- `loss_EG_angle` float64 (8,) = [-0.7392464201163509, -0.5989645190845755, -0.4576809085474474, -0.317498622303378, -0.17788008540602915, -0.03768745205646191, 0.10417819955018684, 0.2469399829299836]
+- `loss_EG_mse` float64 (8,) = [0.11791347613665353, 0.3631014113037683, 0.28145890592217626, 0.29718518469308297, 0.8225612982946101, 1.7115306585078742, 2.3995648832606733, 1.431219838744392]
+- `loss_EG_n` float64 (8,) = [7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0]
+- `loss_EG_share_sqerr` float64 (8,) = [0.015881596046704208, 0.04890560542572354, 0.03790929412023175, 0.04002744392753577, 0.11078959497409586, 0.2305235960346877, 0.32319393348761394, 0.19276893598340716]
+- `loss_EG_share_ssd` float64 (8,) = [0.007350243248448569, 0.02402516526380195, 0.032573268904805795, 0.07395171475239926, 0.11666103816997181, 0.2143127125287266, 0.30076376698936375, 0.23036209014248213]
+- `loss_EG_share_ss0` float64 (8,) = [0.01243525952854879, 0.031667485395256094, 0.041581745740584534, 0.0735066793528524, 0.15242678085231925, 0.19786695666925458, 0.2943634203535811, 0.19615167210760323]
+- `loss_EG_share_ssglobal` float64 (8,) = [0.04175106876260061, 0.03655506697927033, 0.03829193932256886, 0.06751074789287718, 0.1116086346173919, 0.19582587666851903, 0.3022396382809797, 0.2062170274757923]
+- `loss_EG_target_sd` float64 (8,) = [2.0201834150853286, 3.6523562958463827, 4.2527574863852875, 6.407875568503226, 8.048276049733152, 10.908471769776375, 12.922683365949206, 11.309553273367662]
+- `loss_HM_angle` float64 (8,) = [-0.7876244419884749, -0.6465238383038834, -0.5047007686529826, -0.3636416581732506, -0.22198311452079483, -0.08102784399391494, 0.05441853470784039, 0.19776450866877618]
+- `loss_HM_mse` float64 (8,) = [0.04252591944360569, 0.09924781628832009, 0.0788588908443399, 0.20073801955242276, 0.21737520605531638, 0.3633618642772221, 0.33251345291806006, 0.4452561548314389]
+- `loss_HM_n` float64 (8,) = [7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0]
+- `loss_HM_share_sqerr` float64 (8,) = [0.02389261263411146, 0.05576104315634833, 0.044305801176105955, 0.11278194110453012, 0.12212931930671675, 0.2041499486142127, 0.1868181859474561, 0.2501611480605185]
+- `loss_HM_share_ssd` float64 (8,) = [0.005282127018219113, 0.03421806489463065, 0.028357551115173258, 0.11588878373920602, 0.14736695245974119, 0.2081577563323066, 0.26139316194174717, 0.19933560249897617]
+- `loss_HM_share_ss0` float64 (8,) = [0.012040684540374305, 0.04348204656460746, 0.0390780936014524, 0.11314461683175145, 0.19707107462062376, 0.16420925101387057, 0.21563457231855987, 0.21533966050876027]
+- `loss_HM_share_ssglobal` float64 (8,) = [0.03560920969021003, 0.03937301883941489, 0.035131132126499064, 0.10480977974186749, 0.15687980012792657, 0.1883143879242605, 0.24098559044081688, 0.19889708110900475]
+- `loss_HM_target_sd` float64 (8,) = [0.7814065612737857, 1.9888423362783685, 1.8105352937020038, 3.6601032416226214, 4.127363171013993, 4.905337941578288, 5.496924151847608, 4.800263414547551]
+- `loss_IES_angle` float64 (8,) = [-0.5898096733509489, -0.484878522403635, -0.380043602243853, -0.27160609112454903, -0.16979891370776198, -0.061481604212563545, 0.038997562316852294, 0.14416485977812607]
+- `loss_IES_mse` float64 (8,) = [0.24966732766640598, 0.23197131445027025, 0.3013075879896644, 0.34942630620764364, 0.42828326851748383, 0.3818445881322436, 1.2155059547174816, 1.822492722416619]
+- `loss_IES_n` float64 (8,) = [7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0]
+- `loss_IES_share_sqerr` float64 (8,) = [0.05012897786998337, 0.04657591763102458, 0.06049746897829397, 0.07015889397621777, 0.08599203864705726, 0.0766679368388567, 0.24405304320107224, 0.36592572285749403]
+- `loss_IES_share_ssd` float64 (8,) = [0.019247793760313648, 0.032555953733163404, 0.07987428909222369, 0.04855898176812145, 0.1643558240854917, 0.0966855826582425, 0.22129726960112509, 0.3374243053013187]
+- `loss_IES_share_ss0` float64 (8,) = [0.00836313211627973, 0.017503716423659745, 0.05672217600326816, 0.03134715137933185, 0.1439527153355152, 0.09013688279597287, 0.22453492712411252, 0.4274392988218599]
+- `loss_IES_share_ssglobal` float64 (8,) = [0.07764493737849316, 0.06276034146672142, 0.05867440886658409, 0.05362599683641816, 0.11164022371439726, 0.06224642549276065, 0.17996708673352488, 0.3934405795111004]
+- `loss_IES_target_sd` float64 (8,) = [2.6326256507136994, 3.423842996681798, 5.3629300588802735, 4.18151265933137, 7.692919347819914, 5.900373306609879, 8.926611992726079, 11.022670148274202]
+- `loss_JM_angle` float64 (8,) = [-0.786878918015024, -0.6450674879113688, -0.5046635461651396, -0.3600248213553751, -0.21820663022815248, -0.07675907325412835, 0.0563087722816685, 0.1988995638485248]
+- `loss_JM_mse` float64 (8,) = [0.08197733908596458, 0.06995417217679407, 0.11999982750587207, 0.11857731367223057, 0.13507579791253396, 0.48190882513668354, 0.24505178976089248, 0.38843903022722637]
+- `loss_JM_n` float64 (8,) = [7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0]
+- `loss_JM_share_sqerr` float64 (8,) = [0.04995620573767696, 0.042629402911067704, 0.0731267462229139, 0.07225987990924193, 0.08231389827892979, 0.2936706251234269, 0.1493322150020486, 0.23671102681469422]
+- `loss_JM_share_ssd` float64 (8,) = [0.0124286322113021, 0.02359531012225146, 0.18533816272651163, 0.07233735943661682, 0.07980860334831266, 0.10318000410527997, 0.20971330884946515, 0.31359861920026016]
+- `loss_JM_share_ss0` float64 (8,) = [0.004529552187846059, 0.006142594401243167, 0.0540414913631824, 0.02045115457285448, 0.02496724636317484, 0.7256735776094521, 0.08657520904824327, 0.07761917445400371]
+- `loss_JM_share_ssglobal` float64 (8,) = [0.06018189848818435, 0.05871889625010596, 0.033367938945217, 0.03739860246604486, 0.03241955651058713, 0.6920279552095963, 0.03486730504777533, 0.05101784708248919]
+- `loss_JM_target_sd` float64 (8,) = [0.6046058315259701, 0.8330546796180135, 2.3347645480031853, 1.4586194123513219, 1.5320943774754079, 1.7420412473473283, 2.4835542997263853, 3.0370205761795592]
+- `loss_YES_angle` float64 (8,) = [-0.4864838723727353, -0.3818133407659487, -0.2774759527480375, -0.17418531510579832, -0.06908631039811336, 0.03113220486875007, 0.1372121867160906, 0.24464143128846624]
+- `loss_YES_mse` float64 (8,) = [0.06548673569604119, 0.14870010119380167, 0.22061713530299587, 0.2618502154374008, 0.44047863020509753, 1.211357451007002, 2.697691451863799, 2.2388092057642766]
+- `loss_YES_n` float64 (8,) = [7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0, 7112.0]
+- `loss_YES_share_sqerr` float64 (8,) = [0.00898926798358685, 0.02041184439276262, 0.030283789990921118, 0.03594379431358708, 0.06046385433434025, 0.16628125734590393, 0.370308141642509, 0.30731804999638923]
+- `loss_YES_share_ssd` float64 (8,) = [0.0006361962007244791, 0.009706036870686368, 0.02813210826046995, 0.07644404157880956, 0.09772918986570794, 0.25337889894587035, 0.3063448601991092, 0.2276286680786219]
+- `loss_YES_share_ss0` float64 (8,) = [0.0035391107297629847, 0.011873492694917493, 0.03293795095538402, 0.07569802594933282, 0.0896074212546777, 0.2536726331170354, 0.33980644796568776, 0.1928649173332017]
+- `loss_YES_share_ssglobal` float64 (8,) = [0.039039316238453095, 0.03477935382994598, 0.03261925644855466, 0.06353268223468381, 0.0805096673124682, 0.23644056859973725, 0.3210690158111769, 0.19201013952498003]
+- `loss_YES_target_sd` float64 (8,) = [0.6909417943224883, 2.6987763535137224, 4.594593225321333, 7.573868280246034, 8.563633594444772, 13.788948518954957, 15.161816178932394, 13.069513042095384]
+- facts_y05.json keys: `a_jm`, `audit_item2_check`, `b_static_hold_sd`, `c_yes_m049`, `checks`, `d_loss_share`, `display`, `inputs`, `npz_arrays`, `storyboard_comparison`
+
+## data2/y06.npz
+- `subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `x05_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `x05_td_r2_before` float64 (6,) = [0.9701, 0.4212, 0.83725, 0.68415, 0.59525, 0.36705]
+- `x05_td_mae_before` float64 (6,) = [0.8492000000000001, 1.4821, 0.38505, 1.47145, 0.33675, 0.6574]
+- `x05_other_r2_before` float64 (6,) = [0.9838, 0.9676, 0.9709000000000001, 0.95955, 0.6980500000000001, 0.97465]
+- `x05_other_mae_before` float64 (6,) = [1.8609, 1.26515, 0.54365, 0.901, 0.9746, 0.91125]
+- `x05_td_r2_raw_before` float64 (6,) = [0.9701, 0.3304, 0.83725, 0.68415, 0.59525, 0.1078]
+- `x05_td_r2_after` float64 (6,) = [0.9701, 0.93075, 0.8359000000000001, 0.90135, 0.84285, 0.4276]
+- `x05_td_mae_after` float64 (6,) = [0.8492000000000001, 0.5279, 0.30984999999999996, 0.84455, 0.21425, 0.6208]
+- `x05_other_r2_after` float64 (6,) = [0.9838, 0.97705, 0.9754, 0.9818, 0.8814500000000001, 0.98295]
+- `x05_other_mae_after` float64 (6,) = [1.8609, 0.8803, 0.51015, 0.6922, 0.5301, 0.7315499999999999]
+- `x05_td_r2_raw_after` float64 (6,) = [0.9701, 0.93075, 0.8359000000000001, 0.90135, 0.84285, -0.2934]
+- `x05_group` float64 (2, 2, 2) = [[[0.81035, 0.90025], [0.7872, 0.5785]], [[0.9707, 0.9773499999999999], [1.01345, 0.7363]]]
+- `x05_cell_subject_idx` int64 (48,)
+- `x05_cell_pos` float64 (48,)
+- `x05_cell_toes_down` int64 (48,)
+- `x05_cell_r2_floor0_before` float64 (48,)
+- `x05_cell_r2_floor0_after` float64 (48,)
+- `x05_cell_r2_raw_before` float64 (48,)
+- `x05_cell_r2_raw_after` float64 (48,)
+- `x05_cell_mae_before` float64 (48,)
+- `x05_cell_mae_after` float64 (48,)
+- `x05_cell_r2_range_before` float64 (48,)
+- `x05_cell_r2_range_after` float64 (48,)
+- `x04_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `x04_td_r2_before` float64 (6,) = [0.9701, 0.4212, 0.83725, 0.68415, 0.59525, 0.36705]
+- `x04_td_mae_before` float64 (6,) = [0.8492000000000001, 1.4821, 0.38505, 1.47145, 0.33675, 0.6574]
+- `x04_other_r2_before` float64 (6,) = [0.9838, 0.9676, 0.9709000000000001, 0.95955, 0.6980500000000001, 0.97465]
+- `x04_other_mae_before` float64 (6,) = [1.8609, 1.26515, 0.54365, 0.901, 0.9746, 0.91125]
+- `x04_td_r2_raw_before` float64 (6,) = [0.9701, 0.3304, 0.83725, 0.68415, 0.59525, 0.1078]
+- `x04_td_r2_after` float64 (6,) = [0.9821, 0.9381999999999999, 0.84505, 0.83765, 0.47295000000000004, 0.43795]
+- `x04_td_mae_after` float64 (6,) = [0.61205, 0.5518000000000001, 0.36035000000000006, 1.1209, 0.37424999999999997, 0.6050500000000001]
+- `x04_other_r2_after` float64 (6,) = [0.9884999999999999, 0.9739, 0.9694, 0.98365, 0.6528, 0.97985]
+- `x04_other_mae_after` float64 (6,) = [1.5624500000000001, 0.8349, 0.6213500000000001, 0.7039500000000001, 1.2303000000000002, 0.9353]
+- `x04_td_r2_raw_after` float64 (6,) = [0.9821, 0.9381999999999999, 0.84505, 0.83765, 0.47295000000000004, -0.0691]
+- `x04_group` float64 (2, 2, 2) = [[[0.81035, 0.868], [0.7872, 0.5352]], [[0.9707, 0.9784999999999999], [1.01345, 0.93575]]]
+- `x04_cell_subject_idx` int64 (48,)
+- `x04_cell_pos` float64 (48,)
+- `x04_cell_toes_down` int64 (48,)
+- `x04_cell_r2_floor0_before` float64 (48,)
+- `x04_cell_r2_floor0_after` float64 (48,)
+- `x04_cell_r2_raw_before` float64 (48,)
+- `x04_cell_r2_raw_after` float64 (48,)
+- `x04_cell_mae_before` float64 (48,)
+- `x04_cell_mae_after` float64 (48,)
+- `x04_cell_r2_range_before` float64 (48,)
+- `x04_cell_r2_range_after` float64 (48,)
+- `x06_subjects` <U3 (2,) = ['YES', 'EG']
+- `x06_td_r2_before` float64 (2,) = [0.42865, 0.43445]
+- `x06_td_mae_before` float64 (2,) = [0.5775250000000001, 1.375575]
+- `x06_other_r2_before` float64 (2,) = [0.975875, 0.97085]
+- `x06_other_mae_before` float64 (2,) = [0.787525, 1.2585]
+- `x06_td_r2_raw_before` float64 (2,) = [0.299025, 0.38905]
+- `x06_td_r2_after` float64 (2,) = [0.32094999999999996, 0.5708]
+- `x06_td_mae_after` float64 (2,) = [0.891025, 1.231]
+- `x06_other_r2_after` float64 (2,) = [0.9837250000000001, 0.972775]
+- `x06_other_mae_after` float64 (2,) = [1.1068, 1.027175]
+- `x06_td_r2_raw_after` float64 (2,) = [-0.9883749999999999, 0.5708]
+- `x06_group` float64 (2, 2, 2) = [[[0.42865, 0.49687499999999996], [0.9313250000000001, 1.150525]], [[0.9734999999999999, 0.980375], [1.1372, 1.0605499999999999]]]
+- `x06_cell_subject_idx` int64 (16,)
+- `x06_cell_pos` float64 (16,)
+- `x06_cell_toes_down` int64 (16,)
+- `x06_cell_r2_floor0_before` float64 (16,)
+- `x06_cell_r2_floor0_after` float64 (16,)
+- `x06_cell_r2_raw_before` float64 (16,)
+- `x06_cell_r2_raw_after` float64 (16,)
+- `x06_cell_mae_before` float64 (16,)
+- `x06_cell_mae_after` float64 (16,)
+- `x06_cell_r2_range_before` float64 (16,)
+- `x06_cell_r2_range_after` float64 (16,)
+- `d02_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `d02_td_r2_before` float64 (6,) = [0.9821, 0.9621, 0.9167000000000001, 0.9608, 0.8359, 0.4444]
+- `d02_td_mae_before` float64 (6,) = [0.61205, 0.39425, 0.25105, 0.53085, 0.2091, 0.5329999999999999]
+- `d02_other_r2_before` float64 (6,) = [0.9884999999999999, 0.98045, 0.97245, 0.986, 0.9132, 0.9874499999999999]
+- `d02_other_mae_before` float64 (6,) = [1.5624500000000001, 0.8232, 0.50375, 0.6376999999999999, 0.4017, 0.81165]
+- `d02_td_r2_raw_before` float64 (6,) = [0.9821, 0.9621, 0.9167000000000001, 0.9608, 0.8359, -0.15349999999999997]
+- `d02_td_r2_after` float64 (6,) = [0.9831, 0.9623, 0.9074, 0.9675, 0.8772, 0.44315]
+- `d02_td_mae_after` float64 (6,) = [0.5769, 0.396, 0.26065, 0.47929999999999995, 0.18364999999999998, 0.5055000000000001]
+- `d02_other_r2_after` float64 (6,) = [0.98735, 0.9839, 0.97235, 0.9863999999999999, 0.92005, 0.9889]
+- `d02_other_mae_after` float64 (6,) = [1.43555, 0.7140500000000001, 0.48260000000000003, 0.6095, 0.34225, 0.7444500000000001]
+- `d02_td_r2_raw_after` float64 (6,) = [0.9831, 0.9623, 0.9074, 0.9675, 0.8772, 0.15104999999999996]
+- `d02_group` float64 (2, 2, 2) = [[[0.9392, 0.9439], [0.45485, 0.3963]], [[0.9813000000000001, 0.98385], [0.6715500000000001, 0.6447]]]
+- `d02_cell_subject_idx` int64 (48,)
+- `d02_cell_pos` float64 (48,)
+- `d02_cell_toes_down` int64 (48,)
+- `d02_cell_r2_floor0_before` float64 (48,)
+- `d02_cell_r2_floor0_after` float64 (48,)
+- `d02_cell_r2_raw_before` float64 (48,)
+- `d02_cell_r2_raw_after` float64 (48,)
+- `d02_cell_mae_before` float64 (48,)
+- `d02_cell_mae_after` float64 (48,)
+- `d02_cell_r2_range_before` float64 (48,)
+- `d02_cell_r2_range_after` float64 (48,)
+- `d01_vs_x00_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `d01_vs_x00_td_r2_before` float64 (6,) = [0.97075, 0.46552499999999997, 0.8086249999999999, 0.7305999999999999, 0.489675, 0.349375]
+- `d01_vs_x00_td_mae_before` float64 (6,) = [0.8488, 1.4188, 0.40975, 1.417675, 0.37775, 0.7366999999999999]
+- `d01_vs_x00_other_r2_before` float64 (6,) = [0.984675, 0.9706250000000001, 0.973, 0.9479, 0.71295, 0.975175]
+- `d01_vs_x00_other_mae_before` float64 (6,) = [1.87295, 1.188375, 0.5354, 1.0884749999999999, 0.9558500000000001, 0.8400000000000001]
+- `d01_vs_x00_td_r2_raw_before` float64 (6,) = [0.97075, 0.46552499999999997, 0.8086249999999999, 0.7305999999999999, 0.489675, 0.007599999999999996]
+- `d01_vs_x00_td_r2_after` float64 (6,) = [0.982475, 0.960575, 0.9134, 0.95975, 0.8377, 0.44845]
+- `d01_vs_x00_td_mae_after` float64 (6,) = [0.59985, 0.380275, 0.26115, 0.5338749999999999, 0.2039, 0.532025]
+- `d01_vs_x00_other_r2_after` float64 (6,) = [0.98885, 0.979725, 0.9735, 0.9859, 0.906325, 0.987225]
+- `d01_vs_x00_other_mae_after` float64 (6,) = [1.574825, 0.876675, 0.5199750000000001, 0.6388, 0.431025, 0.7912]
+- `d01_vs_x00_td_r2_raw_after` float64 (6,) = [0.982475, 0.960575, 0.9134, 0.95975, 0.8377, -0.036775]
+- `d01_vs_x00_group` float64 (2, 2, 2) = [[[0.7689250000000001, 0.936575], [0.8331999999999999, 0.4438]], [[0.971775, 0.9808250000000001], [1.072425, 0.6665000000000001]]]
+- `d01_vs_x00_cell_subject_idx` int64 (48,)
+- `d01_vs_x00_cell_pos` float64 (48,)
+- `d01_vs_x00_cell_toes_down` int64 (48,)
+- `d01_vs_x00_cell_r2_floor0_before` float64 (48,)
+- `d01_vs_x00_cell_r2_floor0_after` float64 (48,)
+- `d01_vs_x00_cell_r2_raw_before` float64 (48,)
+- `d01_vs_x00_cell_r2_raw_after` float64 (48,)
+- `d01_vs_x00_cell_mae_before` float64 (48,)
+- `d01_vs_x00_cell_mae_after` float64 (48,)
+- `d01_vs_x00_cell_r2_range_before` float64 (48,)
+- `d01_vs_x00_cell_r2_range_after` float64 (48,)
+- `x00_vs_x00f_subjects` <U3 (6,) = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
+- `x00_vs_x00f_td_r2_before` float64 (6,) = [0.9707, 0.39175, 0.8147, 0.68415, 0.4069, 0.3746]
+- `x00_vs_x00f_td_mae_before` float64 (6,) = [0.6978500000000001, 1.5688499999999999, 0.39885000000000004, 1.47145, 0.3997, 0.69345]
+- `x00_vs_x00f_other_r2_before` float64 (6,) = [0.9843, 0.97055, 0.96905, 0.95955, 0.62435, 0.97875]
+- `x00_vs_x00f_other_mae_before` float64 (6,) = [1.9062000000000001, 1.1571, 0.5914, 0.901, 0.97775, 0.78285]
+- `x00_vs_x00f_td_r2_raw_before` float64 (6,) = [0.9707, 0.29285, 0.8147, 0.68415, 0.4069, 0.03589999999999999]
+- `x00_vs_x00f_td_r2_after` float64 (6,) = [0.9701, 0.4212, 0.83725, 0.68415, 0.59525, 0.36705]
+- `x00_vs_x00f_td_mae_after` float64 (6,) = [0.8492000000000001, 1.4821, 0.38505, 1.47145, 0.33675, 0.6574]
+- `x00_vs_x00f_other_r2_after` float64 (6,) = [0.9838, 0.9676, 0.9709000000000001, 0.95955, 0.6980500000000001, 0.97465]
+- `x00_vs_x00f_other_mae_after` float64 (6,) = [1.8609, 1.26515, 0.54365, 0.901, 0.9746, 0.91125]
+- `x00_vs_x00f_td_r2_raw_after` float64 (6,) = [0.9701, 0.3304, 0.83725, 0.68415, 0.59525, 0.1078]
+- `x00_vs_x00f_group` float64 (2, 2, 2) = [[[0.7456499999999999, 0.81035], [0.6978500000000001, 0.7872]], [[0.96975, 0.9707], [1.0337999999999998, 1.01345]]]
+- `x00_vs_x00f_cell_subject_idx` int64 (48,)
+- `x00_vs_x00f_cell_pos` float64 (48,)
+- `x00_vs_x00f_cell_toes_down` int64 (48,)
+- `x00_vs_x00f_cell_r2_floor0_before` float64 (48,)
+- `x00_vs_x00f_cell_r2_floor0_after` float64 (48,)
+- `x00_vs_x00f_cell_r2_raw_before` float64 (48,)
+- `x00_vs_x00f_cell_r2_raw_after` float64 (48,)
+- `x00_vs_x00f_cell_mae_before` float64 (48,)
+- `x00_vs_x00f_cell_mae_after` float64 (48,)
+- `x00_vs_x00f_cell_r2_range_before` float64 (48,)
+- `x00_vs_x00f_cell_r2_range_after` float64 (48,)
+- `jm_x04_pos` float64 (8,) = [-0.787, -0.644, -0.504, -0.36, -0.218, -0.078, 0.055, 0.199]
+- `jm_x04_r2_floor0_before` float64 (8,) = [0.8523, 0.3382, 0.8999, 0.3949, 0.8468, 0.0, 0.6525, 0.7436]
+- `jm_x04_r2_floor0_after` float64 (8,) = [0.8221, 0.1238, 0.9013, 0.0262, 0.8964, 0.0, 0.6321, 0.6735]
+- `jm_x04_r2_raw_before` float64 (8,) = [0.8523, 0.3382, 0.8999, 0.3949, 0.8468, -55.2293, 0.6525, 0.7436]
+- `jm_x04_r2_raw_after` float64 (8,) = [0.8221, 0.1238, 0.9013, 0.0262, 0.8964, -54.2453, 0.6321, 0.6735]
+- `jm_x04_mae_before` float64 (8,) = [0.1956, 0.4779, 0.4046, 0.7697, 0.3198, 12.4107, 1.2737, 1.1795]
+- `jm_x04_mae_after` float64 (8,) = [0.1988, 0.5497, 0.4492, 1.1067, 0.2827, 12.4225, 1.3874, 1.3539]
+- `jm_x05_pos` float64 (8,) = [-0.787, -0.644, -0.504, -0.36, -0.218, -0.078, 0.055, 0.199]
+- `jm_x05_r2_floor0_before` float64 (8,) = [0.8523, 0.3382, 0.8999, 0.3949, 0.8468, 0.0, 0.6525, 0.7436]
+- `jm_x05_r2_floor0_after` float64 (8,) = [0.8224, 0.8633, 0.8749, 0.9258, 0.888, 0.0, 0.8699, 0.9204]
+- `jm_x05_r2_raw_before` float64 (8,) = [0.8523, 0.3382, 0.8999, 0.3949, 0.8468, -55.2293, 0.6525, 0.7436]
+- `jm_x05_r2_raw_after` float64 (8,) = [0.8224, 0.8633, 0.8749, 0.9258, 0.888, -57.0899, 0.8699, 0.9204]
+- `jm_x05_mae_before` float64 (8,) = [0.1956, 0.4779, 0.4046, 0.7697, 0.3198, 12.4107, 1.2737, 1.1795]
+- `jm_x05_mae_after` float64 (8,) = [0.2047, 0.2238, 0.4645, 0.2951, 0.3288, 12.7565, 0.7455, 0.5957]
+- `drop_rates` float64 (4,) = [0.0, 0.1, 0.3, 0.5]
+- `drop_td_mae` float64 (4,) = [1.1149499999999999, 1.348325, 0.9313250000000001, 1.2504]
+- `drop_td_r2` float64 (4,) = [0.51775, 0.332275, 0.42865, 0.48675]
+- `drop_other_mae` float64 (4,) = [1.0339500000000001, 1.13165, 1.1372, 1.2521499999999999]
+- `drop_other_r2` float64 (4,) = [0.9683, 0.9719500000000001, 0.9734999999999999, 0.9678500000000001]
+- `grp_set_names` <U32 (5,) = ['X00_baseline_seeds0-9', 'X00f_baseline_framework_seeds0-2', 'X00_baseline_seeds0-2', 'D01_with_C01_for_EG_YES_seeds0-9', 'D01_with_C01_for_EG_YES_seeds0-2']
+- `grp_table_cols` <U18 (6,) = ['td_r2', 'td_mae', 'other_r2', 'other_mae', 'td_r2_range_raw', 'other_r2_range_raw']
+- `grp_table` float64 (5, 6)
+- `yes_m486_pos` float64 () = -0.486
+- `yes_m486_r2_X05` float64 (3,) = [0.1618, -1.442, -3.1603]
+- `yes_m486_mae_X05` float64 (3,) = [0.3053, 0.5349, 0.7038]
+- `yes_m486_r2_X00f` float64 (3,) = [-0.5185, 0.1166, -1.3629]
+- `yes_m486_mae_X00f` float64 (3,) = [0.4235, 0.3178, 0.5167]
+- `yes_m486_r2_X04` float64 (3,) = [-0.999, -1.0141, -1.1984]
+- `yes_m486_mae_X04` float64 (3,) = [0.505, 0.5069, 0.5254]
+- `yes_m486_r2_X00` float64 (10,)
+- `yes_m486_mae_X00` float64 (10,)
+- `yes_m486_r2_C01` float64 (10,)
+- `yes_m486_mae_C01` float64 (10,)
+- `yes_m486_r2_D02` float64 (3,) = [-0.8666, -0.5842, -0.4874]
+- `yes_m486_mae_D02` float64 (3,) = [0.4384, 0.4, 0.3875]
+- `d01x00_cell_r2_range_x00` float64 (48,)
+- `d01x00_cell_r2_range_d01` float64 (48,)
+- `d01x00_cell_r2f_range_x00` float64 (48,)
+- `d01x00_cell_r2f_range_d01` float64 (48,)
+- `d01x00_cell_r2_min_x00` float64 (48,)
+- `d01x00_cell_r2_max_x00` float64 (48,)
+- `d01x00_cell_r2_min_d01` float64 (48,)
+- `d01x00_cell_r2_max_d01` float64 (48,)
+- facts_y06.json keys: `source`, `results_json_built`, `note`, `group_numbers`, `comparisons`, `jm_per_position`, `jm_minus0p36_position`, `yes_minus0p486`, `extra`, `storyboard_claims`, `precision_crosscheck_max_abs_diff`, `display`, `checks`, `storyboard_mismatches`, `npz_arrays`
+
+## data2/y07.npz
+- `td_subject` <U3 (12,)
+- `td_pos` float64 (12,)
+- `td_s1_minus_s2` float64 (12,)
+- `td_lstm_bias` float64 (12,)
+- `td_ref_rmse` float64 (12,)
+- `td_lstm_rmse` float64 (12,)
+- `pt_subject` <U3 (48,)
+- `pt_rank` int64 (48,)
+- `pt_r2` float64 (48, 3)
+- facts_y07.json keys: `ref`, `shift`, `per_trial`, `pooled`, `own_target`, `vaf`, `dropout_loss`, `ch_flip`, `checks`
+
+## data/x01.npz
+- `trial_t` float64 (8910,)
+- `trial_tq` float64 (8910,)
+- `trial_pos` float64 (8910,)
+- `push_runs` int64 (22, 2)
+- `raw_gm` float32 (2000,)
+- `raw_gl` float32 (2000,)
+- `raw_sol` float32 (2000,)
+- `raw_ta` float32 (2000,)
+- `raw_position` float32 (2000,)
+- `raw_torque` float32 (2000,)
+- `raw_t` float32 (2000,)
+- `raw2_gm` float32 (2000,)
+- `raw2_gl` float32 (2000,)
+- `raw2_sol` float32 (2000,)
+- `raw2_ta` float32 (2000,)
+- `raw2_torque` float32 (2000,)
+- `raw2_t` float32 (2000,)
+- facts_x01.json keys: `eg_S1_angles`, `eg_S1_idx`, `eg_S1_peak_abs_tq_Nm`, `eg_S2_angles`, `eg_S2_idx`, `eg_S2_peak_abs_tq_Nm`, `eg_active_seconds`, `eg_angle`, `eg_angle_sd_mrad`, `eg_channel_names`, `eg_mvc_seconds`, `eg_n_mvc`, `eg_n_trials`, `eg_push_count`, `eg_push_mid_Nm`, `eg_raw_ranges`, `eg_raw_window_s`, `eg_s1_idx`, `eg_s2_idx`, `eg_tq_min_Nm`, `eg_trials`, `people`
+
+## data/x02.npz
+- `f` float64 (600,)
+- `gain_bp` float64 (600,)
+- `gain_lp` float64 (600,)
+- `imp_t` float64 (2001,)
+- `imp_h` float64 (2001,)
+- `piece_t` float64 (3000,)
+- `piece_raw` float64 (3000,)
+- `piece_demeaned` float64 (3000,)
+- `piece_band` float64 (3000,)
+- `piece_rect` float64 (3000,)
+- `piece_env` float64 (3000,)
+- `piece_t100` float64 (301,)
+- `piece_env100` float64 (301,)
+- facts_x02.json keys: `bp`, `check_decimated_vs_bundle`, `check_env_vs_extract_envelope`, `decimate_taps`, `imp90`, `imp99`, `lp`, `mean_offset`, `n_100hz`, `order`, `piece_s`, `seconds_100hz`, `trial_idx`
+
+## data/x03.npz
+- `eg_t` float64 (8910,)
+- `eg_base` float64 (8910, 4)
+- `eg_env_raw` float64 (8910, 4)
+- `eg_agc` float64 (8910, 4)
+- `eg_tq` float64 (8910,)
+- `eg2_t` float64 (8910,)
+- `eg2_agc` float64 (8910, 4)
+- `eg2_base` float64 (8910, 4)
+- `jm_t` float64 (8910,)
+- `jm_base` float64 (8910, 4)
+- `jm_lo` float64 (8910, 4)
+- `jm_top` float64 (8910, 4)
+- `jm_agc` float64 (8910, 4)
+- `jm_tq` float64 (8910,)
+- `jm_s1_t` float64 (8910,)
+- `jm_s1_base` float64 (8910, 4)
+- `jm_s1_agc` float64 (8910, 4)
+- `jm_s1_tq` float64 (8910,)
+- `jm_s1_lo` float64 (8910, 4)
+- `w_n` int64 (2001,)
+- `w` float64 (2001,)
+- facts_x03.json keys: `eg_cancel`, `eg_cancel_max_abs_diff`, `jm_example`, `per_subject`, `size_mismatch`, `size_ratio`
+
+## data/x04.npz
+- `p20_t` float64 (9010,)
+- `p20_pos` float64 (9010,)
+- `p20_tq` float64 (9010,)
+- `S1_t` float64 (8910,)
+- `S1_tq` float64 (8910,)
+- `S1_P` float64 (8910,)
+- `S1_target` float64 (8910,)
+- `S2_t` float64 (8910,)
+- `S2_tq` float64 (8910,)
+- `S2_P` float64 (8910,)
+- `S2_target` float64 (8910,)
+- facts_x04.json keys: `eg_S1_P_median`, `eg_S1_P_range`, `eg_S1_angle`, `eg_S2_P_median`, `eg_S2_P_range`, `eg_S2_angle`, `eg_map_check_S1`, `eg_map_check_S2`, `eg_pieces`, `maps`, `p20_pieces`
+
+## data/x05.npz
+- `trial_F` float32 (7131, 5)
+- `trial_target` float32 (7112,)
+- `trial_last` int64 (7112,)
+- `trial_t` float32 (7112,)
+- `window` float32 (20, 5)
+- `val_t` float32 (1778,)
+- `val_target` float32 (1778,)
+- `knot0_target` float64 (7112,)
+- `knot0_t` float32 (7112,)
+- `knot6_target` float64 (7112,)
+- `knot6_t` float32 (7112,)
+- `knots` float64 (8,) = [-0.739, -0.599, -0.458, -0.317, -0.178, -0.038, 0.104, 0.247]
+- `sd` float64 (8,) = [2.0201834150853286, 3.6523562958463827, 4.2527574863852875, 6.407875568503226, 8.048276049733152, 10.908471769776375, 12.922683365949206, 11.309553273367662]
+- facts_x05.json keys: `c01_equals_d01`, `config`, `example`, `knots`, `n_per_knot`, `per_trial`, `protocol`, `sd`, `sd2_ratio_max_min`, `sd_argmax`, `sd_argmin`, `shapes`, `test_per_trial`, `trial`
+
+## data2/facts_y01.json (no npz; top-level keys, read the file directly with json): `source`, `results_json_built`, `note`, `toes_down_rule_check`, `seeds_per_set`, `A_baseline_cells`, `B_group_summaries`, `B_per_seed_group_median_r2_floor0`, `C_cells_median_r2_below_0p5`, `C_n_cells_below_0p5`, `C_n_below_0p5_that_are_toes_down`, `C_below_0p5_demeaned_above_0p7`, `C_below_0p5_median_raw_r2`, `C_below_0p5_median_demeaned_r2`, `C_n_single_runs_r2_neg_demeaned_gt_0p7`, `C_n_single_runs_r2_negative`, `C_n_single_runs_total`, `C_best3_examples_by_demeaned_r2`, `C_top10_candidates`, `C_relaxed_examples_r2_neg_demeaned_gt_0p4_one_per_cell`, `C_toes_down_negative_runs_all`, `C_n_negative_runs_by_toes_down`, `C_other_sets_cells_median_r2_below_0p5`, `C_JM_minus0p078_evidence`, `C_JM_minus0p078_in_D01`, `C_best_per_subject`, `D_identity_check`, `D_cells`, `D_tracking`, `D_toes_down_table`, `D_loss_decomposition_median_per_run`, `E_learning_curves`, `E_note`, `F_seed_spread`, `F_seed_counts`
