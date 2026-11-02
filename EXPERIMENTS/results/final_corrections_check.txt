@@ -1,0 +1,43 @@
+## Regressions of the final candidate vs X00f (seed-mean, seeds 0-2): R2 drop > 0.01 OR RMSE rise > 10 %
+S1toS2 CH +0.238 problematic=0: R2 0.990 -> 0.988 (-0.002), RMSE 2.77 -> 3.07 (+11 %)
+S1toS2 HM -0.224 problematic=0: R2 0.980 -> 0.972 (-0.009), RMSE 0.58 -> 0.70 (+20 %)
+S1toS2 HM +0.052 problematic=0: R2 0.985 -> 0.981 (-0.003), RMSE 0.65 -> 0.71 (+10 %)
+S1toS2 YES -0.486 problematic=1: R2 -0.588 -> -1.185 (-0.597), RMSE 0.49 -> 0.59 (+19 %)
+S2toS1 CH -0.047 problematic=0: R2 0.991 -> 0.988 (-0.004), RMSE 2.17 -> 2.59 (+20 %)
+S2toS1 EG +0.104 problematic=0: R2 0.984 -> 0.980 (-0.004), RMSE 1.63 -> 1.82 (+11 %)
+S2toS1 HM +0.054 problematic=0: R2 0.965 -> 0.938 (-0.026), RMSE 1.04 -> 1.37 (+32 %)
+S2toS1 IES +0.144 problematic=0: R2 0.979 -> 0.975 (-0.005), RMSE 1.56 -> 1.71 (+10 %)
+S2toS1 JM -0.505 problematic=0: R2 0.872 -> 0.836 (-0.035), RMSE 0.84 -> 0.94 (+13 %)
+S2toS1 YES -0.486 problematic=1: R2 0.375 -> -0.455 (-0.831), RMSE 0.51 -> 0.79 (+54 %)
+S2toS1 YES -0.069 problematic=0: R2 0.992 -> 0.986 (-0.006), RMSE 0.77 -> 1.00 (+30 %)
+S2toS1 YES +0.031 problematic=0: R2 0.983 -> 0.977 (-0.006), RMSE 1.77 -> 2.10 (+18 %)
+S2toS1 YES +0.245 problematic=0: R2 0.969 -> 0.961 (-0.008), RMSE 2.34 -> 2.64 (+13 %)
+
+## Per subject toes-down, S1toS2: official X00 vs final (seed-mean, R2 floored at -1 per position, and unfloored)
+YES: floored -0.08 -> -0.06 | unfloored -0.08 -> -0.15 | RMSE 0.82 -> 0.67
+EG: floored 0.25 -> 0.96 | unfloored 0.25 -> 0.96 | RMSE 2.08 -> 0.55
+JM: floored 0.39 -> 0.84 | unfloored 0.39 -> 0.84 | RMSE 0.53 -> 0.27
+IES: floored 0.64 -> 0.96 | unfloored 0.64 -> 0.96 | RMSE 1.75 -> 0.63
+CH: floored 0.96 -> 0.98 | unfloored 0.96 -> 0.98 | RMSE 1.09 -> 0.86
+HM: floored 0.83 -> 0.92 | unfloored 0.83 -> 0.92 | RMSE 0.49 -> 0.37
+ALL 6 toes-down: R2 floored 0.500 -> 0.768; RMSE 1.13 -> 0.56
+ALL 6 other: R2 floored 0.873 -> 0.966; RMSE 1.83 -> 1.19
+
+## Diagnostics ranges over the 12 problematic positions (X00, primary key)
+                       off    sc    sh  corr  lag    sd   offp
+subject position_rad                                          
+CH      -0.737        0.38  0.05  0.57  0.99  2.0  4.53  37.77
+        -0.595        0.63  0.22  0.75  0.99  0.0  8.21  39.52
+EG      -0.739        3.27  1.42  0.41  0.97 -2.0  2.06  64.09
+        -0.598        2.19  0.77  1.11  0.97 -2.0  3.72  53.86
+HM      -0.789        0.08  0.01  0.05  0.96 -1.0  0.77  59.19
+        -0.648        0.21  0.08  0.10  0.98  0.0  1.86  53.93
+IES     -0.591        2.86  0.15  1.52  0.92  1.0  2.81  63.13
+        -0.484        1.41  0.07  0.51  0.98  0.0  3.70  70.88
+JM      -0.787        0.03  0.02  0.07  0.90  1.0  0.60  23.60
+        -0.644        0.31  0.17  0.08  0.86  3.0  0.78  55.86
+YES     -0.486        0.22  0.01  0.07  0.80  1.0  0.40  72.49
+        -0.381        0.22  0.74  0.27  0.98 -1.0  2.24  18.12
+
+## Run times (min)
+X00 39-146; framework 25-220; total CPU-hours 224; runs 156

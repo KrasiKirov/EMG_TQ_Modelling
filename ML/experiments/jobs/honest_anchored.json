@@ -1,0 +1,92 @@
+[
+ {
+  "subject": "YES",
+  "name": "H_anc_pgain_smooth_floortrain",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.baseline_drift:rezero_smooth",
+    "ML.experiments.plugins.anchored:floor_train"
+   ],
+   "params": {
+    "bd_apply": "trainval",
+    "bd_sigma_s": 8
+   }
+  },
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "H_anc_pgain_smooth_floortrain_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.baseline_drift:rezero_smooth",
+    "ML.experiments.plugins.anchored:floor_train"
+   ],
+   "params": {
+    "bd_apply": "trainval",
+    "bd_sigma_s": 8
+   }
+  },
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "H_anc_pgain_smooth_floortrain",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.baseline_drift:rezero_smooth",
+    "ML.experiments.plugins.anchored:floor_train"
+   ],
+   "params": {
+    "bd_apply": "trainval",
+    "bd_sigma_s": 8
+   }
+  },
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "H_anc_pgain_smooth_floortrain_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.baseline_drift:rezero_smooth",
+    "ML.experiments.plugins.anchored:floor_train"
+   ],
+   "params": {
+    "bd_apply": "trainval",
+    "bd_sigma_s": 8
+   }
+  },
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

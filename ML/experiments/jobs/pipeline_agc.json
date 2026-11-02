@@ -1,0 +1,106 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P7_core_agc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": true
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P7_core_agc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": true
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P8_core_agc_moe",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": true
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": false,
+    "moe": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P8_core_agc_moe",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": true
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": false,
+    "moe": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

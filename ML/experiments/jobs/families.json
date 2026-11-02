@@ -1,0 +1,236 @@
+[
+ {
+  "subject": "YES",
+  "name": "F_mlp",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:mlp",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "F_tcn",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:tcn",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "F_gru8",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:gru8",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "F_lstm32",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "lstm32",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "F_mlp",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:mlp",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "F_tcn",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:tcn",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "F_gru8",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:gru8",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "F_lstm32",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "lstm32",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "EG",
+  "name": "F_mlp",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:mlp",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "EG",
+  "name": "F_tcn",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:tcn",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "EG",
+  "name": "F_gru8",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "ML.experiments.plugins.families:gru8",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "EG",
+  "name": "F_lstm32",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "lstm32",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "EG",
+  "name": "H_pgain_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain"
+   ]
+  },
+  "model": "lstm8",
+  "model_kw": {},
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

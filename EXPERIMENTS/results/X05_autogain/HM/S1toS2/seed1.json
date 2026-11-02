@@ -1,0 +1,87 @@
+{
+ "experiment": "X05_autogain",
+ "subject": "HM",
+ "direction": "S1toS2",
+ "seed": 1,
+ "config": {
+  "passive": "legacy",
+  "emg": "agc_auto",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "The EMG size for the same push changes between sessions (JM \u2248 0.4\u20130.5\u00d7 at some positions). Rescaling each muscle by its own recent quiet and strong levels should make session 2 look like session 1.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "agc_auto",
+   "rmin_frac": 0.35,
+   "auto_decision": "AGC ON"
+  },
+  "push_directions": [
+   -3.746580769131083,
+   -8.767285321928894,
+   -4.013916287657036,
+   -8.671070542355817,
+   -7.54951043782725,
+   -1.561245136614404,
+   -10.042185032465444,
+   -10.919395043050997
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.19728979190101237
+ },
+ "train_info": {
+  "epochs": 34,
+  "best_epoch": 9,
+  "best_val_loss": 0.36053597927093506,
+  "knots": [
+   -0.788,
+   -0.647,
+   -0.505,
+   -0.364,
+   -0.222,
+   -0.081,
+   0.054,
+   0.198
+  ],
+  "sd_per_knot": [
+   0.7814065612737857,
+   1.9888423362783685,
+   1.8105352937020038,
+   3.6601032416226214,
+   4.127363171013993,
+   4.905337941578288,
+   5.496924151847608,
+   4.800263414547551
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 4.577016592025757,
+ "train_s": 2312.397216796875,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

@@ -1,0 +1,74 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1791513498.833184   24624 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1791513503.678979   24624 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+
+============================================================
+Loading subject EG: C:/Users/dramo/Desktop/Projects/krasi_ml/EMG_TQ_Modelling/ML/subjects\EG_121224.flb
+Read 40 trials from 'EG_121224.flb'
+Trials classified:  MVC=8  passive=16  active=16
+Active trials after std filter (<= 30.0 Nm): 16
+
+Auto-detected trial split from comments:
+  Train/Val (test session):  [10, 12, 14, 16, 18, 20, 22, 24]
+  Held-out  (retest session): [26, 28, 30, 32, 34, 36, 38, 40]
+Processed 8 trials × 4 EMG channels
+  Bandpass: 30.0–300.0 Hz | Lowpass: 2.0 Hz | Order: 4
+  gm max used: 0.126339
+  gl max used: 0.018893
+  sol max used: 0.087493
+  ta max used: 0.013388
+Retest trials normalized using train/val max (no data leakage)
+
+Test-session passive torques (auto-detected):
+  pos ≈ -0.738 rad → passive torque = +2.536 Nm
+  pos ≈ -0.596 rad → passive torque = +1.808 Nm
+  pos ≈ -0.453 rad → passive torque = +1.124 Nm
+  pos ≈ -0.311 rad → passive torque = +0.020 Nm
+  pos ≈ -0.170 rad → passive torque = -1.735 Nm
+  pos ≈ -0.028 rad → passive torque = -3.589 Nm
+  pos ≈ +0.106 rad → passive torque = -5.603 Nm
+  pos ≈ +0.249 rad → passive torque = -10.144 Nm
+
+Retest-session passive torques (auto-detected):
+  pos ≈ -0.737 rad → passive torque = +2.618 Nm
+  pos ≈ -0.596 rad → passive torque = +2.028 Nm
+  pos ≈ -0.454 rad → passive torque = +1.183 Nm
+  pos ≈ -0.311 rad → passive torque = +0.392 Nm
+  pos ≈ -0.169 rad → passive torque = -1.002 Nm
+  pos ≈ -0.028 rad → passive torque = -2.745 Nm
+  pos ≈ +0.105 rad → passive torque = -5.232 Nm
+  pos ≈ +0.250 rad → passive torque = -8.319 Nm
+  Trial 10 (active test, p1               ) → TRAIN  7112 | VAL  1778
+  Trial 12 (active test, p2               ) → TRAIN  7112 | VAL  1778
+  Trial 14 (active test, p3               ) → TRAIN  7112 | VAL  1778
+  Trial 16 (active test, p4               ) → TRAIN  7112 | VAL  1778
+  Trial 18 (active test, p5               ) → TRAIN  7112 | VAL  1778
+  Trial 20 (active test, p6               ) → TRAIN  7112 | VAL  1778
+  Trial 22 (active test, p7               ) → TRAIN  7112 | VAL  1778
+  Trial 24 (active test, p8               ) → TRAIN  7112 | VAL  1778
+  Trial 26 (active retest, p1             ) → TEST   8891  (retest — fully held out)
+  Trial 28 (active retest, p2             ) → TEST   8891  (retest — fully held out)
+  Trial 30 (active retest, p3             ) → TEST   8891  (retest — fully held out)
+  Trial 32 (active retest, p4             ) → TEST   8891  (retest — fully held out)
+  Trial 34 (active retest, p5             ) → TEST   8891  (retest — fully held out)
+  Trial 36 (active retest, p6             ) → TEST   8891  (retest — fully held out)
+  Trial 38 (active retest, p7             ) → TEST   8891  (retest — fully held out)
+  Trial 40 (active retest, p8             ) → TEST   8891  (retest — fully held out)
+
+Trial-based split:
+  Train/Val trials (1-indexed): [10, 12, 14, 16, 18, 20, 22, 24]
+  Test trials (retest, 1-indexed): [26, 28, 30, 32, 34, 36, 38, 40]
+
+Dataset built at 100 Hz  |  window=20 steps (200 ms)  |  stride=1 step (10 ms)
+  Features : ['gm_env_norm', 'gl_env_norm', 'sol_env_norm', 'ta_env_norm', 'position']
+  Target   : net active torque (Nm)
+  X_train  : (56896, 20, 5)   y_train: (56896,)
+  X_val    : (14224, 20, 5)   y_val:   (14224,)
+  X_test   : (71128, 20, 5)   y_test:  (71128,)
+  Training LSTM8 (EG)...
+Epoch 32: early stopping
+Restoring model weights from the end of the best epoch: 7.
+Read 40 trials from 'EG_121224.flb'
+[X00 EG s2] 32 ep, best 7, 2326s  -0.74:+0.11  -0.60:+0.89  -0.46:+0.84  -0.32:+0.97  -0.18:+0.97  -0.04:+0.98  +0.10:+0.98  +0.25:+0.97

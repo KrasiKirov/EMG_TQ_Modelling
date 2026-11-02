@@ -1,0 +1,187 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P11_final",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": true
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "orig",
+  "seeds": [
+   0
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P11_final",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": true
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "orig",
+  "seeds": [
+   0
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P12_core_moe_scale",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P12_core_moe_scale",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "IES",
+  "name": "P12_core_moe_scale",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "EG",
+  "name": "P12_core_moe_scale",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "HM",
+  "name": "P12_core_moe_scale",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "scale",
+    "anchored": false,
+    "moe": true,
+    "moe_expert_bias": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

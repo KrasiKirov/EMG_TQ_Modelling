@@ -1,0 +1,102 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P5_core_moe",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw"
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": false,
+    "moe": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P5_core_moe",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw"
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": false,
+    "moe": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P6_core_sp_moe",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "setpoint"
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": false,
+    "moe": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P6_core_sp_moe",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "setpoint"
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": false,
+    "moe": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

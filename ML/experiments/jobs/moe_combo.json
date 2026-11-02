@@ -1,0 +1,72 @@
+[
+ {
+  "subject": "YES",
+  "name": "H_pgain_moe",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.model_loss:posstats"
+   ]
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "H_pgain_moe",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.model_loss:posstats"
+   ]
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "H_pgain_moe_knot",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.model_loss:posstats"
+   ],
+   "pos_feature": "knot"
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "H_pgain_moe_knot",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.baseline_drift:passive_static_gain",
+    "ML.experiments.plugins.model_loss:posstats"
+   ],
+   "pos_feature": "knot"
+  },
+  "model": "ML.experiments.plugins.model_loss:moe_pos",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

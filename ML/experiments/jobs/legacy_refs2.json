@@ -1,0 +1,26 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "CH",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "HM",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

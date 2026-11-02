@@ -1,0 +1,9 @@
+{
+ "title": "Every position counts the same in the fit (divide each position by its typical swing)",
+ "changes": {
+  "balance": "scale"
+ },
+ "hypothesis": "Plain least squares in Nm² lets the strong positions dominate (YES: 2 most plantarflexed positions = 1 % of the loss). Dividing each position's target by its training standard deviation (= weighted least squares, weight 1/σ²) should improve the plantarflexed positions without hurting the others much.",
+ "motivation": "Loss-imbalance diagnosis; inverse-variance weighting of task losses (Kendall et al. 2018).",
+ "id": "X04_equal_angle_weight"
+}

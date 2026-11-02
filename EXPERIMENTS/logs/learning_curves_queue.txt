@@ -1,0 +1,13 @@
+done X00f_baseline_framework EG
+done X00f_baseline_framework JM
+done X00f_baseline_framework YES
+done X00f_baseline_framework CH
+done X00f_baseline_framework IES
+done X00f_baseline_framework HM
+done D01_cleanpassive+autogain+equalweight EG
+done D01_cleanpassive+autogain+equalweight YES
+done D01_cleanpassive+autogain+equalweight JM
+done D01_cleanpassive+autogain+equalweight CH
+done D01_cleanpassive+autogain+equalweight IES
+done D01_cleanpassive+autogain+equalweight HM
+LC_DONE

@@ -1,0 +1,381 @@
+[
+ {
+  "subject": "JM",
+  "name": "drift_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "drift_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "drift_clip_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:clip_env",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "drift_clip_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:clip_env",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "passive_monotone",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:passive_monotone"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "trialnorm_TRANSDUCTIVE",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:trial_norm"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "trialnorm_TRANSDUCTIVE",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:trial_norm"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "rezero_train_only",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:rezero_train_only"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "rezero_train_only",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:rezero_train_only"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "raw_target",
+  "opts": {
+   "target": "raw"
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "raw_target",
+  "opts": {
+   "target": "raw"
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "aug_gain04",
+  "opts": {
+   "aug_gain": 0.4,
+   "aug_copies": 1
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "aug_gain04",
+  "opts": {
+   "aug_gain": 0.4,
+   "aug_copies": 1
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "posw_invstd",
+  "opts": {},
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_std_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "posw_invstd",
+  "opts": {},
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_std_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "floor",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "floor",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "lstm32",
+  "opts": {},
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "lstm32"
+ },
+ {
+  "subject": "YES",
+  "name": "lstm32",
+  "opts": {},
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "lstm32"
+ },
+ {
+  "subject": "JM",
+  "name": "film",
+  "opts": {},
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "film"
+ },
+ {
+  "subject": "YES",
+  "name": "film",
+  "opts": {},
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "film"
+ },
+ {
+  "subject": "JM",
+  "name": "lp4",
+  "opts": {
+   "lp": 4.0
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "lp4",
+  "opts": {
+   "lp": 4.0
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "win50",
+  "opts": {
+   "window": 50
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "win50",
+  "opts": {
+   "window": 50
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "JM",
+  "name": "rezero_linear",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:rezero_linear"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "subject": "YES",
+  "name": "rezero_linear",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:rezero_linear"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

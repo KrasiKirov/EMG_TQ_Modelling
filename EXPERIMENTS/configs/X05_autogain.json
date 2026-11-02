@@ -1,0 +1,9 @@
+{
+ "title": "EMG auto-gain (running per-muscle rescaling, off for people who push both ways)",
+ "changes": {
+  "emg": "agc_auto"
+ },
+ "hypothesis": "The EMG size for the same push changes between sessions (JM ≈ 0.4–0.5× at some positions). Rescaling each muscle by its own recent quiet and strong levels should make session 2 look like session 1.",
+ "motivation": "EMG amplitude depends on electrode contact, sweat, temperature (De Luca 1997); running normalisation used before (Tanaka et al. 2022).",
+ "id": "X05_autogain"
+}

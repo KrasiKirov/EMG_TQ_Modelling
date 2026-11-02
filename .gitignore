@@ -11,3 +11,7 @@ __pycache__/
 ML/plots/
 ML/*_output/
 .venv/
+.ipynb_checkpoints/
+.claude/
+.venv311/
+debug/
