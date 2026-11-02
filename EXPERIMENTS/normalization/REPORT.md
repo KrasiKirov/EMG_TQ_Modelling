@@ -30,6 +30,11 @@ Four things we learned:
    30-second relaxed hold recorded before every trial fixed YES (2.37 to 0.48 Nm). But on CH and HM, the people it was
    checked on afterwards, it made CH worse and only helped HM. It was an idea from after Stage 1, so we report it as
    exploratory and do not use it.
+5. **A 10-second calibration per angle fixes the drift for everyone.** Using the first 10 seconds of each session-2
+   trial, with torque measured, to fit a gain and an offset for that angle cut the toes-down error from 0.86 to
+   **0.35 Nm** (R² 0.81 to **0.94**), and the other positions from 1.01 to 0.75 Nm. All six people improved. Every
+   fix that guessed the drift from EMG alone helped some people and hurt others. Measuring it for a few seconds works
+   for all of them. Details in the last results section.
 
 The LSTM beat both reference predictors everywhere: a per-position ridge model, and a flat line at session 1's average.
 
@@ -309,6 +314,73 @@ resting level can drift a little during the trial itself. Choosing a threshold f
 people than we have. So it is not part of the model, but it is the most promising lead for the
 toes-down offset.
 
+## The fix that works for everyone: a short calibration
+
+*Rules written and committed before any result (`calibration_test.py`, commit fcc2b1d). No retraining: it sits on
+top of the N0 predictions above, for all six people and all three seeds.*
+
+**Why this one is different.** Everything above tried to guess how session 2 changed, from EMG alone. But the
+change is different for each person: the EMG got bigger for EG, smaller and uneven for JM, the resting torque moved
+for YES, and CH did a different task. A guess that suits one person hurts another. The standard answer in EMG
+control, for prosthetic hands for example, is not a cleverer guess. It is to **measure** the change: a few seconds
+of calibration at the start of each session.
+
+**How it works.** For each session-2 trial, one angle of about 90 seconds:
+
+1. Take the first C seconds as the calibration block. The torque is measured during it, as it would be on a device
+   that asks you to "push a few times before you start".
+2. Fit two numbers for that angle on that block: a **gain** (how much to stretch the prediction) and an **offset**
+   (how much to shift it). The gain answers "the EMG reads bigger or smaller today". The offset answers "the resting
+   torque moved today". If the block has no push in it, only the offset is fitted.
+3. Apply them to the rest of the trial. **Only the stretch from 30 seconds to the end is scored**, for every
+   variant, so the calibration seconds are never scored and every variant is judged on the same stretch.
+
+The headline, chosen in advance, is gain and offset with 10 seconds.
+
+| N0, all 6 people, scored from 30 s to the end | toes-down MAE | toes-down R² | other MAE | other R² |
+|---|---|---|---|---|
+| no calibration | 0.86 Nm | 0.81 | 1.01 Nm | 0.97 |
+| offset only, 10 s | 0.42 | 0.93 | 0.89 | 0.97 |
+| **gain and offset, 10 s** | **0.35** | **0.94** | **0.75** | **0.98** |
+| gain and offset, 5 s | 0.37 | 0.93 | 0.75 | 0.97 |
+| gain and offset, 20 s | 0.36 | 0.95 | 0.74 | 0.98 |
+| gain and offset, 30 s | 0.34 | 0.96 | 0.72 | 0.98 |
+
+The uncalibrated numbers differ from the Stage 2 numbers to quote because they cover all six people and only the
+stretch after 30 seconds.
+
+Per person, MAE in Nm, no calibration against gain and offset with 10 seconds:
+
+| | toes-down | other positions |
+|---|---|---|
+| YES | 2.27 → **0.55** | 1.43 → 1.23 |
+| JM | 0.43 → 0.25 | 0.75 → 0.54 |
+| EG | 0.82 → 0.33 | 1.14 → 0.79 |
+| IES | 1.16 → 0.41 | 0.75 → 0.59 |
+| CH | 0.72 → 0.57 | 1.83 → 1.44 |
+| HM | 0.52 → 0.34 | 0.59 → 0.44 |
+
+**Every person improves, at toes-down and elsewhere.** No other fix in this study did that. The gain matters: the
+offset alone already removes most of YES's problem, but for EG, IES, JM and CH the gain removes more on top.
+
+**How short can it be?** 10 seconds is the shortest length that is safe for everyone. With 5 seconds, IES's
+toes-down positions did not improve (1.16 to 1.20 Nm): the first push had probably not happened yet, so the gain was
+learned from almost nothing. From 10 seconds on, the curve is flat. Eight angles times 10 seconds is under two
+minutes per session.
+
+**Is it cheating?** No. The seconds used to calibrate are never scored. But be clear about what it needs: **a torque
+sensor during the calibration block**. That is fine in a lab or a clinic, where the device that measures torque is
+there anyway. It is not a model that works from EMG alone on a new day.
+
+**The honest caveats.**
+
+- The calibration block is the start of the same trial it corrects. That assumes the drift stays the same for the
+  90 seconds of the trial. A separate calibration block, recorded just before, would be a more realistic test. Our
+  protocol has none with pushes in it.
+- Its rules were written after Stages 1 and 2 had been seen, though before any calibration number was. It is not
+  part of the pre-registered study.
+- One fit per angle means the calibration has to be repeated at every angle used.
+
 ## Data notes found along the way
 
 - **CH pulls the toes up at the toes-down positions.** At CH's three most toes-down angles, both sessions are toes-up
@@ -335,7 +407,8 @@ toes-down offset.
 
 - Plan and rule: `EXPERIMENTS/normalization/PLAN.md`. Stage 1 verdict: `decision_stage1.md`.
 - Scores: `runs_stage1.csv`, `cells_stage1.csv`, `runs_stage2.csv`, `cells_stage2.csv` (one row per run and
-  position, and per position over seeds). The relaxed-hold test: `relaxed_hold_extra.csv`.
+  position, and per position over seeds). The relaxed-hold test: `relaxed_hold_extra.csv`. The calibration test:
+  `calibration_test.py`, `calibration_runs.csv`, `calibration_summary.md`.
 - Picture of the toes-down offset: `figures/toes_down_explained.png`.
 - Runs: `EXPERIMENTS/results/N0_total_trainmax` ... `NR3_total_sessionp99`, logs in `EXPERIMENTS/logs/`.
 - Dashboard: sidebar group "Normalization study". This report is under "How it works" for each arm.

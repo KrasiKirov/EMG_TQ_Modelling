@@ -85,8 +85,8 @@ def main():
     group = cells.groupby(['variant', 'seconds', 'toes_down'])[['mae', 'r2', 'vaf']].median().unstack('toes_down')
     person = cells.groupby(['variant', 'seconds', 'subject', 'toes_down']).mae.median().unstack(['toes_down', 'subject'])
     out = ['# Short-calibration test (N0 runs, 6 people, 3 seeds, scored from 30 s to the end of each trial)', '',
-           '## Group medians (toes-down = 1)', '', group.round(3).to_markdown(), '',
-           '## MAE per person (Nm)', '', person.round(2).to_markdown(), '']
+           '## Group medians (toes-down = 1)', '', '```', group.round(3).to_string(), '```', '',
+           '## MAE per person (Nm)', '', '```', person.round(2).to_string(), '```', '']
     open(os.path.join(HERE, 'calibration_summary.md'), 'w', encoding='utf-8').write('\n'.join(out))
     print('\n'.join(out))
 
