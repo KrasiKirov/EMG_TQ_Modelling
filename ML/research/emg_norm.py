@@ -33,6 +33,10 @@ agc_auto     report 1's 'auto' rule: 'agc' unless the training session shows
 agc_soft     same with rmin = 0.7 x prior range: amplifies a near-silent
              channel at most ~1.4x instead of ~2.9x (less noise blow-up at
              weak angles).
+train_p99    divide each channel by its 99th percentile over the TRAINING
+             part of the training-session trials (100 Hz envelope).  Same
+             idea as 'trainmax', but one spike cannot set the scale, and the
+             validation part is not used.
 session_p99  every session is divided by ITS OWN per-channel 99th percentile
              of the envelope (training session: training part only; test
              session: all of its active-trial EMG, without any torque).
@@ -106,6 +110,11 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
         priors = emg_agc.agc_priors([base[r['idx']][:_train_part(r, train_frac, window)] for r in train_recs])
         info.update(rmin_frac=rmin_frac, prior_lo=priors[0].tolist(), prior_hi=priors[1].tolist())
         return {i: _agc(e, priors[0], priors[1], rmin_frac) for i, e in base.items()}, info
+    if kind == 'train_p99':
+        src = np.concatenate([r['env_raw'][:_train_part(r, train_frac, window)] for r in train_recs])
+        sc = np.maximum(np.percentile(src, 99, axis=0), 1e-9)
+        info['train_p99'] = sc.tolist()
+        return {r['idx']: r['env_raw'] / sc for r in all_recs}, info
     if kind == 'session_p99':
         train_ids = {r['idx'] for r in train_recs}
         out, scales = {}, {}

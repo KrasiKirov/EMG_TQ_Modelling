@@ -64,7 +64,9 @@ def prepare(subject, protocol, cfg):
     base_env, _ = normalise('trainmax', bundle, train_recs, recs, train_frac=tf_, val_end_frac=val_end,
                             window=window)
     tr_segs, va_segs = rest_segments(train_recs, base_env, train_frac=tf_, val_end_frac=val_end, window=window)
-    if cfg['passive'] == 'restanchor':
+    if cfg['passive'] == 'none':              # total torque: nothing subtracted
+        targets, pinfo = {r['idx']: r['tq'].copy() for r in recs}, {'kind': 'none'}
+    elif cfg['passive'] == 'restanchor':
         targets, pinfo = restanchor_targets(bundle, protocol)
     else:
         pm = PassiveModel(cfg['passive'], bundle).fit(train_recs, tr_segs, va_segs)

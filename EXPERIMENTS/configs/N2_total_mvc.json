@@ -1,0 +1,13 @@
+{
+ "id": "N2_total_mvc",
+ "stage": "normalization",
+ "title": "Divide each muscle by its peak during the maximum-effort (MVC) trials.",
+ "changes": {
+  "passive": "none",
+  "emg": "mvc_global",
+  "balance": "scale",
+  "window": 20
+ },
+ "hypothesis": "Textbook scaling (% of maximum voluntary activation). The MVC trials were recorded once, so session 2 is still divided by a session-1-era number.",
+ "motivation": "Fixed settings for the whole normalization study: total torque (no passive subtraction), balanced positions (each position's target divided by its standard deviation), clean passive table not used (nothing is subtracted), 0.2 s window, no auto-gain, LSTM 8x2, original training settings, learn session 1 -> predict session 2."
+}

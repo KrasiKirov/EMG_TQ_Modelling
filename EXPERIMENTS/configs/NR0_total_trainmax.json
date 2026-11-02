@@ -1,0 +1,14 @@
+{
+ "id": "NR0_total_trainmax",
+ "stage": "normalization-reference",
+ "title": "Ridge reference with the scaling of N0_total_trainmax",
+ "changes": {
+  "passive": "none",
+  "emg": "trainmax",
+  "balance": "none",
+  "window": 20,
+  "model": "ridge"
+ },
+ "hypothesis": "Deterministic per-position ridge regression on the same inputs: a simple reference the LSTM should beat.",
+ "motivation": "Fixed settings for the whole normalization study: total torque (no passive subtraction), balanced positions (each position's target divided by its standard deviation), clean passive table not used (nothing is subtracted), 0.2 s window, no auto-gain, LSTM 8x2, original training settings, learn session 1 -> predict session 2."
+}

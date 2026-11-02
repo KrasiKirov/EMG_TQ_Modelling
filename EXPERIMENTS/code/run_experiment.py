@@ -139,7 +139,7 @@ def main():
     with open(stem + '.json.tmp', 'w') as f:
         json.dump(res, f, indent=1, default=float)
     os.replace(stem + '.json.tmp', stem + '.json')
-    print(f'[{a.exp} {a.subject} {a.direction} s{a.seed}] {info["epochs"]} ep (best {info["best_epoch"]}) {t_train:.0f}s',
+    print(f'[{a.exp} {a.subject} {a.direction} s{a.seed}] {info["epochs"]} ep (best {info.get("best_epoch", "-")}) {t_train:.0f}s',
           flush=True)
 
 

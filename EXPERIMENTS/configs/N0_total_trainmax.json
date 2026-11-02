@@ -1,0 +1,13 @@
+{
+ "id": "N0_total_trainmax",
+ "stage": "normalization",
+ "title": "Control: divide each muscle by the largest value it reached in session 1 (one single sample, at 1 kHz).",
+ "changes": {
+  "passive": "none",
+  "emg": "trainmax",
+  "balance": "scale",
+  "window": 20
+ },
+ "hypothesis": "Reference for the other three arms. Same scaling as the baseline and D01 without auto-gain.",
+ "motivation": "Fixed settings for the whole normalization study: total torque (no passive subtraction), balanced positions (each position's target divided by its standard deviation), clean passive table not used (nothing is subtracted), 0.2 s window, no auto-gain, LSTM 8x2, original training settings, learn session 1 -> predict session 2."
+}

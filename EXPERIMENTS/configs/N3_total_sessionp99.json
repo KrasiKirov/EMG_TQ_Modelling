@@ -1,0 +1,13 @@
+{
+ "id": "N3_total_sessionp99",
+ "stage": "normalization",
+ "title": "Divide each session by its OWN 99th percentile per muscle (session 2: all of its active-trial EMG, no torque).",
+ "changes": {
+  "passive": "none",
+  "emg": "session_p99",
+  "balance": "scale",
+  "window": 20
+ },
+ "hypothesis": "A static, one-number-per-muscle-per-session version of auto-gain. Transductive: it needs the whole of session 2's EMG before predicting.",
+ "motivation": "Fixed settings for the whole normalization study: total torque (no passive subtraction), balanced positions (each position's target divided by its standard deviation), clean passive table not used (nothing is subtracted), 0.2 s window, no auto-gain, LSTM 8x2, original training settings, learn session 1 -> predict session 2."
+}
