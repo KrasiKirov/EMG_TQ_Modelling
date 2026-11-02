@@ -186,5 +186,7 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
             'best_val_loss': float(hist.history['val_loss'][best]),
             'knots': knots.tolist(), 'sd_per_knot': sd.tolist(), 'n_params': int(model.count_params()),
+            'n_train_per_knot': [int(np.sum(k_tr == j)) for j in range(len(knots))],
+            'history': {k: [float(x) for x in v] for k, v in hist.history.items()},
             'init_weights': init_weights, 'lr': lr or p['lr']}
     return pred, info

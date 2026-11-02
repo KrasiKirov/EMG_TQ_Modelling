@@ -1,0 +1,102 @@
+<title>Total-Torque Study Update</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,600&display=swap">
+<style>
+/* Layout: one readable column, a status strip, then compact tables — a lab status memo */
+:root{
+  --bg:#f6f7f8; --surface:#ffffff; --fg:#1b2127; --muted:#5b6670; --line:#dde2e6;
+  --accent:#2f6f8f; --ok:#2e7d4f; --wait:#9a6a12;
+  --display:"Fraunces",Georgia,serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13181c;--surface:#1a2025;--fg:#e4e8eb;--muted:#9aa6b0;--line:#2c353c;--accent:#7cb8d6;--ok:#6fc193;--wait:#e0b25a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#13181c;--surface:#1a2025;--fg:#e4e8eb;--muted:#9aa6b0;--line:#2c353c;--accent:#7cb8d6;--ok:#6fc193;--wait:#e0b25a;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font:600 2rem/1.15 var(--display);margin:0;text-wrap:balance}
+h2{font:600 .78rem/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+p,ul{margin:0} ul{padding-left:1.2em} li+li{margin-top:4px}
+.sub{color:var(--muted);margin-top:6px}
+.status{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 .8rem var(--body);padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.chip.ok{color:var(--ok);border-color:currentColor} .chip.wait{color:var(--wait);border-color:currentColor}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0} th{font-weight:600;font-size:.85rem;color:var(--muted)}
+code{font:.88em var(--mono);color:var(--accent)}
+.note{color:var(--muted);font-size:.9rem;margin-top:8px}
+</style>
+<main>
+<header>
+<h1>Total-torque study: setup and runtime estimate</h1>
+<p class="sub">Branch <code>total-torque</code> · 1 Nov 2026 · Exploratory study. No results yet.</p>
+</header>
+
+<div class="status">
+<span class="chip ok">Branches merged</span><span class="chip ok">Checks passed</span><span class="chip ok">Benchmark done</span><span class="chip wait">Pilot not started</span><span class="chip wait">Not committed</span>
+</div>
+
+<section>
+<h2>What we're testing</h2>
+<p>Our models currently predict active torque (measured minus a passive-table estimate). Errors in the passive table and passive levels that shift between sessions may be hurting results. This study instead trains on <strong>measured total torque</strong>, with no passive subtraction. Everything else follows D01: four EMG envelopes plus ankle angle, 200 ms windows, balanced positions, the same LSTM and training rules, matched seeds, and no auto-gain. Early stopping uses source-session validation only. We are not assuming this will help.</p>
+</section>
+
+<section>
+<h2>Four EMG normalisations compared</h2>
+<div class="tbl"><table>
+<tr><th>ID</th><th>Scale per muscle</th><th>Uses</th></tr>
+<tr><td>TT01</td><td>None (raw envelope units)</td><td>Nothing</td></tr>
+<tr><td>TT02</td><td>Maximum, positions pooled</td><td>Training part of source session only</td></tr>
+<tr><td>TT03</td><td>99th percentile, positions pooled</td><td>Training part of source session only</td></tr>
+<tr><td>TT04</td><td>99th percentile per session</td><td>Target session's unlabelled EMG. This is offline target-session adaptation and needs the whole recording first.</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>Done so far</h2>
+<ul>
+<li>Created <code>total-torque</code> from <code>experimentation</code> (dashboard) and merged <code>experimentation-dorsiflexion</code> (D01 training code).</li>
+<li>The two branches had diverged in <code>ML/preprocessing</code>. For example, the passive-torque bound is 20 Nm in one and 10 Nm in the other. I kept experimentation's <code>ML/</code> package and pinned D01's preprocessing inside <code>ML/research/d01_preprocessing/</code>. The merged branch rebuilds D01's training data bit-identically (checked on YES, JM and IES).</li>
+<li>Pre-run checks pass on YES, JM and EG (both directions, all four methods). They confirm that:
+<ul>
+<li>the target equals processed measured torque;</li>
+<li>inputs line up with the target in time;</li>
+<li>scales and balancing factors use training data only;</li>
+<li>auto-gain is off;</li>
+<li>predictions are converted back to Nm.</li>
+</ul></li>
+</ul>
+</section>
+
+<section>
+<h2>Benchmark on this computer</h2>
+<p>i7-14700F (20 cores), 32 GB RAM, RTX 5070. The GPU isn't used, because TensorFlow on native Windows is CPU-only. Measured on YES, session 1 → 2:</p>
+<div class="tbl"><table>
+<tr><th>Measured</th><th>Value</th></tr>
+<tr><td>Preprocessing</td><td>2.8 s per subject (once), 0.25 s per run</td></tr>
+<tr><td>One run alone</td><td>≈ 20 s per epoch (extra threads barely help)</td></tr>
+<tr><td>24 runs in parallel</td><td>56 s per epoch each ≈ 1,530 epochs per hour in total, ≈ 14 GB RAM</td></tr>
+</table></div>
+</section>
+
+<section>
+<h2>Estimated run time</h2>
+<div class="tbl"><table>
+<tr><th>Plan</th><th>Runs</th><th>Time (24 parallel)</th></tr>
+<tr><td>Pilot: YES, EG, JM × 4 methods × both directions, seed 0</td><td>24</td><td>≈ 1–2 h</td></tr>
+<tr><td>Full study, 6 subjects, 5 seeds</td><td>240</td><td>≈ 10–11 h</td></tr>
+<tr><td>Full study, 10 seeds</td><td>480</td><td>≈ 20–21 h</td></tr>
+<tr><td>Optional: re-run D01 to save its predictions for a total-torque comparison</td><td>60</td><td>≈ 2.5 h</td></tr>
+</table></div>
+<p class="note">These are projections. They assume D01's average of about 62 epochs per run (range 34–132). The total-torque target may stop earlier or later, and the pilot will tell us.</p>
+</section>
+
+<section>
+<h2>Next</h2>
+<ul>
+<li>Commit, then run the pilot and check its run lengths.</li>
+<li>Run the full study overnight with 5 seeds, then 10 if it's worth it.</li>
+<li>Add the study to the dashboard and push the branch.</li>
+</ul>
+</section>
+</main>

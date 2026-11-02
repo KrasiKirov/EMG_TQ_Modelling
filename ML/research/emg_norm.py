@@ -41,6 +41,22 @@ session_p99  every session is divided by ITS OWN per-channel 99th percentile
              The unsupervised re-normalisation idea follows AdaBN (Du et
              al. 2017, Sensors 17:458), which re-estimates normalisation
              statistics on the new session's unlabelled data.
+
+Total-torque study (EXPERIMENTS/configs/TT*.json).  Fixed, non-adaptive
+amplitude scales, one per muscle, pooled across positions:
+raw          no amplitude normalisation: the processed envelopes in their
+             original units (mV) are fed to the network.
+trainmax_tr  divide each channel by the maximum of the 100 Hz envelope over
+             the TRAINING part only (first 80 % of the windows of every
+             source-session trial; the validation part is excluded, unlike
+             'trainmax').  Applied unchanged to validation and to the other
+             session.
+trainp99     the same with the 99th percentile instead of the maximum.
+session_p99  (above) is the study's per-session variant: offline,
+             unlabelled target-session adaptation.
+A scale that is not finite or not above MIN_SCALE is replaced by 1.0 (the
+channel is then left in its original units) and listed in
+'guarded_channels'; with real recordings this has never happened.
 """
 
 import numpy as np
@@ -50,6 +66,15 @@ from .d01_preprocessing import emg_agc
 from . import config as C
 
 AUTO_DIR_NM = 2.0   # Nm, push-direction threshold of the 'agc_auto' rule (as in report 1)
+MIN_SCALE = 1e-9    # envelope units; smaller fixed scales are treated as zero (see 'guarded_channels')
+CHANNELS = ('GM', 'GL', 'SOL', 'TA')
+
+
+def _safe_scale(sc):
+    """Replace non-finite or ~zero channel scales by 1.0; return (scale, guarded channel names)."""
+    sc = np.asarray(sc, np.float64)
+    bad = ~np.isfinite(sc) | (sc <= MIN_SCALE)
+    return np.where(bad, 1.0, sc), [CHANNELS[k] for k in np.flatnonzero(bad)]
 
 
 def _train_part(rec, train_frac=C.TRAIN_FRAC, window=C.WINDOW):
@@ -93,6 +118,19 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
 
     if kind == 'trainmax':
         return base, info
+    if kind == 'raw':
+        return {r['idx']: r['env_raw'].copy() for r in all_recs}, {
+            'kind': kind, 'scale': [1.0] * len(CHANNELS), 'scale_source': 'none (original envelope units)',
+            'adaptive': False, 'transductive': False}
+    if kind in ('trainmax_tr', 'trainp99'):
+        src = np.concatenate([r['env_raw'][:_train_part(r, train_frac, window)] for r in train_recs])
+        sc = src.max(axis=0) if kind == 'trainmax_tr' else np.percentile(src, 99, axis=0)
+        sc, guarded = _safe_scale(sc)
+        return {r['idx']: r['env_raw'] / sc for r in all_recs}, {
+            'kind': kind, 'scale': sc.tolist(), 'guarded_channels': guarded, 'adaptive': False,
+            'transductive': False, 'n_samples_scale': int(len(src)),
+            'scale_source': f"{'max' if kind == 'trainmax_tr' else '99th percentile'} of the 100 Hz envelope "
+                            f"over the training part of every source-session trial (positions pooled)"}
     if kind == 'agc_auto':
         dirs = push_directions(bundle, train_recs, base, train_frac, window)
         bidirectional = max(dirs) > AUTO_DIR_NM and min(dirs) < -AUTO_DIR_NM
@@ -119,7 +157,10 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
             scales[sess] = sc.tolist()
             for r in rs:
                 out[r['idx']] = r['env_raw'] / sc
-        info.update(transductive=True, session_scale=scales)
+        info.update(transductive=True, adaptive=False, session_scale=scales,
+                    scale_source='99th percentile of the 100 Hz envelope per session, positions pooled: source '
+                                 'session = training part only, target session = all of its active-trial EMG '
+                                 '(no torque); offline, unlabelled target-session adaptation')
         return out, info
     if kind == 'mvc_global':
         peak = np.max(np.stack([m['env_peak'] for m in bundle['mvc']]), axis=0)

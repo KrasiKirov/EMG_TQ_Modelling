@@ -15,3 +15,6 @@ ML/*_output/
 .claude/
 .venv311/
 debug/
+
+# total-torque study: per-run prediction arrays stay local (large); scores and dashboard data are committed
+EXPERIMENTS/results/TT*/**/*.npz

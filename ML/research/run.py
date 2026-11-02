@@ -64,14 +64,22 @@ def prepare(subject, protocol, cfg):
     base_env, _ = normalise('trainmax', bundle, train_recs, recs, train_frac=tf_, val_end_frac=val_end,
                             window=window)
     tr_segs, va_segs = rest_segments(train_recs, base_env, train_frac=tf_, val_end_frac=val_end, window=window)
-    if cfg['passive'] == 'restanchor':
+    if cfg['passive'] == 'none':
+        # total-torque study: the target is the processed measured torque itself
+        # (1 kHz -> trim -> zero-phase FIR decimation to 100 Hz, data._process_active);
+        # nothing is subtracted.
+        targets = {r['idx']: r['tq'].copy() for r in recs}
+        pinfo = {'kind': 'none', 'target': 'measured total torque (no passive subtraction)'}
+    elif cfg['passive'] == 'restanchor':
         targets, pinfo = restanchor_targets(bundle, protocol)
     else:
         pm = PassiveModel(cfg['passive'], bundle).fit(train_recs, tr_segs, va_segs)
         targets, pinfo = {r['idx']: r['tq'] - pm.predict(r) for r in recs}, pm.describe()
     rest = rest_flags(bundle, protocol)
     data = splits.build(protocol, recs, feats, targets, window=window, rest=rest)
-    details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in ('kind', 'rmin_frac', 'transductive', 'auto_decision')},
+    details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in (
+                   'kind', 'rmin_frac', 'transductive', 'auto_decision', 'adaptive', 'scale', 'session_scale',
+                   'scale_source', 'guarded_channels', 'n_samples_scale')},
                'push_directions': push_directions(bundle, train_recs, base_env, train_frac=tf_, window=window),
                'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
                'rest_frac_train': float(np.mean(data['meta_train']['rest']))}

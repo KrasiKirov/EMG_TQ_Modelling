@@ -1,0 +1,2189 @@
+{
+ "all_passed": true,
+ "runs": [
+  {
+   "subject": "YES",
+   "direction": "S1toS2",
+   "experiment": "TT01_total_w200_bal_rawemg",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: every training position has training windows and a finite balancing SD"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT01_total_w200_bal_rawemg: predictions multiplied back to Nm"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6833490313931445,
+    2.6730985922201276,
+    4.5730751534417875,
+    7.547551263782036,
+    8.507790497670538,
+    13.739761679918205,
+    15.043959675803295,
+    12.934583440241635
+   ],
+   "emg": {
+    "kind": "raw",
+    "scale": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "scale_source": "none (original envelope units)",
+    "adaptive": false,
+    "transductive": false
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S1toS2",
+   "experiment": "TT02_total_w200_bal_trainmax",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT02_total_w200_bal_trainmax: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6833490313931445,
+    2.6730985922201276,
+    4.5730751534417875,
+    7.547551263782036,
+    8.507790497670538,
+    13.739761679918205,
+    15.043959675803295,
+    12.934583440241635
+   ],
+   "emg": {
+    "kind": "trainmax_tr",
+    "scale": [
+     0.03803981603099122,
+     0.022753698637366322,
+     0.014785699489200357,
+     0.005871100997523725
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "max of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S1toS2",
+   "experiment": "TT03_total_w200_bal_trainp99",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT03_total_w200_bal_trainp99: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6833490313931445,
+    2.6730985922201276,
+    4.5730751534417875,
+    7.547551263782036,
+    8.507790497670538,
+    13.739761679918205,
+    15.043959675803295,
+    12.934583440241635
+   ],
+   "emg": {
+    "kind": "trainp99",
+    "scale": [
+     0.026096116897702977,
+     0.015632192418668495,
+     0.011646422611422106,
+     0.005090461992039505
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "99th percentile of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S1toS2",
+   "experiment": "TT04_total_w200_bal_sessionp99_offline",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: source-session scale ignores validation part and other session"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: target-session scale uses target-session EMG only"
+    },
+    {
+     "ok": true,
+     "check": "YES S1toS2 TT04_total_w200_bal_sessionp99_offline: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6833490313931445,
+    2.6730985922201276,
+    4.5730751534417875,
+    7.547551263782036,
+    8.507790497670538,
+    13.739761679918205,
+    15.043959675803295,
+    12.934583440241635
+   ],
+   "emg": {
+    "kind": "session_p99",
+    "transductive": true,
+    "adaptive": false,
+    "session_scale": {
+     "S1": [
+      0.026096116897702977,
+      0.015632192418668495,
+      0.011646422611422106,
+      0.005090461992039505
+     ],
+     "S2": [
+      0.02719790298878575,
+      0.016220728936724726,
+      0.013846001375913502,
+      0.006983810570366789
+     ]
+    },
+    "scale_source": "99th percentile of the 100 Hz envelope per session, positions pooled: source session = training part only, target session = all of its active-trial EMG (no torque); offline, unlabelled target-session adaptation"
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S2toS1",
+   "experiment": "TT01_total_w200_bal_rawemg",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: every training position has training windows and a finite balancing SD"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT01_total_w200_bal_rawemg: predictions multiplied back to Nm"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.4158191033038208,
+    2.216515895194369,
+    4.483113592675369,
+    7.43252363326705,
+    8.47764021943917,
+    13.577596208384081,
+    15.11968811070315,
+    13.072555147657972
+   ],
+   "emg": {
+    "kind": "raw",
+    "scale": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "scale_source": "none (original envelope units)",
+    "adaptive": false,
+    "transductive": false
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S2toS1",
+   "experiment": "TT02_total_w200_bal_trainmax",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT02_total_w200_bal_trainmax: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.4158191033038208,
+    2.216515895194369,
+    4.483113592675369,
+    7.43252363326705,
+    8.47764021943917,
+    13.577596208384081,
+    15.11968811070315,
+    13.072555147657972
+   ],
+   "emg": {
+    "kind": "trainmax_tr",
+    "scale": [
+     0.03755771372161215,
+     0.021851709103363117,
+     0.01910720472066164,
+     0.01135470784128005
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "max of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S2toS1",
+   "experiment": "TT03_total_w200_bal_trainp99",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT03_total_w200_bal_trainp99: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.4158191033038208,
+    2.216515895194369,
+    4.483113592675369,
+    7.43252363326705,
+    8.47764021943917,
+    13.577596208384081,
+    15.11968811070315,
+    13.072555147657972
+   ],
+   "emg": {
+    "kind": "trainp99",
+    "scale": [
+     0.027087933182644987,
+     0.016086472915551427,
+     0.013961846174070893,
+     0.006873766329041682
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "99th percentile of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "YES",
+   "direction": "S2toS1",
+   "experiment": "TT04_total_w200_bal_sessionp99_offline",
+   "checks": [
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: passive none"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: source-session scale ignores validation part and other session"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: target-session scale uses target-session EMG only"
+    },
+    {
+     "ok": true,
+     "check": "YES S2toS1 TT04_total_w200_bal_sessionp99_offline: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.4158191033038208,
+    2.216515895194369,
+    4.483113592675369,
+    7.43252363326705,
+    8.47764021943917,
+    13.577596208384081,
+    15.11968811070315,
+    13.072555147657972
+   ],
+   "emg": {
+    "kind": "session_p99",
+    "transductive": true,
+    "adaptive": false,
+    "session_scale": {
+     "S1": [
+      0.026355747659282013,
+      0.01571838470799084,
+      0.011479230287556524,
+      0.005164096913861329
+     ],
+     "S2": [
+      0.027087933182644987,
+      0.016086472915551427,
+      0.013961846174070893,
+      0.006873766329041682
+     ]
+    },
+    "scale_source": "99th percentile of the 100 Hz envelope per session, positions pooled: source session = training part only, target session = all of its active-trial EMG (no torque); offline, unlabelled target-session adaptation"
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S1toS2",
+   "experiment": "TT01_total_w200_bal_rawemg",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: every training position has training windows and a finite balancing SD"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT01_total_w200_bal_rawemg: predictions multiplied back to Nm"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6044321260856912,
+    0.8326535276343017,
+    2.3321452190488854,
+    1.457716717026976,
+    1.5278042532971006,
+    1.80278395726576,
+    2.3486040742276777,
+    3.017594895462801
+   ],
+   "emg": {
+    "kind": "raw",
+    "scale": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "scale_source": "none (original envelope units)",
+    "adaptive": false,
+    "transductive": false
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S1toS2",
+   "experiment": "TT02_total_w200_bal_trainmax",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT02_total_w200_bal_trainmax: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6044321260856912,
+    0.8326535276343017,
+    2.3321452190488854,
+    1.457716717026976,
+    1.5278042532971006,
+    1.80278395726576,
+    2.3486040742276777,
+    3.017594895462801
+   ],
+   "emg": {
+    "kind": "trainmax_tr",
+    "scale": [
+     0.007403344215918127,
+     0.005636801580751454,
+     0.021839880694340976,
+     0.005926896221001888
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "max of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S1toS2",
+   "experiment": "TT03_total_w200_bal_trainp99",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT03_total_w200_bal_trainp99: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6044321260856912,
+    0.8326535276343017,
+    2.3321452190488854,
+    1.457716717026976,
+    1.5278042532971006,
+    1.80278395726576,
+    2.3486040742276777,
+    3.017594895462801
+   ],
+   "emg": {
+    "kind": "trainp99",
+    "scale": [
+     0.005828470629663731,
+     0.004304320076218646,
+     0.01562413409889248,
+     0.003077015981838657
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "99th percentile of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S1toS2",
+   "experiment": "TT04_total_w200_bal_sessionp99_offline",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: source-session scale ignores validation part and other session"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: target-session scale uses target-session EMG only"
+    },
+    {
+     "ok": true,
+     "check": "JM S1toS2 TT04_total_w200_bal_sessionp99_offline: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.6044321260856912,
+    0.8326535276343017,
+    2.3321452190488854,
+    1.457716717026976,
+    1.5278042532971006,
+    1.80278395726576,
+    2.3486040742276777,
+    3.017594895462801
+   ],
+   "emg": {
+    "kind": "session_p99",
+    "transductive": true,
+    "adaptive": false,
+    "session_scale": {
+     "S1": [
+      0.005828470629663731,
+      0.004304320076218646,
+      0.01562413409889248,
+      0.003077015981838657
+     ],
+     "S2": [
+      0.004521603596391223,
+      0.004390332998675574,
+      0.01082210554396887,
+      0.0027551844726799125
+     ]
+    },
+    "scale_source": "99th percentile of the 100 Hz envelope per session, positions pooled: source session = training part only, target session = all of its active-trial EMG (no torque); offline, unlabelled target-session adaptation"
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S2toS1",
+   "experiment": "TT01_total_w200_bal_rawemg",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: every training position has training windows and a finite balancing SD"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT01_total_w200_bal_rawemg: predictions multiplied back to Nm"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.5960002916593397,
+    0.7807408813261618,
+    1.8874372769652277,
+    1.340942571061029,
+    1.3824197513574834,
+    1.6632198752779443,
+    2.622571821770952,
+    2.9493576157663552
+   ],
+   "emg": {
+    "kind": "raw",
+    "scale": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "scale_source": "none (original envelope units)",
+    "adaptive": false,
+    "transductive": false
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S2toS1",
+   "experiment": "TT02_total_w200_bal_trainmax",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT02_total_w200_bal_trainmax: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.5960002916593397,
+    0.7807408813261618,
+    1.8874372769652277,
+    1.340942571061029,
+    1.3824197513574834,
+    1.6632198752779443,
+    2.622571821770952,
+    2.9493576157663552
+   ],
+   "emg": {
+    "kind": "trainmax_tr",
+    "scale": [
+     0.0059348900141032454,
+     0.033356260574663864,
+     0.012954843658179678,
+     0.0032091382192022495
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "max of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S2toS1",
+   "experiment": "TT03_total_w200_bal_trainp99",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT03_total_w200_bal_trainp99: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.5960002916593397,
+    0.7807408813261618,
+    1.8874372769652277,
+    1.340942571061029,
+    1.3824197513574834,
+    1.6632198752779443,
+    2.622571821770952,
+    2.9493576157663552
+   ],
+   "emg": {
+    "kind": "trainp99",
+    "scale": [
+     0.004541533840885754,
+     0.004390530688388353,
+     0.010870596193979669,
+     0.002752274955120259
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "99th percentile of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "JM",
+   "direction": "S2toS1",
+   "experiment": "TT04_total_w200_bal_sessionp99_offline",
+   "checks": [
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: passive none"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: source-session scale ignores validation part and other session"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: target-session scale uses target-session EMG only"
+    },
+    {
+     "ok": true,
+     "check": "JM S2toS1 TT04_total_w200_bal_sessionp99_offline: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    0.5960002916593397,
+    0.7807408813261618,
+    1.8874372769652277,
+    1.340942571061029,
+    1.3824197513574834,
+    1.6632198752779443,
+    2.622571821770952,
+    2.9493576157663552
+   ],
+   "emg": {
+    "kind": "session_p99",
+    "transductive": true,
+    "adaptive": false,
+    "session_scale": {
+     "S1": [
+      0.005754643699967754,
+      0.004318823916466792,
+      0.015271916167147652,
+      0.002971144109410168
+     ],
+     "S2": [
+      0.004541533840885754,
+      0.004390530688388353,
+      0.010870596193979669,
+      0.002752274955120259
+     ]
+    },
+    "scale_source": "99th percentile of the 100 Hz envelope per session, positions pooled: source session = training part only, target session = all of its active-trial EMG (no torque); offline, unlabelled target-session adaptation"
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S1toS2",
+   "experiment": "TT01_total_w200_bal_rawemg",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: every training position has training windows and a finite balancing SD"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT01_total_w200_bal_rawemg: predictions multiplied back to Nm"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.017267950752833,
+    3.640915523916091,
+    4.2448735668805275,
+    6.394631539127734,
+    8.019789426108098,
+    10.882349551877205,
+    12.875107447539914,
+    11.253191049214323
+   ],
+   "emg": {
+    "kind": "raw",
+    "scale": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "scale_source": "none (original envelope units)",
+    "adaptive": false,
+    "transductive": false
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S1toS2",
+   "experiment": "TT02_total_w200_bal_trainmax",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT02_total_w200_bal_trainmax: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.017267950752833,
+    3.640915523916091,
+    4.2448735668805275,
+    6.394631539127734,
+    8.019789426108098,
+    10.882349551877205,
+    12.875107447539914,
+    11.253191049214323
+   ],
+   "emg": {
+    "kind": "trainmax_tr",
+    "scale": [
+     0.11364864438534779,
+     0.018893889956422147,
+     0.08750355063851224,
+     0.013387700391503773
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "max of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S1toS2",
+   "experiment": "TT03_total_w200_bal_trainp99",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT03_total_w200_bal_trainp99: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.017267950752833,
+    3.640915523916091,
+    4.2448735668805275,
+    6.394631539127734,
+    8.019789426108098,
+    10.882349551877205,
+    12.875107447539914,
+    11.253191049214323
+   ],
+   "emg": {
+    "kind": "trainp99",
+    "scale": [
+     0.08945734909711628,
+     0.01228508769351388,
+     0.05832654837906365,
+     0.0064017189231253884
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "99th percentile of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S1toS2",
+   "experiment": "TT04_total_w200_bal_sessionp99_offline",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: source-session scale ignores validation part and other session"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: target-session scale uses target-session EMG only"
+    },
+    {
+     "ok": true,
+     "check": "EG S1toS2 TT04_total_w200_bal_sessionp99_offline: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.017267950752833,
+    3.640915523916091,
+    4.2448735668805275,
+    6.394631539127734,
+    8.019789426108098,
+    10.882349551877205,
+    12.875107447539914,
+    11.253191049214323
+   ],
+   "emg": {
+    "kind": "session_p99",
+    "transductive": true,
+    "adaptive": false,
+    "session_scale": {
+     "S1": [
+      0.08945734909711628,
+      0.01228508769351388,
+      0.05832654837906365,
+      0.0064017189231253884
+     ],
+     "S2": [
+      0.1476869073882779,
+      0.016684844371339814,
+      0.06412210375987025,
+      0.006056884865839173
+     ]
+    },
+    "scale_source": "99th percentile of the 100 Hz envelope per session, positions pooled: source session = training part only, target session = all of its active-trial EMG (no torque); offline, unlabelled target-session adaptation"
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S2toS1",
+   "experiment": "TT01_total_w200_bal_rawemg",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: every training position has training windows and a finite balancing SD"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT01_total_w200_bal_rawemg: predictions multiplied back to Nm"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.0656984836054155,
+    3.7338944321378533,
+    4.5083598945486605,
+    6.414669103466845,
+    8.533397823269123,
+    10.846569170766715,
+    12.749048315638628,
+    12.227324128789723
+   ],
+   "emg": {
+    "kind": "raw",
+    "scale": [
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "scale_source": "none (original envelope units)",
+    "adaptive": false,
+    "transductive": false
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S2toS1",
+   "experiment": "TT02_total_w200_bal_trainmax",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT02_total_w200_bal_trainmax: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.0656984836054155,
+    3.7338944321378533,
+    4.5083598945486605,
+    6.414669103466845,
+    8.533397823269123,
+    10.846569170766715,
+    12.749048315638628,
+    12.227324128789723
+   ],
+   "emg": {
+    "kind": "trainmax_tr",
+    "scale": [
+     0.178995134764111,
+     0.0227716149655399,
+     0.09037606908136794,
+     0.009035826613222983
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "max of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S2toS1",
+   "experiment": "TT03_total_w200_bal_trainp99",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: fixed scale ignores val + other session"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: fixed scale == direct recomputation"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT03_total_w200_bal_trainp99: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.0656984836054155,
+    3.7338944321378533,
+    4.5083598945486605,
+    6.414669103466845,
+    8.533397823269123,
+    10.846569170766715,
+    12.749048315638628,
+    12.227324128789723
+   ],
+   "emg": {
+    "kind": "trainp99",
+    "scale": [
+     0.14706070346932149,
+     0.016732238510462627,
+     0.06498801793455956,
+     0.006211603559524381
+    ],
+    "guarded_channels": [],
+    "adaptive": false,
+    "transductive": false,
+    "n_samples_scale": 57048,
+    "scale_source": "99th percentile of the 100 Hz envelope over the training part of every source-session trial (positions pooled)"
+   }
+  },
+  {
+   "subject": "EG",
+   "direction": "S2toS1",
+   "experiment": "TT04_total_w200_bal_sessionp99_offline",
+   "checks": [
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: passive none"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: auto-gain off"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: train target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: train target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: train last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: val target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: val target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: val last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: test target == measured torque"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: test target differs from D01 active target"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: test last input step == target sample"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: features = envelope / constant per-channel scale"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: source-session scale ignores validation part and other session"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: target-session scale uses target-session EMG only"
+    },
+    {
+     "ok": true,
+     "check": "EG S2toS1 TT04_total_w200_bal_sessionp99_offline: every training position has training windows and a finite balancing SD"
+    }
+   ],
+   "balancing_sd_nm": [
+    2.0656984836054155,
+    3.7338944321378533,
+    4.5083598945486605,
+    6.414669103466845,
+    8.533397823269123,
+    10.846569170766715,
+    12.749048315638628,
+    12.227324128789723
+   ],
+   "emg": {
+    "kind": "session_p99",
+    "transductive": true,
+    "adaptive": false,
+    "session_scale": {
+     "S1": [
+      0.09009668663758322,
+      0.012214836779813259,
+      0.05801756753954949,
+      0.006184024637919028
+     ],
+     "S2": [
+      0.14706070346932149,
+      0.016732238510462627,
+      0.06498801793455956,
+      0.006211603559524381
+     ]
+    },
+    "scale_source": "99th percentile of the 100 Hz envelope per session, positions pooled: source session = training part only, target session = all of its active-trial EMG (no torque); offline, unlabelled target-session adaptation"
+   }
+  }
+ ]
+}

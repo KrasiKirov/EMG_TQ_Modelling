@@ -94,6 +94,18 @@ def add_passive_input(data, subject):
     return data
 
 
+def source_revision():
+    """Git commit of the code that produced a result, with a flag for uncommitted changes."""
+    import subprocess
+    try:
+        rev = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        dirty = subprocess.run(['git', 'status', '--porcelain', '--', 'ML', 'EXPERIMENTS/code', 'EXPERIMENTS/configs'],
+                               cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        return {'commit': rev, 'uncommitted_changes': bool(dirty)}
+    except OSError:
+        return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--exp', required=True)
@@ -101,6 +113,9 @@ def main():
     ap.add_argument('--direction', required=True, choices=['S1toS2', 'S2toS1'])
     ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--threads', type=int, default=1)
+    ap.add_argument('--max-epochs', type=int, default=None,
+                    help='benchmark only: cap the number of epochs (results go to --out-root)')
+    ap.add_argument('--out-root', default=os.path.join(EXP, 'results'))
     a = ap.parse_args()
 
     import tensorflow as tf
@@ -109,9 +124,12 @@ def main():
 
     from ML.research.run import prepare
     from ML.research import train as RT
+    from ML.research import config as RC
 
     spec, cfg = load_config(a.exp)
     RT.build_model = make_builder(cfg)                  # adds units / layers / dropout knobs
+    if a.max_epochs:
+        RC.PROTOCOLS[cfg['train_protocol']] = dict(RC.PROTOCOLS[cfg['train_protocol']], epochs=a.max_epochs)
     t0 = time.time()
     rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window')}
     data, details = prepare(a.subject, a.direction, rcfg)
@@ -124,18 +142,39 @@ def main():
     t_train = time.time() - t0 - t_prep
 
     y, meta = data['y_test'].astype(np.float64), data['meta_test']
-    out = os.path.join(EXP, 'results', a.exp, a.subject, a.direction)
+    out = os.path.join(a.out_root, a.exp, a.subject, a.direction)
     os.makedirs(out, exist_ok=True)
     stem = os.path.join(out, f'seed{a.seed}')
+    extra = {}
+    if cfg['passive'] == 'none':
+        # measured total torque and angle of every test window, read straight from the
+        # processed recording (independent of the target arrays above)
+        from ML.research.data import load_subject
+        recs = {r['idx']: r for r in load_subject(a.subject)['active']}
+        extra = dict(y_measured_total=np.array([recs[i]['tq'][k] for i, k in zip(meta['trial'], meta['last'])],
+                                               np.float32),
+                     pos=np.array([recs[i]['pos'][k] for i, k in zip(meta['trial'], meta['last'])], np.float32),
+                     last=meta['last'].astype(np.int32))
+        if not np.array_equal(extra['y_measured_total'], y.astype(np.float32)):
+            raise RuntimeError('total-torque target differs from the measured torque')
     np.savez_compressed(stem + '.npz', y_own_target=y.astype(np.float32), y_pred=pred.astype(np.float32),
                         trial=meta['trial'].astype(np.int16), angle=meta['angle'].astype(np.float32),
-                        session=(meta['session'] == 'S2').astype(np.int8), t=meta['t'].astype(np.float32))
+                        session=(meta['session'] == 'S2').astype(np.int8), t=meta['t'].astype(np.float32), **extra)
+    import keras
+    import scipy
+    try:
+        import psutil
+        peak_mb = psutil.Process().memory_info().peak_wset / 2 ** 20       # Windows peak working set
+    except Exception:                                                      # noqa: BLE001
+        peak_mb = None
     res = {'experiment': a.exp, 'subject': a.subject, 'direction': a.direction, 'seed': a.seed,
-           'config': cfg, 'hypothesis': spec.get('hypothesis'), 'details': details,
+           'config': cfg, 'title': spec.get('title'), 'hypothesis': spec.get('hypothesis'), 'details': details,
            'train_info': {k: v for k, v in info.items() if k != 'init_weights'},
            'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
-           'prep_s': t_prep, 'train_s': t_train,
-           'versions': {'tensorflow': tf.__version__, 'numpy': np.__version__, 'python': sys.version.split()[0]}}
+           'prep_s': t_prep, 'train_s': t_train, 'threads': a.threads, 'max_epochs_override': a.max_epochs,
+           'peak_memory_mb': peak_mb, 'source_revision': source_revision(),
+           'versions': {'tensorflow': tf.__version__, 'keras': keras.__version__, 'numpy': np.__version__,
+                        'scipy': scipy.__version__, 'python': sys.version.split()[0]}}
     with open(stem + '.json.tmp', 'w') as f:
         json.dump(res, f, indent=1, default=float)
     os.replace(stem + '.json.tmp', stem + '.json')

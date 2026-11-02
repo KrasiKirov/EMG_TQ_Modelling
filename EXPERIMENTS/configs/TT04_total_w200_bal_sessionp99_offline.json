@@ -1,0 +1,15 @@
+{
+ "id": "TT04_total_w200_bal_sessionp99_offline",
+ "study": "total_torque",
+ "target": "total",
+ "title": "Total torque | 200 ms | balanced positions | per-session 99th-percentile EMG scale (offline, unlabelled target-session adaptation)",
+ "changes": {
+  "passive": "none",
+  "emg": "session_p99",
+  "balance": "scale",
+  "window": 20
+ },
+ "normalisation": "One scale per muscle per session: source session = 99th percentile of its training part; target session = 99th percentile of all its active-trial EMG (no torque). OFFLINE, UNLABELLED TARGET-SESSION ADAPTATION: needs the whole target recording before predicting and assumes comparable effort ranges in both sessions.",
+ "hypothesis": "Passive-table errors and session-dependent passive levels may limit the active-torque results; predicting measured total torque removes the passive table from the target. This study tests that; it is not assumed to help.",
+ "motivation": "Total-torque study (exploratory). Target = processed measured total torque, no passive subtraction. Inputs: 4 EMG envelopes + ankle angle, 200 ms windows (20 samples at 100 Hz). Balanced positions exactly as D01 (train on target / training SD of its position, floor 0.1 Nm; predictions multiplied back to Nm). No auto-gain. LSTM 8x2, dropout 0.3, Nadam 0.003, batch 8, ReduceLROnPlateau 0.7/10, EarlyStopping 25 on source-session validation loss, max 200 epochs; identical in all four TT experiments."
+}

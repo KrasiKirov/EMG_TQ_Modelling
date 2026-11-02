@@ -1,0 +1,77 @@
+{
+ "subject": "YES",
+ "experiment": "TT02_total_w200_bal_trainmax",
+ "hardware": {
+  "cpu": "Intel(R) Core(TM) i7-14700F",
+  "physical_cores": 20,
+  "logical_cpus": 28,
+  "ram_gb": 31.8,
+  "os": "Windows-10-10.0.26200-SP0",
+  "python": "3.11.18",
+  "gpu": "NVIDIA GeForce RTX 5070, 12227 MiB",
+  "tensorflow": "2.21.0",
+  "tf_built_with_cuda": false,
+  "tf_visible_gpus": [],
+  "tf_can_use_gpu": false
+ },
+ "preprocessing": {
+  "bundle_cold_s": 2.7957892417907715,
+  "prepare_first_s": 0.27533578872680664,
+  "prepare_warm_s": 0.2666962146759033
+ },
+ "single_job": {
+  "1": {
+   "s_per_epoch": 19.8786638379097,
+   "overhead_s": 1.96930992603302,
+   "prep_s": 0.24351048469543457,
+   "wall_s": [
+    49.335715532302856,
+    128.78040289878845
+   ],
+   "peak_memory_mb": 580.4140625
+  },
+  "2": {
+   "s_per_epoch": 17.219532012939453,
+   "overhead_s": 2.478449821472168,
+   "prep_s": 0.2406008243560791,
+   "wall_s": [
+    44.39053392410278,
+    113.28155279159546
+   ],
+   "peak_memory_mb": 583.2734375
+  },
+  "4": {
+   "s_per_epoch": 17.878053963184357,
+   "overhead_s": 0.9345036745071411,
+   "prep_s": 0.2547268867492676,
+   "wall_s": [
+    44.22374606132507,
+    115.57821393013
+   ],
+   "peak_memory_mb": 583.71875
+  }
+ },
+ "concurrent": {
+  "8": {
+   "s_per_epoch_median": 29.473882456620533,
+   "s_per_epoch_max": 29.730283677577972,
+   "wall_s": 190.418931722641,
+   "epochs_per_hour_total": 907.4727939955873,
+   "peak_memory_mb_max": 583.80859375
+  },
+  "16": {
+   "s_per_epoch_median": 43.61848352352778,
+   "s_per_epoch_max": 43.88815059264501,
+   "wall_s": 279.4750163555145,
+   "epochs_per_hour_total": 1236.604275068256,
+   "peak_memory_mb_max": 583.82421875
+  },
+  "24": {
+   "s_per_epoch_median": 56.40328619877497,
+   "s_per_epoch_max": 60.482220470905304,
+   "wall_s": 383.2381513118744,
+   "epochs_per_hour_total": 1352.6836987013137,
+   "peak_memory_mb_max": 583.83203125
+  }
+ }
+}
