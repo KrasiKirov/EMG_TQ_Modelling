@@ -1,3 +1,4 @@
+import { hiddenFromDisplay } from '../lib/experimentStory';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { AppShell, Badge, Button, Card, Collapse, Divider, Group, ScrollArea, SegmentedControl, Select, Stack, Switch, Text, Title, UnstyledButton } from '@mantine/core';
 import { IconAlertTriangle, IconArrowsExchange, IconCheck, IconChevronRight, IconCircleX } from '../icons';
@@ -10,7 +11,7 @@ import {
   friendly,
   modelStatus,
   modelTitle,
-  PARAM_KEYS,
+  SHOWN_KEYS,
   PARAM_NAMES,
   paramLabel,
   paramMedium,
@@ -32,18 +33,15 @@ export function Sidebar({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       <AppShell.Section grow component={ScrollArea} type="scroll" scrollbarSize={8}>
-        <Stack gap="md" p="md">
+        <Stack gap="sm" p="md">
           <ViewControls />
-          <Divider label="Compare two models" labelPosition="left" />
+          <Divider label="Models to compare" labelPosition="left" />
           <ModelCard which="A" />
-          <Button variant="default" fullWidth leftSection={<IconArrowsExchange size={16} />} onClick={swap} data-testid="swap">
+          <ModelCard which="B" />
+          <Button variant="subtle" color="gray" size="xs" fullWidth leftSection={<IconArrowsExchange size={14} />} onClick={swap} data-testid="swap">
             Swap A ⇄ B
           </Button>
-          <ModelCard which="B" />
-          <Text size="xs" c="dimmed">
-            A model is a set of settings. If a combination was never trained for a person, it says so. For everyone except JM the original and
-            the clean passive tables are identical, so an experiment that differs only in the passive table is used for them.
-          </Text>
+<details className="disclosure"><summary>How model matching works</summary><Text size="xs" c="dimmed">Choose a preset or adjust its settings. Unavailable combinations are marked as not trained. Passive tables differ only for JM; equivalent runs may be used for other participants.</Text></details>
         </Stack>
       </AppShell.Section>
       <AppShell.Section p="md" hiddenFrom="md" style={{ borderTop: '1px solid var(--line)' }}>
@@ -59,22 +57,14 @@ function ViewControls() {
   const { s, setSubj, setDir, setMetric, set } = useView();
   return (
     <Stack gap="sm">
-      <Title order={4} c="dimmed" tt="uppercase" fz={12} style={{ letterSpacing: '0.06em' }}>
+      <Title order={4} fz={14}>
         View
       </Title>
       <Stack gap={4}>
         <Text size="sm" fw={500}>
-          Person
+          Participant
         </Text>
-        <SegmentedControl
-          size="xs"
-          fullWidth
-          styles={SEG_STYLES}
-          value={s.subj}
-          onChange={setSubj}
-          data={['All', ...DS.subjects].map((v) => ({ value: v, label: v }))}
-          data-testid="ctl-subj"
-        />
+        <Select size="sm" aria-label="Participant" value={s.subj} onChange={(v) => v && setSubj(v)} data={['All', ...DS.subjects].map((v) => ({ value: v, label: v === 'All' ? 'All participants' : v }))} data-testid="ctl-subj" />
       </Stack>
       <Stack gap={4}>
         <Text size="sm" fw={500}>
@@ -107,14 +97,14 @@ function ViewControls() {
           data-testid="ctl-metric"
         />
       </Stack>
-      <Switch
+<details className="disclosure"><summary>Display options</summary>      <Switch
         checked={s.floor}
         onChange={(e) => set({ floor: e.currentTarget.checked })}
         label="Show R² below 0 as 0"
         description="Supervisor's display rule. Off = raw values (can be far below 0)."
         size="sm"
         data-testid="ctl-floor"
-      />
+      /></details>
     </Stack>
   );
 }
@@ -127,7 +117,7 @@ function presetData() {
     // any experiment not listed above (future data) still shows up
     (() => {
       const listed = new Set(PRESET_GROUPS.flatMap((g) => g.ids));
-      const rest = DS.expIds.filter((id) => !listed.has(id));
+      const rest = DS.expIds.filter((id) => !listed.has(id) && !hiddenFromDisplay(id, DS.experiments[id].title));
       return rest.length ? [{ group: 'Other', items: rest.map((id) => ({ value: id, label: friendly(id) })) }] : [];
     })(),
   );
@@ -141,13 +131,13 @@ function ModelCard({ which }: { which: 'A' | 'B' }) {
   const base = DS.experiments[DEFAULT_A_ID]?.params;
   const data = useMemo(presetData, []);
   const accent = which === 'A' ? 'var(--c-a)' : 'var(--c-b)';
-  const nChanged = base ? PARAM_KEYS.filter((k) => String(base[k]) !== String(p[k])).length : 0;
+  const nChanged = base ? SHOWN_KEYS.filter((k) => String(base[k]) !== String(p[k])).length : 0;
   // the single settings are folded away while a preset is picked; a custom combination shows them
   const [openState, setOpen] = useState<boolean | null>(null);
   const open = openState ?? !exact;
   return (
     <Card padding="md" className="model-card" style={{ '--accent': accent } as CSSProperties} data-testid={`model-${which}`}>
-      <Stack gap="sm">
+      <Stack gap="xs">
         <Group justify="space-between" wrap="nowrap">
           <Group gap={8} wrap="nowrap">
             <Swatch which={which} size={12} />
@@ -182,7 +172,7 @@ function ModelCard({ which }: { which: 'A' | 'B' }) {
           <Group gap={6} wrap="nowrap">
             <IconChevronRight size={14} style={{ transform: open ? 'rotate(90deg)' : undefined, transition: 'transform 120ms', flex: 'none' }} />
             <Text size="sm" fw={500}>
-              Single settings
+              Adjust settings
             </Text>
             <Text size="xs" c="dimmed">
               {nChanged === 0 ? 'same as last semester' : `${nChanged} differ${nChanged === 1 ? 's' : ''} from last semester`}
@@ -191,7 +181,7 @@ function ModelCard({ which }: { which: 'A' | 'B' }) {
         </UnstyledButton>
         <Collapse in={open}>
           <div className="param-grid">
-            {PARAM_KEYS.map((k) => {
+            {SHOWN_KEYS.map((k) => {
               const changed = base && String(base[k]) !== String(p[k]);
               return (
                 <ParamRow
@@ -213,7 +203,7 @@ function ModelCard({ which }: { which: 'A' | 'B' }) {
             <span className="changed-dot inline" /> = differs from last semester (original code)
           </Text>
         </Collapse>
-        <StatusBlock which={which} st={st} onFramework={String(p.code) === 'original' && st.missing.length > 0 ? () => setModel(which, { ...p, code: 'framework' }) : undefined} />
+        <details className="disclosure" open={st.missing.length > 0 || undefined}><summary>Run details{st.missing.length > 0 ? ' · missing results' : ''}</summary><StatusBlock which={which} st={st} onFramework={String(p.code) === 'original' && st.missing.length > 0 ? () => setModel(which, { ...p, code: 'framework' }) : undefined} /></details>
       </Stack>
     </Card>
   );

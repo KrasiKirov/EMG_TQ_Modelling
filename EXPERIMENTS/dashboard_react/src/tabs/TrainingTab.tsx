@@ -23,7 +23,7 @@ export function TrainingTab() {
           </Text>
         </Alert>
       )}
-      <Explainer />
+      <details className="disclosure detail-panel"><summary>How training and evaluation work</summary><Explainer /></details>
       <LearningCurvesCard />
       <LearningTableCard />
       <BiasVarianceCard />

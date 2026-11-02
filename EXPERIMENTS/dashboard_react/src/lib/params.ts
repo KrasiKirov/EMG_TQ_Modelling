@@ -3,6 +3,8 @@ import { hasRuns, seedsOf, type Dataset } from './data';
 import type { Dir, ParamKey, ParamValue, Params } from './types';
 
 export const PARAM_KEYS: ParamKey[] = ['code', 'passive', 'emg', 'weighting', 'window', 'dropout', 'lr', 'extra'];
+/** parameters shown on screen (EMG scaling is not shown) */
+export const SHOWN_KEYS: ParamKey[] = PARAM_KEYS.filter((k) => k !== 'emg');
 
 export const PARAM_NAMES: Record<ParamKey, string> = {
   code: 'Code',
@@ -78,9 +80,9 @@ export const FRIENDLY: Record<string, string> = {
   X05_autogain: 'EMG auto-gain',
   'X06_window_0.4s': 'Window 0.4 s',
   T01_passive_value_input: 'Passive value as input (rejected: circular)',
-  'C01_autogain+equalweight': 'Auto-gain + equal weight',
+  'C01_autogain+equalweight': 'Balanced positions (EG, YES)',
   'S2_cleanpassive+autogain': 'Clean table + auto-gain',
-  'D01_cleanpassive+autogain+equalweight': 'Ours: clean table + auto-gain + equal weight',
+  'D01_cleanpassive+autogain+equalweight': 'Ours: balanced positions',
   'D02_D01+window_0.5s': 'Ours + 0.5 s window',
 };
 
@@ -98,9 +100,8 @@ export const PRESET_GROUPS: { group: string; ids: string[] }[] = [
   { group: 'Ours', ids: ['D01_cleanpassive+autogain+equalweight', 'D02_D01+window_0.5s'] },
   {
     group: 'Single changes',
-    ids: ['X01_clean_passive', 'X02a_dropout_0.0', 'X02b_dropout_0.1', 'X02c_dropout_0.5', 'X03_lr_0.001', 'X04_equal_angle_weight', 'X05_autogain', 'X06_window_0.4s', 'T01_passive_value_input'],
+    ids: ['X01_clean_passive', 'X02a_dropout_0.0', 'X02b_dropout_0.1', 'X02c_dropout_0.5', 'X03_lr_0.001', 'X04_equal_angle_weight', 'X06_window_0.4s', 'T01_passive_value_input'],
   },
-  { group: 'Combinations', ids: ['C01_autogain+equalweight', 'S2_cleanpassive+autogain'] },
 ];
 
 export const DEFAULT_A_ID = 'X00_baseline';
@@ -250,7 +251,7 @@ export function passiveTwins(ds: Dataset, id: string): string[] {
 export function diffFromBaseline(ds: Dataset, p: Params): ParamKey[] {
   const base = ds.experiments[DEFAULT_A_ID]?.params;
   if (!base) return [];
-  const d = PARAM_KEYS.filter((k) => k !== 'code' && String(p[k]) !== String(base[k]));
+  const d = SHOWN_KEYS.filter((k) => k !== 'code' && String(p[k]) !== String(base[k]));
   if (!d.length && String(p.code) !== String(base.code)) return ['code'];
   return d;
 }

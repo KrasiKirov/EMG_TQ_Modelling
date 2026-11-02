@@ -91,3 +91,51 @@ For automated checks, numbers are also in the DOM with `data-testid` attributes:
 `kpi-toes-B`, `kpi-toes-delta`, `kpi-other-*`, `heat-<PERSON>-<k>`, `status-A`, `status-B`, and table rows
 (`exp-row-<id>`, `runs-row-<A|B>-<seed>`, `lc-row-*`, `bv-row-*`, `r2-row-*`, `fam-row-*`), e.g.
 `chrome --headless=new --virtual-time-budget=10000 --dump-dom "file:///…/dist/index.html#tab=overview"`.
+
+
+## Experiment-first workflow (25 October 2026)
+
+The default Experiment tab now uses a single saved experiment selected from the left-hand list. It shows the experiment purpose, implementation-based explanations (including an interactive AGC example), all-subject summaries, all six saved performance metrics by position, individual runs, and one experiment’s prediction against the measured target. Train/test direction is selectable. The selected experiment, subject, position and run are stored in the URL hash (`exp`, `wsubj`, `pos`, `ra`).
+
+Comparison is a separate workspace with its own A/B presets and Summary, Waveforms and Training audit views. Study history explains the sequence of trials and the recorded decisions. Its interpretations incorporate the 24 October audit corrections; the selected candidate is not labelled a confirmed best model.
+
+Exact experiment runs are preferred. The existing passive-table equivalence rule is optional and every substitute source is named in the subject table; missing results remain missing. CSV export contains raw run-level scores and both selected and source experiment IDs. Single-experiment summaries take a median across runs at each subject-position, then a median across the chosen positions. Signed bias is preserved, so summary offsets can cancel. Raw individual-run scores are always available regardless of the R² display floor. Training curves are separately recorded diagnostic runs and only shown for an exact experiment/subject/direction match.
+
+New UI files: `tabs/ExperimentTab.tsx`, `tabs/ExperimentLibrary.tsx`, `components/ExperimentSidebar.tsx`, `components/ExperimentMethod.tsx`, and `lib/experimentStory.ts`. No recordings, predictions, training settings or generated results were modified.
+
+
+## Extended catalogue, timing and demeaning
+
+`src/data/catalog.json` supplements the original generated dataset. Rebuild it from existing saved predictions (no training) with `python scripts/build_catalog.py`, using the project Python environment with numpy, pandas and matplotlib. It exports five family models, 38 earlier study/configuration collections, main-run timing metadata and full-trial means. Three teammate entries are transcribed directly from the local `origin/main` Markdown reports, with revision and native aggregation retained. They intentionally do not invent unavailable waveform, seed, or timing records.
+
+The earlier family targets differ from the clean passive-trial evaluation target; this is labelled explicitly. Study collections remain separate, including the two ridge variants. Full float32 waveform storage preserves extreme ridge failures without int16 clipping. Box plots display quartiles, a median and 5th–95th percentile whiskers plus individual seeds. Timing is wall-clock per saved run, with the measured scope labelled (family fit-only versus research/control fit and prediction).
+
+The new waveform switch removes each curve’s own full-trial mean for evaluation only. The main controlled models do not remove the torque mean in training. Ridge fits an intercept using a weighted training mean; the 0.5 s + retest map benchmark globally centres/scales its neural-network target on training-only statistics and undoes that at prediction time. Those training transformations are documented separately from per-trial demeaned scoring.
+
+
+## Focused interface for the supervisor presentation
+
+The shipped client uses `presentation-catalog.json`: all 15 controlled experiments, the GRU family run and the 0.5 s window + retest passive map runs. The earlier research collections are retained on disk in the archived catalogue but excluded from the interface and accepted experiment links. The left navigation follows 0.5 s + retest map / new model / preliminary exploration. Controlled experiments has its own complete tab. Each saved experiment has Results, Waveforms and How it works views. The result view leads with figures and tables; metric definitions, provenance and timing detail expand on demand.
+
+Box plots now offer individual-axis zoom or a shared scale, plus ordinal position focus. Individual-axis limits include all displayed points and explicitly show the changed axis range; they do not trim outliers. The focused catalogue retains only the archived GRU waveform payload to reduce startup cost.
+
+Refresh the focused supplement after rebuilding the archived catalogue with `python scripts/build_presentation_catalog.py`, then run the normal dashboard build. Only the explicitly requested collections are shipped in the focused interface.
+
+
+## 0.5 s window + retest passive map
+
+`main/session-passive` holds 60 runs of the 0.5 s LSTM (6 people × seeds 0–9, session 1 → 2): 50 samples of the four muscle envelopes plus angle, LSTM 8×2, up to 60 epochs, patience 12, batch 64, train stride 5. The target is measured torque minus passive torque; session 1 uses its own passive map and session 2 uses a passive map re-measured in session 2.
+
+Data fixes in the pipeline (`ML/reviewed_overrides.json`, `ML/config.py`, `ML/preprocessing/pipeline.py`): YES trials 27/29/31/33 are the retest pushes at p1–p4 (their recorded notes wrongly say “passive”), and YES session-1 passive values come from the lab worksheet; IES has no passive trials, so its documented pre-test table (`experiment_metadata_IES.docx`) is used for both sessions; CH is added to the subject list. JM needs no fix: the still-hold rule already ignores the movement in passive trial 21.
+
+Train (from the repository root; the data folder holds the `.flb` recordings, the YES worksheet PDF and the IES DOCX, none of which are in git):
+
+```bash
+python -m ML.training.parallel_benchmark --output <runs folder> --data-dir <data folder> --overrides ML/reviewed_overrides.json --workers 8
+```
+
+Then import with `python scripts/import_retest_map.py <runs folder>` (requires NumPy) and run the normal build. The importer only reads arrays and JSON, recomputes every position score in float64 and checks it against each run’s `metrics.json`. Full trial means are preserved for evaluation demeaning. Chart resampling never extrapolates beyond valid intervals, and gaps remain gaps. `build_presentation_catalog.py` preserves the imported collection on later refreshes.
+
+Comparison now offers Saved experiments (0.5 s + retest map, GRU and all controlled models) plus the original Controlled settings workspace. Saved comparisons match available angles within 0.02 rad, retain each protocol’s own target/interval, and do not imply paired seeds or a matched improvement. Each waveform panel has its own target; both panels share time and torque scales. The comparison box plot uses each seed’s median across common angles, while the table takes medians across seeds within an angle first.
+
+Training times are labelled per seed. The 0.5 s + retest map timings include model construction, compilation and fit, with 8 single-thread jobs sharing the CPU; controlled timings include prediction. These hardware and timer differences preclude a controlled speed claim. Its learning histories are shown in standardized MSE units, separately from the controlled diagnostic curves.
