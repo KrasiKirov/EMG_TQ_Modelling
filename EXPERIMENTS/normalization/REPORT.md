@@ -15,7 +15,7 @@ The numbers to quote, from IES, CH and HM, trained on session 1 and tested on se
 | Toes-down positions | **0.86 Nm** | 6.4 Nm | 0.86 | 97 % |
 | All other positions | **0.76 Nm** | 20.0 Nm | 0.98 | 98 % |
 
-Four things we learned:
+Six things we learned:
 
 1. **N1 (99th percentile) and N2 (maximum-effort trial) cannot fix a change between sessions.** Any fixed number per
    muscle is absorbed by the model: a straight-line model gives the same predictions, within 0.003 Nm, with N0, N1 or
@@ -34,7 +34,11 @@ Four things we learned:
    trial, with torque measured, to fit a gain and an offset for that angle cut the toes-down error from 0.86 to
    **0.35 Nm** (R² 0.81 to **0.94**), and the other positions from 1.01 to 0.75 Nm. All six people improved. Every
    fix that guessed the drift from EMG alone helped some people and hurt others. Measuring it for a few seconds works
-   for all of them. Details in the last results section.
+   for all of them. Details in the calibration section.
+6. **Predicting active torque instead (A0) is the best model without a pushing calibration.** Subtracting session
+   2's clean passive table cut the toes-down error from 0.86 to **0.61 Nm** (other positions 1.01 to 0.75 Nm), mostly
+   by fixing YES. With the 10 s calibration on top, A0 and N0 end up about the same (toes-down 0.43 and 0.35 Nm).
+   Details in the A0 section.
 
 The LSTM beat both reference predictors everywhere: a per-position ridge model, and a flat line at session 1's average.
 
@@ -381,6 +385,64 @@ there anyway. It is not a model that works from EMG alone on a new day.
   part of the pre-registered study.
 - One fit per angle means the calibration has to be repeated at every angle used.
 
+## Back to active torque: A0, with and without the calibration
+
+*Run on 2 November 2026 after everything above, to answer one question: does the calibration still work if the
+network learns active torque instead of total torque? Not part of the pre-registered study.*
+
+**What A0 is.** Exactly N0 (session-1 maximum, balanced positions, 0.2 s, no auto-gain, LSTM 8×2, all six people,
+three seeds), with one change: the network learns **active torque**. That is total torque minus the passive table,
+the torque the ankle shows when the person is relaxed at that angle. The passive table is the clean one, built from
+the 30-second relaxed holds, **one table per session**. IES has no relaxed holds, so IES uses the old passive rule.
+
+**Can we compare A0 with N0 at all?** For MAE, yes. Within one trial the passive table is one constant number. Moving
+a whole trial up or down by a constant does not change the size of the errors. R² is less comparable, because active
+torque swings over a slightly different range.
+
+Same scoring as the calibration test: all six people, three seeds, only 30 s to the end of each trial.
+
+| | toes-down MAE | toes-down R² | other MAE | other R² |
+|---|---|---|---|---|
+| N0, total torque, no calibration | 0.86 Nm | 0.81 | 1.01 Nm | 0.97 |
+| **A0, active torque, no calibration** | **0.61** | **0.90** | **0.75** | **0.98** |
+| N0 + 10 s calibration | **0.35** | 0.94 | 0.75 | 0.98 |
+| A0 + 10 s calibration | 0.43 | 0.94 | **0.67** | **0.98** |
+
+Per person, MAE in Nm, A0 without and with the 10 s calibration:
+
+| | toes-down | other positions |
+|---|---|---|
+| YES | 0.68 → 0.48 | 0.90 → 0.90 |
+| JM | 0.38 → 0.30 | 0.74 → 0.46 |
+| EG | 0.53 → 0.38 | 0.81 → 0.69 |
+| IES | 1.16 → 0.41 | 0.75 → 0.59 |
+| CH | 0.64 → 0.48 | 1.59 → 1.32 |
+| HM | 0.31 → **0.46** | 0.61 → 0.45 |
+
+**What this says.**
+
+1. **Without calibration, A0 is clearly the better model.** Toes-down drops from 0.86 to 0.61 Nm, and the other
+   positions from 1.01 to 0.75 Nm. Most of the gain is YES: 2.27 to 0.68 Nm at toes-down. YES's problem was the
+   resting torque moving between sessions. Session 2's own passive table, from session 2's relaxed holds, takes that
+   move out.
+2. **But A0 quietly uses session 2 too.** Its passive table for session 2 comes from session 2's relaxed holds: 30
+   seconds with the torque sensor on, the person relaxed. So A0 is not "EMG only on a new day" either. It needs a
+   relaxed hold at each angle, while the calibration needs about 10 seconds of pushing at each angle.
+3. **With the calibration, the two targets end up close.** N0 is a little better at toes-down (0.35 against 0.43),
+   A0 a little better elsewhere (0.67 against 0.75). This was expected: the calibration's offset already does what
+   subtracting the passive table does, so the passive table adds little on top. They are not identical, because two
+   networks trained on different targets learn slightly different shapes.
+4. **On A0, the calibration helps five of the six people at toes-down, not all six.** HM gets worse, from 0.31 to
+   0.46 Nm. HM's A0 prediction was already good there, so fitting a gain on 10 seconds mostly adds noise. On N0 the
+   calibration helped all six.
+
+**Which to show.** Both stories hold up, and they answer different questions:
+
+- **The best model without a pushing calibration** is A0: 0.61 Nm at toes-down. It needs session 2's relaxed holds.
+- **The best model with a 10 s calibration** is N0 + calibration or A0 + calibration, about the same: 0.35 to 0.43 Nm
+  at toes-down, 0.67 to 0.75 Nm elsewhere. N0 + calibration is the simpler one (no passive table at all) and the only
+  one that helped every person.
+
 ## Data notes found along the way
 
 - **CH pulls the toes up at the toes-down positions.** At CH's three most toes-down angles, both sessions are toes-up
@@ -397,7 +459,8 @@ there anyway. It is not a model that works from EMG alone on a new day.
 - **Six people, two sessions, one trial per angle per session.** Every per-person number rests on one 90-second
   trial.
 - **Stage 1 chose using session 2 of YES, JM and EG.** Stage 2 is the clean check, but it is only three people.
-- **Total torque is not comparable with D01 or the baseline**, which predicted active torque.
+- **Total torque is not comparable with D01 or the baseline**, which predicted active torque. A0 predicts active
+  torque, but without auto-gain, so it is still not the same setup as D01.
 - **N3 and the relaxed-hold correction need session 2's data before they can predict.** Neither would run on a
   device without a calibration block first. N0 needs nothing from session 2.
 - **Auto-gain was not run here.** So this study cannot say how close N3 gets to auto-gain in numbers.
@@ -408,7 +471,11 @@ there anyway. It is not a model that works from EMG alone on a new day.
 - Plan and rule: `EXPERIMENTS/normalization/PLAN.md`. Stage 1 verdict: `decision_stage1.md`.
 - Scores: `runs_stage1.csv`, `cells_stage1.csv`, `runs_stage2.csv`, `cells_stage2.csv` (one row per run and
   position, and per position over seeds). The relaxed-hold test: `relaxed_hold_extra.csv`. The calibration test:
-  `calibration_test.py`, `calibration_runs.csv`, `calibration_summary.md`.
+  `calibration_test.py`, `calibration_runs.csv`, `calibration_summary.md`; for A0, `calibration_runs_A0_active_trainmax.csv`
+  and `calibration_summary_A0_active_trainmax.md` (`calibration_test.py --exp A0_active_trainmax`).
 - Picture of the toes-down offset: `figures/toes_down_explained.png`.
-- Runs: `EXPERIMENTS/results/N0_total_trainmax` ... `NR3_total_sessionp99`, logs in `EXPERIMENTS/logs/`.
-- Dashboard: sidebar group "Normalization study". This report is under "How it works" for each arm.
+- Runs: `EXPERIMENTS/results/N0_total_trainmax` ... `NR3_total_sessionp99` and `A0_active_trainmax`, logs in
+  `EXPERIMENTS/logs/`.
+- Dashboard: sidebar groups "Final model + 10 s calibration" (N0, N0 + calibration, A0, A0 + calibration) and
+  "Normalization study". This report is under "How it works" for each entry. The calibrated entries are scored from
+  30 s to the end of each trial, the others on the whole trial, so their numbers differ a little from the tables here.

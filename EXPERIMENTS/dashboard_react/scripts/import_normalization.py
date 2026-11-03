@@ -3,17 +3,23 @@
 Reads the runs written by ``EXPERIMENTS/code/run_experiment.py`` in this repository
 (``EXPERIMENTS/results/N*``). Only arrays and JSON are read; no model is loaded. Every
 position score is computed here from the saved predictions, in float64, against the total
-measured torque. The plain-English report (``EXPERIMENTS/normalization/REPORT.md``) is attached
+measured torque (active torque for A0). Calibrated entries (N0 + cal, A0 + cal) apply the 10 s
+gain+offset rule of ``EXPERIMENTS/normalization/calibration_test.py`` per trial and are scored from 30 s
+to the end of each trial only. The plain-English report (``EXPERIMENTS/normalization/REPORT.md``) is attached
 to every entry.
 
 Usage (from the repository root): python EXPERIMENTS/dashboard_react/scripts/import_normalization.py
 """
 from pathlib import Path
 import argparse, base64, hashlib, json
+import sys
 import numpy as np
 
 DASH = Path(__file__).resolve().parents[1]
 ROOT = DASH.parents[1]
+sys.path.insert(0, str(ROOT/'EXPERIMENTS'/'normalization'))
+from calibration_test import correct, SCORE_FROM_S   # noqa: E402
+CAL_S = 10
 PREFIX = 'norm/'
 GROUP = 'Normalization study'
 ARMS = {
@@ -30,8 +36,19 @@ ARMS = {
         'Each session is divided by its own 99th percentile per muscle. Session 2’s scale comes from all of its '
         'active-trial EMG (no torque). It needs the whole of session 2 before it can predict.'),
 }
-REFS = {'NR' + k[1:]: k for k in ARMS}
+ARMS['A0_active_trainmax'] = ('A0 · N0 with the active-torque target', 'max',
+    'Exactly N0 (session-1 maximum, balanced positions, 0.2 s, no auto-gain), but the network learns active torque: '
+    'total torque minus the clean passive table built from the relaxed holds of each session (IES has no holds, '
+    'so the old passive rule is used for IES).')
+REFS = {'NR' + k[1:]: k for k in ARMS if k.startswith('N')}
+CALIBRATED = {k + '+cal': k for k in ('N0_total_trainmax', 'A0_active_trainmax')}
 TARGET = 'Total measured torque, nothing subtracted. The passive table plays no part in training or scoring.'
+TARGET_ACTIVE = ('Active torque: total measured torque minus the clean passive table of that session (relaxed '
+                 'holds). Scored against active torque.')
+CAL_HOW = (' Then a 10 s calibration, no retraining: on the first 10 s of every session-2 trial (torque measured), '
+           'fit torque ≈ a × prediction + b (a kept between 0.5 and 2; offset only if the person barely pushed) and '
+           'apply it to the rest of that trial. Scores use only 30 s to the end of each trial, so seconds 0–30 '
+           '(the calibration block and a gap) are never scored. The trace shows the whole corrected trial.')
 
 
 def metrics(y, p):
@@ -63,11 +80,16 @@ def main():
     data['experiments'] = {k: v for k, v in data['experiments'].items() if not k.startswith(PREFIX)}
     t0, dt, n = data['grid']; grid = t0+dt*np.arange(n)
     summary = {}
-    for native in [*ARMS, *REFS]:
+    for entry in [*ARMS, *REFS, *CALIBRATED]:
+        cal = entry in CALIBRATED
+        native = CALIBRATED.get(entry, entry)
         ridge = native.startswith('NR')
         arm = REFS.get(native, native)
         title, emg, how = ARMS[arm]
-        ident = PREFIX+native.split('_')[0]
+        if cal:
+            title, how = title.split(' · ')[0] + ' + 10 s calibration', how + CAL_HOW
+        active = arm.startswith('A')
+        ident = PREFIX+native.split('_')[0]+('cal' if cal else '')
         files = sorted(results.glob(f'{native}/*/S1toS2/seed*.npz'))
         if not files:
             continue
@@ -89,7 +111,13 @@ def main():
                 assert len(np.unique(trial[m])) == 1, 'one trial per position expected'
                 yy, pp, ts = y[m], p[m], tt[m]
                 assert np.all(np.diff(ts) > 0)
-                row = metrics(yy, pp)
+                if cal:
+                    rel = ts-ts[0]
+                    pp = correct(pp[rel < CAL_S], yy[rel < CAL_S], pp, 'gain+offset')
+                    scored = rel >= SCORE_FROM_S
+                    row = metrics(yy[scored], pp[scored])
+                else:
+                    row = metrics(yy, pp)
                 row.update(exp=ident, subj=subject, dir='S1toS2', seed=seed, pos=round(float(a), 3), toes=int(k < 2))
                 data['rows'].append(row)
                 data['means'][f'{key}|{round(float(a), 3)}'] = [float(yy.mean()), float(pp.mean())]
@@ -110,17 +138,18 @@ def main():
         seeds = sorted({s for v in coverage.values() for s in v})
         data['experiments'][ident] = dict(
             id=ident, title=(f'Ridge reference · {title.split(" · ")[1]}' if ridge else title), group=GROUP,
-            kind='normalization', native=native, model='ridge' if ridge else 'lstm', config=cfg, target=TARGET,
+            kind='normalization', native=native, model='ridge' if ridge else 'lstm', config=cfg,
+            target=TARGET_ACTIVE if active else TARGET,
             reportText=report_text,
             purpose=(('Reference model, never chosen: per-position ridge regression with the scaling of '
                       + arm.split('_')[0] + '. ') if ridge else '') + how,
-            protocol=('Train on session 1, test on session 2. Total torque, 0.2 s window (20 samples at 100 Hz) of four '
+            protocol=('Train on session 1, test on session 2. ' + ('Active torque' if active else 'Total torque') + ', 0.2 s window (20 samples at 100 Hz) of four '
                       'muscle envelopes plus angle, no auto-gain. ' + (
                           'Ridge regression with its own coefficients per position, no seeds.' if ridge else
                           'Balanced positions (each position’s target ÷ its standard deviation). LSTM 8×2, dropout 0.3, '
                           'batch 8, at most 200 epochs, early stopping after 25.')
                       + f' People: {", ".join(sorted(coverage))}. Seeds: {", ".join(map(str, seeds))}.'),
-            params=dict(code='norm', passive='none', emg=emg, weighting='none' if ridge else 'scale', window=0.2,
+            params=dict(code='norm', passive='clean' if active else 'none', emg=emg, weighting='none' if ridge else 'scale', window=0.2,
                         dropout=0.0 if ridge else 0.3, lr=0.003, extra='ridge' if ridge else 'none'))
         summary[ident] = {s: len(v) for s, v in coverage.items()}
     used = set(data['targets'].values()); data['targetPool'] = {k: v for k, v in data['targetPool'].items() if k in used}
