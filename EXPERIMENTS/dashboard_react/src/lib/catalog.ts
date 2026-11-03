@@ -23,6 +23,9 @@ export interface Timing {seconds:number;prep:number|null;definition:string}
 interface CatalogData {experiments:Record<string,ExtraExperiment>;rows:Run[];positions:Record<string,number[]>;targets:Record<string,string>;targetPool:Record<string,string>;predictions:Record<string,string>;means:Record<string,[number,number]>;times:Record<string,Timing>}
 const data=raw as unknown as CatalogData;
 export const EXTRA=data.experiments;
+export interface CalVariant {group:Record<'toes'|'other',{mae:number;r2:number;vaf:number}>;person:Record<'toes'|'other',Record<string,number>>;angle:Record<string,number>}
+/** N0 / A0 with and without the 10 s calibration, all scored from 30 s on (import_normalization.py) */
+export const CALIBRATION=(raw as unknown as {calibration?:{people:string[];variants:Record<string,CalVariant>}}).calibration??{people:[],variants:{}};
 export const ALL_EXPERIMENTS:Record<string,Experiment>={...DS.experiments,...EXTRA};
 export const ALL_IDS=[...STUDY_ORDER.filter(id=>DS.experiments[id]),...DS.expIds.filter(id=>!STUDY_ORDER.includes(id)),...Object.keys(EXTRA)]
   .filter(id=>!hiddenFromDisplay(id,`${ALL_EXPERIMENTS[id]?.title??''} ${EXTRA[id]?.purpose??''} ${EXTRA[id]?ROUND2_NAMES[EXTRA[id].native]??'':''}`));

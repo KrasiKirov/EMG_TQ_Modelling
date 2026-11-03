@@ -2,6 +2,14 @@ export const RETEST_MAP_ID='main/session-passive';
 /** the page the dashboard opens on: the final model */
 export const FINAL_ID='norm/N0cal';
 export const NEW_MODEL_ID=FINAL_ID;
+/** one plain sentence under the title of the pages people open most */
+export const BLURBS:Record<string,string>={
+ 'norm/N0cal':'The final model. The day-1 LSTM is kept as it is; on day 2, 10 seconds of pushing at each angle fit a stretch and a shift. Scored from 30 s on.',
+ 'norm/N0':'The final model before calibration: trained on day 1, tested on day 2, nothing corrected. Predicts the total measured torque.',
+ 'norm/A0':'Balanced positions without auto-gain: the same LSTM, but it predicts active torque, with each day’s relaxed-hold passive torque subtracted.',
+ 'norm/A0cal':'A0 plus the same 10-second calibration per angle. Scored from 30 s on.',
+ 'X00_baseline':'Last semester’s model, re-run unchanged: plain loss, so the angles with big torque swings dominate training.',
+};
 export const EXPLORATION_IDS=['X02a_dropout_0.0','X02b_dropout_0.1','X02c_dropout_0.5','family/F_gru8'];
 export interface SidebarItem { id:string; label:string; badge?:string }
 export interface SidebarGroup { label:string; caption:string; tone:string; open:boolean; items:SidebarItem[] }

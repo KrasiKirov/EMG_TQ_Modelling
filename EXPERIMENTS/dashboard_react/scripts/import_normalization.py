@@ -115,6 +115,32 @@ def metrics(y, p):
                 peak=float(np.max(abs(y))))
 
 
+def calibration_summary(norm_dir):
+    """Home-page numbers: N0 / A0 with and without the 10 s calibration, all scored from 30 s to the end of each
+    trial (the calibration test's own rows, so the four variants are judged on the same stretch)."""
+    import pandas as pd
+    out = {'people': [], 'variants': {}}
+    for code, name in (('N0', 'calibration_runs.csv'), ('A0', 'calibration_runs_A0_active_trainmax.csv')):
+        f = norm_dir/name
+        if not f.exists():
+            continue
+        d = pd.read_csv(f)
+        d = d[(d.seconds == 0) | ((d.variant == 'gain+offset') & (d.seconds == 10))]
+        for cal, part in ((False, d[d.seconds == 0]), (True, d[d.seconds == 10])):
+            cells = part.groupby(['subject', 'position_rad', 'toes_down'])[['mae', 'r2', 'vaf']].median().reset_index()
+            cells['r2'] = cells.r2.clip(lower=0)
+            cells['rank'] = cells.groupby('subject').position_rad.rank(method='first').astype(int)
+            v = {'group': {}, 'person': {}, 'angle': {}}
+            for t, key in ((1, 'toes'), (0, 'other')):
+                g = cells[cells.toes_down == t]
+                v['group'][key] = {m: float(g[m].median()) for m in ('mae', 'r2', 'vaf')}
+                v['person'][key] = {k: float(x) for k, x in g.groupby('subject').mae.median().items()}
+            v['angle'] = {int(k): float(x) for k, x in cells.groupby('rank').mae.median().items()}
+            out['variants'][code + ('cal' if cal else '')] = v
+            out['people'] = sorted(set(out['people']) | set(cells.subject))
+    return out
+
+
 def packed(a):
     return base64.b64encode(np.asarray(a, dtype='<f4').tobytes()).decode()
 
@@ -205,6 +231,7 @@ def main():
             params=dict(code='norm', passive='clean' if active else 'none', emg=emg, weighting='none' if ridge else 'scale', window=0.2,
                         dropout=0.0 if ridge else 0.3, lr=0.003, extra='ridge' if ridge else 'none'))
         summary[ident] = {s: len(v) for s, v in coverage.items()}
+    data['calibration'] = calibration_summary(ROOT/'EXPERIMENTS'/'normalization')
     used = set(data['targets'].values()); data['targetPool'] = {k: v for k, v in data['targetPool'].items() if k in used}
     path.write_text(json.dumps(data, separators=(',', ':'), allow_nan=False), encoding='utf-8')
     print(json.dumps(summary, indent=1))

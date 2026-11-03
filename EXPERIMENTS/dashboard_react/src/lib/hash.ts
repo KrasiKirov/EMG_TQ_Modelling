@@ -5,7 +5,7 @@ import { METRIC_KEYS } from './metrics';
 import { coerceParam, exactExperiment, PARAM_KEYS } from './params';
 import type { Dir, MetricKey, Params } from './types';
 
-export const TABS = ['overview', 'comparison', 'waveforms', 'training', 'experiments', 'about'] as const;
+export const TABS = ['home', 'overview', 'comparison', 'waveforms', 'training', 'experiments', 'about'] as const;
 export type TabKey = (typeof TABS)[number];
 
 export interface ViewState {
