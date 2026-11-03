@@ -36,7 +36,7 @@ ARMS = {
         'Each session is divided by its own 99th percentile per muscle. Session 2’s scale comes from all of its '
         'active-trial EMG (no torque). It needs the whole of session 2 before it can predict.'),
 }
-ARMS['A0_active_trainmax'] = ('A0 · N0 with the active-torque target', 'max',
+ARMS['A0_active_trainmax'] = ('A0 · balanced positions, active torque (no auto-gain)', 'max',
     'Exactly N0 (session-1 maximum, balanced positions, 0.2 s, no auto-gain), but the network learns active torque: '
     'total torque minus the clean passive table built from the relaxed holds of each session (IES has no holds, '
     'so the old passive rule is used for IES).')

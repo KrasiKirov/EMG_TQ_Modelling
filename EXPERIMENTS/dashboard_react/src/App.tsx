@@ -11,7 +11,6 @@ import { ExperimentTab } from './tabs/ExperimentTab';
 import { ControlledTab } from './tabs/ControlledTab';
 import { OverviewTab } from './tabs/OverviewTab';
 import { WaveformsTab } from './tabs/WaveformsTab';
-import { TrainingTab } from './tabs/TrainingTab';
 import { SavedComparisonTab } from './tabs/SavedComparisonTab';
 
 import { AboutTab } from './tabs/AboutTab';
@@ -86,8 +85,8 @@ function Shell() {
             <Tabs.Panel value="comparison">
               <div className="page-heading"><Text size="sm" c="dimmed">Side-by-side analysis</Text><Title order={2}>Compare two models</Title><Text size="sm" c="dimmed">Inspect saved predictions, coverage and seed variability. Use controlled settings for the original parameter-by-parameter comparison.</Text></div>
               <SegmentedControl mb="lg" aria-label="Comparison workspace" value={comparisonMode} onChange={v=>{setComparisonMode(v);setTab('comparison');}} data={[{value:'saved',label:'Saved experiments'},{value:'settings',label:'Controlled settings'}]}/>
-              {comparisonMode==='saved'?<SavedComparisonTab/>:<><Group className="comparison-subnav" mb="lg">{([['comparison','Summary'],['waveforms','Waveforms'],['training','Training audit']] as const).map(([tab,label])=><button key={tab} data-active={s.tab===tab||undefined} onClick={()=>setTab(tab)}>{label}</button>)}</Group>
-              {s.tab==='waveforms' ? <WaveformsTab /> : s.tab==='training' ? <TrainingTab /> : <OverviewTab />}</>}
+              {comparisonMode==='saved'?<SavedComparisonTab/>:<><Group className="comparison-subnav" mb="lg">{([['comparison','Summary'],['waveforms','Waveforms']] as const).map(([tab,label])=><button key={tab} data-active={s.tab===tab||undefined} onClick={()=>setTab(tab)}>{label}</button>)}</Group>
+              {s.tab==='waveforms' ? <WaveformsTab /> : <OverviewTab />}</>}
             </Tabs.Panel>
             <Tabs.Panel value="experiments"><ControlledTab /></Tabs.Panel>
             <Tabs.Panel value="about">

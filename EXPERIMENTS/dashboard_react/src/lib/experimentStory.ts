@@ -20,9 +20,6 @@ export const STUDY_ORDER = ['X00_baseline', 'X00f_baseline_framework', 'X01_clea
 
 /** Display only: the new model is presented as balanced positions, so other models whose
  * name or description mentions auto-gain are left off the lists. Data are unchanged. */
-export const KEEP_IDS = ['D01_cleanpassive+autogain+equalweight', 'C01_autogain+equalweight', 'D02_D01+window_0.5s'];
-export const TITLE_OVERRIDES: Record<string, string> = {
-  'D01_cleanpassive+autogain+equalweight': 'Selected candidate: clean passive table (X01) + equal weight per position (X04)',
-  'C01_autogain+equalweight': 'Equal weight per position (X04) for EG and YES',
-};
+export const KEEP_IDS: string[] = [];
+export const TITLE_OVERRIDES: Record<string, string> = {};
 export const hiddenFromDisplay = (id: string, text = '') => !KEEP_IDS.includes(id) && !id.startsWith('norm/') && /auto-?gain|agc/i.test(`${id} ${text}`);

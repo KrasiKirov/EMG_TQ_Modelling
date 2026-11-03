@@ -4,14 +4,15 @@ import { DS } from './dataset';
 import { hashFromState, stateFromHash, themeFromHash, type TabKey, type ViewState } from './lib/hash';
 import { near, positionsOf } from './lib/data';
 import { DEFAULT_A_ID, DEFAULT_B_ID } from './lib/params';
+import { NEW_MODEL_ID } from './lib/presentation';
 import type { Dir, MetricKey, Params } from './lib/types';
 import { chartTokens, type ChartTokens } from './theme';
 
 const DEFAULT_STATE: ViewState = {
   tab: 'overview',
-  experiment: DEFAULT_B_ID,
+  experiment: NEW_MODEL_ID,
   compareA: 'main/session-passive',
-  compareB: 'D01_cleanpassive+autogain+equalweight',
+  compareB: NEW_MODEL_ID,
   subj: 'All',
   dir: 'S1toS2',
   metric: 'r2',

@@ -76,7 +76,7 @@ export const FRIENDLY: Record<string, string> = {
   'X02b_dropout_0.1': 'Dropout 0.1',
   'X02c_dropout_0.5': 'Dropout 0.5',
   'X03_lr_0.001': 'Learning rate 0.001',
-  X04_equal_angle_weight: 'Equal weight per position',
+  X04_equal_angle_weight: 'Balanced positions (equal weight per position)',
   X05_autogain: 'EMG auto-gain',
   'X06_window_0.4s': 'Window 0.4 s',
   T01_passive_value_input: 'Passive value as input (rejected: circular)',
@@ -97,15 +97,15 @@ export function shortId(id: string): string {
 
 export const PRESET_GROUPS: { group: string; ids: string[] }[] = [
   { group: 'Reference', ids: ['X00_baseline', 'X00f_baseline_framework'] },
-  { group: 'Ours', ids: ['D01_cleanpassive+autogain+equalweight', 'D02_D01+window_0.5s'] },
+  { group: 'Ours', ids: ['X04_equal_angle_weight'] },
   {
     group: 'Single changes',
-    ids: ['X01_clean_passive', 'X02a_dropout_0.0', 'X02b_dropout_0.1', 'X02c_dropout_0.5', 'X03_lr_0.001', 'X04_equal_angle_weight', 'X06_window_0.4s', 'T01_passive_value_input'],
+    ids: ['X01_clean_passive', 'X02a_dropout_0.0', 'X02b_dropout_0.1', 'X02c_dropout_0.5', 'X03_lr_0.001', 'X06_window_0.4s', 'T01_passive_value_input'],
   },
 ];
 
 export const DEFAULT_A_ID = 'X00_baseline';
-export const DEFAULT_B_ID = 'D01_cleanpassive+autogain+equalweight';
+export const DEFAULT_B_ID = 'X04_equal_angle_weight';
 export const REFERENCE_ID = 'X00f_baseline_framework';
 
 export function sameParams(p: Params, q: Params, skipPassive = false): boolean {
