@@ -1,0 +1,107 @@
+# Explainer video v3: how the model is fed, and how the calibration works
+
+About 5 minutes. Same format as v2: Kokoro `af_sarah`, speed 1.0, 0.6 s gap between beats, 1080p30, the v2 palette
+(`scenes3/style3.py`), no code on screen, every number tagged in `SRC:`. Most of the time goes to the split and the
+feeding (chapters 2–4), which the 1-hour video went through too fast.
+
+Model shown: the final model (N0: balanced LSTM, total torque, EMG ÷ session-1 maximum, 0.2 s window), trained on
+session 1 and tested on session 2. Running examples: **EG, session 1, −0.038 rad** for the windows and the split;
+**YES, session 2, −0.381 rad, seed 0** for the calibration. Facts: `data3/facts_v01.json` (extract3/v01_data.py);
+the learning curve is the one from v2 (`data3/y04.npz`, rebuilt copy of last semester's model, HM), labelled as such.
+
+Format (parsed by `narration3/parse_storyboard.py`): `## cNN | Title` starts a chapter, `### cNN_bMM` a beat, then
+`VIS:`, `SAY:`, `SRC:`.
+
+---
+
+## c01 | What goes in
+
+### c01_b01
+VIS: Title card "How the model is fed, and how the calibration works". Then EG's session-1 recording at −0.038 rad, the whole 89 s: four rows of muscle envelopes (GM, GL, soleus, TA, each 0–1), the ankle angle, and the measured torque in Nm at the bottom.
+SAY: Two questions. How is session 1 turned into examples, and fed to the model? And how does the ten-second calibration work? Here is one real recording from session 1: person EG, at one angle. Four muscle signals, the ankle angle, and the measured torque. Eighty-nine seconds, at a hundred samples per second.
+SRC: facts_v01 eg_trial (angle −0.038, 8910 samples, 89.1 s); v01 eg_env (÷ session-1 maximum), eg_angle, eg_tq.
+
+## c02 | Cutting a recording into windows
+
+### c02_b01
+VIS: Zoom into 6 s of the recording. A highlighted box 20 samples wide spans the five rows; at its right edge, a dot on the torque curve. Label: "input: 20 samples × 5 signals = 0.2 s" → "answer: the torque at the last sample".
+SAY: The model never sees the whole recording at once. It sees short windows. One window is twenty samples of all five signals: 0.2 seconds. Its answer is one number: the torque at the window's last sample. In plain words: given the last fifth of a second of muscle activity, and the angle, what is the torque right now?
+SRC: window 20 samples at 100 Hz; target at the last sample (ML/research/splits.py windows()).
+
+### c02_b02
+VIS: The box slides right by one sample, again and again, faster and faster; each step leaves a dot on the torque curve. A counter runs to "8,891 windows in this trial". Side note: "neighbours share 19 of their 20 samples".
+SAY: Then the window moves forward by one sample, ten milliseconds, and that is the next example. So neighbouring windows overlap: they share nineteen of their twenty samples. Slide all the way through this trial, and you get 8,891 windows.
+SRC: stride 1; 8910 − 20 + 1 = 8891 (facts_v01 eg_trial.windows).
+
+### c02_b03
+VIS: One push of the recording highlighted. Four small window boxes on it, at the onset, the rise, the plateau and the release, each with its own torque dot.
+SAY: So every moment of the recording, including the middle of every push, is the end of some window. A window that starts halfway through a contraction is not a problem: it is what most examples look like. And it is also all a device would have in real time: the last fifth of a second.
+SRC: —
+
+## c03 | Fit and validation
+
+### c03_b01
+VIS: EG's trial as one long bar of windows. A cut at 80 %: left part blue, "fit · 7,112 windows · first 71 s"; right part yellow, "validation · 1,778 windows · last 18 s". A crossed-out pattern of every-fifth stripes: "not every 5th window: one block at the end".
+SAY: Next, the split. Each trial of session 1 is cut once, in time. The first 80 percent of its windows, the first seventy-one seconds, are the fit windows: the model learns from these. The last 20 percent, the last eighteen seconds, are the validation windows. It is one block at the end of the trial, not every fifth window.
+SRC: TRAIN_FRAC 0.8 per trial (splits.build); facts_v01 eg_trial (7112 fit, 71.1 s; 1,778 validation used per trial = 14,224 / 8, 17.8 s).
+
+### c03_b02
+VIS: Eight bars, one per session-1 angle, each cut the same way (blue then yellow). Totals: "per person: fit 56,896 · validation 14,224". Below, eight orange bars for session 2: "test · 71,128 windows · never used for training".
+SAY: The same cut is made in all eight trials, so every angle is in both parts. For one person, that is 56,896 fit windows, and 14,224 validation windows. Session 2 is kept completely apart. It is only used at the very end, to test the model.
+SRC: facts_v01 n_windows {train 56896, val 14224, test 71128}, the same in all 18 N0 runs.
+
+### c03_b03
+VIS: Zoom on EG's trial around the cut at 71.3 s: the torque is in the middle of a push (−24.8 Nm). The part of the push before the cut is blue, after it yellow.
+SAY: In this trial, the cut lands in the middle of a push. That is fine. The first part of the push trains the model, and the rest checks it. Nothing is lost.
+SRC: facts_v01 eg_trial cut_time_s 71.31, tq_at_cut −24.84 Nm.
+
+### c03_b04
+VIS: Three role cards. Fit (blue): "the model's numbers are adjusted on these". Validation (yellow): "only measured, never learned from". Test (orange): "session 2 · scored at the very end".
+SAY: So what is validation? It is not fine-tuning. The model is never adjusted on the validation windows. They are only measured, like a quiz, to decide how long to train, and which version of the model to keep.
+SRC: ML/research/train.py (validation_data used by ReduceLROnPlateau and EarlyStopping only).
+
+## c04 | Feeding the windows
+
+### c04_b01
+VIS: The 56,896 fit windows as a deck of cards. The deck is shuffled; eight cards are dealt into a "batch" → the model → eight predictions vs eight answers → an "adjust" arrow back into the model. A progress bar: "7,112 batches = 1 epoch".
+SAY: Now the feeding. The fit windows are shuffled like a deck of cards, and dealt eight at a time. A group of eight is called a batch. The model predicts eight torques, measures its error against the eight answers, and adjusts its numbers a little. After 7,112 batches, every fit window has been used once. That is one epoch.
+SRC: batch 8, shuffle=True (train.py model.fit); 56,896 / 8 = 7,112 (facts_v01 n0_epochs.steps_per_epoch).
+
+### c04_b02
+VIS: One card zoomed: its 20 columns stay in time order, oldest on the left; the model reads them left to right, updating 8 memory squares; the squares go blank before the next card arrives. Label: "shuffled: the order of the windows · never: the order inside a window".
+SAY: Shuffling changes the order of the windows, never what is inside them. Inside each window, the twenty samples stay in time order, and the model reads them oldest first. Its memory starts empty for every window. So the order in which windows arrive tells it nothing. Shuffling just stops each batch from being eight near-copies of the same moment.
+SRC: Keras LSTM stateful=False (memory reset per window); windows built in time order (splits.windows).
+
+### c04_b03
+VIS: A real learning curve: validation error per epoch (rebuilt copy of last semester's model, person HM). Markers where the step size was cut (× 0.7, epochs 20, 30, 44, 63, 73); a star at the best epoch 53; a bracket "25 epochs without improvement"; a stop sign at 78. Footer: "final model: stopped after 32–98 epochs, kept epoch 7–73".
+SAY: After every epoch, the validation windows are checked. Here is a real run. When the validation error stops improving for ten epochs, the steps get smaller. After twenty-five epochs without improvement, training stops, and the best epoch is kept. For the final model, training stopped after 32 to 98 epochs.
+SRC: y04 x00f_HM (78 epochs, best 53, cuts at 20, 30, 44, 63, 73); facts_v01 n0_epochs (18 runs: 32–98 epochs, best 7–73).
+
+## c05 | The 10-second calibration
+
+### c05_b01
+VIS: Session 2, YES at −0.381 rad, the whole trial: measured torque (white) and the trained model's prediction (green). The gap between them shaded. Label: "model trained on session 1 only".
+SAY: Now session 2. The trained model is used as it is. Here is person YES, at a toes-down angle. The prediction follows every push, but it sits about two newton metres too low, and its swings are a little too big. Between the two sessions, the signals changed a little.
+SRC: facts_v01 calibration_example (bias −2.18 Nm after 30 s; gain 0.77 < 1).
+
+### c05_b02
+VIS: The first 10 s highlighted. A scatter grows beside it: one point per sample of those 10 s, prediction across, measured torque up. A straight line is fitted through the points: "torque ≈ 0.77 × prediction + 2.66 Nm". The two numbers labelled "stretch" and "shift".
+SAY: The calibration looks only at the first ten seconds, while the torque sensor records. Put each moment's prediction against the measured torque, and draw the best straight line through the points. That line has two numbers: a stretch, here 0.77, and a shift, here 2.66 newton metres.
+SRC: facts_v01 calibration_example gain 0.769, offset 2.66 (least squares on t < 10 s, gain kept within 0.5–2).
+
+### c05_b03
+VIS: Over the whole trial, the green prediction morphs into the corrected one (teal). The first 30 s grey out: "not scored". Badge: "error after 30 s: 2.18 → 0.49 Nm".
+SAY: Every prediction in the trial is then stretched and shifted with those two numbers. The model itself is not retrained. To keep the test fair, only the part after thirty seconds is scored, so the calibration seconds never count. Here, the error drops from 2.18 to 0.49 newton metres.
+SRC: facts_v01 calibration_example mae_raw_scored 2.18, mae_cal_scored 0.49.
+
+### c05_b04
+VIS: Summary card: "per angle · first 10 s · two numbers · no retraining". Two before → after rows for all six people: "toes-down 0.86 → 0.35 Nm (R² 0.81 → 0.94)", "other angles 1.01 → 0.75 Nm". Footnote: "needs the torque sensor for those 10 s".
+SAY: The same is done at every angle, for every person. Across all six people, the toes-down error went from 0.86 to 0.35 newton metres, and elsewhere from 1.01 to 0.75. It needs the torque sensor, for those ten seconds at each angle.
+SRC: facts_v01 group (calibration_summary.md: gain+offset, 10 s, scored from 30 s, 6 people × 3 seeds).
+
+## c06 | Recap
+
+### c06_b01
+VIS: Four recap lines appear one by one, each with a small icon from the chapters: window box, split bar, card deck, stretch-and-shift line.
+SAY: To recap. Overlapping 0.2-second windows. The first 80 percent of each trial trains, the last 20 percent decides when to stop. Batches of eight shuffled windows, each in time order. And in session 2, ten seconds per angle give a stretch and a shift.
+SRC: —
