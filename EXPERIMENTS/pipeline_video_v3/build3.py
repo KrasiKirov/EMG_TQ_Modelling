@@ -106,8 +106,8 @@ def concat(_=None):
 if __name__ == '__main__':
     steps = {'extract': extract, 'narration': narration, 'tts': tts, 'render': render, 'concat': concat}
     args = sys.argv[1:] or ['all']
-    if args[0] == 'render' and len(args) > 1:
-        render(set(args[1:]))
+    if args[0] == 'render' and len(args) > 1 and all(a not in steps for a in args[1:]):
+        render(set(args[1:]))           # only some chapters: build3.py render c02 c05
     else:
         for a in args:
             for name in (steps if a == 'all' else [a]):
