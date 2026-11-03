@@ -9,11 +9,10 @@ import { Sidebar } from './components/Sidebar';
 import { ModelBar } from './components/ModelBar';
 import { HomeTab } from './tabs/HomeTab';
 import { ExperimentTab } from './tabs/ExperimentTab';
-import { ControlledTab } from './tabs/ControlledTab';
+import { AllExperimentsTab } from './tabs/AllExperimentsTab';
 import { OverviewTab } from './tabs/OverviewTab';
 import { WaveformsTab } from './tabs/WaveformsTab';
 import { SavedComparisonTab } from './tabs/SavedComparisonTab';
-import { AboutTab } from './tabs/AboutTab';
 
 export function App() {
   return (
@@ -29,7 +28,6 @@ const NAV: { key: TabKey; label: string }[] = [
   { key: 'overview', label: 'Models' },
   { key: 'comparison', label: 'Compare' },
   { key: 'experiments', label: 'Experiments' },
-  { key: 'about', label: 'Guide' },
 ];
 
 function Shell() {
@@ -77,8 +75,7 @@ function Shell() {
             {comparisonMode === 'saved' ? <SavedComparisonTab /> : <><Group className="comparison-subnav" mb="lg">{([['comparison', 'Summary'], ['waveforms', 'Waveforms']] as const).map(([tab, label]) => <button key={tab} data-active={s.tab === tab || undefined} onClick={() => setTab(tab)}>{label}</button>)}</Group>
               {s.tab === 'waveforms' ? <WaveformsTab /> : <OverviewTab />}</>}
           </>}
-          {current === 'experiments' && <ControlledTab />}
-          {current === 'about' && <AboutTab />}
+          {current === 'experiments' && <AllExperimentsTab />}
         </div>
       </AppShell.Main>
     </AppShell></>

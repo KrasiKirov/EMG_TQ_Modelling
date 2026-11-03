@@ -25,7 +25,7 @@ export function ModelBar() {
       </div>
       <Select className="model-search" size="sm" searchable placeholder="Other models…" aria-label="Other models" value={other ? s.experiment : null} data={groups} onChange={(v) => v && choose(v)} comboboxProps={{ width: 360, position: 'bottom-end' }} maxDropdownHeight={420} />
       <Menu position="bottom-end" withinPortal>
-        <Menu.Target><UnstyledButton className="model-settings" aria-label="Evaluation settings">{s.dir === 'S1toS2' ? 'Day 1 → 2' : 'Day 2 → 1'} ▾</UnstyledButton></Menu.Target>
+        <Menu.Target><UnstyledButton className="model-settings" aria-label="Evaluation settings">{s.dir === 'S1toS2' ? 'Session 1 → 2' : 'Session 2 → 1'} ▾</UnstyledButton></Menu.Target>
         <Menu.Dropdown p="sm">
           <Menu.Label>Train → test</Menu.Label>
           <SegmentedControl fullWidth size="xs" value={s.dir} onChange={(v) => set({ dir: v as Dir, runA: 'typical' })} data={[{ value: 'S1toS2', label: 'Session 1 → 2' }, { value: 'S2toS1', label: 'Session 2 → 1' }]} />
