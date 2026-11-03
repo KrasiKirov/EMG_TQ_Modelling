@@ -2,15 +2,17 @@
 
     python extract4/w01_phases.py        # .venv311, PYTHONPATH = repository root
 
-Each session-2 trial's measured torque is split into phases: rest, onset (first 0.3 s of a push), plateau, and
-release (the 0.5 s after a push ends). A push = |torque - rest level| above 25 % of the trial's swing, where the
-rest level is the most common torque value of the trial. The error is measured after removing each trial's mean
+Each session-2 trial is split into phases from the MUSCLE ACTIVITY (the EMG at the end of each window, as the
+model sees it): a push = the summed envelope of the four muscles above 30 % of the way from its 5th to its 95th
+percentile in that trial, kept only if it lasts at least 0.3 s. Phases: rest, onset (first 0.3 s of a push),
+plateau, release (the 0.5 s after a push ends). The error is measured after removing each trial's mean
 offset (so the phases are compared on timing and shape, not on the session offset), plus the raw error.
 Also: the time lag that best lines the prediction up with the measured torque (cross-correlation, +-0.5 s).
 Writes data4/w01.npz (one example trial) and data4/facts_w01.json.
 """
 import glob
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -20,19 +22,22 @@ RES = VIDEO.parents[0] / 'results' / 'N0_total_trainmax'
 FS = 100
 
 
-def phases(y):
-    """0 rest, 1 onset, 2 plateau, 3 release, -1 unassigned (push gaps shorter than the margins)."""
-    h, e = np.histogram(y, bins=60)
-    rest = (e[np.argmax(h)] + e[np.argmax(h) + 1]) / 2
-    act = np.abs(y - rest) > 0.25 * np.ptp(y)
-    lab = np.zeros(len(y), int)
+def phases(emg):
+    """0 rest, 1 onset, 2 plateau, 3 release, from the summed EMG envelope at each window's last sample."""
+    lo, hi = np.percentile(emg, [5, 95])
+    act = emg > lo + 0.3 * (hi - lo)
+    d0 = np.diff(act.astype(int), prepend=0, append=0)
+    for s, e_ in zip(np.where(d0 == 1)[0], np.where(d0 == -1)[0]):
+        if e_ - s < int(0.3 * FS):
+            act[s:e_] = False
+    lab = np.zeros(len(emg), int)
     d = np.diff(act.astype(int), prepend=0, append=0)
     starts, ends = np.where(d == 1)[0], np.where(d == -1)[0]
     for s, e_ in zip(starts, ends):
         lab[s:e_] = 2
         lab[s:min(e_, s + int(0.3 * FS))] = 1
-        lab[e_:min(len(y), e_ + int(0.5 * FS))] = 3
-    return lab, rest
+        lab[e_:min(len(emg), e_ + int(0.5 * FS))] = 3
+    return lab
 
 
 def best_lag(y, p, max_s=0.5):
@@ -43,6 +48,12 @@ def best_lag(y, p, max_s=0.5):
 
 
 def main():
+    sys.path.insert(0, str(VIDEO.parents[1]))
+    sys.path.insert(0, str(VIDEO.parents[0] / 'code'))
+    from run_experiment import load_config
+    from ML.research.run import prepare
+    _, cfg = load_config('N0_total_trainmax')
+    emg_cache = {}
     names = ['rest', 'onset', 'plateau', 'release']
     cells = {n: [] for n in names}
     cells_raw = {n: [] for n in names}
@@ -51,12 +62,17 @@ def main():
         z = np.load(f)
         y, p, ang = (z[k].astype(float) for k in ('y_own_target', 'y_pred', 'angle'))
         subj = Path(f).parts[-3]
+        if subj not in emg_cache:
+            data, _ = prepare(subj, 'S1toS2', {k: cfg[k] for k in ('passive', 'emg', 'window')})
+            emg_cache[subj] = data['X_test'][:, -1, :4].sum(1)
+        emg = emg_cache[subj]
+        assert len(emg) == len(y), 'saved predictions and windows must line up'
         for a in np.unique(ang):
             m = ang == a
             yy, pp = y[m], p[m]
             if np.ptp(yy) < 2:                                     # nearly flat trial: no clear pushes
                 continue
-            lab, rest = phases(yy)
+            lab = phases(emg[m])
             e_shape = np.abs((pp - pp.mean()) - (yy - yy.mean()))
             e_raw = np.abs(pp - yy)
             for k, n in enumerate(names):
@@ -67,7 +83,7 @@ def main():
             if subj == 'EG' and 'seed0' in f and abs(a - (-0.038)) < 0.02:
                 example = dict(y=yy, p=pp, lab=lab, t=np.arange(len(yy)) / FS)
     facts = dict(
-        trials=len(lags), source='N0_total_trainmax, session 2, 6 people x 3 seeds (trials with a torque swing >= 2 Nm)',
+        trials=len(lags), phases_from='summed EMG envelope of the 4 muscles (window end)', source='N0_total_trainmax, session 2, 6 people x 3 seeds (trials with a torque swing >= 2 Nm)',
         shape_mae_median={n: round(float(np.median(v)), 3) for n, v in cells.items()},
         raw_mae_median={n: round(float(np.median(v)), 3) for n, v in cells_raw.items()},
         lag_s=dict(median=round(float(np.median(lags)), 3), p5=round(float(np.percentile(lags, 5)), 3),

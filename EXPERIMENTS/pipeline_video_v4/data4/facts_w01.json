@@ -1,17 +1,18 @@
 {
  "trials": 141,
+ "phases_from": "summed EMG envelope of the 4 muscles (window end)",
  "source": "N0_total_trainmax, session 2, 6 people x 3 seeds (trials with a torque swing >= 2 Nm)",
  "shape_mae_median": {
-  "rest": 0.402,
-  "onset": 1.035,
-  "plateau": 0.7,
-  "release": 0.586
+  "rest": 0.37,
+  "onset": 0.881,
+  "plateau": 0.714,
+  "release": 0.72
  },
  "raw_mae_median": {
-  "rest": 0.663,
-  "onset": 1.293,
-  "plateau": 0.966,
-  "release": 0.865
+  "rest": 0.604,
+  "onset": 1.167,
+  "plateau": 0.946,
+  "release": 0.99
  },
  "lag_s": {
   "median": 0.0,

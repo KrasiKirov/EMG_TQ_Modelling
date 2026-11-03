@@ -1,113 +1,166 @@
-# Explainer video v4: windows, memory and shuffling (a check of our method)
+# Explainer video v4: inside the LSTM — how the windows are prepared, fed and read
 
-About 8 minutes. Same format as v2/v3: Kokoro `af_sarah`, speed 1.0, 0.6 s gap, 1080p30, the v2 palette, no code on
-screen, every number tagged in `SRC:`. Written for the supervisors' question: "torque at time t needs information
-from earlier moments, so why are the windows cut up and shuffled?" Plain claims only, backed by checks on real data.
+About 9.5 minutes. Same format as v2/v3: Kokoro `af_sarah`, speed 1.0, 0.6 s gap, 1080p30, the v2 palette, no code on
+screen, every number tagged in `SRC:`. Goal: follow the data all the way through the final model, so that it is
+clear why the model predicts well even though the windows are shuffled during training. Chapters 2–5 reuse the
+v3 scenes for the inputs, the windows, the split and the feeding (the part of v3 that worked), with a new
+"one batch up close" beat; chapters 6–9 open the trained LSTM.
 
 Model shown: the final model before calibration (N0: balanced LSTM, total torque, EMG ÷ session-1 maximum, 0.2 s).
-Real examples: EG, session 2, −0.038 rad (V0 = N0 retrained for EG seed 0 with its weights saved). Facts:
-`data4/facts_w01.json` (errors by push phase, lag), `facts_w02.json` (inside the LSTM, order test),
-`facts_w03.json` (shuffling on vs off), `facts_v01.json` (windows, counts; from v3).
+Real examples: EG, −0.038 rad (V0 = N0 retrained for EG seed 0 with its weights saved; identical to the N0 run).
+Facts: `data4/facts_v01.json` (windows, counts; from v3), `facts_y04.json` (learning curve; from v3),
+`facts_w04.json` (one batch), `facts_w02.json` (inside the LSTM, order test), `facts_w01.json` (push phases, lag).
 
 ---
 
 ## c01 | The question
 
 ### c01_b01
-VIS: Title card "Windows, memory and shuffling: a check of our method". Then a quote card: "Torque at time t needs information from earlier moments. So why cut the recording into windows, and shuffle them?"
+VIS: Title card "Inside the LSTM: how the windows are prepared, fed and read". Then a quote card: "Torque at time t needs information from earlier moments. So why cut the recording into windows, and shuffle them?"
 SAY: Here is the question. The torque at any moment depends on what the muscles did a little earlier. So why do we cut the recordings into short windows, and then shuffle them during training? Doesn't that throw the timing away?
 SRC: supervisors' question (user, 3 Nov 2026).
 
 ### c01_b02
-VIS: Three short answers appear one under the other: "1 · The history is inside each window." "2 · Shuffling changes the order of the examples, not what is in them." "3 · We checked it on real data, four ways." A footer: "and one question that is still open: is 0.2 s of history enough?"
-SAY: The short answer has three parts. The history is inside each window. Shuffling only changes the order of the examples, never what is inside them. And we checked it on real data, four different ways. One question is still open, and we will end on it: is 0.2 seconds of history enough?
+VIS: Four numbered steps appear one under the other: "1 · how the inputs are prepared" "2 · how they are fed to the model" "3 · what happens inside the LSTM" "4 · why the order of the windows does not matter". A footer: "then: the end of a push, and what is still open".
+SAY: To answer it, we will follow the data all the way through. First, how the inputs are prepared. Then, how they are fed to the model. Then, what happens inside the LSTM. And finally, why the order of the windows does not matter. At the end, the case that worried everyone: the end of a push.
 SRC: —
 
-## c02 | Two ways to give a model memory
+## c02 | What goes in
 
 ### c02_b01
-VIS: Left panel "a muscle model (CEINMS, the earlier ankle project)": a chain of boxes for the activation equation, u(t) = α·e(t − d) − β₁·u(t − 1) − β₂·u(t − 2), with arrows feeding u(t − 1) and u(t − 2) back in. A long timeline below with one state passed from sample to sample, start to end of the recording. Label: "the state is carried through the whole recording → it must run in time order".
-SAY: There are two ways to give a model memory. The first is the way muscle models do it, like the CEINMS model from the earlier ankle project. Each new value of muscle activation is computed from the previous ones. So the model carries a state from sample to sample, through the whole recording. A model like that must run in time order, and shuffling its samples would make no sense.
-SRC: Team 11 BIEN470 D2 report, activation dynamics u(t) = αe(t − d) − β₁u(t − 1) − β₂u(t − 2) (p. 6), CEINMS (pp. 8–10).
+VIS: EG's session-1 recording at −0.038 rad, the whole 89 s: four rows of muscle envelopes (GM, GL, soleus, TA, each 0–1), the ankle angle, and the measured torque in Nm at the bottom.
+SAY: Here is one real recording from session 1: person EG, at one angle. Four muscle signals, each divided by that muscle's maximum in session 1. The ankle angle. And the measured torque. Eighty-nine seconds, at a hundred samples per second. Session 1 has eight of these trials, one per angle.
+SRC: facts_v01 eg_trial (angle −0.038, 8910 samples, 89.1 s); v01 eg_env (÷ session-1 maximum), eg_angle, eg_tq.
 
-### c02_b02
-VIS: Right panel "our LSTM": the recording with a 20-sample box; an arrow from the box to "torque at its last sample". Under it: "each prediction uses only the last 0.2 s · the memory starts empty for every window". Two tags under the panels: "carried state (like an IIR filter)" vs "fixed look-back (like an FIR filter / impulse response)".
-SAY: The second way is ours. Each prediction looks back over a fixed stretch: the last twenty samples, 0.2 seconds, and nothing before that. The LSTM does have a memory, but only inside that window. It starts empty for every window. In signal-processing terms, the first kind is like an I I R filter, with a state carried forward. Ours is like an F I R filter, an impulse response with a fixed length.
-SRC: stateless Keras LSTM (memory reset per sample); window 20 samples (splits.windows).
-
-### c02_b03
-VIS: A regression table builds up: each row = "20 past samples of the 5 signals" → "torque at t". Rows are then shuffled on screen; a note: "least squares on these rows gives the same answer in any row order". Then the same rows labelled "training examples for the LSTM".
-SAY: An impulse-response model is fitted the same way. Each row of its data holds the last few samples of input, and the torque at that moment. Shuffle the rows, and least squares gives exactly the same answer, because the history lives inside each row, not in the order of the rows. Our training examples are those rows.
-SRC: ordinary least squares is invariant to row order.
-
-## c03 | Inside the LSTM
+## c03 | Cutting a recording into windows
 
 ### c03_b01
-VIS: One real window from EG's session-2 trial, at the start of a push: 20 columns × 5 rows (GM, GL, soleus, TA, angle) as a coloured grid, oldest on the left. Above it, the torque around that moment, with the window's 0.2 s highlighted and a dot at its last sample: "[[w02_torque]] Nm".
-SAY: Let's open the trained model, and follow one real window through it. This one is from person EG, in session 2, right at the start of a push. Twenty time steps, five signals each, oldest on the left. The question it answers: what is the torque at the last step?
-SRC: facts_w02 (window at t = [[w02_time]] s, torque [[w02_torque]] Nm); w02 win.
+VIS: Zoom into 6 s of the recording. A highlighted box 20 samples wide spans the five rows; at its right edge, a dot on the torque curve. Label: "input: 20 samples × 5 signals = 0.2 s" → "answer: the torque at the last sample".
+SAY: The model never sees the whole recording at once. It sees short windows. One window is twenty samples of all five signals: 0.2 seconds. Its answer is one number: the torque at the window's last sample. In plain words: given the last fifth of a second of muscle activity, and the angle, what is the torque right now?
+SRC: window 20 samples at 100 Hz; target at the last sample (ML/research/splits.py windows()).
 
 ### c03_b02
-VIS: The LSTM drawn as a small cell: a box with "memory (8 numbers)" and three gates: "forget", "write", "read". The 20 columns enter one at a time. For each step, the real values light up: the forget-gate average, and the 8 memory numbers as bars that change height (from w02 l1_c). A small step counter "step 1 … 20".
-SAY: The LSTM reads the window one step at a time, oldest first. It keeps a memory of eight numbers. At every step, three gates decide what happens to it. A forget gate decides how much of the old memory to keep. A write gate decides what to add from the new step. And a read gate decides what to pass on. These bars are the real memory values of our model, step by step through this window.
-SRC: Keras LSTM equations; facts_w02 units 8; w02 l1_c, l1_f, l1_i, l1_o.
+VIS: The box slides right by one sample, again and again, faster and faster; each step leaves a dot on the torque curve. A counter runs to "8,891 windows in this trial". Side note: "neighbours share 19 of their 20 samples".
+SAY: Then the window moves forward by one sample, ten milliseconds, and that is the next example. So neighbouring windows overlap: they share nineteen of their twenty samples. Slide all the way through this trial, and you get 8,891 windows.
+SRC: stride 1; 8910 − 20 + 1 = 8891 (facts_v01 eg_trial.windows).
 
 ### c03_b03
-VIS: After step 20, the memory of the second layer becomes one number through the output: "× the angle's swing" → "prediction: [[w02_pred]] Nm" next to the measured "[[w02_torque]] Nm". Then all memory bars drop to zero: "next window: memory starts empty".
-SAY: After the twentieth step, the memory is boiled down into one number, the prediction, here [[w02_pred]] newton metres, against [[w02_torque]] measured. Then the memory is wiped. The next window starts from an empty memory. So everything the model uses about the past, for this prediction, comes from inside this one window.
-SRC: facts_w02 window_prediction_Nm, window_torque_Nm; stateless LSTM.
+VIS: One push of the recording highlighted. Four small window boxes on it, at the onset, the rise, the plateau and the release, each with its own torque dot.
+SAY: So every moment of the recording, including the middle of every push, is the end of some window. A window that starts halfway through a contraction is not a problem: it is what most examples look like. And it is also all a device would have in real time: the last fifth of a second.
+SRC: —
 
-### c03_b04
-VIS: A check card: "We recomputed the network by hand, with its saved weights, for [[w02_checked]] windows: largest difference from the model's own output: [[w02_hand]]". Subtitle: "nothing hidden: these are the only steps".
-SAY: To be sure nothing else is going on, we recomputed the network by hand, from its saved weights, for [[w02_checked]] windows. The largest difference from the model's own output was [[w02_hand]]. Those twenty steps are all there is.
-SRC: facts_w02 hand_vs_model_max_abs, hand_checked_windows.
-
-## c04 | Check 1: the order of the windows
+## c04 | Fit and validation
 
 ### c04_b01
-VIS: EG's session-2 trial: the measured torque (white) and the model's prediction made window by window in time order (green). Then the windows are drawn as cards, shuffled, predicted in that random order, and put back by their time stamps (dots landing on the curve). The two predictions overlap exactly. Badge: "largest difference over [[w02_windows]] windows: [[w02_order]] Nm".
-SAY: First check: does the order of the windows matter to the model? We predicted this whole trial window by window, in time order. Then we shuffled the windows, predicted them in that random order, and put each prediction back at its own time. The two curves are identical. Over [[w02_windows]] windows, the largest difference is [[w02_order]] newton metres. Each window is a complete example on its own.
-SRC: facts_w02 order_test_windows, order_test_max_abs_Nm.
+VIS: EG's trial as one long bar of windows. A cut at 80 %: left part blue, "fit · 7,112 windows · first 71 s"; right part yellow, "validation · 1,778 windows · last 18 s". A crossed-out pattern of every-fifth stripes: "not every 5th window: one block at the end".
+SAY: Next, the split. Each trial of session 1 is cut once, in time. The first 80 percent of its windows, the first seventy-one seconds, are the fit windows: the model learns from these. The last 20 percent, the last eighteen seconds, are the validation windows. It is one block at the end of the trial, not every fifth window.
+SRC: TRAIN_FRAC 0.8 per trial (splits.build); facts_v01 eg_trial (7112 fit, 71.1 s; 1,778 validation used per trial = 14,224 / 8, 17.8 s).
 
-## c05 | Check 2: training with and without shuffling
+### c04_b02
+VIS: Eight bars, one per session-1 angle, each cut the same way (blue then yellow). Totals: "per person: fit 56,896 · validation 14,224". Below, eight orange bars for session 2: "test · 71,128 windows · never used for training".
+SAY: The same cut is made in all eight trials, so every angle is in both parts. For one person, that is 56,896 fit windows, and 14,224 validation windows. Session 2 is kept completely apart. It is only used at the very end, to test the model.
+SRC: facts_v01 n_windows {train 56896, val 14224, test 71128}, the same in all 18 N0 runs.
+
+### c04_b03
+VIS: Three role cards. Fit (blue): "the model's numbers are adjusted on these". Validation (yellow): "only measured, never learned from". Test (orange): "session 2 · scored at the very end".
+SAY: So what is validation? It is not fine-tuning. The model never learns from the validation windows. They are only measured, like a quiz, to decide when to stop training, and which version of the model to keep.
+SRC: ML/research/train.py (validation_data used by ReduceLROnPlateau and EarlyStopping only).
+
+## c05 | Feeding the windows
 
 ### c05_b01
-VIS: Two strips of batches. "Shuffled": each batch of 8 holds windows from different angles and moments (colours mixed). "Not shuffled": the batches walk through trial 1, then trial 2, … (long runs of one colour). A drifting arrow under the second: "the model keeps leaning towards the last trial it saw".
-SAY: Shuffling matters during training, but for a different reason. Each batch of eight windows nudges the model a little. Shuffled, every batch mixes angles and moments. Not shuffled, training walks through one trial after another, and the model keeps leaning towards the last one it saw. That is about balanced learning, not about time.
-SRC: model.fit(shuffle=True) vs S0_noshuffle (shuffle=False, windows in stored order).
+VIS: The 56,896 fit windows as a deck of cards. The deck is shuffled; eight cards are dealt into a "batch" → the model → eight predictions vs eight answers → an "adjust" arrow back into the model. A progress bar: "7,112 batches = 1 epoch".
+SAY: Now the feeding. The fit windows are shuffled like a deck of cards, and dealt eight at a time. A group of eight is called a batch. The model predicts eight torques, measures its error against the eight answers, and adjusts its numbers a little. After 7,112 batches, every fit window has been used once. That is one epoch.
+SRC: batch 8, shuffle=True (train.py model.fit); 56,896 / 8 = 7,112 (facts_v01 n0_epochs.steps_per_epoch).
 
 ### c05_b02
-VIS: Results table, the final model trained twice, everything else identical (6 people × 3 seeds): rows "shuffled" and "not shuffled"; columns "toes-down MAE", "R²", "other MAE", "R²", and the same after the 10 s calibration. Values [[w03_*]]. Footer: epochs run and kept.
-SAY: [[w03_say]]
-SRC: facts_w03 shuffle_on, shuffle_off.
+VIS: One real batch: the first 8 windows a shuffle deals from EG's fit windows. Eight small 20 × 5 grids in a column, each labelled with its angle and time ("−0.317 rad · 22.8 s"). Each feeds its own copy of the same LSTM (eight identical boxes, "same 1,001 numbers"), each with an empty memory that fills as it reads its window. Out come eight predictions next to eight measured torques. The eight errors merge into one number "average squared error", and one arrow goes back to all eight boxes: "nudge all 1,001 numbers". Label across the copies: "the 8 windows never share anything".
+SAY: Let's look at one real batch up close. The shuffle deals eight windows from anywhere: different angles, different moments, some at rest, some in the middle of a push. The model runs the same network on each of them, separately. Each copy starts with an empty memory, and reads its own window, oldest sample first. The eight windows never share anything. Out come eight predictions, each compared with its own measured torque. The errors are averaged into one number. Then all one thousand and one numbers of the model are nudged a little, to make that error smaller.
+SRC: facts_w04 (rng 0 permutation of EG's 56,896 fit windows; predictions from the trained V0 model, for illustration); n_params 1001; Keras LSTM processes each sequence of a batch independently; loss = mean squared error of the batch.
 
-## c06 | Check 3: timing and the end of a push
+### c05_b03
+VIS: A real learning curve: validation error per epoch (rebuilt copy of last semester's model, person HM). Markers where the step size was cut (× 0.7, epochs 20, 30, 44, 63, 73); a star at the best epoch 53; a bracket "25 epochs without improvement"; a stop sign at 78. Footer: "final model: stopped after 32–98 epochs, kept epoch 7–73".
+SAY: After every epoch, the validation windows are checked. Here is a real run. When the error stops improving for ten epochs, the steps get smaller. After twenty-five epochs without improvement, training stops, and the best epoch is kept. For the final model, that was after 32 to 98 epochs.
+SRC: y04 x00f_HM (78 epochs, best 53, cuts at 20, 30, 44, 63, 73); facts_v01 n0_epochs (18 runs: 32–98 epochs, best 7–73).
+
+## c06 | Inside the LSTM
 
 ### c06_b01
-VIS: EG's trial zoomed on two pushes: measured torque and prediction. Phases coloured: onset (first 0.3 s of a push), plateau, release (0.5 s after it ends), rest. A lag meter: "best alignment of prediction and torque: median [[w01_lag]] s · [[w01_within]] % of trials within 50 ms".
-SAY: Second check: if the window were too short to see the cause of the torque, the prediction would come out late, or it would miss the end of each push, when the muscle relaxes but the torque is still fading. So we measured both. Across [[w01_trials]] trials, the best alignment between prediction and torque is a lag of [[w01_lag]] seconds, and [[w01_within]] percent of trials are within fifty milliseconds. The prediction is not late.
-SRC: facts_w01 lag_s, trials.
+VIS: One real window from EG's session-2 trial, at the end of a push, as the muscle relaxes: 20 columns × 5 rows (GM, GL, soleus, TA, angle) as a coloured grid, oldest on the left. Above it, the torque around that moment, with the window's 0.2 s highlighted and a dot at its last sample: "−4.1 Nm".
+SAY: Now let's open the trained model, and follow one real window through it. This one is from person EG, in session 2, right at the end of a push: the muscle is relaxing, and the torque is falling back. Twenty time steps, five signals each, oldest on the left. The question it answers: what is the torque at the last step?
+SRC: facts_w02 (window at t = 49.3 s, torque −4.1 Nm); w02 win.
 
 ### c06_b02
-VIS: Four bars: error by phase after removing each trial's offset: rest [[w01_rest]], onset [[w01_onset]], plateau [[w01_plateau]], release [[w01_release]] Nm. The release bar is not the tallest; the onset bar is.
-SAY: And here is the error in each phase of a push, with each trial's offset removed. The release is not where the model struggles: [[w01_release]] newton metres, against [[w01_plateau]] on the plateau. The largest error is at the onset, [[w01_onset]], where the torque rises fastest, and a small timing slip costs the most.
-SRC: facts_w01 shape_mae_median.
+VIS: The LSTM drawn as a small cell: a box with "memory (8 numbers)" and three gates: "forget", "write", "read". The 20 columns enter one at a time. For each step, the real values light up: the forget-gate average, and the 8 memory numbers as bars that change height (from w02 l1_c). A small step counter "step 1 … 20".
+SAY: The LSTM reads the window one step at a time, oldest first. It keeps a memory of eight numbers. At every step, three gates decide what happens to it. A forget gate decides how much of the old memory to keep. A write gate decides what to add from the new step. And a read gate decides what to pass on. These bars are the real memory values of our model, step by step through this window. This is where the timing lives: by the last step, the memory holds a summary of how the muscles changed over the whole 0.2 seconds.
+SRC: Keras LSTM equations; facts_w02 units 8; w02 l1_c, l1_f, l1_i, l1_o.
 
 ### c06_b03
-VIS: Caveat card: "The EMG envelope is smoothed with a zero-phase filter: it spreads each moment over about ±0.4 s, past and future. Fine offline; a live device would need a causal filter."
-SAY: One honest caveat. Before the windows are cut, the EMG is smoothed with a zero-phase filter. It spreads each moment over about 0.4 seconds, both before and after. So each window already carries a little more history than 0.2 seconds, and a little of the future. That is fine offline. A live device would need a filter that only looks back.
-SRC: v2 facts_x02 imp90 ±0.376 s (2 Hz zero-phase envelope).
+VIS: After step 20, the memory of the second layer becomes one number through the output: "× the angle's swing" → "prediction: −6.0 Nm" next to the measured "−4.1 Nm". Then all memory bars drop to zero: "next window: memory starts empty".
+SAY: After the twentieth step, the memory is boiled down into one number: the prediction, here minus 6.0 newton metres, against minus 4.1 measured. While the torque falls back fast, the prediction trails by about two. We will check whether that is general. Then the memory is wiped, and the next window starts empty. So everything the model uses about the past, for this prediction, comes from inside this one window.
+SRC: facts_w02 window_prediction_Nm, window_torque_Nm; stateless LSTM.
 
-## c07 | What is still open
+### c06_b04
+VIS: A check card: "We recomputed the network by hand, with its saved weights, for 200 windows: largest difference from the model's own output: less than one millionth". Subtitle: "nothing hidden: these are the only steps".
+SAY: To be sure nothing else is going on, we recomputed the network by hand, from its saved weights, for 200 windows. The largest difference from the model's own output was less than one millionth: just rounding. Those twenty steps are all there is.
+SRC: facts_w02 hand_vs_model_max_abs, hand_checked_windows.
+
+## c07 | Two ways to give a model memory
 
 ### c07_b01
-VIS: Two cards. Left "settled": "the history is inside each window" · "window order does not change predictions" · "shuffling = balanced training" · "no lag". Right "open": "is 0.2 s the best look-back?" with "literature: EMG-to-force dependence levels off after about 0.3–0.4 s (Wang et al. 2024)" and "next: the same model with 0.5 s and 1 s windows".
-SAY: So what is settled, and what is not? Settled: the history is inside each window, the order of the windows does not change the predictions, shuffling only balances the training, and the predictions are not late. Open: whether 0.2 seconds is the best look-back. In a hand-wrist study, the error kept falling up to about 0.3 to 0.4 seconds of history. So the fair next step is to train the same model with 0.5 and 1 second windows, and compare.
-SRC: Wang H et al. 2024, Sensors 24(22):7301 (error levelled off after ~293–391 ms; LSTM best 488 ms).
+VIS: Left panel "a muscle model (CEINMS, the earlier ankle project)": a chain of boxes for the activation equation, u(t) = α·e(t − d) − β₁·u(t − 1) − β₂·u(t − 2), with arrows feeding u(t − 1) and u(t − 2) back in. A long timeline below with one state passed from sample to sample, start to end of the recording. Label: "the state is carried through the whole recording → it must run in time order".
+SAY: This is the heart of the confusion. There are two ways to give a model memory. The first is the way muscle models do it, like the CEINMS model from the earlier ankle project. Each new value of muscle activation is computed from the previous ones. So the model carries a state from sample to sample, through the whole recording. A model like that must run in time order, and shuffling its samples would make no sense.
+SRC: Team 11 BIEN470 D2 report, activation dynamics u(t) = αe(t − d) − β₁u(t − 1) − β₂u(t − 2) (p. 6), CEINMS (pp. 8–10).
 
-## c08 | Recap
+### c07_b02
+VIS: Right panel "our LSTM": the recording with a 20-sample box; an arrow from the box to "torque at its last sample". Under it: "each prediction uses only the last 0.2 s · the memory starts empty for every window". Two tags under the panels: "carried state (like an IIR filter)" vs "fixed look-back (like an FIR filter / impulse response)".
+SAY: The second way is ours. Each prediction looks back over a fixed stretch: the last twenty samples, 0.2 seconds. The LSTM's memory lives only inside that window, and starts empty for every window. In signal-processing terms, the first kind is like an I I R filter, with a state carried forward. Ours is like an F I R filter, with a fixed length.
+SRC: stateless Keras LSTM (memory reset per sample); window 20 samples (splits.windows).
+
+## c08 | Why the order of the windows does not matter
 
 ### c08_b01
-VIS: Four recap lines with icons.
-SAY: To recap. Each window is a complete example: the last 0.2 seconds of muscle activity, and the torque at its end. The memory lives inside the window. Shuffling changes the order of the examples, not their contents, and only keeps the training balanced. And the open question is the length of that look-back, which we can test directly.
+VIS: A regression table builds up: each row = "20 past samples of the 5 signals" → "torque at t". Rows are then shuffled on screen; a note: "least squares on these rows gives the same answer in any row order". Then the same rows labelled "training examples for the LSTM".
+SAY: A fixed look-back model is trained like a table of examples. Each row holds the last few samples of input, and the torque at that moment. Shuffle the rows, and least squares gives exactly the same answer, because the history lives inside each row, not in the order of the rows. Our training examples are those rows.
+SRC: ordinary least squares is invariant to row order.
+
+### c08_b02
+VIS: EG's session-2 trial: the measured torque (white) and the model's prediction made window by window in time order (green). Then the windows are drawn as cards, shuffled, predicted in that random order, and put back by their time stamps (dots landing on the curve). The two predictions overlap exactly. Badge: "largest difference over 8,891 windows: less than one millionth of a Nm".
+SAY: We can test this on the trained model. We predicted this whole trial window by window, in time order. Then we shuffled the windows, predicted them in that random order, and put each prediction back at its own time. The two curves are identical. Over 8,891 windows, the largest difference is less than one millionth of a newton metre: rounding. Each window is a complete example on its own.
+SRC: facts_w02 order_test_windows, order_test_max_abs_Nm.
+
+### c08_b03
+VIS: Two strips of batches. "Shuffled": each batch of 8 holds windows from different angles and moments (colours mixed). "Not shuffled": the batches walk through trial 1, then trial 2, … (long runs of one colour). A drifting arrow under the second: "the model keeps leaning towards the last trial it saw". Footer: "every epoch, every window gives its nudge once, in either order".
+SAY: So why shuffle at all? Within an epoch, every window gives its nudge exactly once, in any order. What changes is the path training takes. Shuffled, every batch mixes angles and moments, so the nudges balance out. Not shuffled, training walks through one trial after another, and the model keeps leaning towards the last one it saw. Shuffling is about balanced learning, not about time. And it cannot leak the test: session 2 is never in the deck.
+SRC: model.fit(shuffle=True); S0_noshuffle (shuffle=False, windows in stored order); test windows = session 2 only.
+
+## c09 | The end of a push
+
+### c09_b01
+VIS: EG's trial zoomed on two pushes: measured torque and prediction. Phases coloured: onset (first 0.3 s of a push), plateau, release (0.5 s after it ends), rest. A lag meter: "best alignment of prediction and torque: median 0.00 s · 98 % of trials within 50 ms".
+SAY: Now the case that worried everyone: the muscle has already relaxed, but the torque is still fading. If 0.2 seconds were too short, the prediction would come out late, or miss the end of each push. So we measured both. Across 141 trials, the best alignment between prediction and torque is a lag of 0.00 seconds, and 98 percent of trials are within fifty milliseconds.
+SRC: facts_w01 lag_s, trials.
+
+### c09_b02
+VIS: Four bars: error by phase after removing each trial's offset, phases found from the muscle activity: rest 0.37, onset 0.88, plateau 0.71, release 0.72 Nm. The release bar is level with the plateau; the onset bar is the tallest.
+SAY: And here is the error in each phase of a push, found from the muscle activity, with each trial's offset removed. The release is no worse than the plateau: 0.72 newton metres, against 0.71. So the example we saw inside the LSTM is not the rule. The largest error is at the onset, 0.88, where the torque changes fastest, and a small timing slip costs the most.
+SRC: facts_w01 shape_mae_median (phases from the summed EMG envelope at each window's end).
+
+### c09_b03
+VIS: Caveat card: "The EMG envelope is smoothed with a zero-phase filter: it spreads each moment over about ±0.4 s, past and future. Fine offline; a live device would need a causal filter."
+SAY: One honest caveat. The EMG is smoothed with a zero-phase filter before the windows are cut. It spreads each moment over about 0.4 seconds, before and after. So each window carries a little extra history, and a little of the future. Fine offline, but a live device would need a filter that only looks back.
+SRC: v2 facts_x02 imp90 ±0.376 s (2 Hz zero-phase envelope).
+
+## c10 | What is still open
+
+### c10_b01
+VIS: Two cards. Left "settled": "the history is inside each window" · "window order does not change predictions" · "shuffling = balanced training" · "no lag". Right "open": "is 0.2 s the best look-back?" with "literature: EMG-to-force dependence levels off after about 0.3–0.4 s (Wang et al. 2024)" and "next: the same model with 0.5 s and 1 s windows".
+SAY: So what is settled? The history is inside each window, the order of the windows does not change the predictions, shuffling only balances the training, and the predictions are not late. What is open: whether 0.2 seconds is the best look-back. In a hand-wrist study, the error kept falling up to about 0.3 to 0.4 seconds of history. So the next step is the same model with 0.5 and 1 second windows.
+SRC: Wang H et al. 2024, Sensors 24(22):7301 (error levelled off after ~293–391 ms; LSTM best 488 ms).
+
+## c11 | Recap
+
+### c11_b01
+VIS: Five recap lines with icons.
+SAY: To recap. Each window is a complete example: the last 0.2 seconds of muscle activity, and the torque at its end. The windows are dealt in shuffled batches of eight, and each one is read on its own. Inside, the LSTM's memory builds up over the twenty steps, and starts empty for every window. So shuffling changes the order of the examples, not their contents. And the open question is the length of that look-back.
 SRC: —

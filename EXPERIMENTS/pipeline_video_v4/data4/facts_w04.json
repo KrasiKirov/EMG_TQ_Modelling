@@ -1,0 +1,56 @@
+{
+ "n_fit": 56896,
+ "batch": 8,
+ "batches_per_epoch": 7112,
+ "n_params": 1001,
+ "windows": [
+  {
+   "angle_rad": 0.104,
+   "t_s": 36.11,
+   "torque_Nm": -31.4,
+   "pred_Nm": -30.97
+  },
+  {
+   "angle_rad": -0.178,
+   "t_s": 28.5,
+   "torque_Nm": -1.78,
+   "pred_Nm": -2.07
+  },
+  {
+   "angle_rad": 0.104,
+   "t_s": 54.64,
+   "torque_Nm": -23.92,
+   "pred_Nm": -30.07
+  },
+  {
+   "angle_rad": -0.317,
+   "t_s": 22.78,
+   "torque_Nm": -14.54,
+   "pred_Nm": -15.39
+  },
+  {
+   "angle_rad": -0.599,
+   "t_s": 70.35,
+   "torque_Nm": -1.93,
+   "pred_Nm": -1.18
+  },
+  {
+   "angle_rad": -0.317,
+   "t_s": 50.19,
+   "torque_Nm": -0.82,
+   "pred_Nm": -0.97
+  },
+  {
+   "angle_rad": 0.247,
+   "t_s": 55.31,
+   "torque_Nm": -10.41,
+   "pred_Nm": -10.08
+  },
+  {
+   "angle_rad": -0.317,
+   "t_s": 58.92,
+   "torque_Nm": -0.22,
+   "pred_Nm": -0.39
+  }
+ ]
+}

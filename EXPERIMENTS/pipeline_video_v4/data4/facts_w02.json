@@ -1,0 +1,20 @@
+{
+ "subject": "EG",
+ "session": 2,
+ "angle_rad": -0.038,
+ "seed": 0,
+ "epochs": 40,
+ "best_epoch": 15,
+ "n_params": 1001,
+ "hand_vs_model_max_abs": 3.4275372584602337e-07,
+ "hand_checked_windows": 200,
+ "order_test_windows": 8891,
+ "order_test_max_abs_Nm": 6.486385797366268e-07,
+ "window_time_s": 49.31,
+ "window_torque_Nm": -4.07,
+ "window_prediction_Nm": -6.01,
+ "swing_scale": 10.882,
+ "v0_vs_saved_n0_max_abs_Nm": 0.0,
+ "units": 8,
+ "layers": 2
+}
