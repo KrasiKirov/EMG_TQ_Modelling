@@ -117,7 +117,8 @@ def fit_ridge(data, knots, w_tr=None, w_va=None):
 
 
 def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
-                protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None):
+                protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
+                save_weights=None):
     """Train one model on data['X_train'] / ['X_val'] and predict X_test.
 
     init_weights : optional .weights.h5 file to start from (fine-tuning a
@@ -127,6 +128,9 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                    the loss weight of windows that end in EMG-detected rest
                    (data['meta_*']['rest']); w = 0 removes them from training
                    and validation (relaxed-window ablation).
+    shuffle      : True (default) = Keras reshuffles the fit windows every epoch; False = windows are fed
+                   in their stored order (trial by trial, in time), for the shuffle ablation
+    save_weights : optional path; the trained (best-epoch) weights are saved there as .weights.h5
 
     Returns (y_pred_test (Nm), info dict)."""
     import tensorflow as tf
@@ -178,7 +182,9 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     hist = model.fit(data['X_train'], t_tr.astype(np.float32),
                      sample_weight=None if w_tr is None else w_tr.astype(np.float32),
                      validation_data=val, epochs=p['epochs'], batch_size=p['batch'],
-                     callbacks=cbs, shuffle=True, verbose=verbose)
+                     callbacks=cbs, shuffle=shuffle, verbose=verbose)
+    if save_weights:
+        model.save_weights(save_weights)
     pred = model.predict(data['X_test'], verbose=0, batch_size=4096).ravel().astype(np.float64)
     if balance == 'scale':
         pred = pred * sd[k_te]

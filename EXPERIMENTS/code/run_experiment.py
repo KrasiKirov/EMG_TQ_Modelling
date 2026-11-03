@@ -33,7 +33,7 @@ import numpy as np                                     # noqa: E402
 
 BASE = dict(passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm',
             balance='none', pf_extra=None, window=20, lr=None, train_protocol='orig', rest_weight=None,
-            extra_input=None)
+            extra_input=None, shuffle=True)
 
 
 def load_config(exp):
@@ -101,6 +101,7 @@ def main():
     ap.add_argument('--direction', required=True, choices=['S1toS2', 'S2toS1'])
     ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--threads', type=int, default=1)
+    ap.add_argument('--save-weights', action='store_true', help='also save the trained weights next to the results')
     a = ap.parse_args()
 
     import tensorflow as tf
@@ -119,8 +120,11 @@ def main():
     if cfg.get('extra_input') == 'passive_trial_value':
         data = add_passive_input(data, a.subject)
     t_prep = time.time() - t0
+    out = os.path.join(EXP, 'results', a.exp, a.subject, a.direction)
+    os.makedirs(out, exist_ok=True)
     pred, info = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], cfg['train_protocol'], a.seed,
-                                lr=cfg['lr'], rest_weight=cfg['rest_weight'])
+                                lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
+                                save_weights=os.path.join(out, f'seed{a.seed}.weights.h5') if a.save_weights else None)
     t_train = time.time() - t0 - t_prep
 
     y, meta = data['y_test'].astype(np.float64), data['meta_test']

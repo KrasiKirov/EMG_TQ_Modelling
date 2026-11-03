@@ -1,0 +1,14 @@
+{
+ "id": "S0_noshuffle",
+ "stage": "video-v4",
+ "title": "N0 with shuffling off: the fit windows are fed in their stored order (trial by trial, in time) every epoch.",
+ "changes": {
+  "passive": "none",
+  "emg": "trainmax",
+  "balance": "scale",
+  "window": 20,
+  "shuffle": false
+ },
+ "hypothesis": "Shuffling the window order during training should not be what makes the model work; turning it off changes training, not what each window contains.",
+ "motivation": "Supervisors questioned shuffling windows (torque at t needs earlier samples). Same settings as N0 (final model before calibration), 6 people x 3 seeds, session 1 -> session 2."
+}

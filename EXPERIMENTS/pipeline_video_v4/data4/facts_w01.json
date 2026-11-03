@@ -1,0 +1,22 @@
+{
+ "trials": 141,
+ "source": "N0_total_trainmax, session 2, 6 people x 3 seeds (trials with a torque swing >= 2 Nm)",
+ "shape_mae_median": {
+  "rest": 0.402,
+  "onset": 1.035,
+  "plateau": 0.7,
+  "release": 0.586
+ },
+ "raw_mae_median": {
+  "rest": 0.663,
+  "onset": 1.293,
+  "plateau": 0.966,
+  "release": 0.865
+ },
+ "lag_s": {
+  "median": 0.0,
+  "p5": -0.03,
+  "p95": 0.03,
+  "share_within_50ms": 0.979
+ }
+}
