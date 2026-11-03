@@ -42,6 +42,59 @@ ARMS['A0_active_trainmax'] = ('A0 · N0 with the active-torque target', 'max',
     'so the old passive rule is used for IES).')
 REFS = {'NR' + k[1:]: k for k in ARMS if k.startswith('N')}
 CALIBRATED = {k + '+cal': k for k in ('N0_total_trainmax', 'A0_active_trainmax')}
+SCALING = {
+    'N0': ('÷ session-1 maximum', 'Each muscle envelope is divided by the largest value it reached anywhere in session 1 '
+           '(one sample of the 1 kHz envelope). Session 2 is divided by the same four numbers.'),
+    'N1': ('÷ session-1 99th percentile', 'Each muscle envelope is divided by its 99th percentile over session 1’s '
+           'training part. Session 2 is divided by the same four numbers.'),
+    'N2': ('÷ maximum-effort (MVC) peak', 'Each muscle envelope is divided by its peak during the maximum-effort trials. '
+           'Session 2 is divided by the same four numbers.'),
+    'N3': ('÷ each session’s own 99th percentile', 'Each session is divided by its own 99th percentile per muscle, '
+           'taken over all of that session’s active trials (EMG only, no torque).'),
+}
+SCALING['A0'] = SCALING['N0']
+
+
+def overview(arm, ridge, active, cal):
+    """Short parameter list and computation steps shown at the top of the experiment page."""
+    code = arm.split('_')[0]
+    scale_short, scale_how = SCALING['N' + code[1:] if code.startswith('NR') else code]
+    target = ('Active torque: total minus that session’s clean passive table (relaxed holds)' if active
+              else 'Total measured torque, nothing subtracted')
+    settings = [
+        ['Train → test', 'Session 1 → session 2 · 8 angles · one ~90 s trial per angle'],
+        ['Inputs', '4 EMG envelopes (GM, GL, SOL, TA) + ankle angle, 100 Hz'],
+        ['Window', '0.2 s = 20 samples → torque at the window’s last sample'],
+        ['Target', target],
+        ['EMG scaling', scale_short],
+        ['Auto-gain', 'Off'],
+        ['Model', 'Ridge regression per position (reference)' if ridge else 'LSTM 8 × 2 layers, dropout 0.3'],
+        ['Balanced positions', 'No' if ridge else 'Yes: each position’s target ÷ its standard deviation'],
+        ['Seeds', 'None (deterministic)' if ridge else '3 (0, 1, 2), median shown'],
+        ['Calibration', '10 s gain + offset per angle, scored from 30 s' if cal else 'None'],
+    ]
+    steps = [
+        'EMG: band-pass 30–300 Hz, rectify, 2 Hz low-pass → envelope (1 kHz), then down-sampled to 100 Hz.',
+        'Scale: ' + scale_how,
+        'Standardise the 5 inputs (mean 0, sd 1) with session 1’s training statistics.',
+        'Cut 0.2 s windows sliding by one sample. Each session-1 trial: first 80 % to fit, last 20 % to stop training.',
+    ]
+    if ridge:
+        steps.append('Fit one ridge regression per position on EMG, EMG² and angle features; predict session 2.')
+    else:
+        steps.append('Train the LSTM on the target ÷ each position’s standard deviation, then multiply its predictions '
+                     'back (Nadam, lr 0.003, batch 8, ≤ 200 epochs, early stopping after 25).')
+        steps.append('Predict every window of session 2, which the model never saw.')
+    if cal:
+        steps.append('Calibrate, without retraining: on the first 10 s of each session-2 trial, fit torque ≈ a × '
+                     'prediction + b (a between 0.5 and 2; offset only if the torque barely moves) and apply it to the '
+                     'whole trial.')
+    steps.append('Score each position on every 100 Hz sample' + (' from 30 s to the end' if cal else '') +
+                 ': R² = 1 − Σ(y − ŷ)² / Σ(y − ȳ)², MAE = mean |y − ŷ|. Median over seeds, then median across '
+                 'positions; R² below 0 is shown as 0.')
+    return dict(settings=settings, steps=steps)
+
+
 TARGET = 'Total measured torque, nothing subtracted. The passive table plays no part in training or scoring.'
 TARGET_ACTIVE = ('Active torque: total measured torque minus the clean passive table of that session (relaxed '
                  'holds). Scored against active torque.')
@@ -140,7 +193,7 @@ def main():
             id=ident, title=(f'Ridge reference · {title.split(" · ")[1]}' if ridge else title), group=GROUP,
             kind='normalization', native=native, model='ridge' if ridge else 'lstm', config=cfg,
             target=TARGET_ACTIVE if active else TARGET,
-            reportText=report_text,
+            reportText=report_text, overview=overview(arm, ridge, active, cal),
             purpose=(('Reference model, never chosen: per-position ridge regression with the scaling of '
                       + arm.split('_')[0] + '. ') if ridge else '') + how,
             protocol=('Train on session 1, test on session 2. ' + ('Active torque' if active else 'Total torque') + ', 0.2 s window (20 samples at 100 Hz) of four '

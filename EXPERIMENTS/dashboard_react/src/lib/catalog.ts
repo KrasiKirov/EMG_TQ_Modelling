@@ -8,7 +8,7 @@ import { keyWave, runWave } from './waves';
 import type { Dir, Experiment, Run } from './types';
 export interface ExtraExperiment extends Experiment {
   group:string; kind:'family'|'research'|'report'|'retest-map'|'normalization'; native:string; model:string; purpose:string; target:string; protocol:string;
-  config?:Record<string,unknown>; revision?:string; sessionPassive?:boolean; reportText?:string;
+  config?:Record<string,unknown>; revision?:string; sessionPassive?:boolean; reportText?:string; overview?:{settings:[string,string][];steps:string[]};
   reportRows?:{subject:string;rmse:number;worst?:number;sourceRmse?:number}[];
   collection?: {
     date:string; runs:number; rows:number; notes:string[];

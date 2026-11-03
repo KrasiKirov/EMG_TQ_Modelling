@@ -628,3 +628,8 @@ body { font-variant-numeric: tabular-nums; }
 .report-table table { border-collapse: collapse; font-size: 0.85rem; min-width: 60%; }
 .report-table th, .report-table td { border-bottom: 1px solid rgba(127,127,127,.25); padding: 4px 10px; text-align: left; vertical-align: top; }
 .report-table th { font-weight: 600; }
+.experiment-overview .settings-list { margin-top: 10px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); column-gap: 32px; }
+.experiment-overview .settings-list > div { justify-content: flex-start; flex-wrap: nowrap; }
+.experiment-overview .settings-list span { flex: 0 0 130px; }
+.experiment-overview details { margin-top: 12px; }
+.experiment-overview ol { margin: 8px 0 0; padding-left: 20px; max-width: 100ch; }
