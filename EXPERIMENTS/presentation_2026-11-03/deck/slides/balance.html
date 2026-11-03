@@ -9,12 +9,12 @@
 <h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">The problem</h3>
 <p style="font-size:26px;line-height:1.4">Torque swings are tiny toes down: YES moves 0.7 Nm at −0.49 rad but 15 Nm at +0.14 rad. With a plain loss, the two toes-down angles make up about 1% of training, so the model can ignore them.</p>
 <h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">How it works</h3>
-<p style="font-size:26px;line-height:1.4">Divide each angle’s torque by its typical swing in session 1, train, then multiply the prediction back. Each angle then carries the same 12.5% of the loss. No auto-gain.</p>
+<p style="font-size:26px;line-height:1.4">Divide each angle’s torque by its typical swing in session 1, train, then multiply the prediction back. Each angle then carries the same 12.5% of the loss.</p>
 </div>
 </div>
 <div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
 <p style="font-size:24px;color:#6B7280">EMG → ankle torque · final model</p>
 <p style="font-size:24px;color:#6B7280">1</p>
 </div>
-<aside>Balanced positions is the change we keep. The toes-down angles are where the torque is smallest. For YES, the torque swings by about 0.7 Nm at −0.49 rad but by 15 Nm at +0.14 rad. A plain squared-error loss is dominated by the big swings, so the two toes-down angles together make up about 1% of what training cares about, and the model can do badly there at almost no cost. The fix: divide each angle’s target by its typical swing, its standard deviation in session 1, train on that, and multiply the prediction back by the same number. Every angle then carries the same share of the loss, 12.5% each with 8 angles. Nothing about session 2 is used, and there is no auto-gain in the final model.</aside>
+<aside>Balanced positions is the change we keep. The toes-down angles are where the torque is smallest. For YES, the torque swings by about 0.7 Nm at −0.49 rad but by 15 Nm at +0.14 rad. A plain squared-error loss is dominated by the big swings, so the two toes-down angles together make up about 1% of what training cares about, and the model can do badly there at almost no cost. The fix: divide each angle’s target by its typical swing, its standard deviation in session 1, train on that, and multiply the prediction back by the same number. Every angle then carries the same share of the loss, 12.5% each with 8 angles. Nothing about session 2 is used.</aside>
 </section>

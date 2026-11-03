@@ -8,9 +8,9 @@ import { FINAL_ID } from '../lib/presentation';
 import { useView } from '../state';
 
 const STEPS = [
-  { id: 'X00_baseline', n: '01', title: 'Last semester', what: 'The original LSTM. Every angle weighted by its torque swing, so toes-down barely counts.' },
-  { id: 'norm/A0', n: '02', title: 'Balanced positions', what: 'Each angle’s target divided by its swing: every angle counts the same. No auto-gain.' },
-  { id: 'norm/N0', n: '03', title: 'Normalization study', what: 'Four ways to scale the EMG. None beat the simplest: ÷ each muscle’s session-1 maximum.' },
+  { id: 'X00_baseline', n: '01', title: 'Last semester', what: 'The original LSTM, re-run unchanged with a plain mean-squared-error loss.' },
+  { id: 'norm/A0', n: '02', title: 'Balanced positions', what: 'Each angle’s target divided by its standard deviation during training. Active torque.' },
+  { id: 'norm/N0', n: '03', title: 'Normalization study', what: 'Four EMG scalings compared. Shown: each muscle ÷ its session-1 maximum, total torque.' },
   { id: FINAL_ID, n: '04', title: '10 s calibration', what: 'In session 2, 10 s of pushing per angle fits a stretch and a shift. The LSTM is not retrained.' },
 ];
 
@@ -18,7 +18,7 @@ const RECIPE: [string, string][] = [
   ['Data', '6 people · train session 1 → test session 2 · 8 angles'],
   ['Inputs', 'GM, GL, SOL, TA envelopes + ankle angle, 100 Hz'],
   ['Window', '0.2 s (20 samples)'],
-  ['EMG scaling', '÷ session-1 maximum per muscle · no auto-gain'],
+  ['EMG scaling', '÷ session-1 maximum per muscle'],
   ['Target', 'Total measured torque'],
   ['Positions', 'Balanced: target ÷ each angle’s swing'],
   ['Model', 'LSTM 8 × 2 · dropout 0.3 · Nadam, lr 0.003'],
@@ -52,7 +52,6 @@ export function HomeTab() {
     yAxis: { type: 'value', name: 'MAE (Nm)', nameTextStyle: { color: tokens.textMuted }, ...axis, splitLine: { lineStyle: { color: tokens.grid } } },
     series: (['N0', 'N0cal', 'A0', 'A0cal'] as const).filter((k) => V[k]).map((k) => ({ name: label[k], type: 'line', smooth: false, symbolSize: 7, lineStyle: { width: k.endsWith('cal') ? 3 : 2, type: k.endsWith('cal') ? 'solid' : 'dashed' }, data: ranks.map((r) => V[k].angle[String(r)] ?? null) })),
   };
-  const improved = people.filter((p) => (V.N0cal?.person.toes[p] ?? Infinity) < (V.N0?.person.toes[p] ?? -Infinity)).length;
 
   return (
     <div className="home">
@@ -80,7 +79,7 @@ export function HomeTab() {
       </section>
 
       <section className="home-section">
-        <div className="home-section-head"><Text className="eyebrow">How we got here</Text><Title order={2}>Four steps</Title></div>
+        <div className="home-section-head"><Text className="eyebrow">Model progression</Text><Title order={2}>Four stages</Title></div>
         <div className="steps">
           {STEPS.map((st) => <UnstyledButton key={st.id} className="step" data-final={st.id === FINAL_ID || undefined} onClick={() => open(st.id)}>
             <span className="step-n">{st.n}</span>
@@ -95,13 +94,13 @@ export function HomeTab() {
 
       <section className="home-grid">
         <div className="home-panel">
-          <div className="panel-head"><div><Text className="eyebrow">Per person</Text><Title order={3}>Calibration helps {improved} of {people.length} people</Title></div>
+          <div className="panel-head"><div><Text className="eyebrow">Per person</Text><Title order={3}>{part === 'toes' ? 'Toes-down' : 'Other-angle'} MAE per person</Title></div>
             <SegmentedControl size="xs" value={part} onChange={(v) => setPart(v as 'toes' | 'other')} data={[{ value: 'toes', label: 'Toes-down' }, { value: 'other', label: 'Other angles' }]} /></div>
           <EChart option={personOption} height={300} label={`MAE per person at ${part === 'toes' ? 'toes-down' : 'other'} angles, N0 with and without calibration`} />
           <Text size="xs" c="dimmed">Both bars scored from 30 s on, so they are judged on the same stretch.</Text>
         </div>
         <div className="home-panel">
-          <div className="panel-head"><div><Text className="eyebrow">Per angle</Text><Title order={3}>The error left is no longer at toes-down</Title></div></div>
+          <div className="panel-head"><div><Text className="eyebrow">Per angle</Text><Title order={3}>MAE by ankle angle</Title></div></div>
           <EChart option={angleOption} height={300} label="MAE by ankle angle for N0 and A0, with and without calibration" />
           <Text size="xs" c="dimmed">Median over the 6 people at each angle (JM and HM have 7 angles). Solid = calibrated.</Text>
         </div>
@@ -109,17 +108,17 @@ export function HomeTab() {
 
       <section className="home-grid">
         <div className="home-panel">
-          <Text className="eyebrow">The final model</Text><Title order={3} mb="sm">Every design choice</Title>
+          <Text className="eyebrow">Final model</Text><Title order={3} mb="sm">Settings</Title>
           <div className="recipe">{RECIPE.map(([k, v]) => <div key={k}><span>{k}</span><b>{v}</b></div>)}</div>
         </div>
         <div className="home-panel limits">
-          <Text className="eyebrow">Read with care</Text><Title order={3} mb="sm">Limits</Title>
+          <Text className="eyebrow">Definitions</Text><Title order={3} mb="sm">How the numbers are computed</Title>
           <ul>
-            <li>The calibration needs the torque sensor for 10 s at each angle in session 2.</li>
-            <li>Its 10 s are the start of the same trial; it was tried after the main study.</li>
-            <li>Six people, two sessions, one trial per angle per session. Nothing was tested in real time.</li>
-            <li>R² is unreliable where the torque barely moves (YES’s most toes-down angle). Read MAE next to the peak.</li>
-            <li>VAF ignores offsets, so it hardly moves with the calibration.</li>
+            <li><b>MAE</b>: mean absolute error in Nm, |torque − prediction| averaged over the trial.</li>
+            <li><b>R²</b>: 1 − Σ(torque − prediction)² / Σ(torque − mean)², on every 100 Hz sample of the trial.</li>
+            <li><b>VAF</b>: 1 − var(error) / var(torque), the same as R² after removing each curve’s mean.</li>
+            <li><b>Summary</b>: median over seeds for each person and angle, then median over those cells. R² below 0 is shown as 0.</li>
+            <li><b>Toes-down</b>: each person’s two most toes-down angles. <b>Calibrated</b> entries: scored from 30 s to the end of each trial.</li>
           </ul>
         </div>
       </section>

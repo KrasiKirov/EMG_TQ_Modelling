@@ -1,4 +1,4 @@
-"""Import the normalization study (total torque, no auto-gain, 0.2 s) into the presentation catalogue.
+"""Import the normalization study (total torque, 0.2 s) into the presentation catalogue.
 
 Reads the runs written by ``EXPERIMENTS/code/run_experiment.py`` in this repository
 (``EXPERIMENTS/results/N*``). Only arrays and JSON are read; no model is loaded. Every
@@ -36,8 +36,8 @@ ARMS = {
         'Each session is divided by its own 99th percentile per muscle. Session 2’s scale comes from all of its '
         'active-trial EMG (no torque). It needs the whole of session 2 before it can predict.'),
 }
-ARMS['A0_active_trainmax'] = ('A0 · balanced positions, active torque (no auto-gain)', 'max',
-    'Exactly N0 (session-1 maximum, balanced positions, 0.2 s, no auto-gain), but the network learns active torque: '
+ARMS['A0_active_trainmax'] = ('A0 · balanced positions, active torque', 'max',
+    'Exactly N0 (session-1 maximum, balanced positions, 0.2 s), but the network learns active torque: '
     'total torque minus the clean passive table built from the relaxed holds of each session (IES has no holds, '
     'so the old passive rule is used for IES).')
 REFS = {'NR' + k[1:]: k for k in ARMS if k.startswith('N')}
@@ -67,7 +67,6 @@ def overview(arm, ridge, active, cal):
         ['Window', '0.2 s = 20 samples → torque at the window’s last sample'],
         ['Target', target],
         ['EMG scaling', scale_short],
-        ['Auto-gain', 'Off'],
         ['Model', 'Ridge regression per position (reference)' if ridge else 'LSTM 8 × 2 layers, dropout 0.3'],
         ['Balanced positions', 'No' if ridge else 'Yes: each position’s target ÷ its standard deviation'],
         ['Seeds', 'None (deterministic)' if ridge else '3 (0, 1, 2), median shown'],
@@ -219,11 +218,11 @@ def main():
             id=ident, title=(f'Ridge reference · {title.split(" · ")[1]}' if ridge else title), group=GROUP,
             kind='normalization', native=native, model='ridge' if ridge else 'lstm', config=cfg,
             target=TARGET_ACTIVE if active else TARGET,
-            reportText=report_text, overview=overview(arm, ridge, active, cal),
+            overview=overview(arm, ridge, active, cal),
             purpose=(('Reference model, never chosen: per-position ridge regression with the scaling of '
                       + arm.split('_')[0] + '. ') if ridge else '') + how,
             protocol=('Train on session 1, test on session 2. ' + ('Active torque' if active else 'Total torque') + ', 0.2 s window (20 samples at 100 Hz) of four '
-                      'muscle envelopes plus angle, no auto-gain. ' + (
+                      'muscle envelopes plus angle. ' + (
                           'Ridge regression with its own coefficients per position, no seeds.' if ridge else
                           'Balanced positions (each position’s target ÷ its standard deviation). LSTM 8×2, dropout 0.3, '
                           'batch 8, at most 200 epochs, early stopping after 25.')

@@ -20,16 +20,16 @@ export const PARAM_NAMES: Record<ParamKey, string> = {
 const VALUE_LABELS: Partial<Record<ParamKey, Record<string, string>>> = {
   code: { original: 'original code (frozen copy)', framework: 'our framework (same model)' },
   passive: { original: 'original table', clean: 'clean table (static holds only)' },
-  emg: { max: '÷ training max (last semester)', autogain: 'auto-gain (running per muscle)' },
+  emg: { max: '÷ training max (last semester)' },
   weighting: { none: 'none (plain Nm² loss)', equal: 'equal weight per position' },
-  extra: { none: 'none', passive: 'passive value (rejected: circular)' },
+  extra: { none: 'none', passive: 'passive value as input' },
 };
 
 /** short labels for badges */
 const SHORT_LABELS: Partial<Record<ParamKey, Record<string, string>>> = {
   code: { original: 'original code', framework: 'our framework' },
   passive: { original: 'original table', clean: 'clean table' },
-  emg: { max: 'EMG ÷ train max', autogain: 'EMG auto-gain' },
+  emg: { max: 'EMG ÷ train max' },
   weighting: { none: 'no weighting', equal: 'equal weight / position' },
   extra: { none: 'no extra input', passive: 'passive value input' },
 };
@@ -38,7 +38,7 @@ const SHORT_LABELS: Partial<Record<ParamKey, Record<string, string>>> = {
 const MEDIUM_LABELS: Partial<Record<ParamKey, Record<string, string>>> = {
   code: { original: 'original code', framework: 'our framework' },
   passive: { original: 'original table', clean: 'clean table' },
-  emg: { max: '÷ training max', autogain: 'auto-gain' },
+  emg: { max: '÷ training max' },
   weighting: { none: 'none', equal: 'equal per position' },
   extra: { none: 'none', passive: 'passive value' },
 };
@@ -77,13 +77,8 @@ export const FRIENDLY: Record<string, string> = {
   'X02c_dropout_0.5': 'Dropout 0.5',
   'X03_lr_0.001': 'Learning rate 0.001',
   X04_equal_angle_weight: 'Balanced positions (equal weight per position)',
-  X05_autogain: 'EMG auto-gain',
   'X06_window_0.4s': 'Window 0.4 s',
-  T01_passive_value_input: 'Passive value as input (rejected: circular)',
-  'C01_autogain+equalweight': 'Balanced positions (EG, YES)',
-  'S2_cleanpassive+autogain': 'Clean table + auto-gain',
-  'D01_cleanpassive+autogain+equalweight': 'Ours: balanced positions',
-  'D02_D01+window_0.5s': 'Ours + 0.5 s window',
+  T01_passive_value_input: 'Passive value as input',
 };
 
 export function friendly(id: string): string {
@@ -123,7 +118,7 @@ export function paramOptions(ds: Dataset, k: ParamKey): ParamValue[] {
   const order: Record<string, string[]> = {
     code: ['original', 'framework'],
     passive: ['original', 'clean'],
-    emg: ['max', 'autogain'],
+    emg: ['max'],
     weighting: ['none', 'equal'],
     extra: ['none', 'passive'],
   };

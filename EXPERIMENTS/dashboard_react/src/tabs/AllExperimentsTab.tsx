@@ -15,10 +15,10 @@ interface Section { title: string; note: string; entries: Entry[] }
 
 const WHAT: Record<string, string> = {
   'norm/N0cal': 'The session-1 LSTM, plus a 10 s stretch-and-shift per angle in session 2. Not retrained.',
-  'norm/N0': 'Total torque · EMG ÷ session-1 maximum · balanced positions · 0.2 s · no auto-gain.',
+  'norm/N0': 'Total torque · EMG ÷ session-1 maximum · balanced positions · 0.2 s.',
   'norm/A0': 'As above, but predicts active torque: each session’s relaxed-hold passive torque subtracted.',
   'norm/A0cal': 'Active-torque LSTM plus the 10 s calibration.',
-  'norm/N1': 'Each muscle ÷ its session-1 99th percentile, so one spike cannot set the scale.',
+  'norm/N1': 'Each muscle ÷ its session-1 99th percentile.',
   'norm/N2': 'Each muscle ÷ its peak in the maximum-effort trials (% of MVC).',
   'norm/N3': 'Each session ÷ its own 99th percentile. Needs all of session 2’s EMG first.',
   'norm/NR0': 'One ridge regression per angle, no LSTM. Reference only.',
@@ -49,7 +49,7 @@ export function AllExperimentsTab() {
     }));
     return [
       { title: 'Final model', note: 'Calibrated entries are scored from 30 s to the end of each trial; the others on the whole trial.', entries: ['norm/N0cal', 'norm/N0', 'norm/A0', 'norm/A0cal'].map(page) },
-      { title: 'Normalization study', note: 'Total torque, balanced positions, 0.2 s, no auto-gain. N1 and N2 were run on YES, JM and EG only. Ridge rows are a non-LSTM reference.', entries: ['norm/N0', 'norm/N1', 'norm/N2', 'norm/N3', 'norm/NR0', 'norm/NR1', 'norm/NR2', 'norm/NR3'].filter((id) => EXTRA[id]).map(page) },
+      { title: 'Normalization study', note: 'Total torque, balanced positions, 0.2 s. N1 and N2 were run on YES, JM and EG only. Ridge rows are a non-LSTM reference.', entries: ['norm/N0', 'norm/N1', 'norm/N2', 'norm/N3', 'norm/NR0', 'norm/NR1', 'norm/NR2', 'norm/NR3'].filter((id) => EXTRA[id]).map(page) },
       { title: 'Network types', note: 'Report 1. Each run is scored on its own target, so compare these rows with each other only. Only the GRU has a page with waveforms.', entries: families },
       { title: 'Earlier models', note: 'Each scored on its own target, on the whole trial.', entries: ['X00_baseline', 'main/session-passive'].map(page) },
       { title: 'Controlled single changes', note: 'Last semester’s LSTM with one setting changed at a time.', entries: STUDY_ORDER.filter((id) => DS.experiments[id] && id !== 'X00_baseline').map(page) },

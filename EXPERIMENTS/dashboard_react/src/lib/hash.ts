@@ -48,8 +48,6 @@ export function parseHashParams(hash: string): Record<string, string> {
 
 /** short names in the URL for long experiment ids */
 const ALIASES: Record<string, string> = {
-  'D01_cleanpassive+autogain+equalweight': 'D01',
-  'C01_autogain+equalweight': 'C01',
 };
 const UNALIAS = Object.fromEntries(Object.entries(ALIASES).map(([id, a]) => [a, id]));
 const alias = (id: string) => ALIASES[id] ?? id;

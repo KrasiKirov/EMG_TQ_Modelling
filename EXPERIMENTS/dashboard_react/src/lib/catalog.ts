@@ -30,7 +30,7 @@ export const CALIBRATION=(raw as unknown as {calibration?:{people:string[];varia
 export const ALL_EXPERIMENTS:Record<string,Experiment>={...DS.experiments,...EXTRA};
 export const ALL_IDS=[...STUDY_ORDER.filter(id=>DS.experiments[id]),...DS.expIds.filter(id=>!STUDY_ORDER.includes(id)),...Object.keys(EXTRA)]
   .filter(id=>!hiddenFromDisplay(id,`${ALL_EXPERIMENTS[id]?.title??''} ${EXTRA[id]?.purpose??''} ${EXTRA[id]?ROUND2_NAMES[EXTRA[id].native]??'':''}`));
-export const catalogTitle=(id:string)=>DISPLAY_NAMES[id]??STORIES[id]?.title??(EXTRA[id]?.kind==='research'?(EXTRA[id].native==='E27_ridge'?'Ridge regression':EXTRA[id].native==='E28_ridge_agc'?'Ridge regression + auto-gain':ROUND2_NAMES[EXTRA[id].native]??EXTRA[id].title):EXTRA[id]?.title)??friendly(id);
+export const catalogTitle=(id:string)=>DISPLAY_NAMES[id]??STORIES[id]?.title??(EXTRA[id]?.kind==='research'?(EXTRA[id].native==='E27_ridge'?'Ridge regression':ROUND2_NAMES[EXTRA[id].native]??EXTRA[id].title):EXTRA[id]?.title)??friendly(id);
 const familyCodes:Record<string,string>={F_gru8:'GRU',F_lstm32:'LSTM32',F_mlp:'MLP',F_tcn:'TCN',H_pgain_posw:'LSTM8','main/window20':'M20','main/window50':'M50','main/session-passive':'M50P'};
 export const catalogCode=(id:string)=>EXTRA[id]?(familyCodes[EXTRA[id].native]??EXTRA[id].native.split('/').pop()!.split('_')[0]):shortId(id);
 export const catalogGroup=(id:string)=>(EXTRA[id]?.group??'Controlled experiments').replace(' · screen',' · screening').replace(' · confirm',' · confirmation').replace(' · final_check',' · final check').replace(' · passive',' · passive targets');
