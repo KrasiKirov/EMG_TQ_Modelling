@@ -243,7 +243,7 @@ function RunsTable({ sides, floor, peak, onPick }: { sides: Side[]; floor: boole
     { key: 'r2', label: 'R²', render: (r) => fmt(floorR2(r.run.r2, floor)), sort: (r) => r.run.r2, align: 'right' },
     { key: 'mae', label: 'MAE (Nm)', render: (r) => fmt(r.run.mae), sort: (r) => r.run.mae, align: 'right' },
     { key: 'bias', label: 'Bias (Nm)', render: (r) => fmt(r.run.bias), sort: (r) => r.run.bias, align: 'right' },
-    { key: 'r2dm', label: 'R² demeaned', render: (r) => fmt(floorR2(r.run.r2_demeaned, floor)), sort: (r) => r.run.r2_demeaned, align: 'right' },
+    { key: 'r2dm', label: 'VAF (R² shape only)', render: (r) => fmt(floorR2(r.run.r2_demeaned, floor)), sort: (r) => r.run.r2_demeaned, align: 'right' },
   ];
   return (
     <SectionCard

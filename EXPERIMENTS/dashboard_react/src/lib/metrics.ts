@@ -14,7 +14,7 @@ export interface MetricDef {
 export const METRICS: Record<MetricKey, MetricDef> = {
   r2: { key: 'r2', label: 'R²', short: 'R²', unit: '', higherBetter: true, floorable: true },
   mae: { key: 'mae', label: 'MAE', short: 'MAE', unit: 'Nm', higherBetter: false, floorable: false },
-  r2_demeaned: { key: 'r2_demeaned', label: 'R² demeaned', short: 'R² dm', unit: '', higherBetter: true, floorable: true },
+  r2_demeaned: { key: 'r2_demeaned', label: 'VAF (R² shape only)', short: 'VAF', unit: '', higherBetter: true, floorable: true },
   bias: { key: 'bias', label: 'Bias', short: 'Bias', unit: 'Nm', higherBetter: null, floorable: false },
 };
 

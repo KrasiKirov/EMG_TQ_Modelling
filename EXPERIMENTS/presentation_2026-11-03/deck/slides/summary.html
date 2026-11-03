@@ -1,0 +1,35 @@
+<section id="summary" data-transition="fade" style="background:#1B2430;color:#F7F5F0;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#7DD3C7">03 · Final model</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#F7F5F0">N0 + a 10-second calibration</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;column-gap:56px">
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Data</p><p style="flex:1;font-size:26px">6 people · train day 1 → test day 2</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Target</p><p style="flex:1;font-size:26px">Total torque</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Inputs</p><p style="flex:1;font-size:26px">GM, GL, SOL, TA envelopes + angle</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Positions</p><p style="flex:1;font-size:26px">Balanced (÷ each angle’s swing)</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Window</p><p style="flex:1;font-size:26px">0.2 s (20 samples at 100 Hz)</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Model</p><p style="flex:1;font-size:26px">LSTM 8 × 2 · dropout 0.3</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">EMG scaling</p><p style="flex:1;font-size:26px">÷ day-1 maximum · no auto-gain</p></div>
+<div style="display:flex;gap:24px;padding:10px 0;border-bottom:1px solid #3A4656"><p style="width:190px;font-size:24px;color:#7DD3C7">Calibration</p><p style="flex:1;font-size:26px">10 s per angle · a × ŷ + b</p></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:0px">
+<div style="display:flex;font-size:24px">
+<div style="width:34%"></div>
+<p style="width:33%;font-size:24px;font-weight:700;color:#7DD3C7;text-align:center;border-bottom:2px solid #7DD3C7">Toes-down angles</p>
+<p style="width:33%;font-size:24px;font-weight:700;color:#BFD0CC;text-align:center;border-bottom:2px solid #5A6878">Other angles</p>
+</div>
+<table style="font-size:26px;color:#F7F5F0">
+<tr><th style="width:34%;text-align:left;color:#BFD0CC">Model</th><th style="width:11%;text-align:right;color:#BFD0CC">MAE (Nm)</th><th style="width:11%;text-align:right;color:#BFD0CC">R²</th><th style="width:11%;text-align:right;color:#BFD0CC">VAF</th><th style="width:11%;text-align:right;color:#BFD0CC">MAE (Nm)</th><th style="width:11%;text-align:right;color:#BFD0CC">R²</th><th style="width:11%;text-align:right;color:#BFD0CC">VAF</th></tr>
+<tr><td>N0, no calibration</td><td style="text-align:right">0.86</td><td style="text-align:right">0.81</td><td style="text-align:right">94.6%</td><td style="text-align:right">1.01</td><td style="text-align:right">0.97</td><td style="text-align:right">97.8%</td></tr>
+<tr><td>A0, active torque, no calibration</td><td style="text-align:right">0.61</td><td style="text-align:right">0.90</td><td style="text-align:right">95.5%</td><td style="text-align:right">0.75</td><td style="text-align:right">0.98</td><td style="text-align:right">98.0%</td></tr>
+<tr style="background:#24504D"><td><b>N0 + 10 s calibration (final)</b></td><td style="text-align:right"><b>0.35</b></td><td style="text-align:right"><b>0.94</b></td><td style="text-align:right"><b>94.8%</b></td><td style="text-align:right"><b>0.75</b></td><td style="text-align:right"><b>0.97</b></td><td style="text-align:right"><b>97.9%</b></td></tr>
+<tr><td>A0 + 10 s calibration</td><td style="text-align:right">0.43</td><td style="text-align:right">0.94</td><td style="text-align:right">95.9%</td><td style="text-align:right">0.67</td><td style="text-align:right">0.98</td><td style="text-align:right">98.3%</td></tr>
+</table>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#BFD0CC">6 people × 3 seeds · scored from 30 s · medians · peak ≈ 6 Nm toes-down, 18 Nm other</p>
+<p style="font-size:24px;color:#BFD0CC">3</p>
+</div>
+<aside>The final model, with every design choice. Data: six people, trained on day 1, tested on day 2. Inputs: the four muscle envelopes, band-passed 30 to 300 Hz, rectified, low-passed at 2 Hz and sampled at 100 Hz, plus the ankle angle, in 0.2-second windows. Each muscle is divided by its day-1 maximum; there is no auto-gain. The target is total torque, so no passive table is needed. Positions are balanced: each angle’s target is divided by its swing during training, so every angle counts the same. The model is an LSTM with two layers of 8 units and 30% dropout, trained with Nadam at a learning rate of 0.003 and early stopping. On day 2, a 10-second calibration per angle fits a stretch and a shift. Results are medians over 3 seeds, then over angles, scored from 30 seconds to the end of each trial. With the calibration, the toes-down error falls from 0.86 to 0.35 Nm against a typical toes-down peak of about 6 Nm. VAF hardly moves with the calibration, because VAF ignores offsets, and most of the toes-down error was an offset; that is why we report R² and MAE next to VAF. A0, which predicts active torque, is the best model without a calibration, and with the calibration it ends up about the same as N0. We keep N0 + calibration because it needs no passive table and it improved every person.</aside>
+</section>

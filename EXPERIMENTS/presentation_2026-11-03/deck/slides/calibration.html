@@ -1,0 +1,37 @@
+<section id="calibration" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:24px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#1F7A72">02 · An attempt: a 10-second calibration</p>
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:60px;font-weight:700;line-height:1.15;color:#1B2430">Measure the drift instead of guessing it</h2>
+</div>
+<div style="display:flex;gap:56px;align-items:start">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px">
+<h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">How it works</h3>
+<ol style="font-size:26px;line-height:1.4;color:#1B2430">
+<li>On day 2, the person pushes for the first 10 s at each angle while the torque sensor records.</li>
+<li>Fit two numbers for that angle: torque ≈ a × prediction + b, a stretch and a shift. The LSTM is not retrained.</li>
+<li>Apply them to the rest of the trial. Only 30 s to the end is scored.</li>
+</ol>
+<h3 style="font-size:30px;font-weight:700;line-height:1.2;color:#16615B">Limits</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5568">Needs the torque sensor for 10 s per angle. The 10 s come from the start of the same trial. Tried after the main study, so it is exploratory.</p>
+</div>
+<div style="width:700px;display:flex;flex-direction:column;gap:16px;background:#FBFBF8;border:1px solid #DDD8CC;border-radius:16px;padding:40px">
+<p style="font-size:24px;font-weight:600;color:#4A5568">Toes-down error · 6 people × 3 seeds</p>
+<p style="font-family:'Libre Baskerville', Georgia, serif;font-size:72px;font-weight:700;line-height:1.1;color:#16615B">0.86 → 0.35 Nm</p>
+<p style="font-size:28px;line-height:1.4">R² 0.81 → 0.94</p>
+<hr style="border-top:1px solid #DDD8CC">
+<p style="font-size:26px;line-height:1.4">Other angles: 1.01 → 0.75 Nm</p>
+<p style="font-size:26px;line-height:1.4;font-weight:700;color:#16615B">All 6 people improve</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:26px;font-weight:700;line-height:1.3;color:#16615B">A common step in EMG work</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568"><b>Lloyd &amp; Besier 2003</b>, J Biomech: EMG-driven models are calibrated per person against measured joint moments.</p>
+<p style="font-size:24px;line-height:1.4;color:#4A5568"><b>Burden 2010</b>, J Electromyogr Kinesiol: EMG amplitude is normalised again whenever electrodes are re-applied.</p>
+<p style="font-size:24px;line-height:1.4;color:#4A5568"><b>Quesada et al. 2026</b>, Int J Robot Res: in-situ calibration of EMG-to-torque models for exoskeletons.</p>
+</div>
+<div style="position:absolute;left:128px;right:128px;bottom:64px;height:34px;display:flex;justify-content:space-between">
+<p style="font-size:24px;color:#6B7280">EMG → ankle torque · final model</p>
+<p style="font-size:24px;color:#6B7280">2</p>
+</div>
+<aside>This is an attempt, outside the pre-registered study. Every fix that tried to guess the day-to-day change from EMG alone helped some people and hurt others, because each person drifted differently: the EMG got bigger for EG, the resting torque moved for YES. So instead of guessing, we measure it. On day 2, the first 10 seconds at each angle are recorded with the torque sensor. On those 10 seconds we fit two numbers per angle: a stretch, for the EMG reading bigger or smaller today, and a shift, for the resting torque moving. The trained LSTM is not touched. We apply the two numbers to the rest of the trial and score only from 30 seconds on, so the calibration seconds are never scored. Toes-down error falls from 0.86 to 0.35 Nm and R² from 0.81 to 0.94, and all six people improve. Calibrating against a short measured block is a common step: EMG-driven musculoskeletal models are calibrated per person against measured moments (Lloyd and Besier 2003), EMG amplitude is normalised again each time electrodes are re-applied (Burden 2010), and exoskeleton EMG-to-torque models use in-situ calibration (Quesada et al. 2026). Limits: it needs the torque sensor for those 10 seconds, the calibration block is the start of the same trial, and it was tried after the main study. References: Lloyd DG, Besier TF (2003) J Biomech 36(6):765–776. Burden A (2010) J Electromyogr Kinesiol 20(6):1023–1035, doi:10.1016/j.jelekin.2010.07.004. Quesada L, Verdel D, Bruneau O, Berret B, Amorim M-A, Vignais N (2026) Int J Robot Res, doi:10.1177/02783649251414884.</aside>
+</section>
