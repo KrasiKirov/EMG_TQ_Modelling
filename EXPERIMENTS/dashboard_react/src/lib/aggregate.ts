@@ -421,10 +421,10 @@ export const ROUND2_NAMES: Record<string, string> = {
   E29_final_win40: '0.4 s window',
   E33_final_noscale: 'without divide-by-swing',
   E34_final_oldpassive: 'old passive table',
-  E35_final_lstm8: 'final pipeline with LSTM-8',
+  E35_final_lstm8: 'report-2 pipeline with LSTM-8',
   E36_static_old: 'passive trials, old pipeline',
   E38_static_full_win40: 'E37 with 0.4 s window',
-  FINAL: 'final pipeline (bigger LSTM with experts)',
+  FINAL: 'report-2 pipeline (bigger LSTM with experts)',
 };
 
 export const ROUND2_STUDY_ORDER = ['screen', 'confirm', 'ablation', 'passive', 'final_check'];

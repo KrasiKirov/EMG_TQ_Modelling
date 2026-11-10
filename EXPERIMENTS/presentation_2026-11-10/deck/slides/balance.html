@@ -1,0 +1,22 @@
+<section id="balance" data-transition="fade" style="background:#F7F5F0;color:#1B2430;font-family:'Public Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Libre Baskerville', Georgia, serif;font-size:56px;font-weight:700;line-height:1.15;color:#1B2430">1. Balanced positions</h2>
+<div style="display:flex;gap:56px;align-items:start">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:30px;font-weight:700;color:#16615B">What we tried</h3>
+<p style="font-size:28px;line-height:1.4">Make every ankle angle count the same in training. Before, the toes-down angles were only about 1% of the loss, so the model mostly ignored them.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:30px;font-weight:700;color:#16615B">How</h3>
+<p style="font-size:28px;line-height:1.4">Divide each angle’s torque by its swing in session 1, train, then multiply the prediction back.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="font-size:30px;font-weight:700;color:#16615B">Result</h3>
+<p style="font-size:28px;line-height:1.4">Toes-down error about <b>30% lower</b> than last semester (0.85 → 0.61 Nm).</p>
+</div>
+</div>
+<img src="/_blob/7f1e9d2568b28b49dfa533be1aa7d9c7" alt="Share of the training loss per ankle angle for YES: plain loss gives the toes-down angles about 1%, balanced gives every angle 12.5%" style="width:900px;height:500px;object-fit:contain">
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#6B7280">6 people · trained on session 1, tested on session 2</p>
+<aside>At the toes-down angles the torque barely moves, so with a normal loss those angles were about 1% of training. We divide each angle’s torque by how much it swings in session 1, so every angle counts the same, 12.5% each. Result: toes-down error goes from 0.85 to 0.61 Nm, about 30% lower than last semester. Other angles are about 20% lower. Five of six people improve; JM stays about the same.</aside>
+</section>

@@ -9,9 +9,9 @@ import type { Dir, MetricKey, Params } from './lib/types';
 import { chartTokens, type ChartTokens } from './theme';
 
 const DEFAULT_STATE: ViewState = {
-  tab: 'home',
+  tab: 'overview',
   experiment: NEW_MODEL_ID,
-  compareA: 'main/session-passive',
+  compareA: 'X00_baseline',
   compareB: NEW_MODEL_ID,
   subj: 'All',
   dir: 'S1toS2',

@@ -6,7 +6,6 @@ import { catalogTitle, EXTRA } from '../lib/catalog';
 import { STORIES, STUDY_ORDER } from '../lib/experimentStory';
 import { fmt } from '../lib/format';
 import { shortId } from '../lib/params';
-import { FINAL_ID } from '../lib/presentation';
 import { coverage, pageScore } from '../lib/summary';
 import { useView } from '../state';
 
@@ -48,7 +47,7 @@ export function AllExperimentsTab() {
       toesMae: r.toesMae, toesR2: r.toesR2, otherMae: r.otherMae, otherR2: r.otherR2, people: r.persons.length, seeds: Math.round(r.runs / Math.max(r.persons.length, 1)), // runs = distinct (person, seed) pairs
     }));
     return [
-      { title: 'Final model', note: 'Calibrated entries are scored from 30 s to the end of each trial; the others on the whole trial.', entries: ['norm/N0cal', 'norm/N0', 'norm/A0', 'norm/A0cal'].map(page) },
+      { title: 'Balanced positions', note: 'Calibrated entries are scored from 30 s to the end of each trial; the others on the whole trial.', entries: ['norm/A0', 'norm/A0cal', 'norm/N0', 'norm/N0cal'].map(page) },
       { title: 'Normalization study', note: 'Total torque, balanced positions, 0.2 s. N1 and N2 were run on YES, JM and EG only. Ridge rows are a non-LSTM reference.', entries: ['norm/N0', 'norm/N1', 'norm/N2', 'norm/N3', 'norm/NR0', 'norm/NR1', 'norm/NR2', 'norm/NR3'].filter((id) => EXTRA[id]).map(page) },
       { title: 'Network types', note: 'Report 1. Each run is scored on its own target, so compare these rows with each other only. Only the GRU has a page with waveforms.', entries: families },
       { title: 'Earlier models', note: 'Each scored on its own target, on the whole trial.', entries: ['X00_baseline', 'main/session-passive'].map(page) },
@@ -69,7 +68,7 @@ export function AllExperimentsTab() {
           <div className="catalog-row catalog-header" role="row">
             <span role="columnheader">Experiment</span><span role="columnheader" className="num">Toes-down MAE</span><span role="columnheader" className="num">R²</span><span role="columnheader" className="num">Other MAE</span><span role="columnheader" className="num">R²</span><span role="columnheader" className="num">People × seeds</span>
           </div>
-          {sec.entries.map((x) => <UnstyledButton key={x.key} component={x.page ? 'button' : 'div'} className="catalog-row" role="row" data-final={x.page === FINAL_ID || undefined} data-link={x.page ? true : undefined} onClick={() => x.page && open(x.page)} disabled={!x.page}>
+          {sec.entries.map((x) => <UnstyledButton key={x.key} component={x.page ? 'button' : 'div'} className="catalog-row" role="row" data-link={x.page ? true : undefined} onClick={() => x.page && open(x.page)} disabled={!x.page}>
             <span role="cell" className="catalog-name"><b>{x.name}</b><span className="catalog-code">{x.code}</span><span className="catalog-what">{x.what}</span></span>
             <span role="cell" className="num big">{fmt(x.toesMae)}</span><span role="cell" className="num">{fmt(x.toesR2)}</span>
             <span role="cell" className="num big">{fmt(x.otherMae)}</span><span role="cell" className="num">{fmt(x.otherR2)}</span>

@@ -33,7 +33,7 @@ export const ALL_IDS=[...STUDY_ORDER.filter(id=>DS.experiments[id]),...DS.expIds
 export const catalogTitle=(id:string)=>DISPLAY_NAMES[id]??STORIES[id]?.title??(EXTRA[id]?.kind==='research'?(EXTRA[id].native==='E27_ridge'?'Ridge regression':ROUND2_NAMES[EXTRA[id].native]??EXTRA[id].title):EXTRA[id]?.title)??friendly(id);
 const familyCodes:Record<string,string>={F_gru8:'GRU',F_lstm32:'LSTM32',F_mlp:'MLP',F_tcn:'TCN',H_pgain_posw:'LSTM8','main/window20':'M20','main/window50':'M50','main/session-passive':'M50P'};
 export const catalogCode=(id:string)=>EXTRA[id]?(familyCodes[EXTRA[id].native]??EXTRA[id].native.split('/').pop()!.split('_')[0]):shortId(id);
-export const catalogGroup=(id:string)=>(EXTRA[id]?.group??'Controlled experiments').replace(' · screen',' · screening').replace(' · confirm',' · confirmation').replace(' · final_check',' · final check').replace(' · passive',' · passive targets');
+export const catalogGroup=(id:string)=>(EXTRA[id]?.group??'Controlled experiments').replace(' · screen',' · screening').replace(' · confirm',' · confirmation').replace(' · final_check',' · check run').replace(' · passive',' · passive targets');
 const index=new Map<string,Run[]>();
 for(const r of data.rows){const k=`${r.exp}|${r.subj}|${r.dir}`;const a=index.get(k)??[];a.push(r);index.set(k,a);}
 export const catalogRuns=(id:string,subject:string,dir:Dir)=>EXTRA[id]?(index.get(`${id}|${subject}|${dir}`)??[]):runsOf(DS,id,subject,dir);

@@ -5,7 +5,7 @@ import { PRESENTATION_GROUPS } from '../lib/presentation';
 import type { Dir } from '../lib/types';
 import { useView } from '../state';
 
-/** Model switcher at the top of a model page: the final-model family as pills, everything else in one search box. */
+/** Model switcher at the top of a model page: the main models as pills, everything else in one search box. */
 export function ModelBar() {
   const { s, set } = useView();
   const choose = (id: string) => { set({ experiment: id, tab: 'overview', runA: 'typical' }); window.scrollTo({ top: 0 }); };

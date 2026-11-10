@@ -5,7 +5,7 @@ const architectures:Record<string,string>={
  F_gru8:'Two GRU layers with 8 units each, dropout 0.3, and one torque output. Think of GRU as a simpler recurrent alternative to LSTM. It uses update/reset gates and one hidden state, rather than the separate cell and hidden states of an LSTM. It still reads a sequence and learns what information to retain.',
  F_lstm32:'Two LSTM layers with 32 units each and dropout 0.2. This tests a larger recurrent model rather than the 8-unit reference.',
  F_mlp:'The 20 × 5 input window is flattened into 100 values. Dense layers with 64 and 32 units, with dropout 0.2 after the first, predict torque. This is a feed-forward model rather than a recurrent model.',
- F_tcn:'Three causal 1D convolution layers with 16 channels, kernel size 3 and dilations 1, 2 and 4, each followed by dropout 0.1. They read local temporal patterns; the final time step feeds a torque output.',
+ F_tcn:'Three causal 1D convolution layers with 16 channels, kernel size 3 and dilations 1, 2 and 4, each followed by dropout 0.1. They read local temporal patterns; the last time step feeds a torque output.',
  H_pgain_posw:'Two LSTM layers with 8 units each, dropout 0.3, and one torque output. This reference shares the family study’s passive-gain correction and inverse-variance position weighting.'
 };
 export function SupplementalMethod({entry:e}:{entry:ExtraExperiment}){

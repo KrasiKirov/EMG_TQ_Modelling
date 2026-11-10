@@ -7,7 +7,6 @@ import { ViewProvider, useView } from './state';
 import { useScrollFade } from './components/useScrollFade';
 import { Sidebar } from './components/Sidebar';
 import { ModelBar } from './components/ModelBar';
-import { HomeTab } from './tabs/HomeTab';
 import { ExperimentTab } from './tabs/ExperimentTab';
 import { AllExperimentsTab } from './tabs/AllExperimentsTab';
 import { OverviewTab } from './tabs/OverviewTab';
@@ -24,7 +23,6 @@ export function App() {
 
 /** top-level pages; 'comparison' also covers its waveform / training sub-views */
 const NAV: { key: TabKey; label: string }[] = [
-  { key: 'home', label: 'Overview' },
   { key: 'overview', label: 'Models' },
   { key: 'comparison', label: 'Compare' },
   { key: 'experiments', label: 'Experiments' },
@@ -37,7 +35,7 @@ function Shell() {
   const [comparisonMode, setComparisonMode] = useState(s.tab === 'waveforms' || s.tab === 'training' ? 'settings' : 'saved');
   const withPanel = comparing && comparisonMode === 'settings';
   const navRef = useScrollFade<HTMLDivElement>();
-  const current = comparing ? 'comparison' : s.tab;
+  const current = comparing ? 'comparison' : s.tab === 'home' || s.tab === 'about' ? 'overview' : s.tab;
   const go = (k: TabKey) => { setTab(k); close(); window.scrollTo({ top: 0 }); };
 
   return (
@@ -47,7 +45,7 @@ function Shell() {
         <Group h="100%" px={{ base: 'sm', sm: 'lg' }} gap="md" wrap="nowrap" justify="space-between">
           <Group gap="sm" wrap="nowrap" style={{ minWidth: 0, flex: 'none' }}>
             {withPanel && <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" aria-label="Show comparison settings" />}
-            <UnstyledButton className="brand" onClick={() => go('home')} aria-label="Overview">
+            <UnstyledButton className="brand" onClick={() => go('overview')} aria-label="Models">
               <span className="brand-mark" aria-hidden>τ</span>
               <span className="brand-text"><Title order={1} fz={16} lh={1.2}>Ankle torque</Title><Text size="xs" c="dimmed" data-testid="built">EMG → torque</Text></span>
             </UnstyledButton>
@@ -67,7 +65,6 @@ function Shell() {
 
       <AppShell.Main className="app-main" id="main-content" tabIndex={-1}>
         <div className={`tab-body page-${current}`}>
-          {current === 'home' && <HomeTab />}
           {current === 'overview' && <><ModelBar /><ExperimentTab /></>}
           {current === 'comparison' && <>
             <div className="page-heading"><Text size="sm" c="dimmed">Side-by-side analysis</Text><Title order={2}>Compare two models</Title><Text size="sm" c="dimmed">Inspect saved predictions, coverage and seed variability. Use controlled settings for the original parameter-by-parameter comparison.</Text></div>
