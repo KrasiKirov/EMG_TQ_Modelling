@@ -1,0 +1,7 @@
+{
+ "title": "LSTM-8 baseline run through the experiment framework",
+ "changes": {},
+ "hypothesis": "Reproduces X00 (frozen original code) exactly; used as the reference for every experiment and for the S2→S1 direction.",
+ "motivation": "Needed so that every experiment differs from the baseline in one thing only.",
+ "id": "X00f_baseline_framework"
+}

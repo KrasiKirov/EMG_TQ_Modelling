@@ -1,0 +1,26 @@
+config | mean R2 all | weak2 | weak2 RMSE | phantom | mean R2 excl CH flip | per subject (mean of 2 dirs)
+E01_old | 0.874 | 0.700 | 1.23 | 1.07 | 0.878 | {'CH': 0.961, 'HM': 0.84, 'IES': 0.821}
+E03_final | 0.787 | 0.659 | 1.32 | 0.85 | 0.870 | {'CH': 0.728, 'HM': 0.937, 'IES': 0.697}
+E29_final_win40 | 0.797 | 0.669 | 1.32 | 0.85 | 0.880 | {'CH': 0.736, 'HM': 0.95, 'IES': 0.705}
+E22_restanchor_final | 0.884 | 0.970 | 0.49 | 0.18 | 0.967 | {'CH': 0.739, 'HM': 0.93, 'IES': 0.983}
+E31_restanchor_agc_lstm8 | 0.869 | 0.940 | 0.59 | 0.19 | 0.951 | {'CH': 0.731, 'HM': 0.895, 'IES': 0.98}
+YES S1toS2 push dirs sign mixed=False  -> AGC on
+YES S2toS1 push dirs sign mixed=False  -> AGC on
+JM S1toS2 push dirs sign mixed=False  -> AGC on
+JM S2toS1 push dirs sign mixed=False  -> AGC on
+EG S1toS2 push dirs sign mixed=False  -> AGC on
+EG S2toS1 push dirs sign mixed=False  -> AGC on
+IES S1toS2 push dirs sign mixed=False  -> AGC on
+IES S2toS1 push dirs sign mixed=False  -> AGC on
+CH S1toS2 push dirs sign mixed=True  -> AGC OFF
+CH S2toS1 push dirs sign mixed=True  -> AGC OFF
+HM S1toS2 push dirs sign mixed=False  -> AGC on
+HM S2toS1 push dirs sign mixed=False  -> AGC on
+E22-auto CH S1toS2 E32_restanchor_noagc_moe [np.float64(0.988), np.float64(0.989), np.float64(0.695), np.float64(0.102)]
+E22-auto CH S2toS1 E32_restanchor_noagc_moe [np.float64(0.983), np.float64(0.985), np.float64(0.746), np.float64(0.152)]
+E22-auto HM S1toS2 E22_restanchor_final [np.float64(0.95), np.float64(0.936), np.float64(0.291), np.float64(0.119)]
+E22-auto HM S2toS1 E22_restanchor_final [np.float64(0.911), np.float64(0.954), np.float64(0.258), np.float64(0.143)]
+E22-auto IES S1toS2 E22_restanchor_final [np.float64(0.984), np.float64(0.981), np.float64(0.452), np.float64(0.238)]
+E22-auto IES S2toS1 E22_restanchor_final [np.float64(0.982), np.float64(0.978), np.float64(0.459), np.float64(0.239)]
+E22 with auto rule on untouched subjects: R2 0.966 weak2 0.970 weak2 RMSE 0.48 phantom 0.17
+per subject {'CH': 0.986, 'HM': 0.93, 'IES': 0.983}

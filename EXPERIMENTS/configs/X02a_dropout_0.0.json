@@ -1,0 +1,9 @@
+{
+ "title": "Dropout 0.0 (baseline 0.3)",
+ "changes": {
+  "dropout": 0.0
+ },
+ "hypothesis": "If the baseline is over-regularised (underfits), less dropout improves the weak positions.",
+ "motivation": "Regularisation check (Srivastava et al. 2014).",
+ "id": "X02a_dropout_0.0"
+}

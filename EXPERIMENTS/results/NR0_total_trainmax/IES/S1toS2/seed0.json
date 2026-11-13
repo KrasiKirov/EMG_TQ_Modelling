@@ -1,0 +1,76 @@
+{
+ "experiment": "NR0_total_trainmax",
+ "subject": "IES",
+ "direction": "S1toS2",
+ "seed": 0,
+ "config": {
+  "passive": "none",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "ridge",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "Deterministic per-position ridge regression on the same inputs: a simple reference the LSTM should beat.",
+ "details": {
+  "passive": {
+   "kind": "none"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -10.866099754100167,
+   -5.588507269859221,
+   -17.91343497022143,
+   -7.420686355751683,
+   -15.700688316545683,
+   -11.538403370394537,
+   -19.1001889385635,
+   -8.465920099393356
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.19502249718785153
+ },
+ "train_info": {
+  "alpha": 1e-08,
+  "alpha_at_edge": true,
+  "val_mse": 0.9983629779198403,
+  "n_features": 648,
+  "epochs": 0,
+  "knots": [
+   -0.59,
+   -0.485,
+   -0.38,
+   -0.272,
+   -0.17,
+   -0.061,
+   0.039,
+   0.144
+  ],
+  "model": "ridge"
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 0.6046383380889893,
+ "train_s": 89.76013159751892,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

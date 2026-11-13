@@ -1,0 +1,10 @@
+{
+ "id": "S2_cleanpassive+autogain",
+ "title": "Ladder step 2: clean passive table (X01) + auto-gain (X05), before equal weight",
+ "changes": {
+  "passive": "static",
+  "emg": "agc_auto"
+ },
+ "hypothesis": "Not a new hypothesis: the intermediate step of the cumulative ladder last semester -> + clean passive -> + auto-gain -> + equal weight (= D01), so every step can be shown for every subject.",
+ "motivation": "Presentation of the effect of each change (supervisor/user request, 24 Oct 2026). Only JM needs this run: for the other subjects the clean and original passive tables are identical, so this equals X05_autogain."
+}

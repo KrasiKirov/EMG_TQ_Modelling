@@ -1,0 +1,85 @@
+{
+ "experiment": "T01_passive_value_input",
+ "subject": "JM",
+ "direction": "S1toS2",
+ "seed": 0,
+ "config": {
+  "passive": "legacy",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": "passive_trial_value"
+ },
+ "hypothesis": "Under the passive-trial key, the relaxed (resting) level of the target at the toes-down positions shifts between sessions by up to 0.72 Nm (YES -0.49), because the passive-trial value changes between sessions while the relaxed torque inside the trial changes less (report 1: relaxed ~0.8 x passive). Giving the model the passive-trial value of the trial (measured before the trial, so available at prediction time) lets it learn how the resting target depends on that value across angles, and apply it to the new session.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -4.8119374463228715,
+   -5.780868691203805,
+   -1.820780495542585,
+   -2.8738748624966117,
+   -3.2787185803360477,
+   -1.3064870021436836,
+   -3.237279919047371,
+   -4.000929852802512
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.12246906636670417
+ },
+ "train_info": {
+  "epochs": 55,
+  "best_epoch": 30,
+  "best_val_loss": 0.22609323263168335,
+  "knots": [
+   -0.787,
+   -0.645,
+   -0.505,
+   -0.36,
+   -0.218,
+   -0.077,
+   0.056,
+   0.199
+  ],
+  "sd_per_knot": [
+   0.6046058315259701,
+   0.8330546796180135,
+   2.3347645480031853,
+   1.4586194123513219,
+   1.5320943774754079,
+   1.7420412473473283,
+   2.4835542997263853,
+   3.0370205761795592
+  ],
+  "n_params": 1033,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 3.2424473762512207,
+ "train_s": 2721.645764350891,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

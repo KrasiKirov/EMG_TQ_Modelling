@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": {"v": 1, "at": "2026-11-10T09:00:00Z"},
+  "lists": "css",
+  "title": "EMG Torque: Two Improvements",
+  "order": ["cover", "balance", "calibration", "curve", "summary"],
+  "sections": {
+    "intro": {"description": "The two changes", "start": "cover"},
+    "balance": {"description": "Balanced positions: what, how, result", "start": "balance"},
+    "calibration": {"description": "10 s calibration: what, how, result, and its line", "start": "calibration"},
+    "summary": {"description": "Summary", "start": "summary"}
+  },
+  "faces": {
+    "libre-baskerville": {"family": "Libre Baskerville", "href": "https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap"},
+    "public-sans": {"family": "Public Sans", "href": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"}
+  },
+  "designSystems": []
+}

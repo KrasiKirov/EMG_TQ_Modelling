@@ -1,0 +1,6 @@
+# rendered media and audio stay out of git (rebuild with build3.py)
+audio3/
+renders3/
+media/
+data3/*.npz
+__pycache__/

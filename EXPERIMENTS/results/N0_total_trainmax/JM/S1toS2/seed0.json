@@ -1,0 +1,85 @@
+{
+ "experiment": "N0_total_trainmax",
+ "subject": "JM",
+ "direction": "S1toS2",
+ "seed": 0,
+ "config": {
+  "passive": "none",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "scale",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "Reference for the other three arms. Same scaling as the baseline and D01 without auto-gain.",
+ "details": {
+  "passive": {
+   "kind": "none"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -4.8119374463228715,
+   -5.780868691203805,
+   -1.820780495542585,
+   -2.8738748624966117,
+   -3.2787185803360477,
+   -1.3064870021436836,
+   -3.237279919047371,
+   -4.000929852802512
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.12246906636670417
+ },
+ "train_info": {
+  "epochs": 41,
+  "best_epoch": 16,
+  "best_val_loss": 0.07114536315202713,
+  "knots": [
+   -0.787,
+   -0.645,
+   -0.505,
+   -0.36,
+   -0.218,
+   -0.077,
+   0.056,
+   0.199
+  ],
+  "sd_per_knot": [
+   0.6044321260856912,
+   0.8326535276343017,
+   2.3321452190488854,
+   1.457716717026976,
+   1.5278042532971006,
+   1.80278395726576,
+   2.3486040742276777,
+   3.017594895462801
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 0.7315983772277832,
+ "train_s": 2203.1663551330566,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

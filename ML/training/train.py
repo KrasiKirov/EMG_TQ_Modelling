@@ -32,7 +32,45 @@ def parse_args():
                    help='Min-max normalize ankle position to [0,1] (for cross-subject transfer)')
     p.add_argument('--normalize-mvc', action='store_true', default=False,
                    help='Normalize EMG and torque by per-position MVC (for cross-subject transfer)')
-    return p.parse_args()
+    p.add_argument('--no-passive', action='store_true', default=False,
+                   help='Skip passive torque subtraction — model predicts raw measured torque')
+    # ── Plantarflexed-angle fixes (see ML/preprocessing/active_torque.py) ──
+    g = p.add_argument_group('active-torque / weak-angle options')
+    g.add_argument('--legacy-passive', action='store_true',
+                   help='Old passive map (20 Nm bounds) instead of static holds only')
+    g.add_argument('--no-passive-gain', action='store_true',
+                   help='Disable P_eff = alpha*P + beta passive correction (fit on training session)')
+    g.add_argument('--label-rezero', action='store_true',
+                   help='Remove within-trial passive relaxation from the training labels '
+                        '(EMG-detected rest; test target untouched) - neutral in screening')
+    g.add_argument('--emg-clip', type=float, default=None,
+                   help='Clip normalised envelopes at this value (artefact suppression)')
+    g.add_argument('--emg-floor', choices=['train'], default=None,
+                   help='Subtract training-session EMG noise floor (needed for --anchored)')
+    g.add_argument('--emg-agc', choices=['off', 'on', 'dual', 'auto'], default='off',
+                   help="Causal adaptive gain control of EMG envelopes (session gain drift): "
+                        "'on' replaces envelopes, 'dual' adds AGC envelopes as extra features, "
+                        "'auto' = on unless the subject pushes in both directions")
+    g.add_argument('--position-feature', choices=['raw', 'setpoint'], default='raw',
+                   help="'setpoint' = trial-constant angle (removes footplate-compliance shortcut)")
+    g.add_argument('--position-balance', choices=['none', 'weights', 'standardize', 'scale'],
+                   default='none', help='Equalise the loss across operating angles')
+    g.add_argument('--anchored', action='store_true',
+                   help='Zero-anchored model: silent EMG -> zero active torque')
+    g.add_argument('--moe', action='store_true',
+                   help='Mixture-of-experts head, one expert per operating angle '
+                        '(implies --position-balance standardize unless scale)')
+    g.add_argument('--no-expert-bias', action='store_true',
+                   help='MoE experts without per-angle bias (no per-angle offset prior)')
+    g.add_argument('--recommended', action='store_true',
+                   help='Final configuration of the plantarflexed-angle investigation: '
+                        '--emg-agc auto --moe --position-balance scale --no-expert-bias '
+                        '(static passive map + passive gain are already the defaults)')
+    args = p.parse_args()
+    if args.recommended:
+        args.emg_agc, args.moe = 'auto', True
+        args.position_balance, args.no_expert_bias = 'scale', True
+    return args
 
 
 def main():
@@ -49,10 +87,18 @@ def main():
         subject_key,
         normalize_position=args.normalize_position,
         normalize_mvc=args.normalize_mvc,
+        subtract_passive=not args.no_passive,
         test_trial_indices=args.test_trials,
         retest_trial_indices=args.retest_trials,
         flb_path=args.flb,
         subject_id=args.subject_id,
+        passive_method='legacy' if args.legacy_passive else 'static',
+        passive_gain=not args.no_passive_gain,
+        train_label_rezero=args.label_rezero,
+        emg_clip=args.emg_clip,
+        emg_floor=args.emg_floor,
+        emg_agc_norm={'off': False, 'on': True, 'dual': 'dual', 'auto': 'auto'}[args.emg_agc],
+        position_feature=args.position_feature,
     )
 
     X_train, y_train = data['X_train'], data['y_train']
@@ -72,6 +118,10 @@ def main():
         save_path=ckpt_path,
         lr=args.lr, epochs=args.epochs, batch_size=args.batch,
         verbose=1,
+        position_balance=None if args.position_balance == 'none' else args.position_balance,
+        anchored=args.anchored,
+        moe=args.moe,
+        moe_expert_bias=not args.no_expert_bias,
     )
     model.summary()
 
@@ -100,7 +150,8 @@ def main():
     print(f'TEST RESULTS')
     print(f'  Data split : held-out retest session ({n_pos} positions, '
           f'{n_test} windows, fully unseen during training)')
-    print(f'  Targets    : net active torque (Nm) = measured − passive')
+    target_desc = 'raw measured torque (Nm)' if args.no_passive else 'net active torque (Nm) = measured − passive'
+    print(f'  Targets    : {target_desc}')
     print(f'{"="*70}')
     print(f'  R²    = 1 − SS_res/SS_tot          : {r2:.4f}')
     print(f'  VAF   = (1 − var(e)/var(y)) × 100  : {overall["vaf"]:.2f}%')

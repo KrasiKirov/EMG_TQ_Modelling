@@ -1,0 +1,9 @@
+{
+ "title": "Dropout 0.1 (baseline 0.3)",
+ "changes": {
+  "dropout": 0.1
+ },
+ "hypothesis": "Same as X02a, milder.",
+ "motivation": "Regularisation check.",
+ "id": "X02b_dropout_0.1"
+}

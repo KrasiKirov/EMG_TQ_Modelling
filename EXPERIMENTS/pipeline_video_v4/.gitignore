@@ -1,0 +1,6 @@
+# rendered media and audio stay out of git (rebuild with build4.py)
+audio4/
+renders4/
+media/
+data4/*.npz
+__pycache__/

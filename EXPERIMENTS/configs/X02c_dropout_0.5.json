@@ -1,0 +1,9 @@
+{
+ "title": "Dropout 0.5 (baseline 0.3)",
+ "changes": {
+  "dropout": 0.5
+ },
+ "hypothesis": "If the baseline overfits session 1, more dropout improves generalisation to session 2.",
+ "motivation": "Regularisation check.",
+ "id": "X02c_dropout_0.5"
+}

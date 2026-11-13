@@ -1,0 +1,10 @@
+{
+ "id": "C01_autogain+equalweight",
+ "title": "Auto-gain (X05) + every position counts the same (X04)",
+ "changes": {
+  "emg": "agc_auto",
+  "balance": "scale"
+ },
+ "hypothesis": "X05 fixes the EMG size change between sessions and X04 makes the fit care about small positions; they address different causes, so together they may add up. Risk: interaction (both re-weight what the model sees at the weak positions).",
+ "motivation": "Stage C step 1: the two best single changes in Stage A (both passed criteria 1-2). Launched in parallel with Stage B to save time; interpreted only if both are confirmed in Stage B."
+}

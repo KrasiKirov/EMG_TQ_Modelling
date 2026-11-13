@@ -1,0 +1,84 @@
+{
+ "experiment": "X02c_dropout_0.5",
+ "subject": "EG",
+ "direction": "S1toS2",
+ "seed": 0,
+ "config": {
+  "passive": "legacy",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.5,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null
+ },
+ "hypothesis": "If the baseline overfits session 1, more dropout improves generalisation to session 2.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -8.434537491265047,
+   -19.3102505141852,
+   -7.540015391739494,
+   -16.9771657294514,
+   -12.815234164111978,
+   -4.160743570348661,
+   -21.86450634345157,
+   -24.40388293407211
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.2890537120359955
+ },
+ "train_info": {
+  "epochs": 38,
+  "best_epoch": 13,
+  "best_val_loss": 1.5577079057693481,
+  "knots": [
+   -0.739,
+   -0.599,
+   -0.458,
+   -0.317,
+   -0.178,
+   -0.038,
+   0.104,
+   0.247
+  ],
+  "sd_per_knot": [
+   2.0201834150853286,
+   3.6523562958463827,
+   4.2527574863852875,
+   6.407875568503226,
+   8.048276049733152,
+   10.908471769776375,
+   12.922683365949206,
+   11.309553273367662
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 1.867156982421875,
+ "train_s": 5845.72686624527,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

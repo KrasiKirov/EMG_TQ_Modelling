@@ -1,0 +1,74 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "orig",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "orig",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "IES",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "EG",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "CH",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "HM",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

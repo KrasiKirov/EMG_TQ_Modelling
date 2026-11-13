@@ -1,0 +1,13 @@
+{
+ "id": "A0_active_trainmax",
+ "stage": "normalization",
+ "title": "N0 with the active-torque target: subtract the clean passive table (static relaxed holds) instead of predicting total torque.",
+ "changes": {
+  "passive": "static",
+  "emg": "trainmax",
+  "balance": "scale",
+  "window": 20
+ },
+ "hypothesis": "Same as N0 except the target. Run to see whether the 10 s calibration also works when the target is active torque.",
+ "motivation": "Calibration follow-up (2 Nov 2026): 0.2 s window, balanced positions, session-1 maximum scaling, no auto-gain, LSTM 8x2, 6 people, seeds 0-2, session 1 -> session 2."
+}

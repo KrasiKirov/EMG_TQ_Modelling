@@ -1,0 +1,86 @@
+{
+ "experiment": "D01_cleanpassive+autogain+equalweight",
+ "subject": "CH",
+ "direction": "S1toS2",
+ "seed": 9,
+ "config": {
+  "passive": "static",
+  "emg": "agc_auto",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "scale",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "The Stage B best candidate C01 (meets criteria 1-3 on YES+EG, fails the noise criterion because of YES -0.49) plus the JM passive-table bug fix generalises to the 4 subjects not used for screening.",
+ "details": {
+  "passive": {
+   "kind": "static"
+  },
+  "emg": {
+   "kind": "agc_auto",
+   "auto_decision": "AGC OFF (pushes in both directions)"
+  },
+  "push_directions": [
+   18.03851835374673,
+   -54.794036573371415,
+   16.492651515362102,
+   -31.586012348960217,
+   27.95270044900236,
+   9.368439407894453,
+   -45.13225371176253,
+   -54.47030321858709
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.31626124859392574
+ },
+ "train_info": {
+  "epochs": 88,
+  "best_epoch": 63,
+  "best_val_loss": 0.01001130510121584,
+  "knots": [
+   -0.74,
+   -0.597,
+   -0.456,
+   -0.312,
+   -0.184,
+   -0.047,
+   0.096,
+   0.239
+  ],
+  "sd_per_knot": [
+   4.551289100308784,
+   8.075534488958468,
+   8.593596627417448,
+   13.250444030544015,
+   16.40531724532375,
+   23.733015844101377,
+   28.043963368862837,
+   29.37862489637003
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 1.6861395835876465,
+ "train_s": 6023.38805103302,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

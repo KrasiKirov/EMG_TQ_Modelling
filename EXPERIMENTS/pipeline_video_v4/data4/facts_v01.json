@@ -1,0 +1,227 @@
+{
+ "eg_trial": {
+  "angle_rad": -0.038,
+  "samples": 8910,
+  "seconds": 89.1,
+  "windows": 8891,
+  "fit_windows": 7112,
+  "val_windows": 1779,
+  "fit_seconds": 71.1,
+  "val_seconds": 17.8,
+  "cut_sample": 7131,
+  "cut_time_s": 71.31,
+  "tq_at_cut": -24.84,
+  "tq_range": [
+   -32.6,
+   -1.7
+  ],
+  "session1_trials": 8,
+  "session1_angles": [
+   -0.739,
+   -0.599,
+   -0.458,
+   -0.317,
+   -0.178,
+   -0.038,
+   0.104,
+   0.247
+  ]
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "same_counts_all_runs": true,
+ "n0_epochs": {
+  "runs": 18,
+  "epochs_min": 32,
+  "epochs_max": 98,
+  "best_min": 7,
+  "best_max": 73,
+  "patience": 25,
+  "epoch_limit": 200,
+  "batch": 8,
+  "steps_per_epoch": 7112,
+  "all_stop_best_plus_25": true
+ },
+ "calibration_example": {
+  "subject": "YES",
+  "angle_rad": -0.381,
+  "seed": 0,
+  "gain": 0.769,
+  "offset": 2.66,
+  "mae_raw_scored": 2.18,
+  "mae_cal_scored": 0.49,
+  "bias_raw_scored": -2.18,
+  "seconds": 88.9
+ },
+ "group": {
+  "toes_mae": [
+   0.86,
+   0.35
+  ],
+  "toes_r2": [
+   0.81,
+   0.94
+  ],
+  "other_mae": [
+   1.01,
+   0.75
+  ],
+  "people_improved": "6 of 6",
+  "source": "EXPERIMENTS/normalization/calibration_summary.md (gain+offset, 10 s, scored from 30 s)"
+ },
+ "calibration_candidates": [
+  {
+   "subject": "YES",
+   "angle": 0.245,
+   "toes": 0,
+   "mae_raw": 3.424,
+   "mae_cal": 1.169,
+   "gain": 1.11,
+   "sd_cal": 12.995,
+   "swing": 39.202
+  },
+  {
+   "subject": "YES",
+   "angle": -0.381,
+   "toes": 1,
+   "mae_raw": 2.182,
+   "mae_cal": 0.491,
+   "gain": 0.769,
+   "sd_cal": 2.412,
+   "swing": 7.374
+  },
+  {
+   "subject": "YES",
+   "angle": -0.486,
+   "toes": 1,
+   "mae_raw": 2.24,
+   "mae_cal": 0.599,
+   "gain": 1.186,
+   "sd_cal": 0.61,
+   "swing": 1.925
+  },
+  {
+   "subject": "YES",
+   "angle": 0.138,
+   "toes": 0,
+   "mae_raw": 2.972,
+   "mae_cal": 1.63,
+   "gain": 1.093,
+   "sd_cal": 15.804,
+   "swing": 38.086
+  },
+  {
+   "subject": "EG",
+   "angle": -0.177,
+   "toes": 0,
+   "mae_raw": 1.599,
+   "mae_cal": 0.568,
+   "gain": 0.984,
+   "sd_cal": 8.555,
+   "swing": 22.468
+  },
+  {
+   "subject": "HM",
+   "angle": 0.195,
+   "toes": 0,
+   "mae_raw": 1.654,
+   "mae_cal": 0.747,
+   "gain": 1.322,
+   "sd_cal": 5.484,
+   "swing": 15.944
+  },
+  {
+   "subject": "IES",
+   "angle": -0.591,
+   "toes": 1,
+   "mae_raw": 1.246,
+   "mae_cal": 0.407,
+   "gain": 1.088,
+   "sd_cal": 2.486,
+   "swing": 8.257
+  },
+  {
+   "subject": "YES",
+   "angle": 0.031,
+   "toes": 0,
+   "mae_raw": 2.283,
+   "mae_cal": 1.446,
+   "gain": 0.956,
+   "sd_cal": 13.29,
+   "swing": 34.765
+  },
+  {
+   "subject": "EG",
+   "angle": 0.247,
+   "toes": 0,
+   "mae_raw": 2.311,
+   "mae_cal": 1.531,
+   "gain": 1.116,
+   "sd_cal": 11.868,
+   "swing": 31.598
+  },
+  {
+   "subject": "EG",
+   "angle": -0.598,
+   "toes": 1,
+   "mae_raw": 1.01,
+   "mae_cal": 0.334,
+   "gain": 0.973,
+   "sd_cal": 3.723,
+   "swing": 9.004
+  },
+  {
+   "subject": "CH",
+   "angle": 0.238,
+   "toes": 0,
+   "mae_raw": 2.412,
+   "mae_cal": 1.751,
+   "gain": 1.002,
+   "sd_cal": 26.634,
+   "swing": 66.173
+  },
+  {
+   "subject": "IES",
+   "angle": 0.039,
+   "toes": 0,
+   "mae_raw": 1.593,
+   "mae_cal": 0.982,
+   "gain": 1.094,
+   "sd_cal": 9.284,
+   "swing": 24.666
+  },
+  {
+   "subject": "IES",
+   "angle": -0.484,
+   "toes": 1,
+   "mae_raw": 0.928,
+   "mae_cal": 0.358,
+   "gain": 1.097,
+   "sd_cal": 3.002,
+   "swing": 10.281
+  },
+  {
+   "subject": "IES",
+   "angle": -0.38,
+   "toes": 0,
+   "mae_raw": 1.201,
+   "mae_cal": 0.658,
+   "gain": 1.051,
+   "sd_cal": 5.025,
+   "swing": 14.636
+  },
+  {
+   "subject": "CH",
+   "angle": -0.326,
+   "toes": 0,
+   "mae_raw": 1.798,
+   "mae_cal": 1.274,
+   "gain": 0.976,
+   "sd_cal": 14.095,
+   "swing": 34.379
+  }
+ ]
+}

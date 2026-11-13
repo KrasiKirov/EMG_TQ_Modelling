@@ -1,0 +1,9 @@
+{
+ "title": "0.4 s input window (baseline 0.2 s)",
+ "changes": {
+  "window": 40
+ },
+ "hypothesis": "A longer history gives the model more context for small, slow pushes.",
+ "motivation": "Longer windows (~300–600 ms) used for EMG-based estimation (Wang H et al. 2024).",
+ "id": "X06_window_0.4s"
+}
