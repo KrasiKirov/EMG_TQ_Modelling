@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "kind": "lstm",
+  "seed": 6,
+  "target_offset": -5.6526384353637695,
+  "target_scale": 7.177677154541016,
+  "omit_muscle": null,
+  "preprocessing": {
+    "schema_version": 1,
+    "config": {
+      "sample_rate": 1000,
+      "downsample": 10,
+      "window": 50,
+      "train_stride": 5,
+      "train_fraction": 0.8,
+      "gap_s": 1.0,
+      "edge_trim_s": 1.0,
+      "lp_cutoff": 2.0,
+      "target_mode": "active_torque",
+      "session_passive_calibration": true
+    },
+    "channels": [
+      "gm",
+      "gl",
+      "sol",
+      "ta"
+    ],
+    "emg_scales": [
+      0.02053491584956646,
+      0.011325918138027191,
+      0.014496387913823128,
+      0.011616182513535023
+    ],
+    "passive": {
+      "positions": [
+        -0.6,
+        -0.4929,
+        -0.3857,
+        -0.2786,
+        -0.1714,
+        -0.0643,
+        0.0429,
+        0.15
+      ],
+      "torques": [
+        1.6,
+        1.36,
+        0.6,
+        0.4,
+        -1.0,
+        -2.4,
+        -5.6,
+        -5.8
+      ],
+      "evidence": [
+        {
+          "source": "experiment_metadata_IES.docx",
+          "sha256": "226c5cc7f83258c96a86a733f1df75d3a32294c837945573b8d1286320d47cf0",
+          "table": "MVC and Passive TQ data from MVC trials",
+          "session": "pre-test calibration",
+          "precision": "recorded table values"
+        }
+      ],
+      "support_margin_rad": 0.015
+    },
+    "passive_by_session": {
+      "test": {
+        "positions": [
+          -0.6,
+          -0.4929,
+          -0.3857,
+          -0.2786,
+          -0.1714,
+          -0.0643,
+          0.0429,
+          0.15
+        ],
+        "torques": [
+          1.6,
+          1.36,
+          0.6,
+          0.4,
+          -1.0,
+          -2.4,
+          -5.6,
+          -5.8
+        ],
+        "evidence": [
+          {
+            "source": "experiment_metadata_IES.docx",
+            "sha256": "226c5cc7f83258c96a86a733f1df75d3a32294c837945573b8d1286320d47cf0",
+            "table": "MVC and Passive TQ data from MVC trials",
+            "session": "pre-test calibration",
+            "precision": "recorded table values"
+          }
+        ],
+        "support_margin_rad": 0.015
+      },
+      "retest": {
+        "positions": [
+          -0.6,
+          -0.4929,
+          -0.3857,
+          -0.2786,
+          -0.1714,
+          -0.0643,
+          0.0429,
+          0.15
+        ],
+        "torques": [
+          1.6,
+          1.36,
+          0.6,
+          0.4,
+          -1.0,
+          -2.4,
+          -5.6,
+          -5.8
+        ],
+        "evidence": [
+          {
+            "source": "experiment_metadata_IES.docx",
+            "sha256": "226c5cc7f83258c96a86a733f1df75d3a32294c837945573b8d1286320d47cf0",
+            "table": "MVC and Passive TQ data from MVC trials",
+            "session": "pre-test calibration",
+            "precision": "recorded table values"
+          }
+        ],
+        "support_margin_rad": 0.015
+      }
+    },
+    "passive_calibration_mode": "session_specific_source_fallback",
+    "position_units": "rad",
+    "target_units": "Nm",
+    "normalization": "training-block max",
+    "mode": "offline",
+    "edge_policy": "independently filtered raw blocks; trimmed both ends",
+    "source_sha256": "b9873aa9106b8c0423eb05bcdecb8bf119f9e9c2122861c301c1310eace806f8",
+    "manifest_sha256": "8c772ac5b1d17536f921329746c9a2395508ab89e716a9d753a5d6c250f86743"
+  },
+  "observed_training_feature_ranges": {
+    "minimum": [
+      0.0,
+      0.06662777066230774,
+      0.04266723617911339,
+      0.1012440100312233,
+      -0.5919237732887268
+    ],
+    "maximum": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.1486644297838211
+    ],
+    "interpretation": "Observed range, not a guarantee of physiological validity"
+  },
+  "input_shape": [
+    50,
+    5
+  ]
+}

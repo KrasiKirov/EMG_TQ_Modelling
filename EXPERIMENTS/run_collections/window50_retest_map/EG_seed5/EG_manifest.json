@@ -1,0 +1,2975 @@
+{
+  "schema_version": 1,
+  "subject": "EG",
+  "source_sha256": "5d8c241c8c9a24a3ab55d333e88e85b3d9d0dd22cdaf6c54a483269fcfaa9d11",
+  "passive_calibration": null,
+  "quality_policy": {
+    "active_position_span_rad": 0.03,
+    "quantiles": [
+      0.05,
+      0.95
+    ]
+  },
+  "trials": [
+    {
+      "subject": "EG",
+      "trial": 1,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p1",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p1",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.46435834469985326,
+      "position_span_rad": 0.009845978021621682,
+      "torque_sd_nm": 9.800208432178517,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.4713395833969116,
+          "maximum": -0.461026668548584,
+          "sd": 0.0035932712440520666,
+          "rms": 0.4643722471149854,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00015294551849365234
+        },
+        "torque": {
+          "minimum": -27.14085578918457,
+          "maximum": 2.6561737060546875,
+          "sd": 9.800208432178517,
+          "rms": 11.630009917660567,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.17440319061279297
+        },
+        "gm": {
+          "minimum": -4.282867908477783,
+          "maximum": 5.348410606384277,
+          "sd": 0.18049449439948342,
+          "rms": 0.1811544226366312,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 3.5016930103302
+        },
+        "gl": {
+          "minimum": -0.1603245735168457,
+          "maximum": 0.2124011516571045,
+          "sd": 0.017451969807153182,
+          "rms": 0.025389713090619628,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.1862490177154541
+        },
+        "sol": {
+          "minimum": -0.7378649711608887,
+          "maximum": 0.9155178070068359,
+          "sd": 0.07587355818977905,
+          "rms": 0.07807377091986002,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.6543910503387451
+        },
+        "ta": {
+          "minimum": -0.08884191513061523,
+          "maximum": 0.05460500717163086,
+          "sd": 0.008882759293267045,
+          "rms": 0.029191909588418247,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.06676793098449707
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 2,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p2",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p2",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.24437622686161156,
+      "position_span_rad": 0.015323525667190557,
+      "torque_sd_nm": 22.99203357923821,
+      "signal_qc": {
+        "position": {
+          "minimum": 0.23361730575561523,
+          "maximum": 0.25029420852661133,
+          "sd": 0.006050996998828664,
+          "rms": 0.24445112971675476,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00021374225616455078
+        },
+        "torque": {
+          "minimum": -68.24269104003906,
+          "maximum": -6.591320037841797,
+          "sd": 22.99203357923821,
+          "rms": 35.548433934172934,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.2625465393066406
+        },
+        "gm": {
+          "minimum": -0.06765961647033691,
+          "maximum": 0.022072792053222656,
+          "sd": 0.006348787656473449,
+          "rms": 0.016811864340114287,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.046890974044799805
+        },
+        "gl": {
+          "minimum": -0.03924369812011719,
+          "maximum": 0.06365299224853516,
+          "sd": 0.005830590076495201,
+          "rms": 0.019324744408489233,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.05408167839050293
+        },
+        "sol": {
+          "minimum": -0.4110288619995117,
+          "maximum": 0.23991942405700684,
+          "sd": 0.03801739455297075,
+          "rms": 0.04230375071878228,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.3174424171447754
+        },
+        "ta": {
+          "minimum": -0.09179353713989258,
+          "maximum": 0.0774228572845459,
+          "sd": 0.004407596830332054,
+          "rms": 0.028222964773113833,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.06737947463989258
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 3,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p3",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p3",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.6062015577249749,
+      "position_span_rad": 0.011118412017822266,
+      "torque_sd_nm": 10.119707519031252,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.612287163734436,
+          "maximum": -0.6004505157470703,
+          "sd": 0.0037204101498856572,
+          "rms": 0.6062129741599642,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00025260448455810547
+        },
+        "torque": {
+          "minimum": -26.224565505981445,
+          "maximum": 1.7621278762817383,
+          "sd": 10.119707519031252,
+          "rms": 12.0984733538934,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.16794204711914062
+        },
+        "gm": {
+          "minimum": -2.7556264400482178,
+          "maximum": 5.326934814453125,
+          "sd": 0.1693314119334672,
+          "rms": 0.17001914128131707,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 3.378394842147827
+        },
+        "gl": {
+          "minimum": -0.15900373458862305,
+          "maximum": 0.3257560729980469,
+          "sd": 0.01797746289449916,
+          "rms": 0.025687630334164352,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.20203113555908203
+        },
+        "sol": {
+          "minimum": -0.464397668838501,
+          "maximum": 0.5791449546813965,
+          "sd": 0.033553057600205466,
+          "rms": 0.038356629951921815,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.6067848205566406
+        },
+        "ta": {
+          "minimum": -0.17760753631591797,
+          "maximum": 0.1405811309814453,
+          "sd": 0.013182061972233386,
+          "rms": 0.030694913451714136,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.1829385757446289
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 4,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p4",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p4",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.18167326449159768,
+      "position_span_rad": 0.017819178104400646,
+      "torque_sd_nm": 18.65393627601128,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.19143319129943848,
+          "maximum": -0.17311203479766846,
+          "sd": 0.00623754491351922,
+          "rms": 0.18178031245869883,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.0002161264419555664
+        },
+        "torque": {
+          "minimum": -46.553611755371094,
+          "maximum": -1.406550407409668,
+          "sd": 18.65393627601128,
+          "rms": 24.89649496597103,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.21109771728515625
+        },
+        "gm": {
+          "minimum": -0.7469940185546875,
+          "maximum": 0.8382081985473633,
+          "sd": 0.049083321143002935,
+          "rms": 0.05142130971454891,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.7384383678436279
+        },
+        "gl": {
+          "minimum": -0.11856913566589355,
+          "maximum": 0.11893749237060547,
+          "sd": 0.013218787468310872,
+          "rms": 0.02267437163912343,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.13626337051391602
+        },
+        "sol": {
+          "minimum": -0.6140637397766113,
+          "maximum": 0.5924892425537109,
+          "sd": 0.05413147137674927,
+          "rms": 0.05723030652626638,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.6493926048278809
+        },
+        "ta": {
+          "minimum": -0.11917591094970703,
+          "maximum": 0.04911065101623535,
+          "sd": 0.007916882371021628,
+          "rms": 0.028945873343140388,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.08105158805847168
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 5,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p5",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p5",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.3234777199984389,
+      "position_span_rad": 0.01649619340896602,
+      "torque_sd_nm": 16.267957462853307,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.3318260908126831,
+          "maximum": -0.31461942195892334,
+          "sd": 0.005684825876227436,
+          "rms": 0.3235276689568165,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00024271011352539062
+        },
+        "torque": {
+          "minimum": -40.20561981201172,
+          "maximum": -0.07596015930175781,
+          "sd": 16.267957462853307,
+          "rms": 20.967973741944224,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.17080307006835938
+        },
+        "gm": {
+          "minimum": -2.3552346229553223,
+          "maximum": 4.158267974853516,
+          "sd": 0.13509729437436296,
+          "rms": 0.13596287813822622,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 3.0463790893554688
+        },
+        "gl": {
+          "minimum": -0.11400222778320312,
+          "maximum": 0.24113774299621582,
+          "sd": 0.014954552628551611,
+          "rms": 0.023705572177438915,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.12813091278076172
+        },
+        "sol": {
+          "minimum": -0.6234383583068848,
+          "maximum": 0.6448900699615479,
+          "sd": 0.060595927984478375,
+          "rms": 0.06337856456729264,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.7146751880645752
+        },
+        "ta": {
+          "minimum": -0.07717132568359375,
+          "maximum": 0.032335519790649414,
+          "sd": 0.007410716760249177,
+          "rms": 0.028623123882766076,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.04487752914428711
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 6,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p6",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p6",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.7455656630414665,
+      "position_span_rad": 0.007809281349182129,
+      "torque_sd_nm": 6.403995844615909,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.7498477697372437,
+          "maximum": -0.7414381504058838,
+          "sd": 0.002753810181037576,
+          "rms": 0.7455707487401679,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00012111663818359375
+        },
+        "torque": {
+          "minimum": -14.686989784240723,
+          "maximum": 2.713179588317871,
+          "sd": 6.403995844615909,
+          "rms": 7.121613819428446,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.09174346923828125
+        },
+        "gm": {
+          "minimum": -2.1426188945770264,
+          "maximum": 5.278754234313965,
+          "sd": 0.10947350248824501,
+          "rms": 0.11056474101139864,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 2.6217591762542725
+        },
+        "gl": {
+          "minimum": -0.10600447654724121,
+          "maximum": 0.17830491065979004,
+          "sd": 0.016029789337823366,
+          "rms": 0.02435648062803074,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.14958858489990234
+        },
+        "sol": {
+          "minimum": -0.2471327781677246,
+          "maximum": 0.2687692642211914,
+          "sd": 0.016974996485425824,
+          "rms": 0.025186159821676626,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.26037096977233887
+        },
+        "ta": {
+          "minimum": -0.16843080520629883,
+          "maximum": 0.12295722961425781,
+          "sd": 0.014283138479308984,
+          "rms": 0.031221994707902722,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.19192099571228027
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 7,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p7",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p7",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.04024447827640166,
+      "position_span_rad": 0.021127110719680785,
+      "torque_sd_nm": 23.21348637107853,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.0520099401473999,
+          "maximum": -0.030479907989501953,
+          "sd": 0.007685888548408512,
+          "rms": 0.040971830744040746,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00019121170043945312
+        },
+        "torque": {
+          "minimum": -59.052085876464844,
+          "maximum": -3.4780025482177734,
+          "sd": 23.21348637107853,
+          "rms": 31.735505946412463,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.4956245422363281
+        },
+        "gm": {
+          "minimum": -0.43665647506713867,
+          "maximum": 0.4458653926849365,
+          "sd": 0.03261635967560834,
+          "rms": 0.03602300341224871,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.40500402450561523
+        },
+        "gl": {
+          "minimum": -0.1533794403076172,
+          "maximum": 0.13459205627441406,
+          "sd": 0.014629061563488222,
+          "rms": 0.023571533934655258,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.15317082405090332
+        },
+        "sol": {
+          "minimum": -0.613013505935669,
+          "maximum": 0.7007956504821777,
+          "sd": 0.07473252026085894,
+          "rms": 0.07701707351766338,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.6804585456848145
+        },
+        "ta": {
+          "minimum": -0.06091952323913574,
+          "maximum": 0.01720428466796875,
+          "sd": 0.00559122550677986,
+          "rms": 0.028392872422757426,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.03009796142578125
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 8,
+      "kind": "mvc",
+      "session": null,
+      "position_id": "p8",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "mvc, p8",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.10037638293944325,
+      "position_span_rad": 0.019012349843978885,
+      "torque_sd_nm": 26.239274889913876,
+      "signal_qc": {
+        "position": {
+          "minimum": 0.08590114116668701,
+          "maximum": 0.10750758647918701,
+          "sd": 0.0074341486377905745,
+          "rms": 0.10065130311115955,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.00021386146545410156
+        },
+        "torque": {
+          "minimum": -71.86522674560547,
+          "maximum": -4.340052604675293,
+          "sd": 26.239274889913876,
+          "rms": 37.236327703522505,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.5727996826171875
+        },
+        "gm": {
+          "minimum": -0.1875746250152588,
+          "maximum": 0.12758612632751465,
+          "sd": 0.012737490475645121,
+          "rms": 0.020203627337379643,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.1307535171508789
+        },
+        "gl": {
+          "minimum": -0.09958267211914062,
+          "maximum": 0.11044144630432129,
+          "sd": 0.011354622582701932,
+          "rms": 0.021582359464769624,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.10498046875
+        },
+        "sol": {
+          "minimum": -0.602717399597168,
+          "maximum": 0.7397663593292236,
+          "sd": 0.061576091699202466,
+          "rms": 0.06432333322961613,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.8339512348175049
+        },
+        "ta": {
+          "minimum": -0.06549239158630371,
+          "maximum": 0.021921396255493164,
+          "sd": 0.004567949399892099,
+          "rms": 0.028161721893774836,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.04145503044128418
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 9,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p1",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p1",
+      "samples": 30100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.29947465953776037,
+      "position_span_rad": 0.46409195722080765,
+      "torque_sd_nm": 479.24221163403314,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.453457236289978,
+          "maximum": 0.010750758461654186,
+          "sd": 0.21809962267503197,
+          "rms": 0.37047606820987616,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.463602626696229
+        },
+        "torque": {
+          "minimum": -1437.304443359375,
+          "maximum": 1.248335838317871,
+          "sd": 479.24221163403314,
+          "rms": 538.1293764563416,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 273.9825839996338
+        },
+        "gm": {
+          "minimum": -0.1875746250152588,
+          "maximum": 0.12758612632751465,
+          "sd": 0.0103600906329768,
+          "rms": 0.018644562995506757,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.1307535171508789
+        },
+        "gl": {
+          "minimum": -0.08487582206726074,
+          "maximum": 0.11044144630432129,
+          "sd": 0.008970292608099952,
+          "rms": 0.020464260759752648,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.10498046875
+        },
+        "sol": {
+          "minimum": -0.602717399597168,
+          "maximum": 0.7397663593292236,
+          "sd": 0.04848558525372049,
+          "rms": 0.05192051047772317,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.8339512348175049
+        },
+        "ta": {
+          "minimum": -0.06549239158630371,
+          "maximum": 0.021921396255493164,
+          "sd": 0.003797013966124699,
+          "rms": 0.02803464429604273,
+          "endpoint_fraction": 6.64451827242525e-05,
+          "max_adjacent_step": 0.03803849220275879
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          30100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 10,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p1",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p1",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.45769029482091045,
+      "position_span_rad": 0.0038697779178619163,
+      "torque_sd_nm": 4.229232907617518,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.46047353744506836,
+          "maximum": -0.45571863651275635,
+          "sd": 0.001649141545558151,
+          "rms": 0.45769326589003817,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00013077259063720703
+        },
+        "torque": {
+          "minimum": -12.112736701965332,
+          "maximum": 0.5324125289916992,
+          "sd": 4.229232907617518,
+          "rms": 6.011326949431941,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.09424686431884766
+        },
+        "gm": {
+          "minimum": -0.36475419998168945,
+          "maximum": 0.3324425220489502,
+          "sd": 0.023801074597437737,
+          "rms": 0.028401620272365386,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2604389190673828
+        },
+        "gl": {
+          "minimum": -0.015134811401367188,
+          "maximum": 0.07119178771972656,
+          "sd": 0.003366765110639865,
+          "rms": 0.018639613366822835,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04026651382446289
+        },
+        "sol": {
+          "minimum": -0.07327079772949219,
+          "maximum": 0.043909549713134766,
+          "sd": 0.003725715753132177,
+          "rms": 0.018994150084906583,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0615692138671875
+        },
+        "ta": {
+          "minimum": -0.05383729934692383,
+          "maximum": 0.0096893310546875,
+          "sd": 0.0031627497063068106,
+          "rms": 0.027969591353232518,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.03381848335266113
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 11,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p2",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p2",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.019919226509245002,
+      "position_span_rad": 0.2946694128215313,
+      "torque_sd_nm": 80.98507681376357,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.04604735225439072,
+          "maximum": 0.2487630844116211,
+          "sd": 0.12257891412957549,
+          "rms": 0.12418681803602365,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2942904010415077
+        },
+        "torque": {
+          "minimum": -242.25473022460938,
+          "maximum": 10.648250579833984,
+          "sd": 80.98507681376357,
+          "rms": 105.24993891151529,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 7.056474685668945
+        },
+        "gm": {
+          "minimum": -0.36475419998168945,
+          "maximum": 0.3324425220489502,
+          "sd": 0.02168661306776223,
+          "rms": 0.026674312359884534,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2604389190673828
+        },
+        "gl": {
+          "minimum": -0.008122920989990234,
+          "maximum": 0.04571676254272461,
+          "sd": 0.0029743985316440535,
+          "rms": 0.018576233863439404,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.024219751358032227
+        },
+        "sol": {
+          "minimum": -0.07193446159362793,
+          "maximum": 0.0277101993560791,
+          "sd": 0.0033693963780958265,
+          "rms": 0.018940179465484465,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04750370979309082
+        },
+        "ta": {
+          "minimum": -0.05383729934692383,
+          "maximum": 0.0096893310546875,
+          "sd": 0.0027490042907282568,
+          "rms": 0.027951595424481,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.03381848335266113
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 12,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p2",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p2",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.24693575265669532,
+      "position_span_rad": 0.004403835535049444,
+      "torque_sd_nm": 11.389238483646702,
+      "signal_qc": {
+        "position": {
+          "minimum": 0.24345362186431885,
+          "maximum": 0.24914467334747314,
+          "sd": 0.0018315282623428814,
+          "rms": 0.246942544807298,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0001685619354248047
+        },
+        "torque": {
+          "minimum": -40.394927978515625,
+          "maximum": -7.4615478515625,
+          "sd": 11.389238483646702,
+          "rms": 23.799234189218712,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.20208358764648438
+        },
+        "gm": {
+          "minimum": -0.569525957107544,
+          "maximum": 0.2891862392425537,
+          "sd": 0.02610760345653178,
+          "rms": 0.03043978116115151,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.3065323829650879
+        },
+        "gl": {
+          "minimum": -0.04304051399230957,
+          "maximum": 0.14026999473571777,
+          "sd": 0.0059341575651744955,
+          "rms": 0.019311936654575524,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.060166120529174805
+        },
+        "sol": {
+          "minimum": -0.32098889350891113,
+          "maximum": 0.19091248512268066,
+          "sd": 0.020430191433407907,
+          "rms": 0.02770057868015995,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.22966980934143066
+        },
+        "ta": {
+          "minimum": -0.0853121280670166,
+          "maximum": 0.05318880081176758,
+          "sd": 0.003460207326209412,
+          "rms": 0.027962497544027316,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.06987452507019043
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 13,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p3",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p3",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.11366469022980194,
+      "position_span_rad": 0.6204374976456165,
+      "torque_sd_nm": 263.80448313207745,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.5956774950027466,
+          "maximum": 0.02489372529089451,
+          "sd": 0.2582017156959762,
+          "rms": 0.28211307625380033,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.6201241370290518
+        },
+        "torque": {
+          "minimum": -807.8984985351562,
+          "maximum": 1.9347190856933594,
+          "sd": 263.80448313207745,
+          "rms": 413.84336084947586,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 699.7286043167114
+        },
+        "gm": {
+          "minimum": -0.569525957107544,
+          "maximum": 0.2891862392425537,
+          "sd": 0.023218125874929916,
+          "rms": 0.0279955764744435,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.3065323829650879
+        },
+        "gl": {
+          "minimum": -0.04304051399230957,
+          "maximum": 0.14026999473571777,
+          "sd": 0.005088059977150126,
+          "rms": 0.019045956932940922,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.060166120529174805
+        },
+        "sol": {
+          "minimum": -0.31427979469299316,
+          "maximum": 0.19091248512268066,
+          "sd": 0.01798386491919371,
+          "rms": 0.02594078259640858,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.22966980934143066
+        },
+        "ta": {
+          "minimum": -0.0853121280670166,
+          "maximum": 0.04979848861694336,
+          "sd": 0.0027066258422411686,
+          "rms": 0.0277897715332185,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.06134033203125
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 14,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p3",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p3",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.5989820495906072,
+      "position_span_rad": 0.005216360092163086,
+      "torque_sd_nm": 3.6459662016645646,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.6020193099975586,
+          "maximum": -0.5961886644363403,
+          "sd": 0.0022474051066273307,
+          "rms": 0.5989862657536297,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00014197826385498047
+        },
+        "torque": {
+          "minimum": -7.840561866760254,
+          "maximum": 1.2377262115478516,
+          "sd": 3.6459662016645646,
+          "rms": 4.759495511302643,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1047372817993164
+        },
+        "gm": {
+          "minimum": -0.801239013671875,
+          "maximum": 0.5545568466186523,
+          "sd": 0.0765383167678129,
+          "rms": 0.07812945310562383,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.560685396194458
+        },
+        "gl": {
+          "minimum": -0.002287626266479492,
+          "maximum": 0.04856586456298828,
+          "sd": 0.003080315410317418,
+          "rms": 0.018485547513159017,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.022361278533935547
+        },
+        "sol": {
+          "minimum": -0.1731586456298828,
+          "maximum": 0.06908416748046875,
+          "sd": 0.006873860408891665,
+          "rms": 0.01991325504529688,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0987088680267334
+        },
+        "ta": {
+          "minimum": -0.04744768142700195,
+          "maximum": -0.0005853176116943359,
+          "sd": 0.002676202085087266,
+          "rms": 0.02779114116068683,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.02098679542541504
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 15,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p4",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p4",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.08436097361957788,
+      "position_span_rad": 0.1100331662222743,
+      "torque_sd_nm": 67.74720715805364,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.16977262496948242,
+          "maximum": -0.05961886793375015,
+          "sd": 0.04570094268027579,
+          "rms": 0.09594451538211535,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1099911704659462
+        },
+        "torque": {
+          "minimum": -156.8112335205078,
+          "maximum": 24.384021759033203,
+          "sd": 67.74720715805364,
+          "rms": 79.79527945098462,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 24.279284477233887
+        },
+        "gm": {
+          "minimum": -0.801239013671875,
+          "maximum": 0.4914116859436035,
+          "sd": 0.06494618269947995,
+          "rms": 0.06681007431569423,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.560685396194458
+        },
+        "gl": {
+          "minimum": -0.002287626266479492,
+          "maximum": 0.04856586456298828,
+          "sd": 0.0028500310445165634,
+          "rms": 0.018436235486136755,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.022361278533935547
+        },
+        "sol": {
+          "minimum": -0.15900611877441406,
+          "maximum": 0.050176382064819336,
+          "sd": 0.006039772453635931,
+          "rms": 0.019676387281211367,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0987088680267334
+        },
+        "ta": {
+          "minimum": -0.045142173767089844,
+          "maximum": -0.0037717819213867188,
+          "sd": 0.0024032417058160137,
+          "rms": 0.027772377096052854,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.019931793212890625
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 16,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p4",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p4",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.1779040366497209,
+      "position_span_rad": 0.005543708801269531,
+      "torque_sd_nm": 8.179562102414444,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.1810286045074463,
+          "maximum": -0.1748872995376587,
+          "sd": 0.00240292240567584,
+          "rms": 0.17792026386095808,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00031435489654541016
+        },
+        "torque": {
+          "minimum": -23.81374740600586,
+          "maximum": -1.534724235534668,
+          "sd": 8.179562102414444,
+          "rms": 13.94622790131984,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2042531967163086
+        },
+        "gm": {
+          "minimum": -0.30263185501098633,
+          "maximum": 0.24097561836242676,
+          "sd": 0.0267462564665082,
+          "rms": 0.031006046819734887,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.19591093063354492
+        },
+        "gl": {
+          "minimum": -0.05150794982910156,
+          "maximum": 0.07555961608886719,
+          "sd": 0.006709039601933061,
+          "rms": 0.01939023135244065,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0566411018371582
+        },
+        "sol": {
+          "minimum": -0.390775203704834,
+          "maximum": 0.3115546703338623,
+          "sd": 0.0376162129786477,
+          "rms": 0.04203924785670353,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.38017988204956055
+        },
+        "ta": {
+          "minimum": -0.0484013557434082,
+          "maximum": -0.0024461746215820312,
+          "sd": 0.0029508317734790505,
+          "rms": 0.027885050750676064,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.022990703582763672
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 17,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p5",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p5",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.08317700093851883,
+      "position_span_rad": 0.293384063988924,
+      "torque_sd_nm": 172.24956884940607,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.31103086471557617,
+          "maximum": -0.01748872920870781,
+          "sd": 0.12199935537048602,
+          "rms": 0.1476558708482006,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.29335540533065796
+        },
+        "torque": {
+          "minimum": -476.27496337890625,
+          "maximum": 0.18177032470703125,
+          "sd": 172.24956884940607,
+          "rms": 250.31096416465604,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 64.58556652069092
+        },
+        "gm": {
+          "minimum": -0.30263185501098633,
+          "maximum": 0.22530913352966309,
+          "sd": 0.024481627452500515,
+          "rms": 0.02906374865152662,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.19591093063354492
+        },
+        "gl": {
+          "minimum": -0.05150794982910156,
+          "maximum": 0.07555961608886719,
+          "sd": 0.005964341336835968,
+          "rms": 0.01914127099657959,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.054405927658081055
+        },
+        "sol": {
+          "minimum": -0.390775203704834,
+          "maximum": 0.3115546703338623,
+          "sd": 0.033336025513741395,
+          "rms": 0.03824925923271879,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.38017988204956055
+        },
+        "ta": {
+          "minimum": -0.0484013557434082,
+          "maximum": -0.0027620792388916016,
+          "sd": 0.0027209460963003034,
+          "rms": 0.02781210656736068,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.022990703582763672
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 18,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p5",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p5",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.3175284430454097,
+      "position_span_rad": 0.0038501083850860374,
+      "torque_sd_nm": 6.445246659466035,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.31999635696411133,
+          "maximum": -0.3156132698059082,
+          "sd": 0.0017238306116337263,
+          "rms": 0.31753312226415,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00011909008026123047
+        },
+        "torque": {
+          "minimum": -16.770553588867188,
+          "maximum": -0.06985664367675781,
+          "sd": 6.445246659466035,
+          "rms": 9.272298357941933,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.15058517456054688
+        },
+        "gm": {
+          "minimum": -0.27865052223205566,
+          "maximum": 0.19165635108947754,
+          "sd": 0.02791614207723582,
+          "rms": 0.032000635327818015,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2246546745300293
+        },
+        "gl": {
+          "minimum": -0.07684588432312012,
+          "maximum": 0.10198116302490234,
+          "sd": 0.008889212542440439,
+          "rms": 0.02028433863798138,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1022648811340332
+        },
+        "sol": {
+          "minimum": -0.48380136489868164,
+          "maximum": 0.3943169116973877,
+          "sd": 0.042682687451209296,
+          "rms": 0.04657992499221343,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.37998318672180176
+        },
+        "ta": {
+          "minimum": -0.052689313888549805,
+          "maximum": 0.008456707000732422,
+          "sd": 0.003671846484022494,
+          "rms": 0.027832817519062802,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.028061866760253906
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 19,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p6",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p6",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.18923331969743232,
+      "position_span_rad": 0.7061289548873901,
+      "torque_sd_nm": 125.57459682069187,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.7378262281417847,
+          "maximum": -0.0315655842423439,
+          "sd": 0.2938923154757116,
+          "rms": 0.3495453366580447,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.7060748711228371
+        },
+        "torque": {
+          "minimum": -335.41107177734375,
+          "maximum": 2.6047706604003906,
+          "sd": 125.57459682069187,
+          "rms": 160.2193547733816,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 8.241057395935059
+        },
+        "gm": {
+          "minimum": -0.27865052223205566,
+          "maximum": 0.28912782669067383,
+          "sd": 0.025257373486743902,
+          "rms": 0.02970936351522498,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2246546745300293
+        },
+        "gl": {
+          "minimum": -0.07684588432312012,
+          "maximum": 0.0857996940612793,
+          "sd": 0.007813394342025512,
+          "rms": 0.019821923604086914,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.09323239326477051
+        },
+        "sol": {
+          "minimum": -0.48380136489868164,
+          "maximum": 0.3639674186706543,
+          "sd": 0.03714540466165558,
+          "rms": 0.04156186975549263,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.37998318672180176
+        },
+        "ta": {
+          "minimum": -0.052689313888549805,
+          "maximum": 0.008456707000732422,
+          "sd": 0.003269159697325618,
+          "rms": 0.0278293616152845,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.02387404441833496
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 20,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p6",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p6",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.7392632735688467,
+      "position_span_rad": 0.0015141963958740234,
+      "torque_sd_nm": 2.031581187881445,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.74090576171875,
+          "maximum": -0.7383350133895874,
+          "sd": 0.0005949855905146752,
+          "rms": 0.7392635130016768,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00011897087097167969
+        },
+        "torque": {
+          "minimum": -4.289102554321289,
+          "maximum": 2.0325660705566406,
+          "sd": 2.031581187881445,
+          "rms": 2.074473403524851,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.063323974609375
+        },
+        "gm": {
+          "minimum": -0.6331145763397217,
+          "maximum": 0.46202898025512695,
+          "sd": 0.038257085587509634,
+          "rms": 0.04136025603453159,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.47724008560180664
+        },
+        "gl": {
+          "minimum": -0.017246007919311523,
+          "maximum": 0.06809592247009277,
+          "sd": 0.004605357570659931,
+          "rms": 0.018631322544912645,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04917144775390625
+        },
+        "sol": {
+          "minimum": -0.05714893341064453,
+          "maximum": 0.02730250358581543,
+          "sd": 0.004722937637828779,
+          "rms": 0.019197287545331846,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.035620927810668945
+        },
+        "ta": {
+          "minimum": -0.09115457534790039,
+          "maximum": 0.02191305160522461,
+          "sd": 0.00521022501979114,
+          "rms": 0.028042642060265754,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.05872964859008789
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 21,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p7",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p7",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.0637734393138732,
+      "position_span_rad": 0.04561940617859364,
+      "torque_sd_nm": 35.1120296221797,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.0740438923239708,
+          "maximum": -0.02830040454864502,
+          "sd": 0.01895557138231678,
+          "rms": 0.06653093452184762,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04559756815433502
+        },
+        "torque": {
+          "minimum": -79.51164245605469,
+          "maximum": 39.548397064208984,
+          "sd": 35.1120296221797,
+          "rms": 36.11418607332832,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 42.47908592224121
+        },
+        "gm": {
+          "minimum": -0.3850865364074707,
+          "maximum": 0.28363704681396484,
+          "sd": 0.029166631181075785,
+          "rms": 0.03312395849843542,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2723109722137451
+        },
+        "gl": {
+          "minimum": -0.017246007919311523,
+          "maximum": 0.06809592247009277,
+          "sd": 0.0043719661329588945,
+          "rms": 0.01860439466876636,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04917144775390625
+        },
+        "sol": {
+          "minimum": -0.05714893341064453,
+          "maximum": 0.02253413200378418,
+          "sd": 0.004372435532824522,
+          "rms": 0.01912941390792,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.035620927810668945
+        },
+        "ta": {
+          "minimum": -0.09115457534790039,
+          "maximum": 0.02191305160522461,
+          "sd": 0.004913629953748443,
+          "rms": 0.028058318010717745,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.05872964859008789
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 22,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p7",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p7",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.03766397154820746,
+      "position_span_rad": 0.004733687639236449,
+      "torque_sd_nm": 10.827990791484734,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.04130363464355469,
+          "maximum": -0.035376667976379395,
+          "sd": 0.002034827830386509,
+          "rms": 0.03771889814248948,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0002371072769165039
+        },
+        "torque": {
+          "minimum": -32.61125183105469,
+          "maximum": -2.18808650970459,
+          "sd": 10.827990791484734,
+          "rms": 16.79843958833653,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.27899932861328125
+        },
+        "gm": {
+          "minimum": -0.09260416030883789,
+          "maximum": 0.03695845603942871,
+          "sd": 0.007546687130143175,
+          "rms": 0.017469218032883368,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.06617188453674316
+        },
+        "gl": {
+          "minimum": -0.0560605525970459,
+          "maximum": 0.09085893630981445,
+          "sd": 0.007186169940205895,
+          "rms": 0.019613345449013456,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.08024930953979492
+        },
+        "sol": {
+          "minimum": -0.4780101776123047,
+          "maximum": 0.3070056438446045,
+          "sd": 0.03892584120803681,
+          "rms": 0.04319807724972587,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.522313117980957
+        },
+        "ta": {
+          "minimum": -0.04640936851501465,
+          "maximum": -0.0004649162292480469,
+          "sd": 0.002902879998480176,
+          "rms": 0.027960688849810796,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.024900436401367188
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 23,
+      "kind": "passive",
+      "session": "test",
+      "position_id": "p8",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive test, p8",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.02068442582232892,
+      "position_span_rad": 0.1097970842383802,
+      "torque_sd_nm": 207.28052176741528,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.00412066001445055,
+          "maximum": 0.10589778423309326,
+          "sd": 0.04558017295675857,
+          "rms": 0.050053947280583704,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.10976651916280389
+        },
+        "torque": {
+          "minimum": -637.55224609375,
+          "maximum": -5.473041534423828,
+          "sd": 207.28052176741528,
+          "rms": 274.7311124363938,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 508.0248432159424
+        },
+        "gm": {
+          "minimum": -0.0914144515991211,
+          "maximum": 0.03695845603942871,
+          "sd": 0.006302363154734134,
+          "rms": 0.016940432334221822,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.06617188453674316
+        },
+        "gl": {
+          "minimum": -0.0560605525970459,
+          "maximum": 0.09085893630981445,
+          "sd": 0.0062316196560874134,
+          "rms": 0.019283246460654376,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.08024930953979492
+        },
+        "sol": {
+          "minimum": -0.4780101776123047,
+          "maximum": 0.3070056438446045,
+          "sd": 0.03262130748578065,
+          "rms": 0.03760357527286904,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.522313117980957
+        },
+        "ta": {
+          "minimum": -0.04640936851501465,
+          "maximum": -0.0004649162292480469,
+          "sd": 0.002649214363202962,
+          "rms": 0.027955831882864924,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.024900436401367188
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 24,
+      "kind": "active",
+      "session": "test",
+      "position_id": "p8",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active test, p8",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.10421290388117885,
+      "position_span_rad": 0.006026273965835577,
+      "torque_sd_nm": 12.822584596627127,
+      "signal_qc": {
+        "position": {
+          "minimum": 0.09997725486755371,
+          "maximum": 0.10733258724212646,
+          "sd": 0.002603700443728799,
+          "rms": 0.10424542479815838,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00026619434356689453
+        },
+        "torque": {
+          "minimum": -38.87364959716797,
+          "maximum": -2.8954029083251953,
+          "sd": 12.822584596627127,
+          "rms": 21.832677282504445,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2613525390625
+        },
+        "gm": {
+          "minimum": -0.5204463005065918,
+          "maximum": 0.3453528881072998,
+          "sd": 0.01633798474133224,
+          "rms": 0.022708273574613025,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.44492006301879883
+        },
+        "gl": {
+          "minimum": -0.04136204719543457,
+          "maximum": 0.08268952369689941,
+          "sd": 0.0056587497315687555,
+          "rms": 0.018951416102466114,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.05270242691040039
+        },
+        "sol": {
+          "minimum": -0.38927435874938965,
+          "maximum": 0.22926688194274902,
+          "sd": 0.028949303911800714,
+          "rms": 0.03444826021332042,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.30401110649108887
+        },
+        "ta": {
+          "minimum": -0.07077455520629883,
+          "maximum": 0.03527402877807617,
+          "sd": 0.0026856034288676636,
+          "rms": 0.027735981282615844,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0451207160949707
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 25,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p1",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p1",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.09320058761831253,
+      "position_span_rad": 0.46484601497650146,
+      "torque_sd_nm": 263.1366025467946,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.45428383350372314,
+          "maximum": 0.010733258910477161,
+          "sd": 0.19339124967579865,
+          "rms": 0.21467772353825126,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.4646767135709524
+        },
+        "torque": {
+          "minimum": -757.477294921875,
+          "maximum": 1.4125585556030273,
+          "sd": 263.1366025467946,
+          "rms": 369.226400942125,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 79.85225105285645
+        },
+        "gm": {
+          "minimum": -0.5204463005065918,
+          "maximum": 0.3453528881072998,
+          "sd": 0.016096979233911398,
+          "rms": 0.022533803937417628,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.44492006301879883
+        },
+        "gl": {
+          "minimum": -0.04136204719543457,
+          "maximum": 0.08268952369689941,
+          "sd": 0.004832575658782669,
+          "rms": 0.01871732030906235,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.05270242691040039
+        },
+        "sol": {
+          "minimum": -0.38927435874938965,
+          "maximum": 0.2250051498413086,
+          "sd": 0.024002622269646733,
+          "rms": 0.030409822082483197,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.30401110649108887
+        },
+        "ta": {
+          "minimum": -0.07077455520629883,
+          "maximum": 0.03527402877807617,
+          "sd": 0.002468814692999365,
+          "rms": 0.02772039769634639,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0451207160949707
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 26,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p1",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p1",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.4577352332275001,
+      "position_span_rad": 0.0040996134281158225,
+      "torque_sd_nm": 4.536726364899122,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.4597322940826416,
+          "maximum": -0.45503461360931396,
+          "sd": 0.001671060000583033,
+          "rms": 0.45773828349763307,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00014460086822509766
+        },
+        "torque": {
+          "minimum": -11.415624618530273,
+          "maximum": 1.2552261352539062,
+          "sd": 4.536726364899122,
+          "rms": 6.7531858764545944,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.11992454528808594
+        },
+        "gm": {
+          "minimum": -0.8176779747009277,
+          "maximum": 0.6293070316314697,
+          "sd": 0.07623109576193621,
+          "rms": 0.07784421216519767,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.5706501007080078
+        },
+        "gl": {
+          "minimum": -0.030755996704101562,
+          "maximum": 0.12067794799804688,
+          "sd": 0.0034535511803272436,
+          "rms": 0.018433067843423225,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.05412936210632324
+        },
+        "sol": {
+          "minimum": -0.23090481758117676,
+          "maximum": 0.12676715850830078,
+          "sd": 0.010328103542098404,
+          "rms": 0.02132882072695108,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.18688440322875977
+        },
+        "ta": {
+          "minimum": -0.04594922065734863,
+          "maximum": 0.026917457580566406,
+          "sd": 0.0024756346455462063,
+          "rms": 0.02775847687876917,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.029894113540649414
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 27,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p2",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p2",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.020176711145759488,
+      "position_span_rad": 0.29584819078445435,
+      "torque_sd_nm": 88.71010593985443,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.04597323015332222,
+          "maximum": 0.2499924898147583,
+          "sd": 0.12309301118169087,
+          "rms": 0.12473567683079002,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2954426296055317
+        },
+        "torque": {
+          "minimum": -219.59495544433594,
+          "maximum": 25.104522705078125,
+          "sd": 88.71010593985443,
+          "rms": 119.50693421241509,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 23.688626289367676
+        },
+        "gm": {
+          "minimum": -0.8176779747009277,
+          "maximum": 0.6293070316314697,
+          "sd": 0.06903989110890747,
+          "rms": 0.07082201931000667,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.5706501007080078
+        },
+        "gl": {
+          "minimum": -0.013393163681030273,
+          "maximum": 0.06776928901672363,
+          "sd": 0.0032326870579129454,
+          "rms": 0.01840472927870207,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.028827190399169922
+        },
+        "sol": {
+          "minimum": -0.22629499435424805,
+          "maximum": 0.12676715850830078,
+          "sd": 0.00933237821812817,
+          "rms": 0.020869122760805672,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.18688440322875977
+        },
+        "ta": {
+          "minimum": -0.04594922065734863,
+          "maximum": 0.026917457580566406,
+          "sd": 0.0023711492676670035,
+          "rms": 0.02776138040547486,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.029894113540649414
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 28,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p2",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p2",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.24700034304543686,
+      "position_span_rad": 0.004560714960098272,
+      "torque_sd_nm": 12.13158065049318,
+      "signal_qc": {
+        "position": {
+          "minimum": 0.24412107467651367,
+          "maximum": 0.24969482421875,
+          "sd": 0.0019394392076242384,
+          "rms": 0.24700795713701929,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00018477439880371094
+        },
+        "torque": {
+          "minimum": -38.19713592529297,
+          "maximum": -6.558728218078613,
+          "sd": 12.13158065049318,
+          "rms": 24.85905451629477,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2444019317626953
+        },
+        "gm": {
+          "minimum": -0.07727265357971191,
+          "maximum": 0.023601055145263672,
+          "sd": 0.005453238226639928,
+          "rms": 0.016595033679740176,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0418698787689209
+        },
+        "gl": {
+          "minimum": -0.03795504570007324,
+          "maximum": 0.07274627685546875,
+          "sd": 0.0055560501966533974,
+          "rms": 0.01905015027574019,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.032373666763305664
+        },
+        "sol": {
+          "minimum": -0.39919614791870117,
+          "maximum": 0.2884554862976074,
+          "sd": 0.03331938570781005,
+          "rms": 0.038231458877949404,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.43990612030029297
+        },
+        "ta": {
+          "minimum": -0.04572153091430664,
+          "maximum": 0.0077915191650390625,
+          "sd": 0.0025275693162057525,
+          "rms": 0.027835270984513338,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.02428412437438965
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 29,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p3",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p3",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.11367359995585634,
+      "position_span_rad": 0.6204808596521616,
+      "torque_sd_nm": 281.96534515113353,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.5956482887268066,
+          "maximum": 0.02496948279440403,
+          "sd": 0.2582035101227561,
+          "rms": 0.2821183084569952,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.620438838377595
+        },
+        "torque": {
+          "minimum": -751.0442504882812,
+          "maximum": 2.1068811416625977,
+          "sd": 281.96534515113353,
+          "rms": 447.62362309919826,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 150.81732273101807
+        },
+        "gm": {
+          "minimum": -0.07088780403137207,
+          "maximum": 0.017049312591552734,
+          "sd": 0.004948740668071729,
+          "rms": 0.01639743858337777,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0418698787689209
+        },
+        "gl": {
+          "minimum": -0.03795504570007324,
+          "maximum": 0.07274627685546875,
+          "sd": 0.005107720908950918,
+          "rms": 0.01891374288089306,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.030971765518188477
+        },
+        "sol": {
+          "minimum": -0.39919614791870117,
+          "maximum": 0.2884554862976074,
+          "sd": 0.029946166943881757,
+          "rms": 0.035345745718083625,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.43990612030029297
+        },
+        "ta": {
+          "minimum": -0.04572153091430664,
+          "maximum": 0.0077915191650390625,
+          "sd": 0.002384201543572756,
+          "rms": 0.02780382979294582,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.02010941505432129
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 30,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p3",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p3",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.5982264236816424,
+      "position_span_rad": 0.0049648284912109375,
+      "torque_sd_nm": 3.7163235574731757,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.6009566783905029,
+          "maximum": -0.595435619354248,
+          "sd": 0.0020385153095946683,
+          "rms": 0.5982298968921523,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00013434886932373047
+        },
+        "torque": {
+          "minimum": -7.362222671508789,
+          "maximum": 1.685476303100586,
+          "sd": 3.7163235574731757,
+          "rms": 4.706627963369837,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.10743141174316406
+        },
+        "gm": {
+          "minimum": -1.5035057067871094,
+          "maximum": 0.931931734085083,
+          "sd": 0.12584711044400337,
+          "rms": 0.12683291515418577,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 1.0274410247802734
+        },
+        "gl": {
+          "minimum": -0.05044817924499512,
+          "maximum": 0.12943744659423828,
+          "sd": 0.004749836678226339,
+          "rms": 0.0187279870079333,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.05902528762817383
+        },
+        "sol": {
+          "minimum": -0.13390898704528809,
+          "maximum": 0.22765398025512695,
+          "sd": 0.005969257500460729,
+          "rms": 0.019769084012205587,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2022838592529297
+        },
+        "ta": {
+          "minimum": -0.04689216613769531,
+          "maximum": 0.006859302520751953,
+          "sd": 0.0033404154392107617,
+          "rms": 0.02783837949639584,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.023959875106811523
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 31,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p4",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p4",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.08417876636586695,
+      "position_span_rad": 0.10945255681872368,
+      "torque_sd_nm": 69.23585156895383,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.16920673847198486,
+          "maximum": -0.05956614017486572,
+          "sd": 0.045446347376578405,
+          "rms": 0.09566313394799403,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.10943648964166641
+        },
+        "torque": {
+          "minimum": -147.24444580078125,
+          "maximum": 33.70952606201172,
+          "sd": 69.23585156895383,
+          "rms": 82.0491287588371,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 28.91089916229248
+        },
+        "gm": {
+          "minimum": -1.5035057067871094,
+          "maximum": 0.8387458324432373,
+          "sd": 0.10916662255830456,
+          "rms": 0.11029570405827442,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 1.0274410247802734
+        },
+        "gl": {
+          "minimum": -0.02146601676940918,
+          "maximum": 0.07351040840148926,
+          "sd": 0.004180291342076966,
+          "rms": 0.0186028404282706,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04188895225524902
+        },
+        "sol": {
+          "minimum": -0.13390898704528809,
+          "maximum": 0.22765398025512695,
+          "sd": 0.005396241452345505,
+          "rms": 0.019611933278198757,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2022838592529297
+        },
+        "ta": {
+          "minimum": -0.04689216613769531,
+          "maximum": 0.006859302520751953,
+          "sd": 0.0030821104912636317,
+          "rms": 0.027833798624658707,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.023959875106811523
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 32,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p4",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p4",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.1771197206555937,
+      "position_span_rad": 0.005363345146179199,
+      "torque_sd_nm": 8.55739422873113,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.18086445331573486,
+          "maximum": -0.17471182346343994,
+          "sd": 0.0023640237863232407,
+          "rms": 0.17713549631165926,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.000331878662109375
+        },
+        "torque": {
+          "minimum": -22.813796997070312,
+          "maximum": -0.3004789352416992,
+          "sd": 8.55739422873113,
+          "rms": 12.139052683063127,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.24526119232177734
+        },
+        "gm": {
+          "minimum": -0.22368073463439941,
+          "maximum": 0.16057848930358887,
+          "sd": 0.014135179553459155,
+          "rms": 0.021148914643804233,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.16117215156555176
+        },
+        "gl": {
+          "minimum": -0.13675808906555176,
+          "maximum": 0.1321268081665039,
+          "sd": 0.012651121311437544,
+          "rms": 0.022127424226326887,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.13037562370300293
+        },
+        "sol": {
+          "minimum": -0.4725968837738037,
+          "maximum": 0.4994344711303711,
+          "sd": 0.04782999522226878,
+          "rms": 0.05142208486833467,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.46392202377319336
+        },
+        "ta": {
+          "minimum": -0.05426764488220215,
+          "maximum": 0.014755725860595703,
+          "sd": 0.004428246915066857,
+          "rms": 0.027990600098516172,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0257265567779541
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 33,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p5",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p5",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.08303004395609492,
+      "position_span_rad": 0.29306279495358467,
+      "torque_sd_nm": 166.60890977282656,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.31070423126220703,
+          "maximum": -0.017473828047513962,
+          "sd": 0.1219039326927908,
+          "rms": 0.1474942609233306,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.29301788844168186
+        },
+        "torque": {
+          "minimum": -456.27593994140625,
+          "maximum": 0.5063533782958984,
+          "sd": 166.60890977282656,
+          "rms": 212.44998482542653,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 11.468076705932617
+        },
+        "gm": {
+          "minimum": -0.19522905349731445,
+          "maximum": 0.14129161834716797,
+          "sd": 0.01221229093559597,
+          "rms": 0.019904095549174772,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.11214494705200195
+        },
+        "gl": {
+          "minimum": -0.12462258338928223,
+          "maximum": 0.1321268081665039,
+          "sd": 0.01118412950240331,
+          "rms": 0.021332940823902774,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.11243581771850586
+        },
+        "sol": {
+          "minimum": -0.4725968837738037,
+          "maximum": 0.4994344711303711,
+          "sd": 0.04198987967868155,
+          "rms": 0.0460414912622699,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.42545080184936523
+        },
+        "ta": {
+          "minimum": -0.05426764488220215,
+          "maximum": 0.014755725860595703,
+          "sd": 0.003997891611771235,
+          "rms": 0.027921417670020116,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0257265567779541
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 34,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p5",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p5",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.31794281175874844,
+      "position_span_rad": 0.0048565924167632835,
+      "torque_sd_nm": 6.5319676796812205,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.3217124938964844,
+          "maximum": -0.3155677318572998,
+          "sd": 0.0018439275326488894,
+          "rms": 0.3179481586954147,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0001697540283203125
+        },
+        "torque": {
+          "minimum": -21.615123748779297,
+          "maximum": 0.39353370666503906,
+          "sd": 6.5319676796812205,
+          "rms": 8.959943297378736,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.15654563903808594
+        },
+        "gm": {
+          "minimum": -0.45291900634765625,
+          "maximum": 0.5003511905670166,
+          "sd": 0.03602846376133408,
+          "rms": 0.03930229002883172,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.3917121887207031
+        },
+        "gl": {
+          "minimum": -0.12404084205627441,
+          "maximum": 0.15157461166381836,
+          "sd": 0.010322246000810898,
+          "rms": 0.020881490081648562,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1347041130065918
+        },
+        "sol": {
+          "minimum": -0.509030818939209,
+          "maximum": 0.5039381980895996,
+          "sd": 0.04100581749792698,
+          "rms": 0.045125218059037374,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.4997897148132324
+        },
+        "ta": {
+          "minimum": -0.0707852840423584,
+          "maximum": 0.028139352798461914,
+          "sd": 0.004364735675906553,
+          "rms": 0.028050412112066738,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.030068159103393555
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 35,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p6",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p6",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.18920583071879687,
+      "position_span_rad": 0.7057682983577251,
+      "torque_sd_nm": 126.55439193915129,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.7375483512878418,
+          "maximum": -0.03156546503305435,
+          "sd": 0.2937294162810847,
+          "rms": 0.34939349788857943,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.7054596655070782
+        },
+        "torque": {
+          "minimum": -432.302490234375,
+          "maximum": 5.4950714111328125,
+          "sd": 126.55439193915129,
+          "rms": 158.0314479407689,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 264.06066036224365
+        },
+        "gm": {
+          "minimum": -0.45291900634765625,
+          "maximum": 0.5003511905670166,
+          "sd": 0.034594966154615964,
+          "rms": 0.03798058444504356,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.3917121887207031
+        },
+        "gl": {
+          "minimum": -0.09397625923156738,
+          "maximum": 0.11637568473815918,
+          "sd": 0.008148153896933831,
+          "rms": 0.019904283707719742,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.11165976524353027
+        },
+        "sol": {
+          "minimum": -0.509030818939209,
+          "maximum": 0.49822568893432617,
+          "sd": 0.0324860352300889,
+          "rms": 0.03755802365054958,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.4997897148132324
+        },
+        "ta": {
+          "minimum": -0.0707852840423584,
+          "maximum": 0.028139352798461914,
+          "sd": 0.0036134581326062905,
+          "rms": 0.027931491925167373,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.030068159103393555
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 36,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p6",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p6",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.7393846040362126,
+      "position_span_rad": 0.002323746681213379,
+      "torque_sd_nm": 2.0558412360863487,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.7411638498306274,
+          "maximum": -0.7380208969116211,
+          "sd": 0.0009083318375638875,
+          "rms": 0.7393851619775136,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0001291036605834961
+        },
+        "torque": {
+          "minimum": -3.6501407623291016,
+          "maximum": 2.248549461364746,
+          "sd": 2.0558412360863487,
+          "rms": 2.098483671079429,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.07176399230957031
+        },
+        "gm": {
+          "minimum": -1.3329434394836426,
+          "maximum": 0.996403694152832,
+          "sd": 0.12344342924884605,
+          "rms": 0.12445168356843767,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.9637105464935303
+        },
+        "gl": {
+          "minimum": -0.02991795539855957,
+          "maximum": 0.08007287979125977,
+          "sd": 0.003820059219331063,
+          "rms": 0.01849566150897533,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04127144813537598
+        },
+        "sol": {
+          "minimum": -0.16127347946166992,
+          "maximum": 0.1724231243133545,
+          "sd": 0.005826979501326742,
+          "rms": 0.019719254739434453,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1749253273010254
+        },
+        "ta": {
+          "minimum": -0.04539847373962402,
+          "maximum": 0.008641481399536133,
+          "sd": 0.003276260143687551,
+          "rms": 0.027859441136427313,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.02425074577331543
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 37,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p7",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p7",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.0636972785435956,
+      "position_span_rad": 0.04605088382959366,
+      "torque_sd_nm": 36.33645200806947,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.07411638647317886,
+          "maximum": -0.02793276309967041,
+          "sd": 0.019113350688114133,
+          "rms": 0.06650310871220409,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.045808710157871246
+        },
+        "torque": {
+          "minimum": -73.00281524658203,
+          "maximum": 44.606685638427734,
+          "sd": 36.33645200806947,
+          "rms": 37.04347906271703,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 45.07427215576172
+        },
+        "gm": {
+          "minimum": -1.3329434394836426,
+          "maximum": 0.996403694152832,
+          "sd": 0.10603026102020956,
+          "rms": 0.10719887450835236,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.9637105464935303
+        },
+        "gl": {
+          "minimum": -0.025055408477783203,
+          "maximum": 0.06722450256347656,
+          "sd": 0.00346840486868819,
+          "rms": 0.01843748807863457,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.03711700439453125
+        },
+        "sol": {
+          "minimum": -0.16127347946166992,
+          "maximum": 0.1724231243133545,
+          "sd": 0.005438831941827361,
+          "rms": 0.019651015614314257,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1749253273010254
+        },
+        "ta": {
+          "minimum": -0.04539847373962402,
+          "maximum": 0.008641481399536133,
+          "sd": 0.00300478190660899,
+          "rms": 0.02775687159838072,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.02425074577331543
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 38,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p7",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p7",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": -0.03831645128200374,
+      "position_span_rad": 0.00470733642578125,
+      "torque_sd_nm": 10.765216994751034,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.04048001766204834,
+          "maximum": -0.035349369049072266,
+          "sd": 0.0019910951345873595,
+          "rms": 0.038368149534231434,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.00019311904907226562
+        },
+        "torque": {
+          "minimum": -30.190013885498047,
+          "maximum": -1.6550302505493164,
+          "sd": 10.765216994751034,
+          "rms": 19.613021742797837,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2843360900878906
+        },
+        "gm": {
+          "minimum": -0.1186072826385498,
+          "maximum": 0.04759669303894043,
+          "sd": 0.009441279553705575,
+          "rms": 0.018268663791905358,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.08731365203857422
+        },
+        "gl": {
+          "minimum": -0.07722735404968262,
+          "maximum": 0.09465575218200684,
+          "sd": 0.00946701915009405,
+          "rms": 0.020592052697765616,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.084075927734375
+        },
+        "sol": {
+          "minimum": -0.4688870906829834,
+          "maximum": 0.3006625175476074,
+          "sd": 0.04171995081879053,
+          "rms": 0.04576696334760196,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.41118502616882324
+        },
+        "ta": {
+          "minimum": -0.04712224006652832,
+          "maximum": 0.0051975250244140625,
+          "sd": 0.0034367641475498063,
+          "rms": 0.027905977169528324,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.025110244750976562
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 39,
+      "kind": "passive",
+      "session": "retest",
+      "position_id": "p8",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "passive retest, p8",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.020328825499067036,
+      "position_span_rad": 0.10854880791157484,
+      "torque_sd_nm": 233.23590598259833,
+      "signal_qc": {
+        "position": {
+          "minimum": -0.004048001952469349,
+          "maximum": 0.10461747646331787,
+          "sd": 0.04510514071399603,
+          "rms": 0.04947458807307951,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.10808982839807868
+        },
+        "torque": {
+          "minimum": -603.80029296875,
+          "maximum": -5.087184906005859,
+          "sd": 233.23590598259833,
+          "rms": 354.28557322998046,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 35.95914840698242
+        },
+        "gm": {
+          "minimum": -0.1186072826385498,
+          "maximum": 0.04759669303894043,
+          "sd": 0.008458399649671778,
+          "rms": 0.01781002016537727,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.08731365203857422
+        },
+        "gl": {
+          "minimum": -0.07722735404968262,
+          "maximum": 0.09465575218200684,
+          "sd": 0.008505347861314048,
+          "rms": 0.020135711684581656,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.084075927734375
+        },
+        "sol": {
+          "minimum": -0.4688870906829834,
+          "maximum": 0.3006625175476074,
+          "sd": 0.037388595612574495,
+          "rms": 0.041855239130385975,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.41118502616882324
+        },
+        "ta": {
+          "minimum": -0.04712224006652832,
+          "maximum": 0.0051975250244140625,
+          "sd": 0.0031738694913419382,
+          "rms": 0.02793536745933829,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.025110244750976562
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    },
+    {
+      "subject": "EG",
+      "trial": 40,
+      "kind": "active",
+      "session": "retest",
+      "position_id": "p8",
+      "status": "included",
+      "reason": "",
+      "confidence": "comment",
+      "evidence": "FLB comment; automated signal checks (not independent label verification)",
+      "comment": "active retest, p8",
+      "samples": 90100,
+      "sample_interval_s": 0.0010000000474974513,
+      "domain_start_s": 0.0010000000474974513,
+      "mean_position_rad": 0.10177980396115158,
+      "position_span_rad": 0.005709773302078253,
+      "torque_sd_nm": 12.790961088591878,
+      "signal_qc": {
+        "position": {
+          "minimum": 0.09874534606933594,
+          "maximum": 0.1050804853439331,
+          "sd": 0.0025626282721865883,
+          "rms": 0.1018120599832449,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.0002371072769165039
+        },
+        "torque": {
+          "minimum": -37.13884353637695,
+          "maximum": -3.7105321884155273,
+          "sd": 12.790961088591878,
+          "rms": 23.065928043173965,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.3016014099121094
+        },
+        "gm": {
+          "minimum": -0.1925337314605713,
+          "maximum": 0.19619464874267578,
+          "sd": 0.009806104903883705,
+          "rms": 0.01847656778223703,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.1791369915008545
+        },
+        "gl": {
+          "minimum": -0.047065019607543945,
+          "maximum": 0.07816076278686523,
+          "sd": 0.006662431513508625,
+          "rms": 0.019339240139867275,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.04209280014038086
+        },
+        "sol": {
+          "minimum": -0.3848743438720703,
+          "maximum": 0.2640056610107422,
+          "sd": 0.03168570026563975,
+          "rms": 0.036841467789378766,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.2983057498931885
+        },
+        "ta": {
+          "minimum": -0.047425031661987305,
+          "maximum": 0.024870634078979492,
+          "sd": 0.0027339106098378464,
+          "rms": 0.02787637561558884,
+          "endpoint_fraction": 2.2197558268590455e-05,
+          "max_adjacent_step": 0.03852725028991699
+        }
+      },
+      "valid_intervals": [
+        [
+          0,
+          90100
+        ]
+      ]
+    }
+  ]
+}

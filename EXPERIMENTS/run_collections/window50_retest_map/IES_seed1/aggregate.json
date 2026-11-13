@@ -1,0 +1,22 @@
+{
+  "lstm": {
+    "val": {
+      "mean_rmse": 0.8446601033210754,
+      "seed_sd": 0.0,
+      "seed_count": 1,
+      "subjects_per_seed": {
+        "1": 1
+      },
+      "interpretation": "Between-seed variation, not population confidence"
+    },
+    "test": {
+      "mean_rmse": 1.2337145805358887,
+      "seed_sd": 0.0,
+      "seed_count": 1,
+      "subjects_per_seed": {
+        "1": 1
+      },
+      "interpretation": "Between-seed variation, not population confidence"
+    }
+  }
+}

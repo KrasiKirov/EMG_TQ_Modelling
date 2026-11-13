@@ -1,0 +1,244 @@
+[
+  {
+    "trial": 1,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 2,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 3,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 4,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 5,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 6,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 7,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 8,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 9,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 10,
+    "status": "included",
+    "reason": "mvc"
+  },
+  {
+    "trial": 11,
+    "position_id": "p1",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 11,
+    "position_id": "p1",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 12,
+    "position_id": "p2",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 12,
+    "position_id": "p2",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 13,
+    "position_id": "p3",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 13,
+    "position_id": "p3",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 14,
+    "position_id": "p4",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 14,
+    "position_id": "p4",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 15,
+    "position_id": "p5",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 15,
+    "position_id": "p5",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 16,
+    "position_id": "p6",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 16,
+    "position_id": "p6",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 17,
+    "position_id": "p7",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 17,
+    "position_id": "p7",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 18,
+    "position_id": "p8",
+    "split": "train",
+    "windows": 1382,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 18,
+    "position_id": "p8",
+    "split": "val",
+    "windows": 1503,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 19,
+    "position_id": "p1",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 20,
+    "position_id": "p2",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 21,
+    "position_id": "p3",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 22,
+    "position_id": "p4",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 23,
+    "position_id": "p5",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 24,
+    "position_id": "p6",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 25,
+    "position_id": "p7",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  },
+  {
+    "trial": 26,
+    "position_id": "p8",
+    "split": "test",
+    "windows": 8761,
+    "status": "included",
+    "reason": ""
+  }
+]

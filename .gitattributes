@@ -1,0 +1,5 @@
+# Preserve scientific arrays, recordings and model packages byte for byte.
+*.npz binary
+*.flb binary
+*.keras binary
+*.h5 binary

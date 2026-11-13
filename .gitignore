@@ -15,3 +15,16 @@ ML/*_output/
 .claude/
 .venv311/
 debug/
+
+# Deliberately included inputs and saved models for the teammate handoff.
+# Other recordings/checkpoints remain ignored until explicitly selected.
+!/ML/subjects/CH_151224.flb
+!/ML/subjects/EG_121224.flb
+!/ML/subjects/HM_110425.flb
+!/ML/subjects/IES_081024.flb
+!/ML/subjects/JM_140325.flb
+!/ML/subjects/YES_281124.flb
+!/EXPERIMENTS/results/V0_saved_weights/EG/S1toS2/seed0.weights.h5
+!/EXPERIMENTS/run_collections/**/*.keras
+ML/research/_cache/
+EXPERIMENTS/run_collections/local/

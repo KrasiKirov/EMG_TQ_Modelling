@@ -1,0 +1,36 @@
+{
+  "protocol": "within",
+  "subjects": [
+    "IES"
+  ],
+  "models": [
+    "lstm"
+  ],
+  "data_dir": "C:\\Users\\dramo\\Desktop\\Projects\\krasi_ml\\EMG_TQ_Modelling_data",
+  "output": "C:\\Users\\dramo\\Desktop\\Projects\\krasi_ml\\EMG_TQ_Modelling_runs\\window50_retest_map\\IES_seed5",
+  "overrides": "C:\\Users\\dramo\\Desktop\\Projects\\krasi_ml\\EMG_TQ_Modelling\\.claude\\worktrees\\open-website-b5b382\\ML\\reviewed_overrides.json",
+  "target_mode": "active_torque",
+  "session_passive_calibration": true,
+  "seeds": [
+    5
+  ],
+  "epochs": 60,
+  "patience": 12,
+  "batch": 64,
+  "lr": 0.003,
+  "dropout": 0.3,
+  "window": 50,
+  "train_stride": 5,
+  "edge_trim": 1.0,
+  "gap": 1.0,
+  "lp_cutoff": 2.0,
+  "position_weights": false,
+  "omit_muscle": null,
+  "calibration_seconds": [
+    30,
+    60,
+    120
+  ],
+  "evaluate_retest": true,
+  "plots": false
+}
