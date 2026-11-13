@@ -1,0 +1,17 @@
+{
+ "landing": "norm/A0",
+ "groups": [
+  {"label": "Models", "caption": "Session 1 → session 2 · each session's own passive torque · no calibration", "tone": "teal", "open": true},
+  {"label": "Calibration experiments", "caption": "10 s gain + offset on measured session-2 torque · not the default", "tone": "amber", "open": true},
+  {"label": "Normalization study", "caption": "Total torque · four ways to scale the EMG", "tone": "blue", "open": false},
+  {"label": "Exploration", "caption": "Preliminary · not a model ranking", "tone": "violet", "open": false}
+ ],
+ "extra_items": [
+  {"group": "Models", "id": "X00_baseline", "label": "Last semester’s LSTM", "order": 0},
+  {"group": "Models", "id": "main/session-passive", "label": "LSTM, 0.5 s window + session-2 passive map", "order": 90},
+  {"group": "Exploration", "id": "X02a_dropout_0.0", "label": "", "order": 10},
+  {"group": "Exploration", "id": "X02b_dropout_0.1", "label": "", "order": 11},
+  {"group": "Exploration", "id": "X02c_dropout_0.5", "label": "", "order": 12},
+  {"group": "Exploration", "id": "family/F_gru8", "label": "", "order": 13}
+ ]
+}

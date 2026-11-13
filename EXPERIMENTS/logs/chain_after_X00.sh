@@ -3,4 +3,4 @@
 cd "$(git rev-parse --show-toplevel)"
 source ML/experiments/env.sh
 until grep -q QUEUE_DONE EXPERIMENTS/logs/queue_X00_seeds3-9.txt 2>/dev/null; do sleep 60; done
-$PY EXPERIMENTS/code/run_queue.py --subjects YES --jobs-file EXPERIMENTS/logs/jobs_presentation_2026-10-24.json --workers 13
+$PY EXPERIMENTS/pipeline/run_queue.py --subjects YES --jobs-file EXPERIMENTS/logs/jobs_presentation_2026-10-24.json --workers 13

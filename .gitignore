@@ -15,6 +15,17 @@ ML/*_output/
 .venv311/
 debug/
 
+# Local working material that stays out of the repository
+ML/data/
+ML/runs/
+ML/reports/
+ML/presentation*/
+ML/.presentation_build/
+docs/superpowers/
+*.key
+/*.docx
+/Capstone LSTM Comparison Implementation Plan.md
+
 # Deliberately included inputs and saved models for the teammate handoff.
 # Other recordings/checkpoints remain ignored until explicitly selected.
 !/ML/subjects/CH_151224.flb

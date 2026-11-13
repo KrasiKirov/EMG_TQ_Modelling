@@ -50,6 +50,9 @@ def main():
     if len(jobs) < len(folders):
         print(f'Skipping {len(folders)-len(jobs)} unfinished run folder(s)')
     data = read(DASH/'src/data/presentation-catalog.json')
+    import sys; sys.path.insert(0, str(DASH.parents[1]))
+    from EXPERIMENTS.pipeline.spec import load_all
+    assert ID not in {s.dashboard.id for s in load_all() if s.dashboard}, f'{ID} belongs to an experiment spec; use the dashboard CLI'
     old = data['experiments'][ID]
     # Idempotent: replace this collection only; preserve all controlled and GRU data.
     data['rows'] = [r for r in data['rows'] if r['exp'] != ID]

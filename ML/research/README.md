@@ -85,7 +85,7 @@ result. The model never sees the reference truth as an input.
 ## How to run
 
 ```bash
-source ML/experiments/env.sh          # sets PYTHONPATH, EMG_DATA_DIR, $PY
+PY=.venv/bin/python                   # from the repository root; recordings default to ML/subjects
 # one job
 $PY -m ML.research.run --study demo --subject YES --protocol S1toS2 --config FINAL --seed 0 --plot
 # many jobs in parallel (skips finished or running ones, safe to relaunch)

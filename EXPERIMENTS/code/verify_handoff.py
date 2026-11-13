@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / 'EXPERIMENTS/handoff_manifest.json'
 ARTIFACT_ROOTS = (
-    'ML/subjects', 'ML/experiments/results', 'ML/research/results',
+    'ML/subjects', 'ML/archive/experiments/results', 'ML/research/results',
     'EXPERIMENTS/results', 'EXPERIMENTS/run_collections',
     'EXPERIMENTS/baseline/retest_map_code',
 )

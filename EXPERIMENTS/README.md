@@ -1,5 +1,9 @@
 # EXPERIMENTS: improving LSTM-8 at the plantarflexed positions, one change at a time
 
+> This page describes the October 2026 controlled study (X, C, D, S, T series). For the current workflow (specs,
+> `pipeline/run.py`, the dashboard command) see [`docs/EXPERIMENTS.md`](../docs/EXPERIMENTS.md); for the current
+> model, [`reports/normalization/REPORT.md`](reports/normalization/REPORT.md).
+
 **Status (2026-10-09): finished.** Read `reports/FINAL_REPORT.md` first.
 
 **Final candidate D01 = clean passive table + EMG auto-gain + equal weight per position.**
@@ -20,11 +24,11 @@ Other documents:
 | `baseline/original_code/` | frozen copy of the original LSTM-8 code (main checkout working copy), with `original_code_sha256.txt` |
 | `configs/` | one JSON per experiment: what it changes relative to LSTM-8, the hypothesis and the motivation |
 | `code/run_original_baseline.py` | runs the frozen original code (only adds a seed and saves predictions) |
-| `code/run_experiment.py` | runs one experiment (one config × subject × direction × seed) |
-| `code/run_queue.py` | runs many jobs in parallel; skips finished ones |
-| `code/check_equivalence.py` | shows the experiment framework builds the same data as the original |
-| `code/score.py` | scores every run → `results/all_evaluations.csv` |
-| `code/diagnostics.py` | Phase 2 diagnostics of the baseline |
+| `pipeline/run.py` | runs one experiment (one config × subject × direction × seed) |
+| `pipeline/run_queue.py` | runs many jobs in parallel; skips finished ones |
+| `analysis/check_equivalence.py` | shows the experiment framework builds the same data as the original |
+| `pipeline/legacy/score.py` | scores every run → `results/all_evaluations.csv` |
+| `analysis/diagnostics.py` | Phase 2 diagnostics of the baseline |
 | `results/` | per-run predictions (`.npz`), run info (`.json`), and the complete metric tables |
 | `plots/`, `reports/`, `logs/`, `literature/` | figures, written interpretations, console logs, verified references |
 
@@ -42,9 +46,9 @@ Other documents:
 
 ## Reproduce
 ```bash
-source ML/experiments/env.sh
-$PY EXPERIMENTS/code/run_queue.py --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
-$PY EXPERIMENTS/code/run_queue.py --exps X01_clean_passive --subjects YES JM --directions S1toS2 S2toS1 --seeds 0 1
-$PY EXPERIMENTS/code/score.py
-$PY EXPERIMENTS/code/diagnostics.py
+PY=.venv/bin/python; export EMG_DATA_DIR="$PWD/ML/subjects"   # from the repository root
+$PY EXPERIMENTS/pipeline/run_queue.py --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
+$PY EXPERIMENTS/pipeline/run_queue.py --exps X01_clean_passive --subjects YES JM --directions S1toS2 S2toS1 --seeds 0 1
+$PY EXPERIMENTS/pipeline/legacy/score.py
+$PY EXPERIMENTS/analysis/diagnostics.py
 ```

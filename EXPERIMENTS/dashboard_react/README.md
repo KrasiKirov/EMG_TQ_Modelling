@@ -9,6 +9,11 @@ The build produces **one self-contained file**, `dist/index.html` (about 4.6 MB,
 Double-click it to open it in any modern browser on Windows or macOS. It needs no server, no install
 and no internet. Share that one file.
 
+> **Adding or updating an experiment:** use `python -m EXPERIMENTS.pipeline.dashboard` (tag, export, build), described in
+> [`docs/EXPERIMENTS.md`](../../docs/EXPERIMENTS.md). Sidebar groups, the landing page, names and blurbs come from
+> `src/data/presentation-catalog.json`, so no React change is needed. The sections below describe how the older
+> datasets (`results.json`, `catalog.json`) were built; those scripts are kept for reproducing them.
+
 ## What is inside
 
 | Tab | Shows |
@@ -53,15 +58,15 @@ npm run build        # type check (tsc --noEmit) + build -> dist/index.html
 
 `npm run build` must finish without TypeScript errors; it then writes `dist/index.html`.
 
-## Refresh the data
+## Refresh the October controlled-experiment data
 
 The data file `src/data/results.json` is generated; never edit it by hand. From the repository root, once the
 training jobs have finished, run the steps in this order (each reads the previous step's output):
 
 ```bash
-python EXPERIMENTS/code/presentation_metrics.py  # scores every saved run -> results/presentation_runs.csv
-python EXPERIMENTS/code/deck_figures.py          # bias / variance split  -> results/bias_variance_runs.csv
-python EXPERIMENTS/code/build_dashboard.py       # rewrites src/data/results.json (and the old HTML dashboard)
+python EXPERIMENTS/pipeline/legacy/presentation_metrics.py  # scores every saved run -> results/presentation_runs.csv
+python presentations/2026-10-25-report-deck/code/deck_figures.py          # bias / variance split  -> results/bias_variance_runs.csv
+python EXPERIMENTS/pipeline/legacy/build_dashboard.py       # rewrites src/data/results.json (and the old HTML dashboard)
 cd EXPERIMENTS/dashboard_react
 npm run build                                    # new dist/index.html
 ```
@@ -106,7 +111,7 @@ New UI files: `tabs/ExperimentTab.tsx`, `tabs/ExperimentLibrary.tsx`, `component
 
 ## Extended catalogue, timing and demeaning
 
-`src/data/catalog.json` supplements the original generated dataset. Rebuild it from existing saved predictions (no training) with `python scripts/build_catalog.py`, using the project Python environment with numpy, pandas and matplotlib. It exports five family models, 38 earlier study/configuration collections, main-run timing metadata and full-trial means. Three teammate entries are transcribed directly from the local `origin/main` Markdown reports, with revision and native aggregation retained. They intentionally do not invent unavailable waveform, seed, or timing records.
+`src/data/catalog.json` supplements the original generated dataset. Rebuild it from existing saved predictions (no training) with `python scripts/legacy/build_catalog.py`, using the project Python environment with numpy, pandas and matplotlib. It exports five family models, 38 earlier study/configuration collections, main-run timing metadata and full-trial means. Three teammate entries are transcribed directly from the local `origin/main` Markdown reports, with revision and native aggregation retained. They intentionally do not invent unavailable waveform, seed, or timing records.
 
 The earlier family targets differ from the clean passive-trial evaluation target; this is labelled explicitly. Study collections remain separate, including the two ridge variants. Full float32 waveform storage preserves extreme ridge failures without int16 clipping. Box plots display quartiles, a median and 5th–95th percentile whiskers plus individual seeds. Timing is wall-clock per saved run, with the measured scope labelled (family fit-only versus research/control fit and prediction).
 
@@ -119,7 +124,7 @@ The shipped client uses `presentation-catalog.json`: all 15 controlled experimen
 
 Box plots now offer individual-axis zoom or a shared scale, plus ordinal position focus. Individual-axis limits include all displayed points and explicitly show the changed axis range; they do not trim outliers. The focused catalogue retains only the archived GRU waveform payload to reduce startup cost.
 
-Refresh the focused supplement after rebuilding the archived catalogue with `python scripts/build_presentation_catalog.py`, then run the normal dashboard build. Only the explicitly requested collections are shipped in the focused interface.
+Refresh the focused supplement after rebuilding the archived catalogue with `python scripts/legacy/build_presentation_catalog.py`, then run the normal dashboard build. Only the explicitly requested collections are shipped in the focused interface.
 
 
 ## 0.5 s window + retest passive map

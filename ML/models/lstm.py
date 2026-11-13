@@ -48,29 +48,30 @@ class GatedSum(layers.Layer):
         return ops.sum(z * g, axis=-1, keepdims=True)
 
 
-def _lstm_stack(n_steps, n_features, name='ankle_torque_lstm'):
+def _lstm_stack(n_steps, n_features, n_units=8, dropout=0.3, name='ankle_torque_lstm'):
     return Sequential([
         Input(shape=(n_steps, n_features)),
-        LSTM(8, activation='tanh', return_sequences=True),
-        Dropout(0.3),
-        LSTM(8, activation='tanh', return_sequences=False),
-        Dropout(0.3),
+        LSTM(n_units, activation='tanh', return_sequences=True),
+        Dropout(dropout),
+        LSTM(n_units, activation='tanh', return_sequences=False),
+        Dropout(dropout),
         Dense(1),
     ], name=name)
 
 
 def build_model(n_steps: int = 20, n_features: int = 5,
+                n_units: int = 8, dropout: float = 0.3,
                 anchored: bool = False, moe_knots=None,
                 moe_expert_bias: bool = True) -> Model:
     """Two-layer stacked LSTM for ankle torque regression (Nm).
 
     Architecture
     ------------
-    Input  : [batch, 20, 5]
-    LSTM 1 : 8 units, tanh, return_sequences=True
-    Dropout: 30%
-    LSTM 2 : 8 units, tanh, return_sequences=False
-    Dropout: 30%
+    Input  : [batch, n_steps, n_features]
+    LSTM 1 : n_units, tanh, return_sequences=True
+    Dropout: dropout (default 30%)
+    LSTM 2 : n_units, tanh, return_sequences=False
+    Dropout: dropout
     Dense  : 1 unit  → predicted ankle torque (Nm)
 
     moe_knots (list of training operating angles) → mixture-of-experts head:
@@ -101,7 +102,7 @@ def build_model(n_steps: int = 20, n_features: int = 5,
         out = layers.Add()([z_shared, GatedSum()([z_expert, gate])])
         return Model(inp, out, name='ankle_torque_lstm_moe')
 
-    core = _lstm_stack(n_steps, n_features)
+    core = _lstm_stack(n_steps, n_features, n_units, dropout)
     if not anchored:
         return core
     inp = Input(shape=(n_steps, n_features))

@@ -27,7 +27,7 @@ import argparse
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXP = os.path.dirname(HERE)
 SNAP = os.path.join(EXP, 'baseline', 'original_code')
-MAIN_DATA = os.environ.get('EMG_DATA_DIR')            # set by ML/experiments/env.sh
+MAIN_DATA = os.environ.get('EMG_DATA_DIR')            # set to the recordings folder, e.g. ML/subjects
 
 sys.path.insert(0, SNAP)                              # frozen original code first
 # make sure nothing from the modified worktree package shadows the frozen copy

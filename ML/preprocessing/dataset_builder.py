@@ -56,9 +56,8 @@ TRANSIENT_SAMPLES = 1000         # samples to trim from start of each trial at 1
 TRAIN_FRAC        = 0.80
 VAL_FRAC          = 0.20
 
-# Trials (active or passive) whose torque std exceeds this are passive
-# movement / ramp trials and are excluded from both the training set and
-# the passive torque lookup.
+# Active trials whose torque std exceeds this are likely ramp / dynamic
+# movements (not isometric holds) and are excluded from training.
 _ACTIVE_STD_THRESHOLD  = 30.0   # Nm
 
 
@@ -573,7 +572,8 @@ def build_dataset(trials,
                   emg_clip=None,
                   emg_floor=None,
                   emg_agc_norm=False,
-                  position_feature='raw'):
+                  position_feature='raw',
+                  passive_entries_override=None):
     """
     Full pipeline: classify → normalize EMG → passive-subtract torque
                    → downsample → sliding windows → temporal split → stack.
@@ -720,9 +720,9 @@ def build_dataset(trials,
     # Extract envelopes for retest trials (always needed)
     for df in retest_trials:
         for col in emg_columns:
-            env, rect = extract_envelope(df[col].values,
+            env, stages = extract_envelope(df[col].values,
                                          return_intermediates=True)
-            df[f'{col}_rect'] = rect
+            df[f'{col}_rect'] = stages['rectified']
             df[f'{col}_env'] = env
             df[f'{col}_env_norm'] = env / emg_max[col]
 
@@ -748,7 +748,11 @@ def build_dataset(trials,
                 return entries
         return get_passive_torque_map(trials_)
 
-    if passive_overrides and 'test' in passive_overrides:
+    if passive_entries_override is not None:
+        # One manually reviewed map for both sessions (main's audited override path).
+        passive_entries = sorted(passive_entries_override, key=lambda x: x[0])
+        print(f"\nPassive torque map (manually overridden — {len(passive_entries)} entries, both sessions):")
+    elif passive_overrides and 'test' in passive_overrides:
         passive_entries = sorted(passive_overrides['test'], key=lambda x: x[0])
         print(f"\nTest-session passive torques (hardcoded from worksheet):")
     else:
@@ -759,7 +763,9 @@ def build_dataset(trials,
     for pos, tq in passive_entries:
         print(f"  pos ≈ {pos:+.3f} rad → passive torque = {tq:+.3f} Nm")
 
-    if passive_overrides and 'retest' in passive_overrides:
+    if passive_entries_override is not None:
+        retest_passive_entries = passive_entries
+    elif passive_overrides and 'retest' in passive_overrides:
         retest_passive_entries = sorted(passive_overrides['retest'], key=lambda x: x[0])
         print(f"\nRetest-session passive torques (hardcoded from worksheet):")
     else:

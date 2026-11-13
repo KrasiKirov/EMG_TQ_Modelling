@@ -64,8 +64,10 @@ _CANONICAL_NAMES = {
 
 def _read_int32(f):
     raw = f.read(4)
-    if len(raw) < 4:
+    if not raw:
         return None
+    if len(raw) != 4:
+        raise IOError('Truncated FLB integer/header.')
     return struct.unpack('<i', raw)[0]
 
 
@@ -78,9 +80,14 @@ def _read_float64(f):
 
 
 def _read_string(f, length):
-    if length <= 0:
+    if length is None or length < 0:
+        raise IOError('Invalid or truncated FLB string length.')
+    if length == 0:
         return 'DEFAULT'
-    return f.read(length).decode('latin-1', errors='replace')
+    raw = f.read(length)
+    if len(raw) != length:
+        raise IOError('Truncated FLB string.')
+    return raw.decode('latin-1', errors='replace')
 
 
 # ── Read one trial header (flbrdet equivalent) ────────────────────────────
@@ -91,7 +98,7 @@ def _read_header(f):
     if flb_version is None:
         return None  # clean EOF
 
-    if flb_version < 2:
+    if flb_version not in (2, 3, 4):
         raise ValueError(f"Unsupported FLB version: {flb_version}")
 
     h = {'version': flb_version}
@@ -143,13 +150,18 @@ def _read_header(f):
 
 def _read_data(f, h):
     """Read the raw data block for a trial given its header dict."""
+    if any(not isinstance(h[k], int) or h[k] <= 0
+           for k in ('nChan', 'chanLen', 'nReal')):
+        raise ValueError('Invalid FLB dimensions.')
+    if h['nReal'] != 1:
+        raise ValueError('Multiple FLB realizations require explicit selection; refusing to discard data.')
     n_samples = h['nChan'] * h['chanLen'] * h['nReal']
 
     if h['chanFormat'] == 4:
-        dtype = np.float32
+        dtype = np.dtype('<f4')
         itemsize = 4
     elif h['chanFormat'] == 2:
-        dtype = np.int16
+        dtype = np.dtype('<i2')
         itemsize = 2
     else:
         raise ValueError(f"Unknown chanFormat: {h['chanFormat']}")
@@ -203,13 +215,17 @@ def read_flb(filepath, subject_id='default', channel_names=None):
 
             data = _read_data(f, h)   # (chanLen, nChan)
 
-            # Enforce 1 ms sampling rate (as done in read_preprocess_data.m)
-            Ts = 0.001
+            # Retain the acquisition interval; callers can validate/override explicitly.
+            Ts = float(h['domainIncr'])
+            if not np.isfinite(Ts) or Ts <= 0:
+                raise ValueError('FLB sampling interval must be finite and positive.')
             n_samples = data.shape[0]
             time = h['domainStart'] + np.arange(n_samples) * Ts
 
             # Reorder channels for IES01
             if subject_id.upper() == 'IES01' and data.shape[1] >= 6:
+                if data.shape[1] != 6:
+                    raise ValueError('IES channel mapping expects exactly six channels.')
                 data = data[:, IES01_CHANNEL_ORDER]
                 # After reorder, data matches DEFAULT_CHANNEL_NAMES order
                 # (pos, tq, gm, gl, sol, ta) — ignore file header names
@@ -225,8 +241,9 @@ def read_flb(filepath, subject_id='default', channel_names=None):
             # Normalize to canonical names (e.g. 'pos' -> 'position')
             col_names = [_CANONICAL_NAMES.get(c, c) for c in col_names]
 
-            n_ch = min(data.shape[1], len(col_names))
-            df = pd.DataFrame(data[:, :n_ch], columns=col_names[:n_ch])
+            if len(col_names) != data.shape[1] or len(set(col_names)) != len(col_names):
+                raise ValueError('Channel mapping must name every channel uniquely.')
+            df = pd.DataFrame(data, columns=col_names)
             df.insert(0, 'time', time)
 
             # Attach metadata as DataFrame attributes
@@ -236,11 +253,11 @@ def read_flb(filepath, subject_id='default', channel_names=None):
             df.attrs['comment']     = h['comment']
             df.attrs['chanName']    = h['chanName']
             df.attrs['source_file'] = os.path.basename(filepath)
+            df.attrs['raw_domainIncr'] = h['domainIncr']
+            df.attrs['chanFormat'] = h['chanFormat']
 
             trials.append(df)
             trial_idx += 1
 
     print(f"Read {len(trials)} trials from '{os.path.basename(filepath)}'")
     return trials
-
-

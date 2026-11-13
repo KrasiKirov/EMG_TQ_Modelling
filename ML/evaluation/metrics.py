@@ -39,6 +39,13 @@ def compute_metrics(y_true, y_pred):
     -------
     dict with keys: r2, vaf, rmse, nrmse, mae
     """
+    y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
+    if y_true.ndim != 1 or y_pred.shape != y_true.shape:
+        raise ValueError('Metrics require matching one-dimensional arrays')
+    if not np.isfinite(y_true).all() or not np.isfinite(y_pred).all():
+        raise ValueError('Metrics do not accept non-finite values')
+    if not len(y_true):
+        return dict.fromkeys(('r2', 'vaf', 'rmse', 'nrmse', 'mae', 'bias', 'p95_abs', 'target_sd'), float('nan'))
     ss_res = np.sum((y_true - y_pred) ** 2)
     ss_tot = np.sum((y_true - y_true.mean()) ** 2)
     r2    = 1.0 - ss_res / ss_tot if ss_tot > 0 else float('nan')
@@ -47,7 +54,9 @@ def compute_metrics(y_true, y_pred):
     y_range = y_true.max() - y_true.min()
     nrmse = rmse / y_range if y_range > 0 else float('nan')
     mae   = np.mean(np.abs(y_true - y_pred))
-    return {'r2': r2, 'vaf': vaf, 'rmse': rmse, 'nrmse': nrmse, 'mae': mae}
+    return {'r2': r2, 'vaf': vaf, 'rmse': rmse, 'nrmse': nrmse, 'mae': mae,
+            'bias': np.mean(y_pred - y_true), 'p95_abs': np.percentile(np.abs(y_pred - y_true), 95),
+            'target_sd': np.std(y_true)}
 
 
 def compute_per_position_metrics(X_test, y_test, y_pred, known_positions):

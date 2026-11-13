@@ -76,7 +76,7 @@ def train_and_evaluate(train_data, test_data, label):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def main():
+def legacy_main():
     os.makedirs(MODEL_DIR, exist_ok=True)
     os.makedirs(PLOT_DIR,  exist_ok=True)
 
@@ -152,6 +152,11 @@ def main():
                     os.path.join(PLOT_DIR, 'cross_subject_r2_overlay.png'))
 
     print(f'\nDone. All plots saved to {PLOT_DIR}/')
+
+
+def main():
+    from ML.training.benchmark import main as audited_main
+    audited_main(default_protocol='loso')
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ Plain-English summary of the controlled experiments in `EXPERIMENTS/`. Model met
 - **Baseline X00:** the original code, frozen from the project folder on disk (`baseline/original_code/`), with 3 fixed seeds. The original code set no seed.
   - For the 2 values we can compare (seed 0), it matches the earlier runs of the original code with the original settings: YES −0.49 rad R² −0.68, and JM −0.64 rad −0.32.
 - **X00f vs X00:**
-  - The framework builds the same data (`code/check_equivalence.py`). It differs only by rounding at the 1e-6 Nm level, plus one validation window per trial, which the runner removes.
+  - The framework builds the same data (`analysis/check_equivalence.py`). It differs only by rounding at the 1e-6 Nm level, plus one validation window per trial, which the runner removes.
   - Training is chaotic, so results differ at the level of run-to-run variation. Example: X00f JM S1 → S2 toes-down R² is 0.09, against 0.39 for X00.
 - **Answer key (supervisor's choice):** measured torque − passive torque from the **passive trials of the session being tested**.
   - We use the clean, still holds of the passive trials, which removes JM's bad table entry.
@@ -203,12 +203,12 @@ In S2 → S1, HM's toes-down positions dip slightly: 0.917 → 0.910 and 0.948 �
 ## 8. Reproduce
 ```bash
 source ML/experiments/env.sh
-$PY EXPERIMENTS/code/run_queue.py --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
-$PY EXPERIMENTS/code/run_queue.py --exps X00f_baseline_framework D01_cleanpassive+autogain+equalweight \
+$PY EXPERIMENTS/pipeline/run_queue.py --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
+$PY EXPERIMENTS/pipeline/run_queue.py --exps X00f_baseline_framework D01_cleanpassive+autogain+equalweight \
     --subjects YES JM EG IES CH HM --directions S1toS2 S2toS1 --seeds 0 1 2
-$PY EXPERIMENTS/code/score.py && $PY EXPERIMENTS/code/diagnostics.py && $PY EXPERIMENTS/code/offset_shift.py
-$PY EXPERIMENTS/code/analyze_stage.py --stage D --seeds 0 1 2 --subjects JM IES CH HM --exps D01_cleanpassive+autogain+equalweight
-$PY EXPERIMENTS/code/final_figures.py
+$PY EXPERIMENTS/pipeline/legacy/score.py && $PY EXPERIMENTS/analysis/diagnostics.py && $PY EXPERIMENTS/analysis/offset_shift.py
+$PY EXPERIMENTS/analysis/analyze_stage.py --stage D --seeds 0 1 2 --subjects JM IES CH HM --exps D01_cleanpassive+autogain+equalweight
+$PY EXPERIMENTS/analysis/final_figures.py
 ```
 
 **Where everything is:**

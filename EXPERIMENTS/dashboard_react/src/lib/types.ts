@@ -1,4 +1,4 @@
-// Shapes of results.json (written by EXPERIMENTS/code/build_dashboard.py) and of the derived objects.
+// Shapes of results.json (written by EXPERIMENTS/pipeline/legacy/build_dashboard.py) and of the derived objects.
 
 export type Dir = 'S1toS2' | 'S2toS1';
 export type MetricKey = 'r2' | 'mae' | 'r2_demeaned' | 'bias';
@@ -60,6 +60,9 @@ export interface Run {
   mae_demeaned: number;
   peak: number;
   toes: 0 | 1;
+  /** error breakdown, 30 s → end of trial: MAE as predicted, and after a 10 s per-angle gain + offset (reported, not applied) */
+  err_raw_mae?: number;
+  err_after_gain_offset_mae?: number;
 }
 
 /** percentiles over runs (numpy default linear interpolation) */

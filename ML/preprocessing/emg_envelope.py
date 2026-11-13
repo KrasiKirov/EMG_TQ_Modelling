@@ -24,7 +24,6 @@ from scipy.signal import butter, sosfiltfilt
 # also enforces this ordering so the feature array is always
 #     [MG, LG, SOL, TA, position].
 CANONICAL_EMG_ORDER = ['gm', 'gl', 'sol', 'ta']
-DEFAULT_EMG_COLUMNS = CANONICAL_EMG_ORDER
 DEFAULT_FS = 1000.0        # Hz — sampling frequency used in REKLAB experiments
 DEFAULT_BP_LOW = 30.0      # Hz — bandpass lower cutoff
 DEFAULT_BP_HIGH = 300.0    # Hz — bandpass upper cutoff
@@ -59,6 +58,8 @@ def detect_emg_columns(df):
     emg_cols = set()
     for col in df.columns:
         col_lower = col.lower()
+        if col_lower.endswith(('_env', '_env_norm', '_rect')):
+            continue
         if col_lower in _NON_EMG_NAMES:
             continue
         if any(kw in col_lower for kw in _EMG_KEYWORDS):
@@ -106,28 +107,29 @@ def extract_envelope(signal, fs=DEFAULT_FS,
         If True, subtract mean before filtering (default True).
         Required for wireless EMG sensors with DC offset.
     return_intermediates : bool
-        If True, also return the bandpass-filtered+rectified signal
-        (``rectified``) alongside the envelope.
+        If True, also return a dict of intermediate signals
+        (``demeaned``, ``filtered``, ``rectified``) alongside the envelope.
 
     Returns
     -------
     envelope : np.ndarray
         Un-normalized linear envelope (same length as input).
-    rectified : np.ndarray
-        Bandpass-filtered and rectified signal — only returned when
-        ``return_intermediates=True``.
+    stages : dict of np.ndarray
+        Filter stages — only returned when ``return_intermediates=True``.
     """
     signal = np.asarray(signal, dtype=np.float64)
 
     # Step 0: Remove DC offset (matches MATLAB demean.m: y = x - mean(x))
     if demean:
-        signal = signal - np.mean(signal)
+        demeaned = signal - np.mean(signal)
+    else:
+        demeaned = signal
 
     nyq = 0.5 * fs
 
     # Step 1: Bandpass filter
     sos_bp = butter(order, [bp_low / nyq, bp_high / nyq], btype='band', output='sos')
-    filtered = sosfiltfilt(sos_bp, signal)
+    filtered = sosfiltfilt(sos_bp, demeaned)
 
     # Step 2: Full-wave rectification
     rectified = np.abs(filtered)
@@ -140,7 +142,11 @@ def extract_envelope(signal, fs=DEFAULT_FS,
     envelope = np.clip(envelope, 0, None)
 
     if return_intermediates:
-        return envelope, rectified
+        return envelope, {
+            'demeaned': demeaned,
+            'filtered': filtered,
+            'rectified': rectified,
+        }
     return envelope
 
 
@@ -191,18 +197,21 @@ def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
         ``{column_name: max_used}`` — the global max values used for
         normalization.
     """
+    trials = [df.copy(deep=True) for df in trials]
+    if not trials:
+        raise ValueError('At least one trial is required.')
     if emg_columns is None:
         emg_columns = detect_emg_columns(trials[0])
 
     # Step 1: Extract envelopes
     for df in trials:
         for col in emg_columns:
-            env, rect = extract_envelope(df[col].values, fs=fs,
+            env, stages = extract_envelope(df[col].values, fs=fs,
                                          bp_low=bp_low, bp_high=bp_high,
                                          lp_cutoff=lp_cutoff, order=order,
                                          demean=demean,
                                          return_intermediates=True)
-            df[f'{col}_rect'] = rect
+            df[f'{col}_rect'] = stages['rectified']
             df[f'{col}_env'] = env
 
     # Step 2: Determine max per channel
@@ -225,5 +234,4 @@ def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
         print(f"  {col} max used: {max_values[col]:.6f}")
 
     return trials, max_values
-
 

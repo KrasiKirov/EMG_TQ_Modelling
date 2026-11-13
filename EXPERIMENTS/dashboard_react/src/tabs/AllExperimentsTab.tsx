@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { Text, Title, UnstyledButton } from '@mantine/core';
 import { DS } from '../dataset';
 import { familiesTable, FAMILY_NAMES } from '../lib/aggregate';
-import { catalogTitle, EXTRA } from '../lib/catalog';
+import { ALL_EXPERIMENTS, catalogTitle, EXTRA } from '../lib/catalog';
+import { BLURBS, PRESENTATION_GROUPS } from '../lib/presentation';
 import { STORIES, STUDY_ORDER } from '../lib/experimentStory';
 import { fmt } from '../lib/format';
 import { shortId } from '../lib/params';
@@ -13,17 +14,6 @@ interface Entry { key: string; page?: string; name: string; code: string; what: 
 interface Section { title: string; note: string; entries: Entry[] }
 
 const WHAT: Record<string, string> = {
-  'norm/N0cal': 'The session-1 LSTM, plus a 10 s stretch-and-shift per angle in session 2. Not retrained.',
-  'norm/N0': 'Total torque · EMG ÷ session-1 maximum · balanced positions · 0.2 s.',
-  'norm/A0': 'As above, but predicts active torque: each session’s relaxed-hold passive torque subtracted.',
-  'norm/A0cal': 'Active-torque LSTM plus the 10 s calibration.',
-  'norm/N1': 'Each muscle ÷ its session-1 99th percentile.',
-  'norm/N2': 'Each muscle ÷ its peak in the maximum-effort trials (% of MVC).',
-  'norm/N3': 'Each session ÷ its own 99th percentile. Needs all of session 2’s EMG first.',
-  'norm/NR0': 'One ridge regression per angle, no LSTM. Reference only.',
-  'norm/NR1': 'One ridge regression per angle, no LSTM. Reference only.',
-  'norm/NR2': 'One ridge regression per angle, no LSTM. Reference only.',
-  'norm/NR3': 'One ridge regression per angle, no LSTM. Reference only.',
   'X00_baseline': 'Last semester’s code unchanged: plain loss, EMG ÷ training maximum.',
   'main/session-passive': '0.5 s window, corrected trial labels, passive map re-measured in session 2; 10 seeds.',
   H_pgain_posw: 'The family study’s reference LSTM, 8 units × 2 layers.',
@@ -38,7 +28,7 @@ export function AllExperimentsTab() {
   const open = (id: string) => { set({ experiment: id, tab: 'overview', runA: 'typical' }); window.scrollTo({ top: 0 }); };
   const sections = useMemo<Section[]>(() => {
     const page = (id: string): Entry => ({
-      key: id, page: id, name: catalogTitle(id), code: id === 'main/session-passive' ? 'retest map' : shortId(id.replace(/^(norm|main|family)\//, '')), what: WHAT[id] ?? STORIES[id]?.purpose ?? '',
+      key: id, page: id, name: catalogTitle(id), code: id === 'main/session-passive' ? 'retest map' : shortId(id.replace(/^(norm|main|family)\//, '')), what: BLURBS[id] ?? WHAT[id] ?? (EXTRA[id]?.kind === 'spec' ? EXTRA[id].description : undefined) ?? STORIES[id]?.purpose ?? '',
       toesMae: pageScore(id, 1, 'mae', s.floor, s.dir), toesR2: pageScore(id, 1, 'r2', s.floor, s.dir),
       otherMae: pageScore(id, 0, 'mae', s.floor, s.dir), otherR2: pageScore(id, 0, 'r2', s.floor, s.dir), ...coverage(id, s.dir),
     });
@@ -47,10 +37,13 @@ export function AllExperimentsTab() {
       toesMae: r.toesMae, toesR2: r.toesR2, otherMae: r.otherMae, otherR2: r.otherR2, people: r.persons.length, seeds: Math.round(r.runs / Math.max(r.persons.length, 1)), // runs = distinct (person, seed) pairs
     }));
     return [
-      { title: 'Balanced positions', note: 'Calibrated entries are scored from 30 s to the end of each trial; the others on the whole trial.', entries: ['norm/A0', 'norm/A0cal', 'norm/N0', 'norm/N0cal'].map(page) },
-      { title: 'Normalization study', note: 'Total torque, balanced positions, 0.2 s. N1 and N2 were run on YES, JM and EG only. Ridge rows are a non-LSTM reference.', entries: ['norm/N0', 'norm/N1', 'norm/N2', 'norm/N3', 'norm/NR0', 'norm/NR1', 'norm/NR2', 'norm/NR3'].filter((id) => EXTRA[id]).map(page) },
+      ...PRESENTATION_GROUPS.filter((g) => g.label !== 'Exploration').map((g): Section => ({
+        title: g.label,
+        note: g.items.some((it) => EXTRA[it.id]?.calibration?.type === 'gain_offset')
+          ? `${g.caption}. Calibrated entries are scored from 30 s to the end of each trial; the others on the whole trial.` : g.caption,
+        entries: g.items.map((it) => it.id).filter((id) => ALL_EXPERIMENTS[id]).map(page),
+      })),
       { title: 'Network types', note: 'Report 1. Each run is scored on its own target, so compare these rows with each other only. Only the GRU has a page with waveforms.', entries: families },
-      { title: 'Earlier models', note: 'Each scored on its own target, on the whole trial.', entries: ['X00_baseline', 'main/session-passive'].map(page) },
       { title: 'Controlled single changes', note: 'Last semester’s LSTM with one setting changed at a time.', entries: STUDY_ORDER.filter((id) => DS.experiments[id] && id !== 'X00_baseline').map(page) },
     ];
   }, [s.floor, s.dir]);
