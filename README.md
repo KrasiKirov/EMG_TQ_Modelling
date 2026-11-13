@@ -85,6 +85,7 @@ flowchart LR
 ## Documentation
 
 - [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md): the spec format and the full run → tag → build workflow
+- [`docs/BASELINE.md`](docs/BASELINE.md): the current baseline's windows, overlap and target, compared with Zhang 2022 and Truong 2023
 - [`docs/CALIBRATION.md`](docs/CALIBRATION.md): the default target, the opt-in 10 s calibration, and the error breakdown
 - [`docs/DATA.md`](docs/DATA.md): subjects, sessions, positions, trial types and the `.flb` format
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): what each module does, Python and MATLAB

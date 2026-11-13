@@ -103,8 +103,18 @@ After the merge, check:
 - `pytest`
 - one short training run of `python -m EXPERIMENTS.pipeline.run` (EG, seed 0)
 
+## After the merge (13 Nov 2026)
+
+Merged as recommended (merge commit `31142bd` on `cleanup`). Checks:
+- `compare_pipelines.py --ref <pre-merge commit>`: the experiment data is identical (largest difference 0) for all six people.
+- `python -m unittest discover -s ML/tests -t .`: 36 tests pass. `pytest`: all pass, including the slow regression.
+- One full training run of A0's settings on the merged code (EG, session 1 → 2, seed 0, under a temporary id):
+  identical targets; 68 epochs, as in the saved A0 run; MAE toes-down 0.672 vs 0.651 Nm saved, other angles 0.897
+  vs 0.896 Nm; correlation of the two prediction series 0.9998. The run used 8 threads, Python 3.13 and NumPy 2.4.3
+  instead of the original 1 thread, Python 3.11 and NumPy 2.4.4, so bit-identical predictions were not expected.
+
 ## Decisions for you
 
-1. Do you accept the recommendation: keep both, the experiment pipeline canonical, and combine the five files as above?
+1. ~~Do you accept the recommendation?~~ Accepted 13 Nov 2026.
 2. HM/IES channel profile: `'IES01'` (this branch) or `'default'` (`main`)?
 3. Should the audited pipeline's `session_passive_calibration` default become `True`, to match your rule that session-2 passive torque is the default?
