@@ -69,6 +69,16 @@ PASSIVE_TORQUE_OVERRIDES = {
     },
 }
 
+# ── Passive torque from experiment metadata (opt-in) ───────────────────────────
+# Used only when an experiment sets "metadata_passive": true AND the subject has no relaxed-hold passive map.
+# IES: no relaxed holds or usable passive trials were recorded; these are the passive torques noted at each
+# position during the MVC trials (ML/subjects/experiment_metadata_IES.docx, recorded once for both sessions).
+# (position_rad, passive_torque_Nm), same sign convention as the recordings (checked against IES's rest torque).
+METADATA_PASSIVE = {
+    'IES': [(-0.6, 1.6), (-0.4929, 1.36), (-0.3857, 0.6), (-0.2786, 0.4),
+            (-0.1714, -1.0), (-0.0643, -2.4), (0.0429, -5.6), (0.15, -5.8)],
+}
+
 # ── Training hyperparameters ─────────────────────────────────────────────────
 LEARNING_RATE  = 0.003
 LR_FACTOR      = 0.7

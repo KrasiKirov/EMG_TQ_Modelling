@@ -48,7 +48,7 @@ from ML.config import SUBJECTS, DATA_DIR, TRIAL_OVERRIDES, PASSIVE_TORQUE_OVERRI
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing import dataset_builder as db
 from ML.preprocessing import active_torque as at
-from ML.preprocessing.emg_envelope import extract_envelope, detect_emg_columns
+from ML.preprocessing.emg_envelope import extract_envelope, extract_envelope_causal, detect_emg_columns
 
 from . import config as C
 
@@ -87,20 +87,50 @@ def _split_trials(trials, subject):
     return mvc, passive, active, s1, s2
 
 
-def _process_active(df, emg_cols, session):
-    env1k = np.column_stack([extract_envelope(df[c].values) for c in emg_cols])
+ENVELOPES = ('zerophase', 'causal')
+
+
+def _envelope_fn(envelope, lp_order=4):
+    if envelope not in ENVELOPES:
+        raise ValueError(f'envelope must be one of {ENVELOPES}, got {envelope!r}')
+    if envelope == 'zerophase':
+        if lp_order != 4:
+            raise ValueError('lp_order is only supported with the causal envelope')
+        return extract_envelope
+    return lambda x: extract_envelope_causal(x, lp_order=lp_order)
+
+
+def _process_active(df, emg_cols, session, envelope='zerophase', trim_end_s=0.0, lp_order=4):
+    """One active trial at 100 Hz.
+
+    envelope   'zerophase' (default; forward-backward filters, as every result before Nov 2026) or 'causal'
+               (forward-only filters; the inputs are then plain 1-in-10 samples of the envelope and angle,
+               so no input sample uses later data; the torque target keeps the zero-phase decimation).
+    trim_end_s seconds dropped at the END of the trial, in addition to the first TRIM_START samples.
+    lp_order   order of the 2 Hz envelope low-pass (causal envelope only; the band-pass stays 4th order).
+    With the defaults the EMG scale (env_max1k) is the whole-trial maximum, as the original pipeline;
+    otherwise it is the maximum over the kept samples only.
+    """
+    env1k = np.column_stack([_envelope_fn(envelope, lp_order)(df[c].values) for c in emg_cols])
     pos = df[db.POSITION_COL].values
     tq = df[db.TORQUE_COL].values
     s = C.TRIM_START
-    env = np.column_stack([_decim(env1k[s:, k]) for k in range(env1k.shape[1])])
-    p, q = _decim(pos[s:]), _decim(tq[s:])
+    e = len(tq) - int(round(trim_end_s * C.FS_RAW))
+    if envelope == 'causal':
+        env, p = env1k[s:e:C.DOWNSAMPLE], pos[s:e:C.DOWNSAMPLE].astype(np.float64)
+    else:
+        env = np.column_stack([_decim(env1k[s:e, k]) for k in range(env1k.shape[1])])
+        p = _decim(pos[s:e])
+    q = _decim(tq[s:e])
     n = min(len(env), len(p), len(q))
     t = (s + np.arange(n) * C.DOWNSAMPLE) / C.FS_RAW
+    legacy = envelope == 'zerophase' and not trim_end_s
     return {
         'idx': int(df.attrs.get('trial_index')), 'comment': df.attrs.get('comment', ''),
         'session': session, 'angle': float(np.mean(p[:n])), 't': t,
-        'env_raw': env[:n], 'env_max1k': env1k.max(axis=0), 'pos': p[:n], 'tq': q[:n],
-        'hold': None,
+        'env_raw': env[:n], 'env_max1k': env1k.max(axis=0) if legacy else env1k[s:e].max(axis=0),
+        'pos': p[:n], 'tq': q[:n], 'hold': None, 'envelope': envelope, 'trim_end_s': float(trim_end_s),
+        'lp_order': int(lp_order),
     }
 
 
@@ -150,10 +180,14 @@ def _passive_maps(subject, passive_trials):
     return out
 
 
-def load_subject(subject, use_cache=True):
-    """Return the processed bundle for ``subject`` (see module docstring)."""
+def load_subject(subject, use_cache=True, envelope='zerophase', trim_end_s=0.0, lp_order=4):
+    """Return the processed bundle for ``subject`` (see module docstring).
+    envelope / trim_end_s: see ``_process_active``; the defaults reproduce every earlier result."""
+    _envelope_fn(envelope, lp_order)
     os.makedirs(C.CACHE_DIR, exist_ok=True)
-    path = os.path.join(C.CACHE_DIR, f'{subject}_bundle_v{CACHE_VERSION}.pkl')
+    tag = '' if (envelope == 'zerophase' and not trim_end_s) else f'_{envelope}_end{trim_end_s:g}'
+    tag += '' if lp_order == 4 else f'_lp{lp_order}'
+    path = os.path.join(C.CACHE_DIR, f'{subject}_bundle_v{CACHE_VERSION}{tag}.pkl')
     if use_cache and os.path.exists(path):
         with open(path, 'rb') as f:
             return pickle.load(f)
@@ -167,7 +201,7 @@ def load_subject(subject, use_cache=True):
     for df in active:
         i = df.attrs.get('trial_index')
         if i in s1 or i in s2:
-            recs.append(_process_active(df, emg_cols, 'S1' if i in s1 else 'S2'))
+            recs.append(_process_active(df, emg_cols, 'S1' if i in s1 else 'S2', envelope, trim_end_s, lp_order))
     recs.sort(key=lambda r: r['idx'])
 
     holds = _find_holds(trials, exclude_idx={r['idx'] for r in recs})
@@ -179,7 +213,7 @@ def load_subject(subject, use_cache=True):
 
     mvc_recs = []
     for df in mvc:
-        env1k = np.column_stack([extract_envelope(df[c].values) for c in emg_cols])
+        env1k = np.column_stack([_envelope_fn(envelope, lp_order)(df[c].values) for c in emg_cols])
         q = df[db.TORQUE_COL].values
         base = float(np.median(q[:1000]))
         mvc_recs.append({'idx': int(df.attrs.get('trial_index')), 'angle': float(df[db.POSITION_COL].mean()),

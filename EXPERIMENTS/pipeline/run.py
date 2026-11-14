@@ -33,7 +33,8 @@ import numpy as np                                     # noqa: E402
 
 BASE = dict(passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm',
             balance='none', pf_extra=None, window=20, lr=None, train_protocol='orig', rest_weight=None,
-            extra_input=None, shuffle=True)
+            extra_input=None, shuffle=True, envelope='zerophase', trim_end_s=0.0, input_step=1, train_stride=1,
+            state='reset', lp_order=4, val_gap=False, metadata_passive=False, chunk=None)
 
 
 def load_config(exp):
@@ -94,6 +95,33 @@ def add_passive_input(data, subject):
     return data
 
 
+def fit_carry(data, cfg, seed):
+    """state='carry': train ML.research.stateful on whole trials; return test predictions on the same samples
+    (and in the same order) as the windowed model's data['y_test'] / data['meta_test']."""
+    from ML.research import config as RC, stateful as ST
+    from ML.research.train import angle_groups, snap
+    knots = angle_groups(data['train_angles'])
+    k_of = lambda r: int(snap(np.array([r['angle']]), knots)[0])
+    st = data['streams']
+    train = [dict(s, k=k_of(s['rec'])) for s in st['train']]
+    test = [dict(s, k=k_of(s['rec'])) for s in st['test']]
+    p = RC.PROTOCOLS[cfg['train_protocol']]
+    preds, info = ST.fit_predict_carry(train, test, n_knots=len(knots), chunk=cfg['chunk'] or cfg['window'] * cfg['input_step'],
+                                       seed=seed, epochs=p['epochs'], early=p['early'], lr=cfg['lr'] or p['lr'],
+                                       lr_factor=p['lr_factor'], lr_patience=p['lr_patience'], balance=cfg['balance'],
+                                       units=cfg['units'], layers=cfg['layers'], dropout=cfg['dropout'])
+    by_trial = {s['rec']['idx']: (s, pr) for s, pr in zip(test, preds)}
+    meta = data['meta_test']
+    pred = np.empty(len(meta['trial']))
+    for i in np.unique(meta['trial']):
+        rows = np.where(meta['trial'] == i)[0]
+        s, pr = by_trial[int(i)]
+        pred[rows] = pr[meta['last'][rows]]
+        assert np.allclose(np.asarray(s['y'])[meta['last'][rows]], data['y_test'][rows])
+    info.update(knots=knots.tolist())
+    return pred, info, data
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--exp', required=True)
@@ -114,7 +142,12 @@ def main():
     spec, cfg = load_config(a.exp)
     RT.build_model = make_builder(cfg)                  # adds units / layers / dropout knobs
     t0 = time.time()
-    rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window')}
+    rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step', 'train_stride',
+                                'state', 'lp_order', 'val_gap', 'metadata_passive')}
+    if cfg['state'] not in ('reset', 'carry'):
+        raise ValueError(f"state must be 'reset' or 'carry', got {cfg['state']!r}")
+    if cfg['state'] == 'carry' and (cfg['model'] != 'lstm' or cfg['extra_input'] or cfg['train_stride'] != 1):
+        raise ValueError("state='carry' supports the plain LSTM with no extra input and train_stride 1")
     data, details = prepare(a.subject, a.direction, rcfg)
     data = drop_last_val_window(data)
     if cfg.get('extra_input') == 'passive_trial_value':
@@ -122,9 +155,12 @@ def main():
     t_prep = time.time() - t0
     out = os.path.join(EXP, 'results', a.exp, a.subject, a.direction)
     os.makedirs(out, exist_ok=True)
-    pred, info = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], cfg['train_protocol'], a.seed,
-                                lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
-                                save_weights=os.path.join(out, f'seed{a.seed}.weights.h5') if a.save_weights else None)
+    if cfg['state'] == 'carry':
+        pred, info, data = fit_carry(data, cfg, a.seed)
+    else:
+        pred, info = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], cfg['train_protocol'], a.seed,
+                                    lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
+                                    save_weights=os.path.join(out, f'seed{a.seed}.weights.h5') if a.save_weights else None)
     t_train = time.time() - t0 - t_prep
 
     y, meta = data['y_test'].astype(np.float64), data['meta_test']

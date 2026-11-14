@@ -13,7 +13,7 @@ Implements the standard processing pipeline:
 
 import numpy as np
 import pandas as pd
-from scipy.signal import butter, sosfiltfilt
+from scipy.signal import butter, sosfilt, sosfilt_zi, sosfiltfilt
 
 
 # Default parameters 
@@ -74,6 +74,30 @@ def detect_emg_columns(df):
 
 
 # Single-signal envelope extraction
+
+def extract_envelope_causal(signal, fs=DEFAULT_FS,
+                            bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
+                            lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
+                            settle_s=1.0, lp_order=None):
+    """Forward-only (causal) linear envelope: same band-pass, rectification and low-pass as
+    ``extract_envelope``, but each output sample uses only the current and earlier input samples,
+    as a real-time device would. The envelope lags the zero-phase one by about 0.23 s with the 4th-order 2 Hz
+    low-pass and about 0.12 s with a 2nd-order one (``lp_order=2``; the band-pass keeps ``order``).
+
+    The offset removed first is the mean of the first ``settle_s`` seconds, and the low-pass starts in the
+    steady state of the mean rectified value of its first 200 ms. Both use only the start of the trial, which
+    the pipeline drops (filter start-up), so no kept sample depends on later data.
+    """
+    x = np.asarray(signal, dtype=np.float64)
+    head = max(1, int(settle_s * fs))
+    x = x - np.mean(x[:head])
+    nyq = 0.5 * fs
+    sos_bp = butter(order, [bp_low / nyq, bp_high / nyq], btype='band', output='sos')
+    rectified = np.abs(sosfilt(sos_bp, x))
+    sos_lp = butter(lp_order or order, lp_cutoff / nyq, btype='low', output='sos')
+    zi = sosfilt_zi(sos_lp) * np.mean(rectified[:max(1, int(0.2 * fs))])
+    return sosfilt(sos_lp, rectified, zi=zi)[0]
+
 
 def extract_envelope(signal, fs=DEFAULT_FS,
                      bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,

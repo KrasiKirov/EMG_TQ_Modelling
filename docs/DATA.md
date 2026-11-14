@@ -7,7 +7,7 @@ Six people, one `.flb` file each in `ML/subjects/`. Each file holds both session
 
 | Subject | File | Channel profile | Notes |
 | --- | --- | --- | --- |
-| IES | `IES_081024.flb` | `IES01` (non-standard channel order) | No relaxed holds; `experiment_metadata_IES.docx`. `main` used `default` (open question) |
+| IES | `IES_081024.flb` | `IES01` (non-standard channel order) | No relaxed holds or usable passive trials (target = total torque unless `metadata_passive`); passive torques per position in `experiment_metadata_IES.docx`. `main` used `default` (open question) |
 | YES | `YES_281124.flb` | `default` | Passive values also hand-entered in `reklab_trial_worksheet_YES_20241128.pdf`; some trials mislabelled, fixed by overrides |
 | EG | `EG_121224.flb` | `default` | |
 | CH | `CH_151224.flb` | `default` | |

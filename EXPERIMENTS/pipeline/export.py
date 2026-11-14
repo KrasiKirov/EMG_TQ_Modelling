@@ -83,7 +83,7 @@ def _groups(specs_all, groups_cfg):
     if unknown:
         raise ValueError(f'groups missing from dashboard_groups.json: {sorted(unknown)}')
     return [dict(g, items=[{'id': i, 'label': lab} for _, i, lab in sorted(items[g['label']])])
-            for g in groups_cfg['groups']]
+            for g in groups_cfg['groups'] if items[g['label']]]          # empty groups stay hidden
 
 
 def export(specs, catalog, results, groups, all_specs=None):

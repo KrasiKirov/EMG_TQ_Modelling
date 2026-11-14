@@ -1,0 +1,17 @@
+{
+ "id": "W00b8_reference_batch8",
+ "title": "Window-study reference trained with batch 8 (A0 training)",
+ "description": "Batch-size check: the window-study reference with A0's original training (batch 8, learning-rate factor 0.7 after 10 flat epochs, early stop 25, at most 200 epochs). Seed 0 for all six people, compared with the batch-64 reference to decide the study's training (13 Nov 2026: batch 64 within 5 % for 4 of 6 people, median person +0.8 % MAE).",
+ "tags": [
+  "window study",
+  "batch size"
+ ],
+ "changes": {
+  "passive": "static",
+  "emg": "trainmax",
+  "balance": "scale",
+  "window": 20,
+  "envelope": "causal",
+  "trim_end_s": 1.0
+ }
+}

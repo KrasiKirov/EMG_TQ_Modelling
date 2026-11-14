@@ -393,7 +393,7 @@ network learns active torque instead of total torque? Not part of the pre-regist
 **What A0 is.** Exactly N0 (session-1 maximum, balanced positions, 0.2 s, no auto-gain, LSTM 8×2, all six people,
 three seeds), with one change: the network learns **active torque**. That is total torque minus the passive table,
 the torque the ankle shows when the person is relaxed at that angle. The passive table is the clean one, built from
-the 30-second relaxed holds, **one table per session**. IES has no relaxed holds, so IES uses the old passive rule.
+the 30-second relaxed holds, **one table per session**. IES has no relaxed holds, so IES uses the old passive rule. *(Correction, 13 Nov 2026: the old rule finds no passive trials for IES either, so nothing is subtracted and IES's target is total torque.)*
 
 **Can we compare A0 with N0 at all?** For MAE, yes. Within one trial the passive table is one constant number. Moving
 a whole trial up or down by a constant does not change the size of the errors. R² is less comparable, because active

@@ -99,22 +99,23 @@ def parse(raw: dict, stem: str | None = None) -> Spec:
                 results_from=raw.get('results_from', raw['id']), dashboard=entry, raw=raw)
 
 
-def load(exp_id: str, configs: Path = CONFIGS) -> Spec:
-    path = Path(configs) / f'{exp_id}.json'
+def load(exp_id: str, configs: Path = None) -> Spec:
+    path = Path(configs or CONFIGS) / f'{exp_id}.json'
     if not path.exists():
         raise SpecError(f'no spec file {path}')
     return parse(json.loads(path.read_text(encoding='utf-8')), path.stem)
 
 
-def load_all(configs: Path = CONFIGS) -> list:
-    return [load(p.stem, configs) for p in sorted(Path(configs).glob('*.json'))]
+def load_all(configs: Path = None) -> list:
+    configs = Path(configs or CONFIGS)
+    return [load(p.stem, configs) for p in sorted(configs.glob('*.json'))]
 
 
 def tag(exp_id, *, label, group, name=None, description=None, tags=None, order=None, blurb=None,
-        configs: Path = CONFIGS, dry_run=False) -> Spec:
+        configs: Path = None, dry_run=False) -> Spec:
     """Add or update a spec's dashboard entry (and optionally description/tags); validate before writing.
     Tags given here replace the spec's tags. dry_run=True validates and returns the result without writing."""
-    path = Path(configs) / f'{exp_id}.json'
+    path = Path(configs or CONFIGS) / f'{exp_id}.json'
     raw = json.loads(path.read_text(encoding='utf-8'))
     dash = dict(raw.get('dashboard') or {})
     dash.update(group=group, label=label)

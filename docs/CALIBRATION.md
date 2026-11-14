@@ -10,7 +10,10 @@ This uses session-2 data, but only from relaxed recordings made before the activ
 predicted. It is part of the default model, not a calibration. A0 (`EXPERIMENTS/configs/A0_active_trainmax.json`) is
 this default and the dashboard opens on it.
 
-- **IES** has no relaxed holds, so IES falls back to the old automatic passive rule.
+- **IES** recorded no relaxed holds and the old automatic rule finds no passive trials either, so in A0 and all earlier
+  experiments nothing is subtracted for IES: its target is total torque. From the window study (13 Nov 2026) on,
+  `"metadata_passive": true` subtracts the passive torques noted at each position during IES's MVC trials
+  (`ML/subjects/experiment_metadata_IES.docx`, one table for both sessions; `METADATA_PASSIVE` in `ML/config.py`).
 - `"passive": "none"` predicts total torque instead (the N/NR normalization study).
 
 ## The 10 s gain + offset calibration (opt-in)

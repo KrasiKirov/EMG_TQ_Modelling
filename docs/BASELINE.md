@@ -27,7 +27,7 @@ Overlap is (window − step) / window. A window of W samples moved by S samples 
 | Step between windows | 1 sample (10 ms) for training, validation and test | 5 samples (50 ms) for training; 1 sample for validation and test |
 | Overlap of consecutive windows | **95 %** everywhere | **90 %** training, **98 %** validation and test |
 | What is predicted | torque at the **last sample** of the window (estimation, no look-ahead) | same |
-| Target | **active torque** = measured − passive torque, with **each session's own relaxed-hold table** (`"passive": "static"`); IES has no holds and uses the old rule | **active torque** with `session_passive_calibration = True` in these runs (session-2 passive from session-2 plateaus). The code's default is `False` |
+| Target | **active torque** = measured − passive torque, with **each session's own relaxed-hold table** (`"passive": "static"`); IES has no passive recording, so nothing is subtracted (total torque); the window study uses IES's MVC-trial passive table instead | **active torque** with `session_passive_calibration = True` in these runs (session-2 passive from session-2 plateaus). The code's default is `False` |
 | Train / validation | first 80 % / last 20 % of every session-1 trial | chronological 80/20 blocks with a 1 s gap at the boundary |
 | Test | every session-2 trial, whole trial | session-2 trials |
 | Model | LSTM 8 × 2 layers, dropout 0.3, per-angle loss scaling (`"balance": "scale"`) | LSTM 8 × 2, dropout 0.3 |
@@ -246,6 +246,18 @@ compared with the uncut envelope. The difference shows how far filter start-up e
 - This is fine for offline estimation and is what every result so far used. It is **not available in real time**
   (an exoskeleton cannot use future EMG), and it blurs the window-length question.
 - A causal (forward-only) envelope would remove the look-ahead but delays the envelope by a few hundred ms.
+
+**Decision (13 Nov 2026): causal envelope from now on.** New experiments (the window study onwards) use
+`"envelope": "causal"` with the first and last 1 s cut. Reasons:
+- The lab's MATLAB system-identification code, which the project statement compares the ML models against on the same
+  datasets, is causal by default (`functions/emg_envelope.m`: `filter_phase` defaults to `'non_zero_phase'`; the
+  forward-backward band-pass is commented out).
+- The intended uses (prosthetic and orthotic control) can only use past EMG.
+- Zhang 2022 and Truong 2023 do not say whether their EMG filters were causal (Zhang states zero-lag filtering only for
+  joint angles and torques).
+
+Earlier results (A0 and everything before it) used the zero-phase envelope. They are valid offline estimates but
+optimistic for real-time use, and they are not directly comparable with the causal results.
 
 ## A test big enough to settle shuffling and state carrying
 

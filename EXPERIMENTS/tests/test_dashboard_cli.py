@@ -28,3 +28,19 @@ def test_tag_dry_run_shows_the_entry_without_writing():
     assert r.returncode == 0, r.stderr
     assert '"label": "Zed"' in r.stdout and '"lr"' in r.stdout
     assert path.read_text(encoding='utf-8') == before
+
+
+def test_export_all_skips_tagged_specs_without_results(tmp_path, monkeypatch, capsys):
+    import json
+    from EXPERIMENTS.pipeline import dashboard as DB, spec as S
+    cfg = tmp_path / 'configs'; cfg.mkdir()
+    (cfg / 'NORES.json').write_text(json.dumps({'id': 'NORES', 'title': 't', 'changes': {},
+                                                'dashboard': {'group': 'Models', 'label': 'x'}}))
+    monkeypatch.setattr(S, 'CONFIGS', cfg)
+    seen = {}
+    def fake(chosen, *a, all_specs=None, **k):
+        seen['ids'], seen['sidebar'] = [s.id for s in chosen], [s.id for s in all_specs]
+        return {}
+    monkeypatch.setattr(DB, 'export', fake)
+    DB.main(['export'])
+    assert seen['ids'] == [] and 'NORES' not in seen['sidebar'] and 'NORES' in capsys.readouterr().err

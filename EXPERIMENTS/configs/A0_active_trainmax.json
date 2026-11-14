@@ -22,7 +22,7 @@
   "name": "Balanced positions (predicts active torque)",
   "order": 10,
   "text": {
-   "purpose": "Exactly N0 (session-1 maximum, balanced positions, 0.2 s), but the network learns active torque: total torque minus the clean passive table built from the relaxed holds of each session (IES has no holds, so the old passive rule is used for IES).",
+   "purpose": "Exactly N0 (session-1 maximum, balanced positions, 0.2 s), but the network learns active torque: total torque minus the clean passive table built from the relaxed holds of each session (IES recorded no relaxed holds and the old rule finds no passive trials either, so nothing is subtracted for IES: its target is total torque).",
    "target": "Active torque: total measured torque minus the clean passive table of that session (relaxed holds). Scored against active torque.",
    "protocol": "Train on session 1, test on session 2. Active torque, 0.2 s window (20 samples at 100 Hz) of four muscle envelopes plus angle. Balanced positions (each position’s target ÷ its standard deviation). LSTM 8×2, dropout 0.3, batch 8, at most 200 epochs, early stopping after 25. People: CH, EG, HM, IES, JM, YES. Seeds: 0, 1, 2.",
    "overview": {

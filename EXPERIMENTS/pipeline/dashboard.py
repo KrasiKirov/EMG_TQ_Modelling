@@ -52,10 +52,22 @@ def cmd_tag(a):
     print(f'tagged {s.id} -> {s.dashboard.group} / {s.dashboard.label}')
 
 
+def _ready(specs):
+    """Specs that can appear on the dashboard: untagged ones, and tagged ones with at least one result."""
+    return [s for s in specs if not (s.dashboard and _coverage(s) == 'no results')]
+
+
 def cmd_export(a):
     every = S.load_all()
-    chosen = [S.load(i) for i in a.exp] if a.exp else [s for s in every if s.dashboard]
-    print(json.dumps(export(chosen, CATALOG, RESULTS, GROUPS, all_specs=every), indent=1))
+    if a.exp:
+        chosen = [S.load(i) for i in a.exp]
+    else:                                   # everything tagged; experiments still waiting for results are skipped
+        chosen = [s for s in every if s.dashboard]
+        waiting = [s.id for s in chosen if _coverage(s) == 'no results']
+        if waiting:
+            print(f'skipped (no results yet): {", ".join(waiting)}', file=sys.stderr)
+        chosen = [s for s in chosen if s.id not in waiting]
+    print(json.dumps(export(chosen, CATALOG, RESULTS, GROUPS, all_specs=_ready(every)), indent=1))
 
 
 def cmd_build(a):
@@ -66,14 +78,14 @@ def cmd_build(a):
 
 
 def cmd_remove(a):
-    path = S.CONFIGS / f'{a.exp}.json'
+    path = Path(S.CONFIGS) / f'{a.exp}.json'
     raw = json.loads(path.read_text(encoding='utf-8'))
     ident = (raw.pop('dashboard', None) or {}).get('id', a.exp)
     path.write_text(json.dumps(raw, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
     data = json.loads(CATALOG.read_text(encoding='utf-8'))
     _drop(data, ident)
     CATALOG.write_text(json.dumps(data, separators=(',', ':'), allow_nan=False), encoding='utf-8')
-    export([], CATALOG, RESULTS, GROUPS, all_specs=S.load_all())        # refresh the sidebar groups
+    export([], CATALOG, RESULTS, GROUPS, all_specs=_ready(S.load_all()))   # refresh the sidebar groups
     print(f'removed {ident}')
 
 

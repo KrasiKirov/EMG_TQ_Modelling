@@ -49,9 +49,26 @@ def out_dir(study, subject, protocol, config):
     return os.path.join(C.RESULTS_DIR, study, subject, protocol, config)
 
 
+def apply_metadata_passive(bundle, subject):
+    """Copy of ``bundle`` whose empty static passive maps are filled from ML.config.METADATA_PASSIVE (IES only).
+    A real relaxed-hold map is never replaced."""
+    from ML.config import METADATA_PASSIVE
+    import copy
+    table = METADATA_PASSIVE.get(subject)
+    st = bundle['maps']['static']
+    if not table or any(len(st.get(s) or []) for s in ('S1', 'S2')):
+        return bundle
+    out = copy.copy(bundle)
+    out['maps'] = dict(bundle['maps'], static={'S1': sorted(table), 'S2': sorted(table)})
+    return out
+
+
 def prepare(subject, protocol, cfg):
     """Steps 1-5: everything up to the windowed arrays."""
-    bundle = load_subject(subject)
+    bundle = load_subject(subject, envelope=cfg.get('envelope', 'zerophase'), trim_end_s=cfg.get('trim_end_s', 0.0),
+                          lp_order=cfg.get('lp_order', 4))
+    if cfg.get('metadata_passive'):
+        bundle = apply_metadata_passive(bundle, subject)
     recs = bundle['active']
     spec = splits.PROTOCOLS[protocol]
     train_recs = [r for r in recs if r['session'] in spec['train']]
@@ -72,7 +89,12 @@ def prepare(subject, protocol, cfg):
         pm = PassiveModel(cfg['passive'], bundle).fit(train_recs, tr_segs, va_segs)
         targets, pinfo = {r['idx']: r['tq'] - pm.predict(r) for r in recs}, pm.describe()
     rest = rest_flags(bundle, protocol)
-    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest)
+    step = cfg.get('input_step', 1)
+    gap = bool(cfg.get('val_gap', False))
+    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest, step=step,
+                        train_stride=cfg.get('train_stride', 1), val_gap=gap)
+    if cfg.get('state', 'reset') == 'carry':
+        data['streams'] = splits.streams(protocol, recs, feats, targets, window=window, step=step, val_gap=gap)
     details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in ('kind', 'rmin_frac', 'transductive', 'auto_decision')},
                'push_directions': push_directions(bundle, train_recs, base_env, train_frac=tf_, window=window),
                'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},

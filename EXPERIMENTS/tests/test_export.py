@@ -88,3 +88,11 @@ def test_duplicate_dashboard_ids_are_an_error(tmp_path):
                     'dashboard': {'group': 'Models', 'label': 'Twin', 'id': 'T1'}}, 'T2')
     with pytest.raises(ValueError, match='T1'):
         EX.export([spec, twin], catalog, results, groups)
+
+
+def test_groups_without_entries_are_left_out(tmp_path):
+    results, spec, catalog, groups = setup(tmp_path)
+    g = json.loads(groups.read_text()); g['groups'].append({'label': 'Empty', 'caption': '', 'tone': 'blue', 'open': True})
+    groups.write_text(json.dumps(g))
+    EX.export([spec], catalog, results, groups)
+    assert [x['label'] for x in json.loads(catalog.read_text())['dashboard']['groups']] == ['Models']
