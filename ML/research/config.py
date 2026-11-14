@@ -34,8 +34,10 @@ TRIM_START = 1000        # raw samples dropped at the start of a trial (filter s
 TRAIN_FRAC = 0.8         # first 80 % of each training trial = train, rest = validation
 
 # Training protocols.  'orig' = the pipeline defaults (ML/config.py); 'fast'
-# = larger batch for screening many configurations (same optimiser and loss).
+# = larger batch for screening many configurations (same optimiser and loss); 'fast400' = 'fast' up to 400 epochs.
 PROTOCOLS = {
     'orig': dict(batch=8, lr=0.003, lr_factor=0.7, lr_patience=10, early=25, epochs=200),
     'fast': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=150),
+    # 'fast' with a higher epoch limit: without shuffling many runs were still improving at 150 epochs
+    'fast400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
 }

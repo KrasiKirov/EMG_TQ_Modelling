@@ -9,7 +9,7 @@
   },
   {
    "label": "Window study",
-   "caption": "One change at a time from the reference · causal EMG, 2nd-order low-pass, first and last 1 s cut, purged validation split · 6 people × 10 seeds",
+   "caption": "One change at a time from the reference · causal EMG, 2nd-order low-pass, first and last 1 s cut, purged validation split, no shuffling · 6 people × 10 seeds",
    "tone": "blue",
    "open": true
   },
@@ -20,12 +20,6 @@
    "open": true
   },
   {
-   "label": "Window study · no shuffling",
-   "caption": "Every window length × overlap with the training windows in time order (no shuffling) · 5 seeds",
-   "tone": "blue",
-   "open": false
-  },
-  {
    "label": "Window study · total torque",
    "caption": "Every window-study setting predicting total torque instead of active torque · 5 seeds",
    "tone": "blue",
@@ -34,6 +28,12 @@
   {
    "label": "Window study · earlier rounds",
    "caption": "Kept for comparison: 4th-order envelope low-pass (first round) and runs before the train/validation gap",
+   "tone": "blue",
+   "open": false
+  },
+  {
+   "label": "Hyperparameter search",
+   "caption": "Finalists, chosen on session-1 validation loss only (the session-2 scores shown were not used for the choice) · window-study reference, batch 64, up to 400 epochs · 6 people × 3 seeds",
    "tone": "blue",
    "open": false
   },

@@ -17,9 +17,8 @@ PY=${PY:-.venv/bin/python}
 WORKERS=${WORKERS:-6}
 SUBJECTS="YES JM EG IES CH HM"
 grid() { for o in 00 50 75 90; do printf 'WG_%s_o%s ' "$1" "$o"; done; }
-noshuffle() { for o in omax o90 o75 o50 o00; do printf 'WN_%s_%s ' "$1" "$o"; done; }
 PHASE1="W00_reference:0-9 W00_reference:0-9:S2toS1 WT1_total:0-9"
-FIVE="WO4_00 WO3_50 WO2_75 WO1_90 WL1_0500ms $(grid 0500ms) WL2_1s $(grid 1s) WS1_noshuffle WN_0200ms_o90 WN_0200ms_o75 WN_0200ms_o50 WN_0200ms_o00 WL3_2s $(grid 2s) WL4_5s $(grid 5s) WL2c_1s_10ms WL5_10s $(grid 10s) $(noshuffle 0500ms) $(noshuffle 1s) $(noshuffle 2s) $(noshuffle 5s) $(noshuffle 10s)"
+FIVE="WO4_00 WO3_50 WO2_75 WO1_90 WL1_0500ms $(grid 0500ms) WL2_1s $(grid 1s) WS1_shuffled WL3_2s $(grid 2s) WL4_5s $(grid 5s) WL2c_1s_10ms WL5_10s $(grid 10s)"
 CARRY="WC1_carry WC2_carry_500ms WC3_carry_1s WC4_carry_2s WC5_carry_5s"   # slowest per run: last, 5 seeds
 
 steps=("$@")

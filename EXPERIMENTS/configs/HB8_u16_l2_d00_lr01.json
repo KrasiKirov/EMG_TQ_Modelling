@@ -1,0 +1,33 @@
+{
+ "id": "HB8_u16_l2_d00_lr01",
+ "title": "Tuning check, batch 8: 16 units × 2, dropout 0.0, learning rate 0.01",
+ "description": "Batch-size check of the grid's best configuration with the original A0 training (batch 8, learning-rate factor 0.7 after 10 flat epochs, early stop 25, at most 200 epochs). Reported only: the study keeps batch 64 for run time. Same data and network as the tuning run HT_u16_l2_d00_lr01; chosen by session-1 validation loss only. Training windows are fed in time order (no shuffling).",
+ "tags": [
+  "batch size",
+  "hyperparameter search"
+ ],
+ "changes": {
+  "passive": "static",
+  "emg": "trainmax",
+  "balance": "none",
+  "window": 20,
+  "envelope": "causal",
+  "trim_end_s": 1.0,
+  "train_protocol": "orig",
+  "lp_order": 2,
+  "val_gap": true,
+  "metadata_passive": true,
+  "units": 16,
+  "layers": 2,
+  "dropout": 0.0,
+  "lr": 0.01,
+  "shuffle": false
+ },
+ "dashboard": {
+  "group": "Hyperparameter search",
+  "label": "Chosen network, batch 8",
+  "name": "Batch-size check: the chosen network with batch 8",
+  "order": 7,
+  "blurb": "Original A0 training (batch 8, up to 200 epochs) at the learning rate tuned for batch 64 (0.01), which is too high for batch 8: not a fair test of batch 8 in general."
+ }
+}
