@@ -7,3 +7,7 @@ declare module '*/results.json' {
 declare module '*/catalog.json' { const value: unknown; export default value; }
 
 declare module '*/presentation-catalog.json' { const value: unknown; export default value; }
+
+declare module '*/study.json' { const value: unknown; export default value; }
+
+declare module '*/pipeline.json' { const value: unknown; export default value; }

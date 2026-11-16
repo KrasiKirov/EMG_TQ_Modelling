@@ -9,7 +9,7 @@ import type { Dir, MetricKey, Params } from './lib/types';
 import { chartTokens, type ChartTokens } from './theme';
 
 const DEFAULT_STATE: ViewState = {
-  tab: 'overview',
+  tab: 'study',
   experiment: NEW_MODEL_ID,
   compareA: 'X00_baseline',
   compareB: NEW_MODEL_ID,

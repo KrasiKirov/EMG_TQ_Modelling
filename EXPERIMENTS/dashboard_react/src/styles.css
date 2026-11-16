@@ -649,3 +649,10 @@ body { font-variant-numeric: tabular-nums; }
 .glance-cell b { font-size: 18px; color: var(--c-ink); font-variant-numeric: tabular-nums; }
 .glance-label { width: 100%; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
 .glance-peak { color: var(--text-3); }
+
+/* window-study page */
+.study-controls { margin-top: 6px; }
+.nowrap-cells td, .nowrap-cells th { white-space: nowrap; }
+.pipe-step { border: 1px solid var(--mantine-color-default-border); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.study-kpi { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--surface-2); min-width: 0; }
+.study-kpi[data-active] { border-color: var(--c-a); }

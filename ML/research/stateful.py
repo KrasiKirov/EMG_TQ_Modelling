@@ -36,6 +36,13 @@ def build_seq(n_features, units=8, layers=2, dropout=0.3):
     return Model([x] + states_in, [y] + states_out, name='lstm_carry')
 
 
+def make_optimizer(lr, clipnorm=None):
+    """Nadam; with ``clipnorm`` each gradient is rescaled so its norm is at most that value (needed when the
+    learning signal runs back through long chunks, where gradients can blow up). None = no clipping."""
+    import tensorflow as tf
+    return tf.keras.optimizers.Nadam(learning_rate=lr, clipnorm=clipnorm)
+
+
 def _zeros(model, B):
     return [np.zeros((B, int(t.shape[-1])), np.float32) for t in model.inputs[1:]]
 
@@ -60,7 +67,8 @@ def _pad(streams, key, T, dtype=np.float32):
 
 
 def fit_predict_carry(train, test, n_knots, chunk=20, seed=0, epochs=200, early=25, lr=0.003, lr_factor=0.7,
-                      lr_patience=10, min_lr=1e-6, balance='scale', units=8, layers=2, dropout=0.3, verbose=0):
+                      lr_patience=10, min_lr=1e-6, balance='scale', units=8, layers=2, dropout=0.3, verbose=0,
+                      clipnorm=None):
     """train: list of {'X' (T, F), 'y' (T,), 'k' angle index, 'train_mask', 'val_mask'} (one per session-1 trial);
     test : list of {'X' (T, F), 'k'}. Returns ([predictions per test trial, in Nm], info)."""
     import tensorflow as tf
@@ -78,7 +86,7 @@ def fit_predict_carry(train, test, n_knots, chunk=20, seed=0, epochs=200, early=
         raise ValueError(f"state='carry' supports balance 'none' or 'scale', got {balance!r}")
     t = (y / sd[k][:, None]).astype(np.float32)
     model = build_seq(X.shape[2], units, layers, dropout)
-    opt = tf.keras.optimizers.Nadam(learning_rate=lr)
+    opt = make_optimizer(lr, clipnorm)
 
     @tf.function(reduce_retracing=True)
     def step(x, yt, m, *states):
@@ -117,7 +125,7 @@ def fit_predict_carry(train, test, n_knots, chunk=20, seed=0, epochs=200, early=
     for s in test:
         p = run_streams(model, np.asarray(s['X'], np.float32)[None], chunk=max(chunk, 200))[0]
         preds.append(p.astype(np.float64) * sd[s['k']])
-    info = {'state': 'carry', 'chunk': chunk, 'epochs': len(hist), 'best_epoch': int(np.argmin(hist)) + 1,
+    info = {'state': 'carry', 'chunk': chunk, 'clipnorm': clipnorm, 'epochs': len(hist), 'best_epoch': int(np.argmin(hist)) + 1,
             'best_val_loss': float(best), 'first_val_loss': float(hist[0]), 'sd_per_knot': sd.tolist(),
             'n_params': int(model.count_params())}
     return preds, info

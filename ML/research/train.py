@@ -118,7 +118,7 @@ def fit_ridge(data, knots, w_tr=None, w_va=None):
 
 def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                 protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
-                save_weights=None):
+                save_weights=None, epoch_windows=None):
     """Train one model on data['X_train'] / ['X_val'] and predict X_test.
 
     init_weights : optional .weights.h5 file to start from (fine-tuning a
@@ -131,6 +131,10 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     shuffle      : True (default) = Keras reshuffles the fit windows every epoch; False = windows are fed
                    in their stored order (trial by trial, in time), for the shuffle ablation
     save_weights : optional path; the trained (best-epoch) weights are saved there as .weights.h5
+    epoch_windows: None (default) = one epoch is one pass over the training windows. A number N = one epoch
+                   is round(N / n_train) whole passes (at least 1), so a setting with few windows gets about
+                   as many weight updates per epoch, and so per validation check, LR step and early-stopping
+                   count, as one with N windows.
 
     Returns (y_pred_test (Nm), info dict)."""
     import tensorflow as tf
@@ -179,8 +183,13 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                              min_lr=1e-6, verbose=0),
            EarlyStopping(monitor='val_loss', patience=p['early'], restore_best_weights=True, verbose=0)]
     val = (data['X_val'], t_va.astype(np.float32)) + ((w_va.astype(np.float32),) if use_w else ())
-    hist = model.fit(data['X_train'], t_tr.astype(np.float32),
-                     sample_weight=None if w_tr is None else w_tr.astype(np.float32),
+    X_fit, t_fit = data['X_train'], t_tr.astype(np.float32)
+    w_fit = None if w_tr is None else w_tr.astype(np.float32)
+    passes = max(1, int(round(epoch_windows / len(X_fit)))) if epoch_windows else 1
+    if passes > 1:                            # whole passes, each in stored order
+        X_fit, t_fit = np.concatenate([X_fit] * passes), np.concatenate([t_fit] * passes)
+        w_fit = None if w_fit is None else np.concatenate([w_fit] * passes)
+    hist = model.fit(X_fit, t_fit, sample_weight=w_fit,
                      validation_data=val, epochs=p['epochs'], batch_size=p['batch'],
                      callbacks=cbs, shuffle=shuffle, verbose=verbose)
     if save_weights:
@@ -192,5 +201,6 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
             'best_val_loss': float(hist.history['val_loss'][best]),
             'knots': knots.tolist(), 'sd_per_knot': sd.tolist(), 'n_params': int(model.count_params()),
-            'init_weights': init_weights, 'lr': lr or p['lr']}
+            'init_weights': init_weights, 'lr': lr or p['lr'],
+            'passes_per_epoch': passes, 'updates': int(model.optimizer.iterations.numpy())}
     return pred, info

@@ -12,6 +12,8 @@ import { AllExperimentsTab } from './tabs/AllExperimentsTab';
 import { OverviewTab } from './tabs/OverviewTab';
 import { WaveformsTab } from './tabs/WaveformsTab';
 import { SavedComparisonTab } from './tabs/SavedComparisonTab';
+import { StudyTab } from './tabs/StudyTab';
+import { PipelineTab } from './tabs/PipelineTab';
 
 export function App() {
   return (
@@ -23,6 +25,8 @@ export function App() {
 
 /** top-level pages; 'comparison' also covers its waveform / training sub-views */
 const NAV: { key: TabKey; label: string }[] = [
+  { key: 'study', label: 'Window study' },
+  { key: 'pipeline', label: 'Pipeline' },
   { key: 'overview', label: 'Models' },
   { key: 'comparison', label: 'Compare' },
   { key: 'experiments', label: 'Experiments' },
@@ -73,6 +77,8 @@ function Shell() {
               {s.tab === 'waveforms' ? <WaveformsTab /> : <OverviewTab />}</>}
           </>}
           {current === 'experiments' && <AllExperimentsTab />}
+          {current === 'study' && <StudyTab />}
+          {current === 'pipeline' && <PipelineTab />}
         </div>
       </AppShell.Main>
     </AppShell></>

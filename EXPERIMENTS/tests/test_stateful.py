@@ -45,3 +45,27 @@ def test_fit_learns_and_predicts_every_test_sample():
     assert [len(p) for p in preds] == [500, 450]
     assert info['best_val_loss'] < info['first_val_loss']
     assert info['epochs'] <= 40 and info['state'] == 'carry'
+
+
+def test_optimizer_clips_gradients_only_when_asked():
+    assert ST.make_optimizer(0.01).clipnorm is None
+    assert ST.make_optimizer(0.01, clipnorm=1.0).clipnorm == 1.0
+
+
+def test_fit_records_clipnorm():
+    rng = np.random.default_rng(2)
+    train = []
+    for k in range(2):
+        x = rng.random((200, 5)).astype(np.float32)
+        s = {'X': x, 'y': x[:, 0] * 2, 'k': k, 'train_mask': np.arange(200) < 160}
+        s['val_mask'] = ~s['train_mask']; train.append(s)
+    _, info = ST.fit_predict_carry(train, [{'X': train[0]['X'], 'k': 0}], n_knots=2, chunk=100, seed=0, epochs=2,
+                                   early=5, lr=0.01, balance='none', clipnorm=1.0)
+    assert info['clipnorm'] == 1.0
+
+
+def test_run_passes_clipnorm_from_the_config():
+    from EXPERIMENTS.pipeline.run import BASE, load_config
+    assert BASE['clipnorm'] is None                      # every earlier setting trains without clipping
+    _, cfg = load_config('WC4_carry_10s')
+    assert (cfg['state'], cfg['chunk'], cfg['clipnorm'], cfg['train_protocol']) == ('carry', 1000, 1.0, 'fast400')
