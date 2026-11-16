@@ -1,7 +1,7 @@
 """
 Resting-level shift between sessions under the primary answer key (passive trials).
 
-For each subject's 2 most toes-down positions and each direction:
+For each subject's 2 most plantarflexed positions and each direction:
   * resting level in the TRAINING session = median of the key while the EMG says
     "relaxed" (first 80 % of the trial, the part used for fitting);
   * resting level in the TESTED session (whole trial);

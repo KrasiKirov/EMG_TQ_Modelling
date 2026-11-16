@@ -34,8 +34,8 @@ def line(cfg, study='screen'):
         return '*(results pending)*'
     runs = '3 runs' if study in ('screen', 'passive') else '1 run'
     return (f'Main 3 people ({runs}). **Supervisor key** (passive trials of the tested session): average R² {fmt(b[0])}, '
-            f'toes-down R² {fmt(b[1])}, toes-down error {b[2]:.2f} Nm. **In-trial key** (report 2): average R² {fmt(a[0])}, '
-            f'toes-down R² {fmt(a[1])}, toes-down error {a[2]:.2f} Nm.')
+            f'plantarflexed R² {fmt(b[1])}, plantarflexed error {b[2]:.2f} Nm. **In-trial key** (report 2): average R² {fmt(a[0])}, '
+            f'plantarflexed R² {fmt(a[1])}, plantarflexed error {a[2]:.2f} Nm.')
 
 
 S = []
@@ -44,7 +44,7 @@ w('# Everything we tried, in plain English')
 w('')
 w('Numbers come from `results_tables/all_results.xlsx` (sheet *Summary*), always for the **main 3 people (YES, JM, EG), both directions**.')
 w('- **average R²**: over all 8 angles; each angle is averaged over runs, then floored at −1.')
-w('- **toes-down**: the 2 most toes-down angles of each person.')
+w('- **plantarflexed**: the 2 most plantarflexed angles of each person.')
 w('- **error**: RMSE in Nm.')
 w('')
 w('Every result is given against two answer keys:')
@@ -52,9 +52,9 @@ w('- **Supervisor key**: measured torque − passive torque from the passive tri
 w('- **In-trial key**: measured torque − the relaxed level inside the same trial (what report 2 used).')
 w('')
 w('**Important:** each version scores best on the key that is built the same way as its own training answers.')
-w('- Versions trained with the in-trial passive line do well on the in-trial key, but only about 0.46 at the toes-down angles on the supervisor key.')
-w('- Versions trained with the passive trials (section 6) do well on the supervisor key (toes-down about 0.72), but only about 0.48 on the in-trial key.')
-w('- The reason: the two keys disagree by about 0.6 Nm typically, up to 2 Nm at the toes-down angles, where the pushes are only about 1 Nm. So which version looks best at the toes-down angles depends on which key you believe, and that is exactly the question for the supervisor.')
+w('- Versions trained with the in-trial passive line do well on the in-trial key, but only about 0.46 at the plantarflexed angles on the supervisor key.')
+w('- Versions trained with the passive trials (section 6) do well on the supervisor key (plantarflexed about 0.72), but only about 0.48 on the in-trial key.')
+w('- The reason: the two keys disagree by about 0.6 Nm typically, up to 2 Nm at the plantarflexed angles, where the pushes are only about 1 Nm. So which version looks best at the plantarflexed angles depends on which key you believe, and that is exactly the question for the supervisor.')
 w('')
 w('---')
 w('')
@@ -133,15 +133,15 @@ w('- **How it is computed:**')
 w('  - Before fitting, every target is divided by its angle’s σ (σ is at least 0.1 Nm).')
 w('  - After predicting, the output is multiplied back by σ, so it is in Nm again.')
 w('  - This is the same as weighted least squares with weight 1/σ² per angle.')
-w('- **Why:** plain least squares in Nm lets the strong angles dominate. For YES, the 2 most toes-down angles carried only 1 % of the fit. After dividing, every angle carries 12.5 %.')
-w('- **Result:** part of the first-report pipeline below (E03). When we took it out of the new pipeline (1 run), the main 3’s toes-down R² (in-trial key) fell from 0.86 to 0.71.')
+w('- **Why:** plain least squares in Nm lets the strong angles dominate. For YES, the 2 most plantarflexed angles carried only 1 % of the fit. After dividing, every angle carries 12.5 %.')
+w('- **Result:** part of the first-report pipeline below (E03). When we took it out of the new pipeline (1 run), the main 3’s plantarflexed R² (in-trial key) fell from 0.86 to 0.71.')
 w('')
 w('### The first-report pipeline (`E03_final`): clean passive table × correction + auto-gain + per-angle corrections + divide by swing')
 w(f'- **Result:** {line("E03_final")}')
 w('')
 for title, cfg, what, verdict in [
-        ('×3 extra weight on the 2 most toes-down angles', 'E13_final_pf3', 'On top of the division, count the 2 most toes-down angles 3× more.', 'Tie.'),
-        ('×10 extra weight', 'E14_final_pf10', 'Same with 10×.', 'Worse; the toes-down angles did not improve.')]:
+        ('×3 extra weight on the 2 most plantarflexed angles', 'E13_final_pf3', 'On top of the division, count the 2 most plantarflexed angles 3× more.', 'Tie.'),
+        ('×10 extra weight', 'E14_final_pf10', 'Same with 10×.', 'Worse; the plantarflexed angles did not improve.')]:
     w(f'### {title} (`{cfg}`)')
     w(f'- **What / how:** {what}')
     w(f'- **Result:** {line(cfg)}')
@@ -153,7 +153,7 @@ items = [
      'Same LSTM type but 16 memory cells × 2 layers. The shared read-out (a weighted sum of the 16 summary numbers) gets one extra set of 16 multipliers per training angle. They start at 0 and are kept small. The ankle angle picks that angle’s set, and between two angles it blends the two. 3,665 numbers in total.',
      'The EMG→torque link changes with muscle length.', 'Small gain (about +0.01), fewer overshoot spikes. Part of E03 and the new pipeline.'),
     ('Longer window: 0.4 s instead of 0.2 s', 'E29_final_win40', 'The model looks at the last 0.4 s of EMG instead of 0.2 s.',
-     'More history may help.', 'Small gain overall (mostly strong angles), none at toes-down. Next: try it with the passive-trial pipeline (running now, section 6).'),
+     'More history may help.', 'Small gain overall (mostly strong angles), none at plantarflexed positions. Next: try it with the passive-trial pipeline (running now, section 6).'),
     ('Pre-train on the other 5 people, then refit on this person', 'E20_xsub_agc',
      'First fit the model on everyone else’s data, then continue fitting on this person.', 'More data.', 'Worse: people differ too much.'),
     ('Straight-line model (ridge regression)', 'E27_ridge',
@@ -183,7 +183,7 @@ for title, cfg in [('Old pipeline with the clean passive table (JM bug removed)'
     w(f'- **{title}** (`{cfg}`): {line(cfg, "passive")}')
 w('')
 w('## 7. All versions in one table (main 3 people, both directions)')
-w('| version | runs | supervisor key: average R² | supervisor key: toes-down R² | supervisor key: toes-down error (Nm) | in-trial key: average R² | in-trial key: toes-down R² |')
+w('| version | runs | supervisor key: average R² | supervisor key: plantarflexed R² | supervisor key: plantarflexed error (Nm) | in-trial key: average R² | in-trial key: plantarflexed R² |')
 w('|---|---|---|---|---|---|---|')
 for study in ('screen', 'ablation', 'passive'):
     for cfg in sorted(df[df.study == study].config.unique()):

@@ -13,11 +13,10 @@ derived from it.
 | `changes` | yes | Settings that differ from the baseline (`BASE` in `EXPERIMENTS/pipeline/run.py`, table below) |
 | `description` | no | What the experiment tests; falls back to the older field `hypothesis` |
 | `tags` | no | List of strings, e.g. `["active torque", "dropout"]` |
-| `calibration` | no | Scoring only. Default `{"type": "none"}`; `{"type": "gain_offset", "seconds": 10, "score_from_s": 30}` makes it a calibration experiment ([`CALIBRATION.md`](CALIBRATION.md)) |
-| `results_from` | no | Reuse another experiment's saved predictions (for scoring-only variants such as `A0cal`) |
+| `results_from` | no | Reuse another experiment's saved predictions (scoring-only variants) |
 | `dashboard` | no | Present = shown on the dashboard. `{"group", "label", "id"?, "name"?, "order"?, "blurb"?, "text"?}`; usually written by `dashboard tag` |
 
-`dashboard.group` must be a group in `EXPERIMENTS/dashboard_groups.json` (Models, Calibration experiments,
+`dashboard.group` must be a group in `EXPERIMENTS/dashboard_groups.json` (Models,
 Normalization study, Exploration). `dashboard.text` may hold `purpose`, `target`, `protocol`, `overview`, `params` and
 `report` (a repository-relative Markdown file shown on the experiment page).
 
@@ -44,7 +43,7 @@ There is no inheritance between specs: to build on A0, copy A0's `changes` and e
 {
   "id": "TEAM01_active_dropout",
   "title": "A0 with dropout 0.2",
-  "description": "Does less dropout help the active-torque model at the toes-down angles?",
+  "description": "Does less dropout help the active-torque model at the plantarflexed angles?",
   "tags": ["active torque", "dropout"],
   "changes": {"passive": "static", "emg": "trainmax", "balance": "scale", "window": 20, "dropout": 0.2}
 }
@@ -84,7 +83,7 @@ for `FAILED` lines.
 .venv/bin/python -m EXPERIMENTS.pipeline.dashboard list
 ```
 
-lists every spec with its dashboard place, calibration, tags and how many results exist per person.
+lists every spec with its dashboard place, tags and how many results exist per person.
 
 **5. Name it and place it** on the dashboard. This writes the `dashboard` block (and the description and tags) into the
 spec; `--dry-run` shows the result without writing.

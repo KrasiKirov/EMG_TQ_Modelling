@@ -1,6 +1,6 @@
 # Short-calibration test (N3_total_sessionp99 runs, 6 people, 3 seeds, scored from 30 s to the end of each trial)
 
-## Group medians (toes-down = 1)
+## Group medians (plantarflexed = 1)
 
 ```
                           mae            r2           vaf       

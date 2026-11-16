@@ -1,6 +1,6 @@
 # Check-up with supervisor: where we are and proposed next steps
 
-**Status in one sentence:** we did a first exploration of why the model fails at the toes-down angles and of possible fixes. The first results look promising but are **not validated yet**. The steps below are what we want to test properly, with the literature behind each idea.
+**Status in one sentence:** we did a first exploration of why the model fails at the plantarflexed angles and of possible fixes. The first results look promising but are **not validated yet**. The steps below are what we want to test properly, with the literature behind each idea.
 
 Status labels:
 - **Not started:** genuinely new.
@@ -24,7 +24,7 @@ Status labels:
 | # | Step | Why | Literature | Status |
 |---|---|---|---|---|
 | B1 | **Rescale the EMG automatically** as the signal changes: a running estimate of each muscle's quiet and strong levels ("auto-gain"). | For the same push, the EMG size differed between our two sessions (e.g. about half for JM at one angle). | EMG size depends on electrode contact, sweat and temperature, not only effort: De Luca 1997, *J Appl Biomech* 13(2), doi:10.1123/jab.13.2.135; Abdoli-Eramaki et al. 2012, doi:10.1016/j.jelekin.2012.04.009. Running or sliding rescaling has been used: Tanaka et al. 2022, *Sensors* 22(13), doi:10.3390/s22135005; Koller et al. 2015, *J NeuroEng Rehabil* 12:97, doi:10.1186/s12984-015-0086-5. | First look |
-| B2 | **Give every angle the same weight in the fit** (divide by each angle's typical swing = weighted least squares). | The toes-down angles carry about 1 % of the fit otherwise. | Inverse-variance weighting of each task's error: Kendall et al. 2018, *CVPR*, doi:10.1109/CVPR.2018.00781. | First look |
+| B2 | **Give every angle the same weight in the fit** (divide by each angle's typical swing = weighted least squares). | The plantarflexed angles carry about 1 % of the fit otherwise. | Inverse-variance weighting of each task's error: Kendall et al. 2018, *CVPR*, doi:10.1109/CVPR.2018.00781. | First look |
 | B3 | **Per-angle corrections on top of one shared model** ("mixture of experts"). | The EMG–torque link changes with muscle length. | Jacobs et al. 1991, *Neural Comput* 3(1), doi:10.1162/neco.1991.3.1.79. | First look |
 | B4 | **Longer input window** (0.3–0.4 s instead of 0.2 s), combined with B1–B3. | More history may help. | Longer windows (~300–600 ms) used for EMG-based estimation: Wang H et al. 2024, *Sensors* 24:7301, doi:10.3390/s24227301. | Not started (in this combination) |
 | B5 | **Short calibration at the start of each new session:** a few seconds of known pushes to correct the model. | Common fix for session-to-session drift. | Vidovic et al. 2016, *IEEE TNSRE*, doi:10.1109/tnsre.2015.2492619; Lloyd & Besier 2003, *J Biomech* 36(6), doi:10.1016/S0021-9290(03)00010-1. | First look (only helped with 20–30 s of calibration) |
@@ -39,7 +39,7 @@ Status labels:
 | Pre-train on other people, then refit on this person | Zhang L et al. 2022, *IEEE TNSRE* 30, doi:10.1109/TNSRE.2022.3156786 | Worse: our 6 people differ a lot (angles, strength, push direction). |
 | Random EMG-size changes during training (augmentation) | Tsinganos et al. 2020, *Sensors* 20:4892, doi:10.3390/s20174892 | Helped only without B1; nothing extra with it. |
 | Re-scale each session using its whole EMG recording | Du et al. 2017, *Sensors* 17:458, doi:10.3390/s17030458 | Mixed (good for 2 people, bad for JM), and it needs the whole session in advance. |
-| Extra weight (×3, ×10) on the toes-down angles | — | No gain on top of B2. |
+| Extra weight (×3, ×10) on the plantarflexed angles | — | No gain on top of B2. |
 | Straight-line (ridge) model instead of a network | Ziai & Menon 2011, doi:10.1186/1743-0003-8-56; Clancy et al. 2012, doi:10.1109/TBME.2011.2170423 | Clearly worse, but a useful baseline. |
 
 ## D. Recording protocol (needs the lab; probably the most valuable)

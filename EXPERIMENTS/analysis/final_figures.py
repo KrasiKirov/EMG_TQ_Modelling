@@ -64,7 +64,7 @@ def main():
             axs[1, 0].set_ylabel(lab)
             axs[0, 0].legend(fontsize=9, loc='lower right')
             fig.suptitle(f'{"learned session 1 → tested session 2" if direction == "S1toS2" else "learned session 2 → tested session 1"} · '
-                         'bars = mean of 3 training runs, dots = each run · leftmost 2 positions = toes-down (problematic)', fontsize=11)
+                         'bars = mean of 3 training runs, dots = each run · leftmost 2 positions = plantarflexed (problematic)', fontsize=11)
             fig.tight_layout()
             fig.savefig(os.path.join(PLOTS, f'{fname}_{direction}.png'), dpi=130)
             plt.close(fig)
@@ -72,7 +72,7 @@ def main():
     # 2. problematic vs other positions, per subject and direction
     g = d.groupby(['model', 'subject', 'direction', 'problematic']).agg(r2=('r2', lambda v: np.mean(np.clip(v, -1, None))), rmse=('rmse', 'mean')).reset_index()
     fig, axs = plt.subplots(1, 2, figsize=(14, 4.6))
-    for ax, pr, ttl in ((axs[0], 1, 'toes-down (problematic) positions'), (axs[1], 0, 'other positions')):
+    for ax, pr, ttl in ((axs[0], 1, 'plantarflexed (problematic) positions'), (axs[1], 0, 'other positions')):
         for j, (mdl, col) in enumerate((('baseline', OLD), ('candidate', NEW))):
             y = g[(g.model == mdl) & (g.problematic == pr)]
             labels = [f'{s}\n{"1→2" if dd == "S1toS2" else "2→1"}' for s in SUBJ for dd in ('S1toS2', 'S2toS1')]
@@ -88,7 +88,7 @@ def main():
     fig.savefig(os.path.join(PLOTS, 'final_problematic_vs_other.png'), dpi=130)
     plt.close(fig)
 
-    # 3. prediction curves at the 2 toes-down positions, seed 0, learned S1 -> tested S2
+    # 3. prediction curves at the 2 plantarflexed positions, seed 0, learned S1 -> tested S2
     from ML.research.data import load_subject
     from ML.research.passive import PassiveModel
     fig, axs = plt.subplots(6, 2, figsize=(15, 17))

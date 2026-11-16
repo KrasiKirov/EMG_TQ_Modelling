@@ -5,7 +5,7 @@ import type { Dir } from './types';
 
 /**
  * The dashboard's summary rule for one experiment page: median over (person, angle) cells of the median
- * over seeds, R² below 0 shown as 0 when `floor` is on. toes = 1: each person's two most toes-down angles.
+ * over seeds, R² below 0 shown as 0 when `floor` is on. toes = 1: each person's two most plantarflexed angles.
  */
 export function pageScore(id: string, toes: 0 | 1, key: 'mae' | 'r2' | 'r2_demeaned', floor: boolean, dir: Dir = 'S1toS2'): number {
   const cells: number[] = [];

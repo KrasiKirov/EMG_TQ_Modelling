@@ -34,7 +34,7 @@ def cmd_list(_):
     for s in S.load_all():
         d = s.dashboard
         place = f'[dashboard] {d.group} / {d.label}' if d else '-'
-        print(f"{s.id:34s} {place:70s} cal={s.calibration['type']:11s} "
+        print(f"{s.id:34s} {place:70s} "
               f"tags={','.join(s.tags) or '-':30s} {_coverage(s)}")
 
 
@@ -92,7 +92,7 @@ def cmd_remove(a):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
-    sub.add_parser('list', help='every spec, its dashboard place, calibration, tags and result coverage').set_defaults(fn=cmd_list)
+    sub.add_parser('list', help='every spec, its dashboard place, tags and result coverage').set_defaults(fn=cmd_list)
     t = sub.add_parser('tag', help='name, describe, tag and place an experiment on the dashboard')
     t.set_defaults(fn=cmd_tag)
     t.add_argument('exp')

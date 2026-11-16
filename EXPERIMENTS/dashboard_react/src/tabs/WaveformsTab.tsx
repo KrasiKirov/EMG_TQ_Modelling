@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Badge, Chip, Group, SegmentedControl, Select, SimpleGrid, Stack, Text } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { IconArrowDown } from '../icons';
 import { DS } from '../dataset';
 import { near, positionsOf, runsOf, peakOf } from '../lib/data';
@@ -26,13 +25,7 @@ interface Side {
 
 export function WaveformsTab() {
   const { s, set, wpos, tokens, takeWaveScroll } = useView();
-  const mobile = useMediaQuery('(max-width: 48em)');
   const positions = positionsOf(DS, s.wsubj, s.dir);
-  // phones: start on the first 30 s of the 90 s trial (the full trace is too dense at 390 px)
-  const zoom = useRef(
-    typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 48em)').matches ? { start: 0, end: 33 } : { start: 0, end: 100 },
-  );
-  const touch = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(pointer: coarse)').matches : false;
 
   // opened from a heat-map cell or a box: bring the chart into view (below the sticky header and tab bar)
   useEffect(() => {
@@ -69,18 +62,14 @@ export function WaveformsTab() {
     return out;
   }, [sides, s.wsubj, s.dir, wpos, tokens]);
 
-  const option = useMemo(() => waveOption(TIME, lines, zoom.current, tokens, !!mobile), [lines, tokens, mobile]);
-  const onZoom = useCallback((_p: unknown, chart: { getOption: () => unknown }) => {
-    const dz = (chart.getOption() as { dataZoom?: { start: number; end: number }[] }).dataZoom?.[0];
-    if (dz) zoom.current = { start: dz.start, end: dz.end };
-  }, []);
+  const option = useMemo(() => waveOption(TIME, lines, tokens), [lines, tokens]);
 
   const peak = wpos !== null ? peakOf(DS, s.wsubj, s.dir, wpos) : NaN;
   const k = wpos !== null ? positions.findIndex((p) => near(p, wpos)) : -1;
 
   return (
     <Stack gap="md">
-      <SectionCard title="Choose a trial" description={`${dirLabel(s.dir, true)} · the measured voluntary torque is the same for both models`}>
+      <SectionCard title="Choose a trial" description={dirLabel(s.dir, true)}>
         <Stack gap="md">
           <Stack gap={4}>
             <Text size="sm" fw={500}>
@@ -110,10 +99,10 @@ export function WaveformsTab() {
               </Group>
             </Chip.Group>
             <Text size="xs" c="dimmed">
-              <IconArrowDown size={12} style={{ verticalAlign: '-2px' }} /> = toes-down (the 2 most plantarflexed positions)
+              <IconArrowDown size={12} style={{ verticalAlign: '-2px' }} /> = the 2 most plantarflexed positions
             </Text>
           </Stack>
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+          <SimpleGrid cols={2} spacing="md">
             {sides.map((side) => (
               <RunPicker key={side.which} side={side} onChange={(v) => set(side.which === 'A' ? { runA: v } : { runB: v })} floor={s.floor} />
             ))}
@@ -122,12 +111,12 @@ export function WaveformsTab() {
       </SectionCard>
 
       <SectionCard
-        title={`${s.wsubj} · ${wpos !== null ? posLabel(wpos, 3) : '–'} rad${k >= 0 && k < 2 ? ' · toes-down' : ''}`}
-        description={`voluntary torque over the 90 s trial · peak ${fmt(peak, 1)} Nm · ${touch ? 'drag the slider or pinch to zoom' : 'drag the slider or use the mouse wheel to zoom'}`}
+        title={`${s.wsubj} · ${wpos !== null ? posLabel(wpos, 3) : '–'} rad${k >= 0 && k < 2 ? ' · plantarflexed' : ''}`}
+        description={`peak ${fmt(peak, 1)} Nm`}
         testId="wave-card"
       >
         {lines.length ? (
-          <EChart option={option} height={mobile ? 340 : 420} label={`Measured and predicted torque for ${s.wsubj} at ${wpos} rad`} onDataZoom={onZoom} />
+          <EChart option={option} height={420} label={`Measured and predicted torque for ${s.wsubj} at ${wpos} rad`} />
         ) : (
           <EmptyState title="No waveform for this choice" hint="This person/direction has no stored trial." />
         )}
@@ -248,7 +237,7 @@ function RunsTable({ sides, floor, peak, onPick }: { sides: Side[]; floor: boole
   return (
     <SectionCard
       title="Every run at this position"
-      description={`peak voluntary torque at this position ${fmt(peak, 1)} Nm · click a row to show that run · R² values below 0 follow the display rule`}
+      description={`peak ${fmt(peak, 1)} Nm · click a row to show it`}
       testId="runs-table"
     >
       {rows.length ? (
@@ -267,7 +256,7 @@ function RunsTable({ sides, floor, peak, onPick }: { sides: Side[]; floor: boole
         <EmptyState compact title="Neither model is trained for this person/direction" />
       )}
       <Stack mt="sm">
-        <Note>Typical run = the run with the median R² at this position (index ⌊(n−1)/2⌋ after sorting by raw R²).</Note>
+        <Note>Typical run = median R² at this position.</Note>
       </Stack>
     </SectionCard>
   );

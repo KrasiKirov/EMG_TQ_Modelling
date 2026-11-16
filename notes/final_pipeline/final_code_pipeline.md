@@ -48,7 +48,7 @@
 
 **One model per person.** Each subject gets their own model, trained only on their own recordings (`run.py --subject YES` loads only YES). There's no single model for everybody. Pre-training on the other people first (config E20) made things worse.
 
-**Result.** On the 3 main subjects (YES, JM, EG) the average score is R² ≈ 0.925 (1 = perfect), against 0.54 for the old version. At the hard "toes-down" angles it goes from ≈ 0 to ≈ 0.84.
+**Result.** On the 3 main subjects (YES, JM, EG) the average score is R² ≈ 0.925 (1 = perfect), against 0.54 for the old version. At the hard "plantarflexed" angles it goes from ≈ 0 to ≈ 0.84.
 
 ![The final pipeline, step by step](figures/fig_final_pipeline.png)
 
@@ -84,10 +84,10 @@ The code builds every experiment from 4 choices. In `experiments.py`, FINAL is `
 
 ### The experiment, in normal words
 
-- A person sits with their foot strapped to a plate. The plate is **locked** at one ankle angle, so the foot can't move. The person pushes against it (toes down, like pressing a gas pedal) and relaxes, again and again, for about 90 seconds. That's one **trial**.
+- A person sits with their foot strapped to a plate. The plate is **locked** at one ankle angle, so the foot can't move. The person pushes against it (plantarflexion, like pressing a gas pedal) and relaxes, again and again, for about 90 seconds. That's one **trial**.
 - There are **8 trials per session**, one per ankle angle. Every person did **2 sessions**, one after the other in the same visit: S1 (the lab calls it "test") and S2 ("retest"). Both are stored in the same recording file.
 - During each trial we record, 1000 times per second:
-  - the **ankle angle**, in radians (rad; 1 rad ≈ 57°, so −0.486 rad ≈ 28° toes-down; negative = toes down = **plantarflexion**);
+  - the **ankle angle**, in radians (rad; 1 rad ≈ 57°, so −0.486 rad ≈ 28° plantarflexed; negative = plantarflexed = **plantarflexion**);
   - the **torque** the foot puts on the plate (Nm);
   - the raw **EMG** of 4 muscles: GM and GL (the two halves of the big calf muscle), SOL (the deeper calf muscle) and TA (the shin muscle that lifts the toes).
 
@@ -102,13 +102,13 @@ The code builds every experiment from 4 choices. In `experiments.py`, FINAL is `
 
 **Why do this at all, if we need the torque sensor to make the answers?** The sensor is needed once, for one training session per person. After that, the idea is to estimate the torque from EMG alone. "Learn on session 1, test on session 2" simulates exactly that.
 
-### Why the toes-down (plantarflexed) angles were the problem
+### Why the plantarflexed angles were the problem
 
 When the foot is pointed down, the calf muscle is already short and weak, so people can only produce a little torque there. For subject YES at −0.486 rad, the voluntary torque swings by only about **1 Nm**. At strong angles it swings by 30 Nm or more. A mistake of a few tenths of a Nm is huge compared with a 1 Nm signal, which is why the scores collapsed at those angles in the old version.
 
 > **What we did:** framed it as a regression problem: 4 EMG signals + angle → voluntary ankle torque, one model per person.
 > **Why:** after one session with the sensor, estimate torque from EMG alone.
-> **Remember:** at toes-down angles the signal is tiny (~1 Nm), so small errors matter a lot.
+> **Remember:** at plantarflexed angles the signal is tiny (~1 Nm), so small errors matter a lot.
 
 <details><summary><b>Check yourself:</b> is this classification or regression? What are the features and what is the target?</summary>
 
@@ -239,7 +239,7 @@ It only uses the **past** (it's "causal"), so it could run live. Some details:
 
 ### The "auto" rule (it only matters for one subject)
 
-Auto-gain throws away the *absolute* size of the signal. Usually that's good, but one subject (CH) pushed **toes-up** at some angles and **toes-down** at others. To tell which muscle group is really working, the model then needs the absolute sizes. So, before training:
+Auto-gain throws away the *absolute* size of the signal. Usually that's good, but one subject (CH) pushed **into dorsiflexion** at some angles and **plantarflexed** at others. To tell which muscle group is really working, the model then needs the absolute sizes. So, before training:
 1. The code measures the push direction of every training trial: torque during high activity minus torque during low activity (`push_directions` in `emg_norm.py`).
 2. If some trials push more than +2 Nm one way and others more than 2 Nm the other way, **auto-gain is switched off** for that subject (option `agc_auto`). This is report 1's rule, written before this round.
 3. Among the 6 subjects, only CH triggers it. Its training trials push about +9 to +28 Nm and −32 to −55 Nm, while all of YES's are negative.
@@ -272,7 +272,7 @@ The torque sensor measures **everything**. Even with the muscles completely rela
 
 > **active torque = measured torque − passive torque**
 
-**Example.** At YES −0.486 rad in session 2, the relaxed torque is about **+8.5 Nm** (Figure 2). When YES pushes, the sensor reads about +7.5 Nm, so the active torque is 7.5 − 8.5 = **−1.0 Nm** (negative = pushing toes down).
+**Example.** At YES −0.486 rad in session 2, the relaxed torque is about **+8.5 Nm** (Figure 2). When YES pushes, the sensor reads about +7.5 Nm, so the active torque is 7.5 − 8.5 = **−1.0 Nm** (negative = pushing into plantarflexion).
 
 ### How the old version estimated the passive part, and why that failed
 
@@ -300,13 +300,13 @@ So the "correct answer" itself was off by 1–2 Nm, at angles where the whole si
 
 ![Reference truth on YES](figures/truth_inspection_YES.png)
 
-*Figure 2: YES, all 16 trials. Grey = measured torque, green dots = relaxed moments found from the EMG, black = the line through them (the passive torque inside the trial). Dashed blue = the static passive map (for YES, essentially what the old pipeline subtracted). Dotted yellow = the mean of the hold recorded just before each trial; the old pipeline never used it, it was tried separately as config E04. At the toes-down angles (top rows) both sit clearly above the real relaxed level.*
+*Figure 2: YES, all 16 trials. Grey = measured torque, green dots = relaxed moments found from the EMG, black = the line through them (the passive torque inside the trial). Dashed blue = the static passive map (for YES, essentially what the old pipeline subtracted). Dotted yellow = the mean of the hold recorded just before each trial; the old pipeline never used it, it was tried separately as config E04. At the plantarflexed angles (top rows) both sit clearly above the real relaxed level.*
 
 **Important:** only the **training** session's torque is used to make training labels. The test session's torque is never given to the model. (In Part 11 the same construction is applied to the test session, but only to **grade** the predictions.)
 
 **What if we didn't do this?**
 - On YES/JM/EG the score barely changes: E03 0.925 vs E22 0.925, because report 1's passive fix was already decent there. But the model predicts more fake torque when you're relaxed (0.25 vs 0.17 Nm, Part 11).
-- On IES, which has no passive recordings, the toes-down angles collapse (R² ≈ 0.05) instead of reaching 0.98.
+- On IES, which has no passive recordings, the plantarflexed angles collapse (R² ≈ 0.05) instead of reaching 0.98.
 
 > **What we did:** active torque = measured − the passive level found during the relaxed moments of the same trial.
 > **Why:** the passive torque inside a trial differs from separate passive recordings, and some subjects have none.
@@ -430,14 +430,14 @@ Our input is a **sequence**: 20 steps in time order. An **LSTM** (Long Short-Ter
 - The experts start at zero, so at the start the model behaves like a plain LSTM.
 - A small penalty (L2, 0.001) keeps the expert weights small unless the data really needs them.
 
-**Why no constant in the experts?** A constant per angle would let each expert learn "at this angle the torque is usually about X Nm". Report 1 dropped it because of CH: at one angle CH pushed toes-up in session 1 and toes-down in session 2, so a "usual torque" learned on one session is wrong on the other. The experts can only change how the 16 summary numbers are turned into torque.
+**Why no constant in the experts?** A constant per angle would let each expert learn "at this angle the torque is usually about X Nm". Report 1 dropped it because of CH: at one angle CH pushed into dorsiflexion in session 1 and plantarflexed in session 2, so a "usual torque" learned on one session is wrong on the other. The experts can only change how the 16 summary numbers are turned into torque.
 
 **What if we removed the experts?** Honest answer: we never removed *only* the experts. The closest run is E31, which changes several things at once compared with FINAL/E22:
 - the original tiny LSTM (8 units instead of 16, dropout 30% instead of 20%);
 - no experts;
 - angle balancing with loss weights instead of scaled targets (same idea).
 
-Together these cost about 0.009 R² on YES/JM/EG (0.917 vs 0.925), and more on held-out HM (0.895 vs 0.930). E31 also sometimes overshoots big toes-down pushes (report 2, Figure 7d). So the bigger model with experts helps a little and is steadier, but how much of that is the experts alone wasn't tested.
+Together these cost about 0.009 R² on YES/JM/EG (0.917 vs 0.925), and more on held-out HM (0.895 vs 0.930). E31 also sometimes overshoots big plantarflexion pushes (report 2, Figure 7d). So the bigger model with experts helps a little and is steadier, but how much of that is the experts alone wasn't tested.
 
 **The old model, for comparison:** LSTM(8) → dropout 30% → LSTM(8) → dropout 30% → one output, 1,001 parameters ([figure](figures/fig05_arch_old.png)).
 
@@ -474,10 +474,10 @@ Squaring makes big errors count much more than small ones, and treats over- and 
 
 ### Making every angle count the same ("scale")
 
-With plain MSE there's a problem in our project. At YES's strong angles the torque swings with σ ≈ 15 Nm; at −0.486, only σ ≈ 0.64 Nm. Errors at strong angles are naturally much bigger, so plain MSE is dominated by them and basically ignores the toes-down angle. In squared units, the strong angle weighs about (15 / 0.64)² ≈ 550× more.
+With plain MSE there's a problem in our project. At YES's strong angles the torque swings with σ ≈ 15 Nm; at −0.486, only σ ≈ 0.64 Nm. Errors at strong angles are naturally much bigger, so plain MSE is dominated by them and basically ignores the plantarflexed angle. In squared units, the strong angle weighs about (15 / 0.64)² ≈ 550× more.
 
 **What the code does:**
-1. For each training angle, compute the torque's σ on the training data. For YES, from toes-down to toes-up: 0.64, 2.67, 4.57, 7.54, 8.51, 13.77, 15.05 and 12.96 Nm.
+1. For each training angle, compute the torque's σ on the training data. For YES, from plantarflexed to dorsiflexed: 0.64, 2.67, 4.57, 7.54, 8.51, 13.77, 15.05 and 12.96 Nm.
 2. **Divide every target by its angle's σ** before training, so every angle's target has the same typical size (≈ 1).
 3. After predicting, **multiply back** by σ to get Nm. Test windows use the σ of the closest training angle.
 
@@ -525,7 +525,7 @@ The starting parameters and the order of the batches are random. The **seed** is
 
 <details><summary><b>Check yourself:</b> what happens if you remove the per-angle scaling?</summary>
 
-The loss is dominated by the strong angles, whose errors are ~550× bigger in squared units, so the model barely cares about the toes-down angles and gets them wrong.
+The loss is dominated by the strong angles, whose errors are ~550× bigger in squared units, so the model barely cares about the plantarflexed angles and gets them wrong.
 </details>
 
 <details><summary><b>Check yourself:</b> why keep the parameters from the best epoch instead of the last one?</summary>
@@ -546,13 +546,13 @@ For each test trial (one subject, one angle, one session), the code compares the
   - 0 = no better than guessing the average;
   - **negative = worse than guessing the average**.
 
-**Why R² is harsh at toes-down angles, in numbers:**
+**Why R² is harsh at plantarflexed angles, in numbers:**
 
 | case | typical swing of the truth (σ) | typical error (RMSE) | R² ≈ 1 − (error / σ)² |
 |---|---|---|---|
 | strong angle | 15 Nm | 2.5 Nm | **0.97** |
-| toes-down angle | 0.4 Nm | 0.3 Nm (smaller!) | **0.44** |
-| old version, toes-down | 0.4 Nm | 1.5 Nm | **−13** |
+| plantarflexed angle | 0.4 Nm | 0.3 Nm (smaller!) | **0.44** |
+| old version, plantarflexed | 0.4 Nm | 1.5 Nm | **−13** |
 
 That's why we always report RMSE in Nm next to R².
 
@@ -573,7 +573,7 @@ To grade fairly, every model is compared with **the same** answer key: the rest-
 2. **Mean over the 8 angles** gives one number per subject per direction: the "main score".
 3. **Mean over** 3 subjects × 2 directions (S1→S2 and S2→S1).
 
-**"Weak-2"** is the same calculation, but only for each subject's 2 most toes-down angles. That's the number that answers "did we fix the problem?".
+**"Weak-2"** is the same calculation, but only for each subject's 2 most plantarflexed angles. That's the number that answers "did we fix the problem?".
 
 ### Phantom torque
 
@@ -591,7 +591,7 @@ The average size of the prediction during the relaxed moments of the test trial.
 
 > **What we did:** per-angle R² and RMSE against one shared answer key, on the other session; averaged over angles, seeds and both directions.
 > **Why:** a fair comparison, a realistic test, no lucky seeds.
-> **Remember:** R² asks "better than guessing the average?" (1 = perfect, < 0 = worse). RMSE = typical error in Nm. Toes-down angles have small swings, so look at RMSE too.
+> **Remember:** R² asks "better than guessing the average?" (1 = perfect, < 0 = worse). RMSE = typical error in Nm. Plantarflexed angles have small swings, so look at RMSE too.
 
 <details><summary><b>Check yourself:</b> a model has R² = 0 at an angle. What does that mean?</summary>
 
@@ -604,7 +604,7 @@ It's exactly as good as always predicting that trial's average torque: it explai
 
 **Main subjects** (YES, JM, EG; both directions; mean of 3 seeds; against the shared truth):
 
-| | mean R² | R² at the 2 most toes-down angles | typical error there (RMSE) | phantom torque at rest |
+| | mean R² | R² at the 2 most plantarflexed angles | typical error there (RMSE) | phantom torque at rest |
 |---|---|---|---|---|
 | old pipeline | 0.540 | 0.04 | 1.27 Nm | 1.25 Nm |
 | report-1 final (E03) | 0.925 | 0.85 | 0.44 Nm | 0.25 Nm |
@@ -612,7 +612,7 @@ It's exactly as good as always predicting that trial's average torque: it explai
 
 **Held-out subjects** (IES, CH, HM; seed 0 only):
 
-| | mean R² | R² at the 2 most toes-down angles | phantom torque | R² without CH's flipped angle (same trials for all) |
+| | mean R² | R² at the 2 most plantarflexed angles | phantom torque | R² without CH's flipped angle (same trials for all) |
 |---|---|---|---|---|
 | old pipeline | 0.874 | 0.70 | 1.07 Nm | 0.878 |
 | report-1 final (E03, auto-gain always on) | 0.787 | 0.66 | 0.85 Nm | 0.870 |
@@ -622,7 +622,7 @@ It's exactly as good as always predicting that trial's average torque: it explai
 **How to read the held-out table:**
 - **Why is E03 worse than the old pipeline here?** Two subjects explain it:
   - IES has no passive recordings, so E03's labels keep several Nm of passive torque (IES: E03 0.70 vs old 0.82).
-  - CH pushed toes-up at one angle in session 1 and toes-down at the same angle in session 2. Every auto-gain model breaks there (R² floored at −1), which pulls CH from ~0.98 down to ~0.73.
+  - CH pushed into dorsiflexion at one angle in session 1 and plantarflexed at the same angle in session 2. Every auto-gain model breaks there (R² floored at −1), which pulls CH from ~0.98 down to ~0.73.
 - **The FINAL row isn't a fair head-to-head.** It's the only row that got the "auto-gain off for CH" switch; the old pipeline and E03 weren't re-run with it.
   - The fair comparison is the last column (same trials for everyone, CH's flipped angle removed): 0.967 vs 0.878 vs 0.870. So the fair gap to E03 is about 0.10, and it comes mostly from IES.
 - **The FINAL numbers are real FINAL output.** `FINAL` was run on all 6 subjects in both directions (seed 0), and in all 12 runs it gave exactly the same predictions as the E22 (or, for CH, E32) runs used here. But FINAL was recommended after seeing these subjects, so they're not independent evidence for it.
@@ -630,7 +630,7 @@ It's exactly as good as always predicting that trial's average torque: it explai
 **Your hardest angle, YES −0.486** (trained on S1, tested on S2):
 - The old R² was −14.3 (error 1.52 Nm).
 - FINAL gets **0.34** on average over the 3 seeds (error 0.31 Nm), and the predictions now follow the pushes (figure below).
-- **Be ready for this question: at this one cell FINAL is the lowest of the new models.** E03 gets 0.47 (error 0.28 Nm), E29 0.42, E31 0.55. The difference is small in Nm (0.31 vs 0.28) and within FINAL's seed spread here (0.14–0.47). Over the two most toes-down angles of all 3 subjects, FINAL and E03 tie (0.84 vs 0.85).
+- **Be ready for this question: at this one cell FINAL is the lowest of the new models.** E03 gets 0.47 (error 0.28 Nm), E29 0.42, E31 0.55. The difference is small in Nm (0.31 vs 0.28) and within FINAL's seed spread here (0.14–0.47). Over the two most plantarflexed angles of all 3 subjects, FINAL and E03 tie (0.84 vs 0.85).
 - **Why R² is still lowish:** the person only pushes ~1 Nm there. The error is small next to their maximum force at that angle (~2% of it), but still about a third of the push itself.
 
 ![FINAL on YES, all 8 angles](figures/full_trial_FINAL_YES_S1toS2.png)
@@ -724,13 +724,13 @@ We tested it on top of the report-1 pipeline: 0.887 (÷ MVC peak, E10) and 0.904
 Yes. It can't tell "electrodes give 2× more signal" from "the person pushes 2× harder" (Part 5). It keeps the ups and downs within the last ~45 s but loses the overall level. That works here because both sessions had the same task.
 
 **Q: What happens if you remove the rest-anchored labels?**
-On YES/JM/EG: the same R², but more fake torque while relaxed (0.25 vs 0.17 Nm). On IES, which has no passive recordings, the toes-down angles collapse (R² ≈ 0.05 instead of 0.98).
+On YES/JM/EG: the same R², but more fake torque while relaxed (0.25 vs 0.17 Nm). On IES, which has no passive recordings, the plantarflexed angles collapse (R² ≈ 0.05 instead of 0.98).
 
 **Q: What happens if you remove the per-angle experts?**
-We never removed only the experts. The closest test (E31) also shrinks the LSTM and changes the loss balancing. It costs about −0.01 R² on YES/JM/EG, more on held-out HM (0.895 vs 0.930), and gives occasional big overshoots at toes-down angles.
+We never removed only the experts. The closest test (E31) also shrinks the LSTM and changes the loss balancing. It costs about −0.01 R² on YES/JM/EG, more on held-out HM (0.895 vs 0.930), and gives occasional big overshoots at plantarflexed angles.
 
 **Q: Why scale the targets per angle?**
-With plain MSE, the strong angles weigh ~550× more than the weakest one (in squared Nm), so the model would ignore the toes-down angles, which were exactly the problem.
+With plain MSE, the strong angles weigh ~550× more than the weakest one (in squared Nm), so the model would ignore the plantarflexed angles, which were exactly the problem.
 
 **Q: Is there data leakage?** *(leakage = information from the test data sneaking into training)*
 - The test session is never used for training or for the training labels.
@@ -746,13 +746,13 @@ With plain MSE, the strong angles weigh ~550× more than the weakest one (in squ
 **Q: Why is R² only 0.34 at YES −0.486 (S1→S2)?**
 - The person only pushes ~1 Nm there, so a typical error of 0.3 Nm caps R². The old error was 1.5 Nm (R² −14).
 - The 3 seeds differ a lot at this angle (0.14 to 0.47).
-- E03 does a bit better at this one cell (0.47), though both tie over the toes-down angles of all subjects.
+- E03 does a bit better at this one cell (0.47), though both tie over the plantarflexed angles of all subjects.
 
 **Q: Did you pick the best seed?**
 No. On the main subjects every setup was trained with 3 seeds and the **average** is reported; the held-out subjects had 1 seed. FINAL's main score varies by only ~0.002–0.02 between seeds, but a single weak angle can vary much more (YES −0.486: 0.14–0.47). That's exactly why we report the mean.
 
 **Q: How do you know the improvement is real and not luck?**
-- At the 2 most toes-down angles, FINAL beats the old version in 12 out of 12 cases (3 subjects × 2 directions × 2 angles), by +0.80 R² on average (95% CI +0.47 to +1.16).
+- At the 2 most plantarflexed angles, FINAL beats the old version in 12 out of 12 cases (3 subjects × 2 directions × 2 angles), by +0.80 R² on average (95% CI +0.47 to +1.16).
 - "95% CI" (confidence interval) means: resampling those 12 differences thousands of times, 95% of the averages fall in that range.
 - Three people is few, so this describes these people, not everyone.
 
@@ -765,7 +765,7 @@ Partly, and I say so.
 - A truth built with a different rest detector would be a good extra check.
 
 **Q: What is the "auto" rule?**
-If the training data shows the person pushing both toes-up and toes-down (> 2 Nm each way), auto-gain is switched off. Auto-gain removes the absolute signal size, which is needed to tell which muscle group is pushing. Only CH triggers it.
+If the training data shows the person pushing both dorsiflexed and plantarflexed (> 2 Nm each way), auto-gain is switched off. Auto-gain removes the absolute signal size, which is needed to tell which muscle group is pushing. Only CH triggers it.
 
 **Q: Why didn't the passive holds before each trial help?**
 They only change the passive estimate in the *training* labels, and the relaxed level during the trial differs from the hold (the tissue relaxes). Measuring it inside the trial (rest-anchored labels) is more direct.
@@ -799,7 +799,7 @@ The model itself is fast (a few thousand parameters). But:
 | feature | an input the model gets | 4 EMG envelopes + angle |
 | target | the right answer the model should give | active torque (Part 6) |
 | EMG / envelope | muscle electrical signal / its smoothed size | Part 3 |
-| radian (rad) | angle unit, 1 rad ≈ 57° | −0.486 rad ≈ 28° toes-down |
+| radian (rad) | angle unit, 1 rad ≈ 57° | −0.486 rad ≈ 28° plantarflexed |
 | median / percentile / σ | middle value / value below which p% fall / typical spread | Part 5 box |
 | normalisation | rescaling numbers to comparable sizes | ÷ max, auto-gain (Part 5) |
 | window | a short piece of signal used as one example | 20 steps × 5 numbers |

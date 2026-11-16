@@ -22,7 +22,7 @@ in `ML/config.py`.
 - **Sessions.** Session 1 (the lab calls it "test") and session 2 ("retest"), both in the same file. A
   trial's session comes from its comment: `retest` → session 2, `test` or `repeat` → session 1.
 - **Positions.** Eight fixed ankle angles (`p1` … `p8` in trial comments), spread over the range of motion. Each
-  session has one active trial per angle. The dashboard calls the two most plantarflexed angles "toes-down".
+  session has one active trial per angle. The dashboard calls the two most plantarflexed angles "plantarflexed".
 - **Trial types** (`ML/preprocessing/dataset_builder.py`, from the comment):
   - `mvc…` → maximum voluntary contraction
   - `…passive…` → passive trial: the ankle is moved or held while the person is relaxed

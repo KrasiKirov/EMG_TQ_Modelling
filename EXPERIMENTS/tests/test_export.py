@@ -35,7 +35,8 @@ def test_export_adds_tagged_entry_and_groups(tmp_path):
     assert {r['exp'] for r in data['rows']} == {'T1'} and len(data['rows']) == 2
     assert all('err_after_gain_offset_mae' in r for r in data['rows'])
     e = data['experiments']['T1']
-    assert e['title'] == 'Test model' and e['tags'] == ['demo'] and e['calibration'] == {'type': 'none'}
+    assert e['title'] == 'Test model' and e['tags'] == ['demo'] and 'calibration' not in e
+    assert not any(k == 'Calibration' for k, _ in e['overview']['settings'])
     assert e['kind'] == 'spec' and e['blurb'] == 'One line.'
     assert data['dashboard'] == {'landing': 'T1', 'groups': [{'label': 'Models', 'caption': '', 'tone': 'teal', 'open': True,
                                                               'items': [{'id': 'T1', 'label': 'Test model'}]}]}

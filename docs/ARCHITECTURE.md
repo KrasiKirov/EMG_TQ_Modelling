@@ -51,7 +51,7 @@ graph TD
 | `spec.py` | Loads and validates `EXPERIMENTS/configs/<id>.json`; `tag()` writes a spec's dashboard entry, description and tags |
 | `run.py` | Runs one experiment for one subject, direction and seed; writes `EXPERIMENTS/results/<id>/<subject>/<direction>/seed<k>.{npz,json}` |
 | `run_queue.py` | Runs many jobs in parallel, one process each; skips a job only if its saved result has the spec's current config |
-| `scoring.py` | Per-position metrics from saved predictions, the drift/shape error breakdown, and opt-in gain+offset calibration |
+| `scoring.py` | Per-position metrics from saved predictions, and the drift/shape error breakdown |
 | `export.py` | Scores every tagged experiment and writes rows, packed waveforms, sidebar groups and the landing page into `presentation-catalog.json` |
 | `dashboard.py` | Command line: `list`, `tag`, `export`, `build` (export + `npm run build`), `remove` |
 | `legacy/` | Scoring and the old single-page dashboard for the October controlled experiments; not used by the current dashboard |

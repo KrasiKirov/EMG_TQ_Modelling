@@ -78,7 +78,7 @@ What's new this round:
 - **Both directions.** Every configuration is trained on session 1 and tested on session 2 (`S1toS2`), *and* trained on session 2 and tested on session 1 (`S2toS1`). The two sessions are the lab's "test" and "retest" blocks, recorded one after the other in the same visit (same file), not on different days. That's a 2-fold cross-session test; report 1 only did S1→S2.
 - **3 seeds for every screening run (YES / JM / EG).** Seed = the random starting point of training. Results are the **mean of the 3 seeds**; I never pick the best seed. The held-out check (IES, CH, HM) used seed 0 only.
 - **Training speed setting.** The faster batch-64 "screening" setting from report 1. Report 1 showed the old-vs-new conclusions also hold with your original batch-8 setting.
-- **Angle names.** Negative angle = **plantarflexion** (toes down), as found in report 1. The "weak" angles are the 2 most plantarflexed angles of each subject.
+- **Angle names.** Negative angle = **plantarflexion** (plantarflexed), as found in report 1. The "weak" angles are the 2 most plantarflexed angles of each subject.
 
 ---
 
@@ -390,7 +390,7 @@ Per subject (mean of the 2 directions):
   - The rest-anchored labels (E22, E31) don't need any passive recording, because they measure the passive level from the relaxed moments of each trial: **R² 0.97–0.99 at every angle**.
   - That makes rest-anchored labels the more robust choice when passive recordings are missing. But it rests on one subject. The direct test would be to re-run E03 vs E22 on YES / JM / EG with their passive recordings removed.
 - **CH is excellent except at one angle (−0.31 / −0.33 rad).** At its other angles E22 gets 0.98–1.00 and E29 / E31 get 0.96–0.99. (Smaller dips: the old pipeline gets 0.94–0.95 at its plantarflexed angles in one direction, and E03 gets 0.82 at −0.456 in one direction.)
-  - At that angle CH pushed **toes-up** (+28 Nm, tibialis anterior) in session 1 and **toes-down** (−28 Nm, calf) in session 2, so the task itself changed between sessions.
+  - At that angle CH pushed **into dorsiflexion** (+28 Nm, tibialis anterior) in session 1 and **plantarflexed** (−28 Nm, calf) in session 2, so the task itself changed between sessions.
   - Every auto-gain model fails there (R² −1.5 to −5.7). The old pipeline gets 0.97 / 0.79 at that angle.
   - Since the angle is floored at −1, it alone pulls CH's mean down from ~0.98 to ~0.73.
   - The right-hand column above drops that single angle. That's a post-hoc choice, made because the task wasn't the same.

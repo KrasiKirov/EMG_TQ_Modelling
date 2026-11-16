@@ -144,7 +144,7 @@ def main():
         if model in MAIN:                                  # keep waveforms only for the plotted models
             curves[(model, s, d, seed, round(pos, 3))] = (t, y, p)
     df = pd.DataFrame(rows)
-    # problematic = the 2 most toes-down positions of each subject's tested session (as in score.py)
+    # problematic = the 2 most plantarflexed positions of each subject's tested session (as in score.py)
     df['toes_down'] = 0
     for (s, d), x in df.groupby(['subject', 'direction']):
         df.loc[x.index[x.position_rad.isin(sorted(x.position_rad.unique())[:2])], 'toes_down'] = 1
@@ -193,14 +193,14 @@ def main():
                 pk = Ad[(Ad.subject == s) & ((Ad.position_rad - pos).abs() < 0.005)].peak_torque.iloc[0]
                 td = ' ⬇' if Ad[(Ad.subject == s) & ((Ad.position_rad - pos).abs() < 0.005)].toes_down.iloc[0] else ''
                 L.append(f'| {s} | {pos:+.3f}{td} | {pk:.1f} | ' + ' | '.join(cells) + ' |')
-        L += ['', '⬇ = one of the 2 most toes-down positions.', '']
+        L += ['', '⬇ = one of the 2 most plantarflexed positions.', '']
         # overall: median over every run x position of the group
         L += ['**Over all subjects** (median over every run × position; 5th–95th / 1st–99th percentile):', '',
               '| model | positions | R² median | R² 5–95 % | R² 1–99 % | MAE median (Nm) | MAE 5–95 % | demeaned R² median | demeaned MAE median |',
               '|---|---|---|---|---|---|---|---|---|']
         Dd = df[df.direction == d]
         for m in models:
-            for grp, gname in ((1, 'toes-down'), (0, 'other')):
+            for grp, gname in ((1, 'plantarflexed'), (0, 'other')):
                 x = Dd[(Dd.model == m) & (Dd.toes_down == grp)]
                 L.append(f'| {m} | {gname} | {show_r2(np.median(x.r2))} | {show_r2(pct(x.r2, 5))}–{show_r2(pct(x.r2, 95))} | '
                          f'{show_r2(pct(x.r2, 1))}–{show_r2(pct(x.r2, 99))} | {np.median(x.mae):.2f} | {pct(x.mae, 5):.2f}–{pct(x.mae, 95):.2f} | '
@@ -239,7 +239,7 @@ def main():
             for ax in axs[:, 0]:
                 ax.set_ylabel(ylab)
             for ax in axs[1]:
-                ax.set_xlabel('ankle position (rad, negative = toes down)')
+                ax.set_xlabel('ankle position (rad, negative = plantarflexed)')
             axs[0, 0].legend(fontsize=8.5, loc='lower right')
             n = Dd[Dd.model.isin(models)].groupby('model').seed.nunique().to_dict()
             fig.suptitle(f'{"learn session 1 → test session 2" if d == "S1toS2" else "learn session 2 → test session 1"} · '
@@ -249,7 +249,7 @@ def main():
             fig.savefig(os.path.join(PLOTS, f'{fn}_{d}.png'), dpi=130)
             plt.close(fig)
 
-    # ── best and worst run of each model at the same position (most toes-down, learn S1 -> test S2) ──
+    # ── best and worst run of each model at the same position (most plantarflexed, learn S1 -> test S2) ──
     for m in ('original', 'ours'):
         Dm = df[(df.model == m) & (df.direction == 'S1toS2')]
         if Dm.empty:
@@ -265,7 +265,7 @@ def main():
             for r, col, nm in ((best, '#1f9d55', 'best run'), (worst, '#c0392b', 'worst run')):
                 tt, _, p = curves[(m, s, 'S1toS2', int(r.seed), pos)]
                 ax.plot(tt, p, color=col, lw=0.8, label=f'{nm} (seed {int(r.seed)}): R² {show_r2(r.r2)}, MAE {r.mae:.2f} Nm')
-            ax.set_title(f'{s} · {pos:+.2f} rad (most toes-down) · {len(x)} runs', loc='left', fontsize=10.5, weight='bold')
+            ax.set_title(f'{s} · {pos:+.2f} rad (most plantarflexed) · {len(x)} runs', loc='left', fontsize=10.5, weight='bold')
             ax.set_ylabel('Nm')
             ax.legend(fontsize=8, loc='lower right', bbox_to_anchor=(1.0, 1.0), ncol=3)
         axs[-1].set_xlabel('time in trial (s)')

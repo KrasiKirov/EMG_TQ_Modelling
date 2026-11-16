@@ -33,7 +33,7 @@ KEY_PLAIN = {'passive_trial': 'Passive trials of the tested session (supervisor)
 STUDY_PLAIN = {'screen': 'main 3 people, 3 runs', 'confirm': 'extra 3 people, 1 run', 'ablation': 'remove-one-change test, 1 run',
                'final_check': 'FINAL check, 1 run', 'passive': 'passive-trials-only versions'}
 
-# toes-down flag: the 2 most negative angles of that person's tested session
+# plantarflexed flag: the 2 most negative angles of that person's tested session
 df['toes_down'] = 0
 for (sj, ses), x in df.groupby(['subject', 'tested_session']):
     angs = sorted(x['angle_rad'].unique())[:2]
@@ -81,12 +81,12 @@ lines = [
     ('R² = 1 − Σ(prediction − key)² / Σ(key − mean of key)².  1 = perfect, 0 = as good as a flat line at the average, below 0 = worse.', False),
     ('MSE = mean of (prediction − key)², in Nm².   RMSE = square root of MSE, in Nm (typical size of the miss).', False),
     ('NRMSE = RMSE ÷ (98th − 2nd percentile of the key): the error as a fraction of the torque range of that trial.', False),
-    ('Bias = mean of (prediction − key), in Nm (negative = predicts too much toes-down push).', False),
+    ('Bias = mean of (prediction − key), in Nm (negative = predicts too much plantarflexion push).', False),
     ('', False),
     ('OTHER COLUMNS', True),
     ('run = training run (1, 2, 3): the same training repeated from a different random start.', False),
     ('direction = which session the model learned from and which it was tested on.', False),
-    ('toes_down = 1 for the 2 most toes-down (most negative) angles of that person.', False),
+    ('toes_down = 1 for the 2 most plantarflexed (most negative) angles of that person.', False),
     ('In the summary sheets, R² of each angle is first averaged over runs, then floored at −1 (so one catastrophic angle cannot dominate), then averaged.', False),
     ('', False),
     ('STUDIES', True),
@@ -120,7 +120,7 @@ R['r2f'] = rng(fcol)
 # ── Per subject (formulas) ──────────────────────────────────────────────────
 ps = mean[['key', 'study', 'config', 'description', 'subject', 'direction', 'runs']].drop_duplicates().reset_index(drop=True)
 wsS = wb.create_sheet('Per subject')
-heads = list(ps.columns) + ['R² (8 angles)', 'R² toes-down', 'MSE (Nm²)', 'RMSE (Nm)', 'RMSE toes-down (Nm)', 'NRMSE']
+heads = list(ps.columns) + ['R² (8 angles)', 'R² plantarflexed', 'MSE (Nm²)', 'RMSE (Nm)', 'RMSE plantarflexed (Nm)', 'NRMSE']
 write_table(wsS, pd.DataFrame(columns=heads), widths={'description': 45, 'direction': 22})
 for i, row in enumerate(ps.itertuples(index=False), 2):
     for j, v in enumerate(row, 1):
@@ -144,8 +144,8 @@ for (key, study, cfg, desc), x in ps.groupby(['key', 'study', 'config', 'descrip
         if x['subject'].isin(subs).any():
             summ.append((key, study, cfg, desc, gname, ','.join(s for s in subs if s in set(x['subject']))))
 wsM = wb.create_sheet('Summary', 1)
-heads = ['key', 'study', 'config', 'description', 'group', 'people', 'R² (8 angles)', 'R² toes-down', 'MSE (Nm²)', 'RMSE (Nm)',
-         'RMSE toes-down (Nm)', 'NRMSE']
+heads = ['key', 'study', 'config', 'description', 'group', 'people', 'R² (8 angles)', 'R² plantarflexed', 'MSE (Nm²)', 'RMSE (Nm)',
+         'RMSE plantarflexed (Nm)', 'NRMSE']
 write_table(wsM, pd.DataFrame(columns=heads), widths={'description': 50, 'group': 22, 'people': 12})
 for i, (key, study, cfg, desc, gname, people) in enumerate(summ, 2):
     for j, v in enumerate((key, study, cfg, desc, gname, people), 1):

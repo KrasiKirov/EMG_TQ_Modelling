@@ -21,14 +21,14 @@ All plots are seed 0 and scored against the **shared reference truth**: measured
 
 ## How to read one plot
 
-- **8 panels = 8 trials = 8 ankle angles** of the tested session. The **top panel is the most toes-down (plantarflexed) angle**, which is the hard one. Going down, the angles move towards toes-up.
+- **8 panels = 8 trials = 8 ankle angles** of the tested session. The **top panel is the most plantarflexed angle**, which is the hard one. Going down, the angles move towards dorsiflexed.
 - **Panel title:** `Position −0.486 | R²=… | RMSE=… Nm | N=…`
   - position = ankle angle in rad
   - R² = 1 is perfect, 0 is no better than guessing the average, below 0 is worse
   - RMSE = the typical error in Nm
   - N = number of 200 ms windows scored
 - **Blue line = the truth** (voluntary torque). **Red line = the model's prediction.**
-- **x-axis** = time in the ~90 s trial. **y-axis** = active torque in Nm. Negative = pushing the toes down. ~0 = relaxed.
+- **x-axis** = time in the ~90 s trial. **y-axis** = active torque in Nm. Negative = pushing the foot into plantarflexion. ~0 = relaxed.
 
 ## What to look for
 
@@ -42,7 +42,7 @@ All plots are seed 0 and scored against the **shared reference truth**: measured
 
 **Good pairs to show:**
 - `YES_learnedS1_testedS2_OLD` vs `…_FINAL`: in the top panel, the old one is ~1.5 Nm too low; FINAL follows the pushes.
-- `JM_learnedS2_testedS1_OLD` vs `…_FINAL`: the same effect at JM's toes-down angles.
+- `JM_learnedS2_testedS1_OLD` vs `…_FINAL`: the same effect at JM's plantarflexed angles.
 - `IES_learnedS2_testedS1_OLD` vs `…_FINAL`: IES has no passive recordings, and FINAL still works.
 
 ## Where the originals are

@@ -18,7 +18,7 @@ Metrics per position (one session-2 trial):
   peak   max |y|                                [Nm]
 Reference 'S1 mean': for every position, the mean torque of the session-1 trial at that
 angle over its training part (first 80 % of its windows), predicted as a constant.
-Toes-down = the 2 most toes-down positions of each person.
+Plantarflexed = the 2 most plantarflexed positions of each person.
 """
 import argparse
 import glob
@@ -111,8 +111,8 @@ def decide(c, subjects):
     base = {k: group(c, 'N0', k) for k in (0, 1)}
     n0_td, n0_ot = base[1].mae.median(), base[0].mae.median()
     n0_worst = base[1].mae_worst.median()
-    L += ['| Arm | toes-down MAE | vs N0 | people better at toes-down | other MAE | worst other person vs N0 | '
-          'toes-down worst-seed MAE | passes |', '|---|---|---|---|---|---|---|---|']
+    L += ['| Arm | plantarflexed MAE | vs N0 | people better at plantarflexed positions | other MAE | worst other person vs N0 | '
+          'plantarflexed worst-seed MAE | passes |', '|---|---|---|---|---|---|---|---|']
     passing = {}
     for arm in ['N0', 'N1', 'N2', 'N3']:
         td, ot = group(c, arm, 1).mae.median(), group(c, arm, 0).mae.median()
@@ -129,7 +129,7 @@ def decide(c, subjects):
         ok = r1 and r2 and r3 and r4
         if ok:
             passing[arm] = td
-        fails = [n for n, r in zip(('1 toes-down', '2 people', '3 elsewhere', '4 worst seed'), (r1, r2, r3, r4)) if not r]
+        fails = [n for n, r in zip(('1 plantarflexed', '2 people', '3 elsewhere', '4 worst seed'), (r1, r2, r3, r4)) if not r]
         L.append(f'| {LABEL[arm]} | {td:.3f} | {td - n0_td:+.3f} ({(td / n0_td - 1) * 100:+.0f} %) | '
                  f'{len(better)} of 3 ({", ".join(better) or "none"}) | {ot:.3f} | {(other_ratio - 1) * 100:+.0f} % | '
                  f'{worst:.3f} | {"yes" if ok else "no, fails " + ", ".join(fails)} |')
@@ -144,7 +144,7 @@ def decide(c, subjects):
         L += ['', '**No arm passes. N0 (control) stays.**']
     others = {a: group(c, a, 1).mae.median() for a in ['N1', 'N2', 'N3'] if a != winner}
     runner = min(others, key=others.get)
-    L += [f'Stage 2 runs: {winner}' + (f' and {runner} (lowest toes-down MAE among the others, for information only).'
+    L += [f'Stage 2 runs: {winner}' + (f' and {runner} (lowest plantarflexed MAE among the others, for information only).'
                                        if winner == 'N0' else ' and N0.')]
     return winner, runner, '\n'.join(L) + '\n'
 

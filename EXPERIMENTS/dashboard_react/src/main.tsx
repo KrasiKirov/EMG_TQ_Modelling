@@ -1,17 +1,16 @@
 import '@mantine/core/styles.css';
 import './styles.css';
 import './redesign.css';
+import './plain.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MantineProvider } from '@mantine/core';
-import { schemeManager, theme } from './theme';
+import { theme } from './theme';
 import { App } from './App';
-
-const manager = schemeManager();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <MantineProvider theme={theme} defaultColorScheme="auto" colorSchemeManager={manager}>
+    <MantineProvider theme={theme} forceColorScheme="light">
       <App />
     </MantineProvider>
   </React.StrictMode>,

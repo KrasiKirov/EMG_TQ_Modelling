@@ -123,7 +123,7 @@ test is big enough to settle the question:
 
 | Test | Setup | Shuffled | Not shuffled |
 | --- | --- | --- | --- |
-| `S0_noshuffle` vs N0 (`EXPERIMENTS/results/`) | 200 ms, total torque, session 1 → 2; the 9 completed runs (CH, EG×2, HM, IES, JM×2, YES×2), each paired with the same N0 person and seed | MAE toes-down **1.07** Nm, other angles **1.21** Nm | toes-down **1.24** Nm, other angles **1.62** Nm; worse in **9 of 9** pairs |
+| `S0_noshuffle` vs N0 (`EXPERIMENTS/results/`) | 200 ms, total torque, session 1 → 2; the 9 completed runs (CH, EG×2, HM, IES, JM×2, YES×2), each paired with the same N0 person and seed | MAE plantarflexed **1.07** Nm, other angles **1.21** Nm | plantarflexed **1.24** Nm, other angles **1.62** Nm; worse in **9 of 9** pairs |
 | JM ablation, 10 Nov (`ML/reports/shuffle_ablation_JM_20261110/`, local, not in git) | 500 ms audited pipeline, JM only, 3 seeds, identical initial weights per pair | retest RMSE **0.55** Nm (validation 0.34) | retest RMSE **0.66** Nm (validation 0.51); worse in **3 of 3** pairs |
 
 Why this is not conclusive:
@@ -271,8 +271,8 @@ decision rule written down before the results.
 | Direction | session 1 → 2 (session 2 → 1 as a supplement) | the primary protocol |
 | Seeds | 5 per person and condition, paired: same seed and same starting weights in both conditions | 3 seeds could not separate the JM effects from noise |
 | Training budget | the A0 limit (≤ 200 epochs, early stop 25), checked that runs are not stopping at the limit | the 60-epoch cap left some 10 Nov runs unfinished |
-| Score | per-person median of the per-angle MAE over seeds, toes-down and other angles separately, on whole session-2 trials | the dashboard's measure |
-| Decision rule (fixed in advance) | a change wins only if it lowers toes-down MAE for at least 5 of 6 people without raising the other angles' MAE by more than 0.05 Nm in more than one person; otherwise keep the default | the same style of rule as the normalization study |
+| Score | per-person median of the per-angle MAE over seeds, plantarflexed and other angles separately, on whole session-2 trials | the dashboard's measure |
+| Decision rule (fixed in advance) | a change wins only if it lowers plantarflexed MAE for at least 5 of 6 people without raising the other angles' MAE by more than 0.05 Nm in more than one person; otherwise keep the default | the same style of rule as the normalization study |
 
 Cost:
 - **Shuffling off** needs no new code: an A0 copy with `"shuffle": false`.

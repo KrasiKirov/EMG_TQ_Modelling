@@ -93,7 +93,7 @@ CONFIGS = {
     'E31_restanchor_agc_lstm8': dict(passive='restanchor', emg='agc', model='lstm8', balance='weights',
                                      q='Simplest candidate: rest-anchored labels + auto-gain + the ORIGINAL small LSTM.'),
     # ── post-hoc diagnostic (after the held-out check; NOT eligible for selection) ──
-    # CH pushes toes-up at one angle in session 1 and toes-down in session 2.
+    # CH pushes into dorsiflexion at one angle in session 1 and plantarflexed in session 2.
     # Is the auto-gain or the per-angle MoE head responsible for the failure there?
     'E32_restanchor_noagc_moe': dict(passive='restanchor', emg='trainmax', model='moe', balance='scale',
                                      q='Diagnostic: E22 without auto-gain (does auto-gain break the direction flip?).'),

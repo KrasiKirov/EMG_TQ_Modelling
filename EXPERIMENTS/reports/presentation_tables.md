@@ -57,17 +57,17 @@ Seeds per model: original LSTM-8 (original code) 10, original LSTM-8 (our framew
 | HM | +0.052 | 12.8 | 0.98 [0.98–0.99] | 0.44 [0.42–0.51] | 0.98 [0.98–0.99] | 0.42 [0.42–0.46] | 0.98 [0.97–0.98] | 0.51 [0.44–0.64] |
 | HM | +0.195 | 14.5 | 0.87 [0.82–0.89] | 1.55 [1.43–1.80] | 0.86 [0.84–0.89] | 1.56 [1.52–1.68] | 0.87 [0.84–0.92] | 1.55 [1.26–1.82] |
 
-⬇ = one of the 2 most toes-down positions.
+⬇ = one of the 2 most plantarflexed positions.
 
 **Over all subjects** (median over every run × position; 5th–95th / 1st–99th percentile):
 
 | model | positions | R² median | R² 5–95 % | R² 1–99 % | MAE median (Nm) | MAE 5–95 % | demeaned R² median | demeaned MAE median |
 |---|---|---|---|---|---|---|---|---|
-| original | toes-down | 0.77 | 0.00–0.98 | 0.00–0.98 | 0.76 | 0.22–1.67 | 0.92 | 0.50 |
+| original | plantarflexed | 0.77 | 0.00–0.98 | 0.00–0.98 | 0.76 | 0.22–1.67 | 0.92 | 0.50 |
 | original | other | 0.97 | 0.53–0.99 | 0.00–0.99 | 1.04 | 0.35–2.80 | 0.98 | 0.81 |
-| original_fw | toes-down | 0.81 | 0.00–0.97 | 0.00–0.98 | 0.79 | 0.21–1.79 | 0.90 | 0.55 |
+| original_fw | plantarflexed | 0.81 | 0.00–0.97 | 0.00–0.98 | 0.79 | 0.21–1.79 | 0.90 | 0.55 |
 | original_fw | other | 0.97 | 0.47–0.99 | 0.00–0.99 | 1.04 | 0.36–2.82 | 0.98 | 0.82 |
-| ours | toes-down | 0.93 | 0.00–0.98 | 0.00–0.99 | 0.43 | 0.15–0.71 | 0.94 | 0.30 |
+| ours | plantarflexed | 0.93 | 0.00–0.98 | 0.00–0.99 | 0.43 | 0.15–0.71 | 0.94 | 0.30 |
 | ours | other | 0.98 | 0.88–0.99 | 0.84–0.99 | 0.67 | 0.29–1.92 | 0.98 | 0.65 |
 
 ## learn session 2 → test session 1 (supplementary)
@@ -123,14 +123,14 @@ Seeds per model: original LSTM-8 (original code) 10, original LSTM-8 (our framew
 | HM | +0.054 | 13.1 | 0.96 [0.96–0.97] | 0.80 [0.71–0.83] | 0.94 [0.93–0.94] | 0.94 [0.90–0.95] |
 | HM | +0.198 | 19.0 | 0.82 [0.53–0.86] | 1.48 [1.26–2.13] | 0.77 [0.76–0.84] | 1.49 [1.33–1.59] |
 
-⬇ = one of the 2 most toes-down positions.
+⬇ = one of the 2 most plantarflexed positions.
 
 **Over all subjects** (median over every run × position; 5th–95th / 1st–99th percentile):
 
 | model | positions | R² median | R² 5–95 % | R² 1–99 % | MAE median (Nm) | MAE 5–95 % | demeaned R² median | demeaned MAE median |
 |---|---|---|---|---|---|---|---|---|
-| original_fw | toes-down | 0.89 | 0.07–0.97 | 0.00–0.98 | 0.57 | 0.20–1.28 | 0.93 | 0.46 |
+| original_fw | plantarflexed | 0.89 | 0.07–0.97 | 0.00–0.98 | 0.57 | 0.20–1.28 | 0.93 | 0.46 |
 | original_fw | other | 0.97 | 0.23–0.99 | 0.00–0.99 | 1.06 | 0.38–4.08 | 0.98 | 0.83 |
-| ours | toes-down | 0.95 | 0.00–0.99 | 0.00–0.99 | 0.36 | 0.18–0.74 | 0.97 | 0.31 |
+| ours | plantarflexed | 0.95 | 0.00–0.99 | 0.00–0.99 | 0.36 | 0.18–0.74 | 0.97 | 0.31 |
 | ours | other | 0.98 | 0.85–0.99 | 0.78–0.99 | 0.74 | 0.31–2.40 | 0.98 | 0.68 |
 

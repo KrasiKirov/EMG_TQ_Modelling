@@ -5,22 +5,19 @@ from EXPERIMENTS.pipeline import spec as S
 BASE = {'id': 'T1', 'title': 'Test', 'changes': {'window': 20}, 'hypothesis': 'h'}
 
 
-def test_defaults_no_calibration_and_hypothesis_as_description():
+def test_defaults_and_hypothesis_as_description():
     s = S.parse(dict(BASE), 'T1')
-    assert s.calibration == {'type': 'none'}
+    assert not hasattr(s, 'calibration')
     assert s.description == 'h' and s.tags == [] and s.dashboard is None and s.results_from == 'T1'
 
 
-def test_gain_offset_requires_score_start_after_block():
-    with pytest.raises(S.SpecError):
-        S.parse(dict(BASE, calibration={'type': 'gain_offset', 'seconds': 10, 'score_from_s': 5}))
-    s = S.parse(dict(BASE, calibration={'type': 'gain_offset', 'seconds': 10, 'score_from_s': 30}))
-    assert s.calibration == {'type': 'gain_offset', 'seconds': 10.0, 'score_from_s': 30.0}
+def test_calibration_field_is_rejected():
+    for cal in ({'type': 'gain_offset', 'seconds': 10, 'score_from_s': 30}, {'type': 'none'}):
+        with pytest.raises(S.SpecError, match='calibration was removed'):
+            S.parse(dict(BASE, calibration=cal))
 
 
-def test_unknown_calibration_and_bad_id_rejected():
-    with pytest.raises(S.SpecError):
-        S.parse(dict(BASE, calibration={'type': 'magic'}))
+def test_bad_id_rejected():
     with pytest.raises(S.SpecError):
         S.parse(dict(BASE, id='bad id'))
     with pytest.raises(S.SpecError):

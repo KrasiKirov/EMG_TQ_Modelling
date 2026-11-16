@@ -1,6 +1,5 @@
-import { memo, useMemo } from 'react';
-import { Alert, Badge, Button, Card, Group, SimpleGrid, Stack, Text, Title, Tooltip } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { memo, useMemo, useState } from 'react';
+import { Alert, Badge, Button, Card, Group, SegmentedControl, SimpleGrid, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { IconAlertTriangle } from '../icons';
 import { DS } from '../dataset';
 import { computeKpis, heatmap, positionStats, scopeSubjects, type HeatCell, type KpiGroup, type KpiSide, type Kpis } from '../lib/aggregate';
@@ -12,6 +11,8 @@ import { quantile } from '../lib/stats';
 import type { Dir, MetricKey, Params, Summary } from '../lib/types';
 import { useView } from '../state';
 import { boxOption } from '../charts/options';
+import { SEED_KEY, type SpreadMode } from '../charts/seedbox';
+import { SeedSetup } from '../components/SeedSetup';
 import { EChart } from '../components/EChart';
 import { EmptyState, Note, SectionCard, Swatch, VerdictBadge } from '../components/common';
 import { luminance, mix, type ChartTokens } from '../theme';
@@ -26,8 +27,8 @@ export function OverviewTab() {
     <Stack gap="lg">
       <ComparisonStrip stA={stA} stB={stB} subjects={subjects} />
       <UntrainedAlert stA={stA} stB={stB} />
-      <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="md">
-        <KpiCard id="toes" title="Toes-down positions" sub="the 2 most plantarflexed positions of each person" g={kpis.toes} k={kpis} stA={stA} stB={stB} metric={s.metric} />
+      <SimpleGrid cols={2} spacing="md">
+        <KpiCard id="toes" title="Plantarflexed positions" sub="the 2 most plantarflexed positions of each person" g={kpis.toes} k={kpis} stA={stA} stB={stB} metric={s.metric} />
         <KpiCard id="other" title="Remaining positions" sub="all remaining test positions" g={kpis.other} k={kpis} stA={stA} stB={stB} metric={s.metric} />
       </SimpleGrid>
       <PerPositionCard stA={stA} stB={stB} />
@@ -184,7 +185,7 @@ function KpiCard({
           </span>
         </Tooltip>
       </Group>
-      <SimpleGrid cols={{ base: 2, xs: 3 }} spacing="md" verticalSpacing="md">
+      <SimpleGrid cols={3} spacing="md" verticalSpacing="md">
         {side('A')}
         {side('B')}
         <Stack gap={4}>
@@ -218,12 +219,11 @@ function KpiCard({
         </Group>
       ))}
       <details className="disclosure"><summary>Torque scale{isBias ? ' and bias' : ''}</summary><Text size="sm" c="dimmed" className="num" data-testid={`kpi-${id}-peak`}>
-        Peak voluntary torque at these positions: median {fmt(g.peak.median, 1)} Nm (range {fmt(g.peak.min, 1)} to {fmt(g.peak.max, 1)} Nm)
-        {metric === 'mae' || isBias ? ', the scale to read the error against.' : '.'}
+        Peak voluntary torque: median {fmt(g.peak.median, 1)} Nm ({fmt(g.peak.min, 1)} to {fmt(g.peak.max, 1)} Nm).
       </Text>
       {isBias && (
         <Text size="xs" c="dimmed" mt={6}>
-          Size of the bias (|bias|) per run, so positive and negative offsets do not cancel; the box plots below keep the sign.
+          |bias| per run; the box plots keep the sign.
         </Text>
       )}</details>
     </Card>
@@ -233,14 +233,15 @@ function KpiCard({
 // ── per-position box plots ───────────────────────────────────────────────────
 function PerPositionCard({ stA, stB }: { stA: ModelStatus; stB: ModelStatus }) {
   const { s, openWaveform, tokens } = useView();
-  const narrow = !!useMediaQuery('(max-width: 48em)');
   const md = METRICS[s.metric];
   const all = s.subj === 'All';
   const subjects = scopeSubjects(DS, s.subj);
+  const [mode, setMode] = useState<SpreadMode>('box');
   return (
     <SectionCard
       title={`${md.label} per position`}
-      description={`${dirLabel(s.dir, true)} · ${all ? 'each person' : s.subj} · spread over training runs (random seeds); the test trials are the same for every run`}
+      actions={<SegmentedControl size="xs" aria-label="Spread over seeds" value={mode} onChange={(v) => setMode(v as SpreadMode)} data={[{ value: 'box', label: 'Box plot' }, { value: 'ci', label: 'Median ± 95 % CI' }]} />}
+      description={`${dirLabel(s.dir, true)} · ${all ? 'each person' : s.subj} · spread over seeds`}
       testId="per-position"
     >
       <Stack gap="md">
@@ -253,22 +254,22 @@ function PerPositionCard({ stA, stB }: { stA: ModelStatus; stB: ModelStatus }) {
           </span>
         </div>
         <details className="disclosure"><summary>How to read this chart</summary><Text size="xs" c="dimmed">
-          box = 25–75 % · whiskers = 5–95 % · line in box = median · dots = runs · shaded = toes-down · positions in rad
-          {s.metric === 'mae' ? ' · grey number under each position = its peak voluntary torque (Nm)' : ''}
+          {SEED_KEY[mode]} Shaded = plantarflexed · positions in rad
           {s.metric === 'bias' ? ' · line at 0 = no bias' : ''}
         </Text></details>
         {all ? (
-          <SimpleGrid cols={{ base: 1, lg: 2, xl: 3 }} spacing="lg" verticalSpacing="lg">
+          <SimpleGrid cols={3} spacing="lg" verticalSpacing="lg">
             {subjects.map((subj) => (
-              <SubjectBox key={subj} subj={subj} compact narrow={narrow} A={s.A} B={s.B} dir={s.dir} metric={s.metric} floor={s.floor} tokens={tokens} onPick={openWaveform} />
+              <SubjectBox key={subj} subj={subj} compact mode={mode} A={s.A} B={s.B} dir={s.dir} metric={s.metric} floor={s.floor} tokens={tokens} onPick={openWaveform} />
             ))}
           </SimpleGrid>
         ) : (
           subjects.map((subj) => (
-            <SubjectBox key={subj} subj={subj} compact={false} narrow={narrow} A={s.A} B={s.B} dir={s.dir} metric={s.metric} floor={s.floor} tokens={tokens} onPick={openWaveform} />
+            <SubjectBox key={subj} subj={subj} compact={false} mode={mode} A={s.A} B={s.B} dir={s.dir} metric={s.metric} floor={s.floor} tokens={tokens} onPick={openWaveform} />
           ))
         )}
-        <Note>Click a box or a dot to open that person and position in the waveform viewer. Hover for median, 5–95 %, 1–99 %, number of runs and peak torque.</Note>
+        <SeedSetup />
+        <Note>Click a box to open its waveform.</Note>
       </Stack>
     </SectionCard>
   );
@@ -284,7 +285,6 @@ function clipText(low: number | undefined, high: number | undefined, unit: strin
 const SubjectBox = memo(function SubjectBox({
   subj,
   compact,
-  narrow,
   A,
   B,
   dir,
@@ -292,10 +292,11 @@ const SubjectBox = memo(function SubjectBox({
   floor,
   tokens,
   onPick,
+  mode,
 }: {
+  mode: SpreadMode;
   subj: string;
   compact: boolean;
-  narrow: boolean;
   A: Params;
   B: Params;
   dir: Dir;
@@ -309,9 +310,9 @@ const SubjectBox = memo(function SubjectBox({
     const a = positionStats(DS, A, subj, dir, metric, floor);
     const b = positionStats(DS, B, subj, dir, metric, floor);
     const peaks = positions.map((p) => peakOf(DS, subj, dir, p));
-    const { option, clip } = boxOption({ subj, positions, peaks, A: a, B: b, metric, floor, compact, narrow }, tokens);
+    const { option, clip } = boxOption({ subj, positions, peaks, A: a, B: b, metric, floor, compact, mode }, tokens);
     return { option, clip, a, b };
-  }, [A, B, subj, dir, metric, floor, compact, narrow, tokens, positions]);
+  }, [A, B, subj, dir, metric, floor, compact, tokens, positions, mode]);
   const missing = [!built.a.exp && 'A', !built.b.exp && 'B'].filter(Boolean) as string[];
   const height = compact ? (metric === 'mae' ? 244 : 228) : metric === 'mae' ? 430 : 410;
   const unit = METRICS[metric].unit ? ` ${METRICS[metric].unit}` : '';
@@ -389,7 +390,7 @@ function HeatmapCard() {
   return (
     <SectionCard
       title="Difference B − A, every person × position"
-      description={`median over runs of B minus median of A · ${compareLabel(s.metric, false)}${unit} · ${dirLabel(s.dir)}`}
+      description={`B − A, median over runs · ${compareLabel(s.metric, false)}${unit}`}
       testId="heatmap"
       actions={
         anyFinite ? (
@@ -414,7 +415,7 @@ function HeatmapCard() {
               <div />
               {Array.from({ length: 8 }, (_, k) => (
                 <div key={k} className={`heat-head ${k < 2 ? 'toes' : ''}`}>
-                  {k < 2 ? `toes-down ${k + 1}` : `pos ${k + 1}`}
+                  {k < 2 ? `plantarflexed ${k + 1}` : `pos ${k + 1}`}
                 </div>
               ))}
               {DS.subjects.map((subj) => (
@@ -434,10 +435,8 @@ function HeatmapCard() {
           </div>
           <Group mt="md" gap="lg">
             <Note>
-              Click a cell to open the waveforms at that person and position. Positions differ slightly per person, so columns are ordered from most
-              toes-down (most negative angle) upwards. Grey = about the same: {md.floorable ? 'R² within ±0.02' : 'within ±0.05 Nm or ±2 % of the peak torque, whichever is larger'}.
-              {md.floorable && s.floor ? ' R² below 0 counts as 0.' : ''}
-              {isBias ? ' Compared on the size of the bias (|bias|); the tooltip also gives the signed medians.' : ''}
+              Click a cell to open its waveform. Grey = about the same ({md.floorable ? '±0.02 R²' : '±0.05 Nm or ±2 % of peak'}).
+              {md.floorable && s.floor ? ' R² below 0 counts as 0.' : ''}{isBias ? ' Compared on |bias|.' : ''}
             </Note>
           </Group>
         </>
@@ -452,12 +451,12 @@ function HeatmapCard() {
 }
 
 function cellColour(c: HeatCell, span: number, t: ChartTokens): { bg: string; fg: string } {
-  const surface = t.dark ? '#262a33' : '#f3f4f6';
+  const surface = '#f3f4f6';
   if (!Number.isFinite(c.d)) return { bg: surface, fg: t.textMuted };
   const hue = c.verdict === 1 ? t.good : c.verdict === -1 ? t.bad : null;
   if (!hue) return { bg: surface, fg: t.text };
   const k = Math.min(1, Math.abs(c.d) / span);
-  const bg = mix(t.dark ? '#1d2129' : '#ffffff', hue, 0.14 + 0.62 * Math.sqrt(k));
+  const bg = mix('#ffffff', hue, 0.14 + 0.62 * Math.sqrt(k));
   return { bg, fg: luminance(bg) > 0.3 ? '#16181c' : '#f4f5f7' };
 }
 
@@ -516,7 +515,7 @@ function HeatRow({
         const label = (
           <Stack gap={4}>
             <Text size="sm" fw={600}>
-              {subj} · {posLabel(c.pos, 3)} rad{k < 2 ? ' · toes-down' : ''} · peak {fmt(c.peak, 1)} Nm
+              {subj} · {posLabel(c.pos, 3)} rad{k < 2 ? ' · plantarflexed' : ''} · peak {fmt(c.peak, 1)} Nm
             </Text>
             <TipSide which="A" exp={aExp} q={c.sa} metric={metric} unit={unit} />
             <TipSide which="B" exp={bExp} q={c.sb} metric={metric} unit={unit} />

@@ -3,6 +3,7 @@
 // tracked at that angle, not how well the torque level of each angle is guessed.
 import raw from '../data/study.json';
 import { median, mean } from './stats';
+import type { Machine, Versions } from './machine';
 
 export type SMetric = 'mae' | 'rmse' | 'r2' | 'r2_demeaned';
 export type Target = 'active' | 'total';
@@ -19,6 +20,15 @@ interface StudyData {
   runs: Record<string, Record<string, Record<string, number[][]>>>;
   epochs: Record<string, Record<string, Record<string, number | null>>>;
   windows: Record<string, Record<string, number | null>>;
+  /** exp -> person -> seed -> training time (s, model.fit only) */
+  times?: Record<string, Record<string, Record<string, number>>>;
+  /** target -> person -> peak measured torque (max |torque|, Nm) per position */
+  peaks?: Record<Target, Record<string, number[]>>;
+  /** software versions the runs reported, and the computer they trained on */
+  versions?: Versions[];
+  machine?: Machine;
+  /** results folder -> distinct software versions its runs reported (every folder, not only the study) */
+  run_versions?: Record<string, Versions[]>;
 }
 export const STUDY = raw as unknown as StudyData;
 export const PEOPLE = STUDY.people;
@@ -42,6 +52,11 @@ const col = (m: SMetric) => STUDY.metrics.indexOf(m);
 export const has = (exp: string) => !!STUDY.settings[exp] && !!STUDY.runs[exp];
 export const setting = (exp: string) => STUDY.settings[exp];
 export const seedsOf = (exp: string, subj: string) => Object.keys(STUDY.runs[exp]?.[subj] ?? {});
+/** every seed any person has for a setting, as numbers, ascending */
+/** peak measured torque per position of the torque a setting predicts (active or total), Nm */
+export const peaksOf = (exp: string, subj: string): number[] => STUDY.peaks?.[STUDY.settings[exp]?.target ?? 'active']?.[subj] ?? [];
+export const allSeeds = (exp: string) =>
+  [...new Set(Object.values(STUDY.runs[exp] ?? {}).flatMap((r) => Object.keys(r).map(Number)))].sort((a, b) => a - b);
 
 /**
  * One run's score over its positions: errors (Nm) are averaged; R² values take the median, so one position with
@@ -160,4 +175,54 @@ export function gridCell(L: (typeof GRID_LENGTHS)[number], o: (typeof GRID_OVERL
 /** training windows of a setting, median over people (the grid's low-overlap long cells have very few) */
 export function trainWindows(exp: string): number {
   return median(Object.values(STUDY.windows[exp] ?? {}).filter((v): v is number => typeof v === 'number'));
+}
+
+// ── parameters of a setting, for the filters ─────────────────────────────────
+export type ParamKey = 'length' | 'overlap' | 'step' | 'target' | 'state' | 'order' | 'updates' | 'epochs';
+export const PARAMS: { key: ParamKey; label: string }[] = [
+  { key: 'length', label: 'Window length' },
+  { key: 'overlap', label: 'Overlap' },
+  { key: 'step', label: 'Step inside window' },
+  { key: 'target', label: 'Torque' },
+  { key: 'state', label: 'LSTM state' },
+  { key: 'order', label: 'Training order' },
+  { key: 'updates', label: 'Weight updates' },
+  { key: 'epochs', label: 'Epoch limit' },
+];
+const dur = (sec: number) => (sec >= 1 ? `${sec} s` : `${Math.round(sec * 1000)} ms`);
+
+/** a setting's parameters as the labels the filters show */
+export function paramsOf(id: string): Record<ParamKey, string> {
+  const s = STUDY.settings[id];
+  return {
+    length: dur(s.length_s), overlap: `${s.overlap_pct} %`, step: `${s.step_ms} ms`,
+    target: s.target === 'active' ? 'Active' : 'Total',
+    state: s.state === 'carry' ? `Carried, ${dur(s.chunk_s ?? 0)} chunks` : 'Reset each window',
+    order: s.shuffle ? 'Shuffled' : 'Time order',
+    updates: id.endsWith('_eq') ? 'Equal to reference' : 'Standard',
+    epochs: String(s.epochs),
+  };
+}
+
+/** every value a parameter takes in the study, in a sensible order (numbers ascending) */
+export function paramValues(key: ParamKey): string[] {
+  const vs = [...new Set(Object.keys(STUDY.settings).filter(has).map((id) => paramsOf(id)[key]))];
+  const num = (v: string) => { const n = parseFloat(v); return /ms/.test(v) && !/chunks/.test(v) ? n / 1000 : n; };
+  return vs.sort((a, b) => (Number.isFinite(num(a)) && Number.isFinite(num(b)) ? num(a) - num(b) : a.localeCompare(b)));
+}
+
+/**
+ * The setting with parameter key = value that keeps as many of the other current parameters as possible
+ * (ties: the one listed first). Every choice in a filter therefore lands on a setting that was actually run.
+ */
+export function settingFor(current: string, key: ParamKey, value: string): string {
+  const now = paramsOf(current);
+  let best = current, score = -1;
+  for (const id of Object.keys(STUDY.settings).filter(has)) {
+    const p = paramsOf(id);
+    if (p[key] !== value) continue;
+    const sc = PARAMS.filter((x) => p[x.key] === now[x.key]).length;
+    if (sc > score) { best = id; score = sc; }
+  }
+  return best;
 }

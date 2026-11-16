@@ -39,8 +39,7 @@ export function AllExperimentsTab() {
     return [
       ...PRESENTATION_GROUPS.filter((g) => g.label !== 'Exploration').map((g): Section => ({
         title: g.label,
-        note: g.items.some((it) => EXTRA[it.id]?.calibration?.type === 'gain_offset')
-          ? `${g.caption}. Calibrated entries are scored from 30 s to the end of each trial; the others on the whole trial.` : g.caption,
+        note: g.caption,
         entries: g.items.map((it) => it.id).filter((id) => ALL_EXPERIMENTS[id]).map(page),
       })),
       { title: 'Network types', note: 'Report 1. Each run is scored on its own target, so compare these rows with each other only. Only the GRU has a page with waveforms.', entries: families },
@@ -59,7 +58,7 @@ export function AllExperimentsTab() {
         <div className="catalog-section-head"><Title order={3}>{sec.title}</Title><Text size="sm" c="dimmed">{sec.note}</Text></div>
         <div className="catalog-table" role="table" aria-label={sec.title}>
           <div className="catalog-row catalog-header" role="row">
-            <span role="columnheader">Experiment</span><span role="columnheader" className="num">Toes-down MAE</span><span role="columnheader" className="num">R²</span><span role="columnheader" className="num">Other MAE</span><span role="columnheader" className="num">R²</span><span role="columnheader" className="num">People × seeds</span>
+            <span role="columnheader">Experiment</span><span role="columnheader" className="num">Plantarflexed MAE</span><span role="columnheader" className="num">R²</span><span role="columnheader" className="num">Other MAE</span><span role="columnheader" className="num">R²</span><span role="columnheader" className="num">People × seeds</span>
           </div>
           {sec.entries.map((x) => <UnstyledButton key={x.key} component={x.page ? 'button' : 'div'} className="catalog-row" role="row" data-link={x.page ? true : undefined} onClick={() => x.page && open(x.page)} disabled={!x.page}>
             <span role="cell" className="catalog-name"><b>{x.name}</b><span className="catalog-code">{x.code}</span><span className="catalog-what">{x.what}</span></span>

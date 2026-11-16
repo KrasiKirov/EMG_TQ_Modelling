@@ -103,10 +103,9 @@ export function WindowStructure({ p, subj, t }: { p: PipelinePerson; subj: strin
   return (
     <>
       <SectionCard testId="pipeline-splits" title="How each trial is cut into windows"
-        description={<>Real times for {subj}'s trial above. Every session-1 trial is cut the same way (all keep {n0(s1.samples)} samples, {s2(s1.start)}–{s2(s1.end)} s):
-          the first 80 % of its windows train the network and the rest check it (validation). Session 2 is never seen in training: every one of its windows is predicted.</>}>
+        description={`${subj}, session 1: first 80 % of windows train, the rest validate. Session 2 is test only.`}>
         <Timeline p={p} t={t} />
-        <SimpleGrid cols={{ base: 2, md: 4 }} spacing="sm" mt="md">
+        <SimpleGrid cols={4} spacing="sm" mt="md">
           {kpis.map(([k, v, sub]) => (
             <div key={k} className="study-kpi">
               <Text size="xs" c="dimmed">{k}</Text>
@@ -117,21 +116,15 @@ export function WindowStructure({ p, subj, t }: { p: PipelinePerson; subj: strin
         </SimpleGrid>
         <Text size="sm" fw={600} mt="lg" mb={4}>The training / validation boundary, one dot per 10 ms sample</Text>
         <Boundary p={p} t={t} />
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg" mt="sm">
-          <Text size="sm" c="dimmed">Each training window starts 10 ms after the previous one, so neighbours share {sp.window - 1} of their {sp.window} samples.
-            The last training window ends with its label at <b>{s2(tr.last_label)} s</b>. The first validation window <i>starts</i> right after it, at {s2(va.first_input)} s,
-            so no sample is in both. Its label is {s2(va.first_label)} s, which leaves {Math.round((va.first_label - tr.last_label - 0.01) * 1000)} ms of labels that neither part uses.
-            Without that gap, validation windows would reuse samples the network trained on and look better than they are.</Text>
-          <Text size="sm" c="dimmed">Training labels run {s2(tr.first_label)}–{s2(tr.last_label)} s; the first {Math.round(sp.span_samples * 10)} ms of each trial are input only.
-            Validation labels run {s2(va.first_label)}–{s2(va.last_label)} s (the last window of each trial is dropped). In session 2 the network predicts at every
-            10 ms from {s2(s1.start + sp.span_samples / 100)} s to the end, one value per window, with nothing carried from one window to the next.</Text>
+        <SimpleGrid cols={2} spacing="lg" mt="sm">
+          <Text size="sm" c="dimmed">Training labels {s2(tr.first_label)}–{s2(tr.last_label)} s · validation windows start at {s2(va.first_input)} s, so no sample is shared.</Text>
+          <Text size="sm" c="dimmed">Validation labels {s2(va.first_label)}–{s2(va.last_label)} s · session 2 predicted every 10 ms from {s2(s1.start + sp.span_samples / 100)} s.</Text>
         </SimpleGrid>
       </SectionCard>
 
       <SectionCard testId="pipeline-updates" title="When the weights change"
-        description={<>Training reads the {n0(sp.n_train)} training windows in time order, trial by trial, {sp.batch} at a time. Each group of {sp.batch} is
-          {' '}{s2(sp.batch / 100)} s of one trial (a group can straddle two trials), and after each group the weights are updated once.</>}>
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="sm">
+        description={`${n0(sp.n_train)} windows in time order; one update per ${sp.batch} (${s2(sp.batch / 100)} s of a trial).`}>
+        <SimpleGrid cols={3} spacing="sm">
           {[
             ['One update', `${sp.batch} windows → loss → gradient → Nadam step. ${n0(sp.updates_per_epoch)} updates make one epoch (one pass over all training windows).`],
             ['After each epoch', `The ${n0(sp.n_val)} validation windows are predicted once; the weights do not change. If the validation loss has not improved for ${6} epochs the learning rate halves.`],
@@ -141,10 +134,9 @@ export function WindowStructure({ p, subj, t }: { p: PipelinePerson; subj: strin
       </SectionCard>
 
       <SectionCard testId="pipeline-settings" title="Window layout of every setting in the window study"
-        description="All rows train on the same 8 session-1 trials per person and predict every 10 ms in session 2. Longer windows lose a little training data at the start of each trial and push validation later (the gap equals the window). Lower overlap keeps fewer training windows, so fewer updates per epoch; the “equal updates” rows reuse each window several times per epoch to make up for that.">
+        description="Same 8 session-1 trials per person; session 2 predicted every 10 ms.">
         <div className="nowrap-cells"><DataTable columns={COLS} rows={PIPE.settings} rowKey={(r) => r.id} dense minWidth={980} stickyFirst caption="Window layout per setting" /></div>
-        <Note>Carried state (WC rows) has no windows: the 8 trials run side by side and the network keeps its memory from one chunk to the next, with one update per
-          chunk. Its validation and test run each trial from start to end. Epoch counts are medians over all finished runs; the 10 s carry is still training.</Note>
+        <Note>WC rows carry the LSTM state across chunks instead of using windows. Epochs: median over finished runs.</Note>
       </SectionCard>
     </>
   );

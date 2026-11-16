@@ -14,7 +14,7 @@ torque (each session's own passive torque from its relaxed holds subtracted), EM
 
 | Folder | What it holds | Start here |
 | --- | --- | --- |
-| `EXPERIMENTS/configs/` | One JSON spec per experiment: settings, description, tags, calibration, dashboard place | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
+| `EXPERIMENTS/configs/` | One JSON spec per experiment: settings, description, tags, dashboard place | [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) |
 | `EXPERIMENTS/pipeline/` | Run an experiment, run a queue, score, export to the dashboard | `python -m EXPERIMENTS.pipeline.dashboard --help` |
 | `EXPERIMENTS/results/` | Saved predictions (`seedK.npz`) and run metadata (`seedK.json`) | written by `pipeline/run.py` |
 | `EXPERIMENTS/dashboard_react/` | The React dashboard and its data (`src/data/presentation-catalog.json`) | `dist/index.html` |
@@ -72,7 +72,7 @@ Rebuilding the dashboard also needs Node.js 18 or newer (`npm ci` once in `EXPER
 ```mermaid
 flowchart LR
   A[ML/subjects/*.flb<br/>recordings] --> B[ML preprocessing<br/>envelope · passive · scaling · windows]
-  S[EXPERIMENTS/configs/&lt;id&gt;.json<br/>spec: changes · tags · calibration · dashboard] --> R
+  S[EXPERIMENTS/configs/&lt;id&gt;.json<br/>spec: changes · tags · dashboard] --> R
   B --> R[pipeline/run.py<br/>train on session 1]
   R --> P[EXPERIMENTS/results/&lt;id&gt;/…/seedK.npz + .json<br/>predictions on session 2]
   P --> E[pipeline/dashboard.py export<br/>score · error breakdown · pack waveforms]
@@ -86,7 +86,7 @@ flowchart LR
 
 - [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md): the spec format and the full run → tag → build workflow
 - [`docs/BASELINE.md`](docs/BASELINE.md): the current baseline's windows, overlap and target, compared with Zhang 2022 and Truong 2023
-- [`docs/CALIBRATION.md`](docs/CALIBRATION.md): the default target, the opt-in 10 s calibration, and the error breakdown
+- [`docs/CALIBRATION.md`](docs/CALIBRATION.md): the default target and the error breakdown (no calibration)
 - [`docs/DATA.md`](docs/DATA.md): subjects, sessions, positions, trial types and the `.flb` format
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): what each module does, Python and MATLAB
 - [`docs/PIPELINE_COMPARISON.md`](docs/PIPELINE_COMPARISON.md): the experiment pipeline versus the audited pipeline on `main`

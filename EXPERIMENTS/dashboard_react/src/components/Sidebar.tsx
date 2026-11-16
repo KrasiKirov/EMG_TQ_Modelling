@@ -28,7 +28,7 @@ import { Swatch } from './common';
 
 const SEG_STYLES = { control: { flex: '1 1 auto' }, label: { paddingInline: 8 } };
 
-export function Sidebar({ onNavigate }: { onNavigate: () => void }) {
+export function Sidebar() {
   const { swap } = useView();
   return (
     <>
@@ -43,11 +43,6 @@ export function Sidebar({ onNavigate }: { onNavigate: () => void }) {
           </Button>
 <details className="disclosure"><summary>How model matching works</summary><Text size="xs" c="dimmed">Choose a preset or adjust its settings. Unavailable combinations are marked as not trained. Passive tables differ only for JM; equivalent runs may be used for other participants.</Text></details>
         </Stack>
-      </AppShell.Section>
-      <AppShell.Section p="md" hiddenFrom="md" style={{ borderTop: '1px solid var(--line)' }}>
-        <Button fullWidth onClick={onNavigate}>
-          Show results
-        </Button>
       </AppShell.Section>
     </>
   );

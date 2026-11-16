@@ -1,12 +1,12 @@
 import { useMemo, useRef } from 'react';
 import ReactEChartsCore from 'echarts-for-react/esm/core';
 import * as echarts from 'echarts/core';
-import { BarChart, BoxplotChart, HeatmapChart, LineChart, ScatterChart } from 'echarts/charts';
-import { DataZoomComponent, GridComponent, LegendComponent, MarkAreaComponent, MarkLineComponent, TooltipComponent, VisualMapComponent } from 'echarts/components';
+import { BarChart, BoxplotChart, CustomChart, HeatmapChart, LineChart, ScatterChart } from 'echarts/charts';
+import { DataZoomComponent, GridComponent, LegendComponent, MarkAreaComponent, MarkLineComponent, TitleComponent, TooltipComponent, VisualMapComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 
 // tree-shaken ECharts: only what the explorer uses
-echarts.use([BoxplotChart, ScatterChart, LineChart, BarChart, HeatmapChart, GridComponent, TooltipComponent, LegendComponent, DataZoomComponent, MarkAreaComponent, MarkLineComponent, VisualMapComponent, CanvasRenderer]);
+echarts.use([BoxplotChart, ScatterChart, LineChart, BarChart, HeatmapChart, CustomChart, GridComponent, TitleComponent, TooltipComponent, LegendComponent, DataZoomComponent, MarkAreaComponent, MarkLineComponent, VisualMapComponent, CanvasRenderer]);
 
 export type EOption = echarts.EChartsCoreOption;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

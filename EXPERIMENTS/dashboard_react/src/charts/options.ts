@@ -5,6 +5,7 @@ import { fmt, posLabel } from '../lib/format';
 import { METRICS, metricLabel } from '../lib/metrics';
 import type { MetricKey } from '../lib/types';
 import { alpha, FONT, type ChartTokens } from '../theme';
+import { seedSeries, seedTooltip, type SeedSide, type SpreadMode } from './seedbox';
 
 const BOX_OFFSET = 0.23; // ECharts puts 2 box plot series at about ±0.23 of the category band
 
@@ -30,7 +31,7 @@ function base(t: ChartTokens) {
       borderWidth: 1,
       padding: [8, 10],
       textStyle: { color: t.text, fontSize: 13, fontFamily: FONT },
-      extraCssText: `border-radius:8px;box-shadow:0 6px 24px ${t.dark ? 'rgba(0,0,0,.45)' : 'rgba(20,25,35,.12)'};`,
+      extraCssText: 'border-radius:4px;box-shadow:none;',
       confine: true,
     },
   };
@@ -58,8 +59,8 @@ export interface BoxInput {
   metric: MetricKey;
   floor: boolean;
   compact: boolean;
-  /** phone-width chart: short peak labels */
-  narrow?: boolean;
+  /** box plot (default) or median + 95 % CI */
+  mode?: SpreadMode;
 }
 
 /** values beyond these limits are drawn at the limit (▼ / ▲ markers carry the true median) */
@@ -134,7 +135,6 @@ export function boxRange(inp: BoxInput): { lo?: number; hi?: number; clip: BoxCl
 
 export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; clip: BoxClip } {
   const { positions, metric, compact } = inp;
-  const narrow = !!inp.narrow;
   const n = positions.length;
   const md = METRICS[metric];
   const { lo, hi, clip } = boxRange(inp);
@@ -143,48 +143,13 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
   const isHigh = (v: number) => clip.high !== undefined && v > clip.high;
 
   const beyond = (v: number) => isLow(v) || isHigh(v);
-  const boxSeries = (which: 'A' | 'B', color: string) => {
-    const side = inp[which];
-    return {
-      type: 'boxplot',
-      name: which,
-      xAxisIndex: 0,
-      z: 3,
-      boxWidth: compact ? [5, 18] : [8, 34],
-      itemStyle: { color: alpha(color, t.dark ? 0.22 : 0.16), borderColor: color, borderWidth: 1.5 },
-      emphasis: { itemStyle: { color: alpha(color, 0.3), borderColor: color, borderWidth: 2 } },
-      data: positions.map((_, k) => {
-        const s = side.stats[k];
-        if (!s || !s.summary.n) return '-';
-        const q = s.summary;
-        // a box whose median is off the axis is not drawn; its marker at the edge carries the median
-        if (beyond(q.p50)) return '-';
-        return [q.p5, q.p25, q.p50, q.p75, q.p95].map(clamp);
-      }),
-    };
-  };
-  const dotSeries = (which: 'A' | 'B', color: string) => {
-    const side = inp[which];
-    const off = which === 'A' ? -BOX_OFFSET : BOX_OFFSET;
-    const data: [number, number, number][] = [];
-    side.stats.forEach((s, k) =>
-      s.points.forEach((p, i) => {
-        if (beyond(p.v)) return; // summarised by the edge marker
-        const jitter = ((i % 5) - 2) * (compact ? 0.018 : 0.022);
-        data.push([k + off + jitter, p.v, p.seed]);
-      }),
-    );
-    return {
-      type: 'scatter',
-      name: `${which} runs`,
-      xAxisIndex: 1,
-      z: 4,
-      symbolSize: compact ? 4 : 6,
-      itemStyle: { color, opacity: 0.85, borderColor: t.surface, borderWidth: compact ? 0.6 : 1 },
-      emphasis: { scale: 1.6 },
-      data,
-    };
-  };
+  const mode = inp.mode ?? 'box';
+  const side = (which: 'A' | 'B', color: string): SeedSide => ({
+    name: which, color, offset: which === 'A' ? -BOX_OFFSET : BOX_OFFSET,
+    cells: positions.map((_, k) => inp[which].stats[k]?.points ?? []),
+  });
+  const sides = [side('A', t.a), side('B', t.b)];
+  const seeds = sides.flatMap((sd) => seedSeries(sd, t, { mode, compact, clamp, hidden: beyond, boxWidth: compact ? [5, 18] : [8, 34] }));
   // one triangle at the edge per box with runs off the axis: label = true median, or how many runs are off the axis
   const clipMarkers = (which: 'A' | 'B', color: string) => {
     const side = inp[which];
@@ -229,7 +194,7 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
   };
   const shade = {
     type: 'scatter',
-    name: 'toes-down',
+    name: 'plantarflexed',
     xAxisIndex: 1,
     data: [] as number[][],
     silent: true,
@@ -237,7 +202,7 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
       silent: true,
       itemStyle: { color: t.shade },
       label: { show: false },
-      data: n >= 2 ? [[{ name: 'toes-down', xAxis: -0.5 }, { xAxis: 1.5 }]] : [],
+      data: n >= 2 ? [[{ name: 'plantarflexed', xAxis: -0.5 }, { xAxis: 1.5 }]] : [],
     },
     // bias: the zero line is the target
     markLine:
@@ -254,29 +219,18 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
     if (!(k >= 0 && k < n)) return '';
     const unit = md.unit ? ' ' + md.unit : '';
     const rows = (['A', 'B'] as const)
-      .map((w) => {
-        const side = inp[w];
-        const s = side.stats[k];
-        const color = w === 'A' ? t.a : t.b;
-        if (!side.exp || !s || !s.summary.n)
-          return `<tr><td>${sw(color)} <b>${w}</b></td><td colspan="4" class="muted">not trained for ${esc(inp.subj)}</td></tr>`;
-        const q = s.summary;
-        return `<tr><td>${sw(color)} <b>${w}</b></td><td class="r"><b>${fmt(q.p50)}</b>${unit}</td><td class="r">${fmt(q.p5)} to ${fmt(q.p95)}</td><td class="r">${fmt(q.p1)} to ${fmt(q.p99)}</td><td class="r">${q.n}</td></tr>`;
-      })
+      .map((w, i) => (!inp[w].exp ? `<div class="muted">${w}: not trained for ${esc(inp.subj)}</div>` : seedTooltip(sides[i], k, 3, unit)))
       .join('');
     const pk = inp.peaks[k];
-    return `<div class="tt"><div><b>${esc(inp.subj)} · ${posLabel(positions[k], 3)} rad</b>${k < 2 ? ' · toes-down' : ''}</div>
+    return `<div class="tt"><div><b>${esc(inp.subj)} · ${posLabel(positions[k], 3)} rad</b>${k < 2 ? ' · plantarflexed' : ''}</div>
       <div class="muted">peak voluntary torque ${fmt(pk, 1)} Nm</div>
-      <table style="margin-top:6px"><tr class="muted"><td></td><td class="r">median ${esc(md.label)}</td><td class="r">5–95 %</td><td class="r">1–99 %</td><td class="r">runs</td></tr>${rows}</table></div>`;
+      <div class="muted">${esc(md.label)} over training seeds</div>${rows}</div>`;
   };
 
-  const showPeak = metric === 'mae';
-  const shortPeak = compact || narrow;
-  const peakText = (pk: number) => (shortPeak ? fmt(pk, pk < 10 ? 1 : 0) : `${fmt(pk, 1)} Nm`);
   const option = {
     ...base(t),
     grid: { left: compact ? 6 : 10, right: compact ? 8 : 14, top: compact ? 10 : 30, bottom: compact ? 4 : 22, containLabel: true },
-    tooltip: { ...base(t).tooltip, trigger: 'axis', axisPointer: { type: 'shadow', shadowStyle: { color: alpha(t.dark ? '#ffffff' : '#000000', 0.035) } }, formatter: tooltipFormatter },
+    tooltip: { ...base(t).tooltip, trigger: 'axis', axisPointer: { type: 'shadow', shadowStyle: { color: alpha('#000000', 0.035) } }, formatter: tooltipFormatter },
     xAxis: [
       {
         type: 'category',
@@ -285,15 +239,13 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
         axisTick: { show: false },
         axisLabel: {
           color: t.text,
-          fontSize: compact || narrow ? 11 : 12,
+          fontSize: compact ? 11 : 12,
           interval: 0,
           hideOverlap: false,
-          formatter: showPeak ? (v: string, i: number) => `${v}\n{pk|${peakText(inp.peaks[i])}}` : undefined,
-          rich: { pk: { color: t.textMuted, fontSize: compact || narrow ? 10 : 11, padding: [3, 0, 0, 0] } },
         },
         name: compact ? undefined : 'ankle position (rad)',
         nameLocation: 'middle',
-        nameGap: showPeak ? 46 : 30,
+        nameGap: 30,
         nameTextStyle: { color: t.textMuted, fontSize: 12 },
       },
       { type: 'value', min: -0.5, max: n - 0.5, show: false, axisPointer: { show: false } },
@@ -313,7 +265,7 @@ export function boxOption(inp: BoxInput, t: ChartTokens): { option: EOption; cli
         formatter: (v: number) => String(+v.toFixed(2)),
       },
     }),
-    series: [shade, boxSeries('A', t.a), boxSeries('B', t.b), dotSeries('A', t.a), dotSeries('B', t.b), clipMarkers('A', t.a), clipMarkers('B', t.b)],
+    series: [shade, ...seeds, clipMarkers('A', t.a), clipMarkers('B', t.b)],
   };
   return { option, clip };
 }
@@ -326,11 +278,11 @@ export interface WaveLine {
   data: Float32Array;
 }
 
-export function waveOption(time: number[], lines: WaveLine[], zoom: { start: number; end: number }, t: ChartTokens, mobile: boolean, demeaned = false): EOption {
+export function waveOption(time: number[], lines: WaveLine[], t: ChartTokens, demeaned = false): EOption {
   return {
     ...base(t),
     animation: false,
-    grid: { left: 8, right: 16, top: mobile ? 92 : 62, bottom: mobile ? 64 : 72, containLabel: true },
+    grid: { left: 8, right: 16, top: 62, bottom: 16, containLabel: true },
     legend: {
       top: 0,
       left: 0,
@@ -365,26 +317,6 @@ export function waveOption(time: number[], lines: WaveLine[], zoom: { start: num
       axisLabel: { color: t.textMuted, fontSize: 12, formatter: (v: number) => `${+v.toFixed(1)} s` },
     },
     yAxis: valueAxis(t, { name: demeaned ? 'demeaned torque (Nm)' : 'voluntary torque (Nm)', nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' }, scale: true }),
-    dataZoom: [
-      { type: 'inside', xAxisIndex: 0, start: zoom.start, end: zoom.end, zoomOnMouseWheel: true, moveOnMouseMove: true, moveOnMouseWheel: false },
-      {
-        type: 'slider',
-        xAxisIndex: 0,
-        start: zoom.start,
-        end: zoom.end,
-        height: 26,
-        bottom: 10,
-        borderColor: t.grid,
-        backgroundColor: 'transparent',
-        fillerColor: alpha(t.dark ? '#ffffff' : '#1b1b1b', 0.06),
-        dataBackground: { lineStyle: { color: t.axis, width: 1 }, areaStyle: { color: alpha(t.axis, 0.25) } },
-        selectedDataBackground: { lineStyle: { color: t.textMuted, width: 1 }, areaStyle: { color: alpha(t.textMuted, 0.2) } },
-        handleStyle: { color: t.surface, borderColor: t.textMuted },
-        moveHandleStyle: { color: t.axis },
-        textStyle: { color: t.textMuted, fontSize: 11 },
-        labelFormatter: (v: number) => `${fmt(v, 1)} s`,
-      },
-    ],
     series: lines.map((l, i) => ({
       type: 'line',
       name: l.name,
@@ -496,7 +428,7 @@ export const BV_PARTS = [
 ] as const;
 
 /** absolute = Nm² (share × MSE) instead of % of the MSE */
-export function biasVarOption(rows: BiasVarianceRow[], t: ChartTokens, mobile: boolean, absolute = false): EOption {
+export function biasVarOption(rows: BiasVarianceRow[], t: ChartTokens, absolute = false): EOption {
   const label = (r: BiasVarianceRow) => `${r.subj} · ${r.model === 'original' ? 'last semester' : 'ours'}`;
   const cats = rows.map(label);
   const comp = [
@@ -507,11 +439,11 @@ export function biasVarOption(rows: BiasVarianceRow[], t: ChartTokens, mobile: b
   return {
     ...base(t),
     // the legend is HTML above the chart (it wrapped onto the bars on phones)
-    grid: { left: 4, right: mobile ? 12 : 24, top: 8, bottom: 8, containLabel: true },
+    grid: { left: 4, right: 24, top: 8, bottom: 8, containLabel: true },
     tooltip: {
       ...base(t).tooltip,
       trigger: 'axis',
-      axisPointer: { type: 'shadow', shadowStyle: { color: alpha(t.dark ? '#ffffff' : '#000000', 0.04) } },
+      axisPointer: { type: 'shadow', shadowStyle: { color: alpha('#000000', 0.04) } },
       formatter: (params: EParams) => {
         const ps: EParams[] = Array.isArray(params) ? params : [params];
         if (!ps.length) return '';

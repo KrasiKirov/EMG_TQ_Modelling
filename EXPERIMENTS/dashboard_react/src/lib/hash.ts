@@ -1,4 +1,4 @@
-// URL hash <-> view state, e.g. #tab=waveforms&subj=JM&dir=S1toS2&metric=mae&floor=1&a=X00_baseline&b=D01_...&pos=-0.787&theme=dark
+// URL hash <-> view state, e.g. #tab=waveforms&subj=JM&dir=S1toS2&metric=mae&floor=1&a=X00_baseline&b=D01_...&pos=-0.787
 import { ALL_EXPERIMENTS } from './catalog';
 import type { Dataset } from './data';
 import { METRIC_KEYS } from './metrics';
@@ -99,7 +99,7 @@ export function stateFromHash(ds: Dataset, hash: string, base: ViewState): ViewS
   return s;
 }
 
-export function hashFromState(ds: Dataset, s: ViewState, theme: string | null): string {
+export function hashFromState(ds: Dataset, s: ViewState): string {
   const parts: [string, string][] = [
     ['tab', s.tab],
     ['exp', alias(s.experiment)],
@@ -116,11 +116,5 @@ export function hashFromState(ds: Dataset, s: ViewState, theme: string | null): 
   if (s.pos !== null) parts.push(['pos', String(s.pos)]);
   if (s.runA !== 'typical') parts.push(['ra', s.runA]);
   if (s.runB !== 'typical') parts.push(['rb', s.runB]);
-  if (theme) parts.push(['theme', theme]);
   return '#' + parts.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
-}
-
-export function themeFromHash(hash: string): 'light' | 'dark' | null {
-  const t = parseHashParams(hash).theme;
-  return t === 'dark' || t === 'light' ? t : null;
 }

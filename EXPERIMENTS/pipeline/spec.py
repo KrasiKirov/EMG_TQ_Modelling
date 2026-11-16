@@ -5,8 +5,6 @@ Fields
   description               optional (falls back to 'hypothesis')
   tags                      optional list of strings
   changes                   required; overrides of the training baseline (read by pipeline/run.py)
-  calibration               optional, scoring only. Default {"type": "none"}.
-                            {"type": "gain_offset", "seconds": 10, "score_from_s": 30}
   results_from              optional; reuse another experiment's saved predictions (scoring-only variants)
   dashboard                 optional; present = shown in the dashboard
                             {"group", "label", "id"?, "name"?, "order"?, "blurb"?, "text"?}
@@ -22,7 +20,6 @@ from pathlib import Path
 
 CONFIGS = Path(__file__).resolve().parents[1] / 'configs'
 ID_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.+-]*$')
-NO_CALIBRATION = {'type': 'none'}
 
 
 class SpecError(ValueError):
@@ -47,35 +44,17 @@ class Spec:
     description: str
     tags: list
     changes: dict
-    calibration: dict
     results_from: str
     dashboard: DashboardEntry | None
     raw: dict = field(repr=False)
-
-
-def _number(x):
-    return isinstance(x, (int, float)) and not isinstance(x, bool)
-
-
-def _calibration(raw):
-    cal = raw.get('calibration', NO_CALIBRATION)
-    kind = cal.get('type') if isinstance(cal, dict) else None
-    if kind == 'none':
-        return dict(NO_CALIBRATION)
-    if kind == 'gain_offset':
-        sec, start = cal.get('seconds'), cal.get('score_from_s')
-        if not (_number(sec) and sec > 0):
-            raise SpecError('calibration.seconds must be a positive number')
-        if not (_number(start) and start >= sec):
-            raise SpecError('calibration.score_from_s must be >= calibration.seconds')
-        return {'type': 'gain_offset', 'seconds': float(sec), 'score_from_s': float(start)}
-    raise SpecError(f"calibration.type must be 'none' or 'gain_offset', got {kind!r}")
 
 
 def parse(raw: dict, stem: str | None = None) -> Spec:
     for key in ('id', 'title', 'changes'):
         if key not in raw:
             raise SpecError(f'missing field {key!r}')
+    if 'calibration' in raw:
+        raise SpecError('calibration was removed: predictions are always scored as saved, on the whole trial')
     if not ID_RE.match(raw['id']):
         raise SpecError(f'invalid id {raw["id"]!r}')
     if stem is not None and stem != raw['id']:
@@ -95,7 +74,7 @@ def parse(raw: dict, stem: str | None = None) -> Spec:
                                name=dash.get('name', dash['label']), order=int(dash.get('order', 100)),
                                blurb=dash.get('blurb', ''), text=dict(dash.get('text', {})))
     return Spec(id=raw['id'], title=raw['title'], description=raw.get('description') or raw.get('hypothesis') or '',
-                tags=list(tags), changes=dict(raw['changes']), calibration=_calibration(raw),
+                tags=list(tags), changes=dict(raw['changes']),
                 results_from=raw.get('results_from', raw['id']), dashboard=entry, raw=raw)
 
 

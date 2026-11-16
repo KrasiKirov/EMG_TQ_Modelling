@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { Button, Group, SegmentedControl, Select, SimpleGrid, Stack, Text } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { DS } from '../dataset';
 import { useView } from '../state';
 import { ALL_IDS, EXTRA, catalogCode, catalogGroup, catalogRuns, catalogTitle, catalogWave, runTiming, secondsLabel } from '../lib/catalog';
 import { ALL_EXPERIMENTS } from '../lib/catalog';
 import { resolve } from '../lib/params';
-import { median, summarize } from '../lib/stats';
+import { median } from '../lib/stats';
 import { fmt, posLabel } from '../lib/format';
 import { pickRun, timeAxis } from '../lib/waves';
 import { waveOption, type WaveLine } from '../charts/options';
 import { alpha } from '../theme';
-import { RangeWindow, rangeDomain, windowBox } from '../components/RangeWindow';
+import { RangeWindow, rangeDomain } from '../components/RangeWindow';
 import type { Run } from '../lib/types';
 import { EChart } from '../components/EChart';
+import { SEED_KEY, seedSeries, seedTooltip, type SeedSide, type SpreadMode } from '../charts/seedbox';
+import { MachineLine } from '../components/MachineInfo';
 import { DataTable, EmptyState, SectionCard, type Column } from '../components/common';
 
 const TIME=timeAxis(DS);
@@ -36,10 +37,10 @@ function presetOptions(){
 }
 
 export function SavedComparisonTab(){
- const {s,set,tokens}=useView();const mobile=!!useMediaQuery('(max-width: 48em)');
+ const {s,set,tokens}=useView();
  const [view,setView]=useState('summary');const [metric,setMetric]=useState<Key>('mae');
  const [runA,setRunA]=useState('typical'),[runB,setRunB]=useState('typical');
- const [boxScale,setBoxScale]=useState('fit');const [custom,setCustom]=useState<[number,number]|null>(null);
+ const [boxScale,setBoxScale]=useState('fit');const [spread,setSpread]=useState<SpreadMode>('box');const [custom,setCustom]=useState<[number,number]|null>(null);
  const ids=[s.compareA,s.compareB];
  const value=(r:Run,k:Key)=>k==='r2'&&s.floor?Math.max(0,r.r2):r[k];
  const score=(rs:Run[],k:Key)=>median([...new Set(rs.map(r=>r.pos))].map(pos=>median(rs.filter(r=>r.pos===pos).map(r=>value(r,k)))));
@@ -58,7 +59,7 @@ export function SavedComparisonTab(){
  const waveRuns=chosen&&position?[pickRun(chosen.rowsA.filter(r=>r.pos===position.a),runA),pickRun(chosen.rowsB.filter(r=>r.pos===position.b),runB)]:[];
  const training=(rs:Run[])=>secondsLabel(median([...new Set(rs.map(r=>r.seed))].map(seed=>runTiming(rs[0]?.exp??'',rs[0]?.subj??'',s.dir,seed)?.seconds??NaN)));
  // Text shades of the chart colours: readable on the light table background, same hue as the A / B boxes.
- const inkA=tokens.dark?tokens.a:'#1d6f66',inkB=tokens.dark?tokens.b:'#94601f';
+ const inkA='#1d6f66',inkB='#94601f';
  const ink=(side:'A'|'B')=>side==='A'?inkA:inkB;
  // Better / worse only past the explorer's thresholds (0.02 R², 0.05 Nm); closer pairs count as about the same.
  const winner=(a:number,b:number,higherBetter:boolean,tie:number)=>!Number.isFinite(a)||!Number.isFinite(b)||Math.abs(a-b)<tie?null:(higherBetter?a>b:a<b)?'A':'B';
@@ -72,10 +73,10 @@ export function SavedComparisonTab(){
   ...pairCols('r2','R²',true,.02),...pairCols('mae','MAE (Nm)',false,.05),
   {key:'seeds',label:<span><span style={{color:inkA,fontWeight:700}}>Seeds A</span> / <span style={{color:inkB,fontWeight:700}}>B</span></span>,render:r=><span><span style={{color:inkA}}>{new Set(r.rowsA.map(x=>x.seed)).size}</span> / <span style={{color:inkB}}>{new Set(r.rowsB.map(x=>x.seed)).size}</span></span>},
   {key:'timea',label:head('A','train / seed'),render:r=><span style={{color:inkA}}>{training(r.rowsA)}</span>},{key:'timeb',label:head('B','train / seed'),render:r=><span style={{color:inkB}}>{training(r.rowsB)}</span>}];
- const cells=eligible.flatMap(pair=>[pair.rowsA,pair.rowsB].map((rows,i)=>({
-  label:`${pair.subject} · ${i===0?'A':'B'}`,color:i===0?tokens.a:tokens.b,
-  values:[...new Set(rows.map(r=>r.seed))].map(seed=>median(rows.filter(r=>r.seed===seed).map(r=>value(r,metric))))
- })));
+ const perSeed=(rows:Run[])=>[...new Set(rows.map(r=>r.seed))].sort((x,y)=>x-y).map(seed=>({seed,v:median(rows.filter(r=>r.seed===seed).map(r=>value(r,metric)))})).filter(p=>Number.isFinite(p.v));
+ const sideA:SeedSide={name:`A · ${catalogCode(ids[0])}`,color:tokens.a,offset:-0.2,cells:eligible.map(pair=>perSeed(pair.rowsA))};
+ const sideB:SeedSide={name:`B · ${catalogCode(ids[1])}`,color:tokens.b,offset:0.2,cells:eligible.map(pair=>perSeed(pair.rowsB))};
+ const cells=[...sideA.cells,...sideB.cells].map(c=>({values:c.map(p=>p.v)}));
  const allValues=cells.flatMap(c=>c.values);const lo=Math.min(...allValues),hi=Math.max(...allValues);const pad=Math.max((hi-lo)*.15,metric==='r2'?.005:.02);
  // Custom range: a reader-chosen window (React state, so re-renders keep it), e.g. R² 0.95–1.
  const step=metric==='r2'?.005:.05,domain=rangeDomain(allValues,metric==='r2',s.floor,step);
@@ -92,25 +93,29 @@ export function SavedComparisonTab(){
  const bottom=Math.min(...amplitudes),top=Math.max(...amplitudes),yPad=Math.max((top-bottom)*.08,.1);
  const yMin=Math.floor((bottom-yPad)*10)/10,yMax=Math.ceil((top+yPad)*10)/10;
  return <Stack gap="lg">
-  <SectionCard title="Choose saved experiments" description="The 0.5 s + retest map runs and controlled experiments, with explicit coverage and result sources.">
-   <SimpleGrid cols={{base:1,md:2}}><Select searchable label={<span style={{color:inkA,fontWeight:700}}>● Model A · teal</span>} aria-label="Saved model A" value={ids[0]} data={presetOptions()} onChange={v=>v&&set({compareA:v,pos:null})}/><Select searchable label={<span style={{color:inkB,fontWeight:700}}>● Model B · amber</span>} aria-label="Saved model B" value={ids[1]} data={presetOptions()} onChange={v=>v&&set({compareB:v,pos:null})}/></SimpleGrid>
+  <SectionCard title="Choose saved experiments" description="Pick model A and model B.">
+   <SimpleGrid cols={2}><Select searchable label={<span style={{color:inkA,fontWeight:700}}>● Model A</span>} aria-label="Saved model A" value={ids[0]} data={presetOptions()} onChange={v=>v&&set({compareA:v,pos:null})}/><Select searchable label={<span style={{color:inkB,fontWeight:700}}>● Model B</span>} aria-label="Saved model B" value={ids[1]} data={presetOptions()} onChange={v=>v&&set({compareB:v,pos:null})}/></SimpleGrid>
    <Group justify="space-between" mt="md"><Text size="sm" c="dimmed">{eligible.length} subjects have shared available angles · {s.dir==='S1toS2'?'session 1 → 2':'session 2 → 1'}</Text><Button size="xs" variant="default" onClick={()=>set({compareA:ids[1],compareB:ids[0]})}>Swap A / B</Button></Group>
   </SectionCard>
   <div className="coverage-note"><b>{ids.some(id=>!!EXTRA[id])?'Different protocols · descriptive comparison':'Available-run comparison'}</b><br/>Shared angles are matched within 0.02 rad. Metrics retain each run’s own target and valid evaluation interval; seeds are not paired. {ids.some(id=>EXTRA[id]?.kind==='retest-map')?'The 0.5 s + retest map model uses 0.5 s history, corrected trial labels and a passive map re-measured in the test session. ':''}A side-by-side score does not isolate the model change or establish a matched improvement.</div>
   <SegmentedControl aria-label="Saved comparison view" value={view} onChange={setView} data={[{value:'summary',label:'Summary & box plots'},{value:'waveforms',label:'Waveforms'}]}/>
   {view==='summary'?<>
-   <SectionCard title="Results on shared available angles" description="Median across seeds within each angle, then median across angles. Teal = model A, amber = model B; ✓ marks the clearly better one (by 0.02 R² or 0.05 Nm or more), unmarked pairs are about the same. Select a subject for its waveforms."><DataTable columns={columns} rows={pairs} rowKey={r=>r.subject} rowClass={r=>r.matched.length?'':'dim'} onRowClick={r=>{if(r.matched.length){set({wsubj:r.subject,pos:null});setView('waveforms');}}} minWidth={950} stickyFirst caption="Saved experiment comparison on shared angles"/><Text size="xs" c="dimmed" mt="sm">{pairs.filter(p=>p.a.id!==ids[0]||p.b.id!==ids[1]).map(p=>`${p.subject}: A source ${catalogCode(p.a.id)}, B source ${catalogCode(p.b.id)}`).join(' · ')}. Controlled passive-table equivalents are used only under the existing project rule. {s.floor?'Negative R² is displayed as 0; the original values remain in individual experiment downloads.':''}</Text></SectionCard>
-   {eligible.length?<SectionCard title="Variation across training seeds" description="Each dot is one seed’s median score over the shared angles for that subject. Boxes show the middle 50%; whiskers show the 5th–95th percentiles. To zoom in, choose Custom range." actions={<Group gap="sm" align="end"><SegmentedControl size="xs" aria-label="Comparison box scale" value={boxScale} onChange={setBoxScale} data={[{value:'fit',label:'Fit all subjects'},{value:'custom',label:'Custom range'}]}/><Select aria-label="Comparison box metric" value={metric} onChange={v=>{if(v){setMetric(v as Key);setCustom(null);}}} data={[{value:'mae',label:'MAE (Nm)'},{value:'rmse',label:'RMSE (Nm)'},{value:'r2',label:'R²'}]} w={140}/></Group>}>
+   <SectionCard title="Results on shared available angles" description="Median over seeds, then angles. ✓ = clearly better (≥ 0.02 R² or 0.05 Nm)."><DataTable columns={columns} rows={pairs} rowKey={r=>r.subject} rowClass={r=>r.matched.length?'':'dim'} onRowClick={r=>{if(r.matched.length){set({wsubj:r.subject,pos:null});setView('waveforms');}}} minWidth={950} stickyFirst caption="Saved experiment comparison on shared angles"/><Stack gap={2} mt="sm"><Text size="xs" fw={600}>Computers behind the training times</Text><MachineLine id={ids[0]} side="A"/><MachineLine id={ids[1]} side="B"/></Stack><Text size="xs" c="dimmed" mt="sm">{(()=>{const subs=pairs.filter(p=>p.a.id!==ids[0]||p.b.id!==ids[1]).map(p=>`${p.subject}: A source ${catalogCode(p.a.id)}, B source ${catalogCode(p.b.id)}`).join(' · ');return subs?`${subs}. `:'';})()}{s.floor?'Negative R² shown as 0.':''}</Text></SectionCard>
+   {eligible.length?<SectionCard title="Variation across training seeds" description="One dot per seed." actions={<Group gap="sm" align="end"><SegmentedControl size="xs" aria-label="Comparison spread over seeds" value={spread} onChange={v=>setSpread(v as SpreadMode)} data={[{value:'box',label:'Box plot'},{value:'ci',label:'Median ± 95 % CI'}]}/><SegmentedControl size="xs" aria-label="Comparison box scale" value={boxScale} onChange={setBoxScale} data={[{value:'fit',label:'Fit all subjects'},{value:'custom',label:'Custom range'}]}/><Select aria-label="Comparison box metric" value={metric} onChange={v=>{if(v){setMetric(v as Key);setCustom(null);}}} data={[{value:'mae',label:'MAE (Nm)'},{value:'rmse',label:'RMSE (Nm)'},{value:'r2',label:'R²'}]} w={140}/></Group>}>
     {zoomed&&<RangeWindow domain={domain} value={win} onChange={setCustom} step={step} digits={metric==='r2'?3:2} unit={metric==='r2'?'':' Nm'} hidden={hiddenSeeds} total={allValues.length}/>}
-    <EChart key={`${ids.join('|')}|${s.dir}|${metric}|${s.floor}|${boxScale}`} height={350} label="Model A and B seed variability on shared angles" option={{animationDuration:150,tooltip:{trigger:'item',formatter:(p:{seriesType:string;dataIndex:number;value:number[]})=>{const k=p.seriesType==='boxplot'?p.dataIndex:Number(p.value[0]);const c=cells[k];return `${c.label}<br/>${c.values.length} seeds<br/>Median: ${fmt(median(c.values),3)}`;}},grid:{left:65,right:25,top:20,bottom:55},xAxis:{type:'category',data:cells.map(c=>c.label),axisLabel:{color:tokens.textMuted,fontSize:11,rotate:mobile?40:0},axisLine:{lineStyle:{color:tokens.axis}}},yAxis:{type:'value',min:yLo,max:yHi,scale:true,axisLabel:{color:tokens.textMuted,formatter:(v:number)=>Number(v.toFixed(3)).toString()},splitLine:{lineStyle:{color:tokens.grid}}},series:[{type:'boxplot',name:'Seed distribution',data:cells.map(c=>{const q=summarize(c.values);return {value:zoomed?windowBox(q,yLo,yHi):[q.p5,q.p25,q.p50,q.p75,q.p95],itemStyle:{color:'transparent',borderColor:c.color,borderWidth:2}};}),boxWidth:[15,35]},{type:'scatter',name:'Individual seed',symbolSize:6,
-     // Spread each box's dots sideways so seeds with near-equal scores stay countable.
-     data:cells.flatMap((c,k)=>c.values.map((v,i)=>({value:[k,v],symbolOffset:[(i-(c.values.length-1)/2)*3,0],itemStyle:{color:c.color}})).filter(d=>!zoomed||(d.value[1]>=yLo&&d.value[1]<=yHi)))}]}}/><Text size="xs" c="dimmed">Teal = A · amber = B. Seed percentile boxes describe these trainings; they are not confidence intervals across new subjects. This chart summarizes positions within each seed; the table summarizes seeds within each position.</Text>
+    <Text size="xs" c="dimmed">{SEED_KEY[spread]}</Text>
+    <EChart key={`${ids.join('|')}|${s.dir}|${metric}|${s.floor}|${boxScale}|${spread}`} height={350} label="Model A and B seed variability on shared angles" option={{animationDuration:150,
+     tooltip:{trigger:'item',confine:true,formatter:(p:{seriesType?:string;seriesIndex:number;dataIndex:number;value?:unknown})=>{const k=p.seriesType==='boxplot'?p.dataIndex:Array.isArray(p.value)?Number(p.value[3]):-1;if(!(k>=0))return '';const unit=metric==='r2'?'':' Nm';return `<b>${eligible[k].subject}</b>`+seedTooltip(sideA,k,3,unit)+seedTooltip(sideB,k,3,unit);}},
+     grid:{left:65,right:25,top:20,bottom:40},
+     xAxis:[{type:'category',data:eligible.map(p=>p.subject),axisLabel:{color:tokens.textMuted,fontSize:11},axisLine:{lineStyle:{color:tokens.axis}}},{type:'value',min:-0.5,max:eligible.length-0.5,show:false}],
+     yAxis:{type:'value',min:yLo,max:yHi,scale:true,axisLabel:{color:tokens.textMuted,formatter:(v:number)=>Number(v.toFixed(3)).toString()},splitLine:{lineStyle:{color:tokens.grid}}},
+     series:[sideA,sideB].flatMap(side=>seedSeries(side,tokens,{mode:spread,boxWidth:[10,28],clamp:zoomed?(v:number)=>Math.min(yHi,Math.max(yLo,v)):undefined,hidden:zoomed?(v:number)=>v<yLo||v>yHi:undefined}))}}/><Text size="xs" c="dimmed">Blue = A, orange = B. One dot per seed: its median over shared angles.</Text>
    </SectionCard>:<EmptyState title="No shared results in this direction" hint="The 0.5 s + retest map runs are available only for session 1 → 2. Switch direction or choose other experiments."/>}
-  </>:chosen&&position?<SectionCard title="Two predictions, each against its own target" description="Both panels use the same time and torque scales. Gaps are excluded samples; they are not filled with predictions.">
-   <Stack gap="md"><SimpleGrid cols={{base:1,sm:2}}><Select label="Subject" aria-label="Comparison waveform subject" value={chosen.subject} data={eligible.map(p=>p.subject)} onChange={v=>v&&set({wsubj:v,pos:null})}/><Select label="Shared ankle angle" aria-label="Comparison waveform position" value={String(position.a)} data={chosen.matched.map(p=>({value:String(p.a),label:`A ${posLabel(p.a,3)} / B ${posLabel(p.b,3)} rad`}))} onChange={v=>v&&set({pos:Number(v)})}/></SimpleGrid>
-    <SimpleGrid cols={{base:1,sm:2}}>{[chosen.rowsA.filter(r=>r.pos===position.a),chosen.rowsB.filter(r=>r.pos===position.b)].map((rows,i)=><Select key={i} label={`${i===0?'A':'B'} · training run`} aria-label={`Comparison run ${i===0?'A':'B'}`} value={i===0?runA:runB} onChange={v=>v&&(i===0?setRunA(v):setRunB(v))} data={[{value:'typical',label:'Typical · middle R²'},{value:'best',label:'Best R²'},{value:'worst',label:'Worst R²'},...[...new Set(rows.map(r=>r.seed))].map(seed=>({value:`s${seed}`,label:`Seed ${seed}`}))]}/>)}</SimpleGrid>
-    {panels.map((p,i)=>{if(!p)return <EmptyState key={i} title="No waveform stored for this run"/>;const color=i===0?tokens.a:tokens.b;const lines:WaveLine[]=[{name:'Own evaluation target',color:tokens.ink,width:2,data:p.target},{name:`${i===0?'A':'B'} prediction · seed ${p.run.seed}`,color,width:1.6,data:p.prediction}];const option=waveOption(TIME,lines,{start:0,end:100},tokens,mobile);return <div key={`${p.run.exp}|${p.run.seed}`}><Group justify="space-between"><Text fw={600}>{i===0?'A':'B'} · {catalogTitle(ids[i])}</Text><Text size="sm">Raw R² {fmt(p.run.r2)} · MAE {fmt(p.run.mae)} Nm</Text></Group><Text size="xs" c="dimmed">{chosen.subject} · {posLabel(p.run.pos,3)} rad · source {catalogCode(p.run.exp)} · seed {p.run.seed}</Text><EChart height={mobile?330:310} label={`Comparison waveform ${i===0?'A':'B'}`} option={{...option,yAxis:{...(option.yAxis as object),min:yMin,max:yMax,axisLabel:{color:tokens.textMuted,fontSize:12,formatter:(v:number)=>Number(v.toFixed(1)).toString()}}}}/></div>;})}
-    <Text size="xs" c="dimmed">Chart display is sampled every 0.2 s. Scores use each full-resolution saved trial, including its own valid interval. A “typical” seed is chosen separately for each model using raw R².</Text>
+  </>:chosen&&position?<SectionCard title="Two predictions, each against its own target" description="Same scales; gaps are excluded samples.">
+   <Stack gap="md"><SimpleGrid cols={2}><Select label="Subject" aria-label="Comparison waveform subject" value={chosen.subject} data={eligible.map(p=>p.subject)} onChange={v=>v&&set({wsubj:v,pos:null})}/><Select label="Shared ankle angle" aria-label="Comparison waveform position" value={String(position.a)} data={chosen.matched.map(p=>({value:String(p.a),label:`A ${posLabel(p.a,3)} / B ${posLabel(p.b,3)} rad`}))} onChange={v=>v&&set({pos:Number(v)})}/></SimpleGrid>
+    <SimpleGrid cols={2}>{[chosen.rowsA.filter(r=>r.pos===position.a),chosen.rowsB.filter(r=>r.pos===position.b)].map((rows,i)=><Select key={i} label={`${i===0?'A':'B'} · training run`} aria-label={`Comparison run ${i===0?'A':'B'}`} value={i===0?runA:runB} onChange={v=>v&&(i===0?setRunA(v):setRunB(v))} data={[{value:'typical',label:'Typical · middle R²'},{value:'best',label:'Best R²'},{value:'worst',label:'Worst R²'},...[...new Set(rows.map(r=>r.seed))].map(seed=>({value:`s${seed}`,label:`Seed ${seed}`}))]}/>)}</SimpleGrid>
+    {panels.map((p,i)=>{if(!p)return <EmptyState key={i} title="No waveform stored for this run"/>;const color=i===0?tokens.a:tokens.b;const lines:WaveLine[]=[{name:'Own evaluation target',color:tokens.ink,width:2,data:p.target},{name:`${i===0?'A':'B'} prediction · seed ${p.run.seed}`,color,width:1.6,data:p.prediction}];const option=waveOption(TIME,lines,tokens);return <div key={`${p.run.exp}|${p.run.seed}`}><Group justify="space-between"><Text fw={600}>{i===0?'A':'B'} · {catalogTitle(ids[i])}</Text><Text size="sm">Raw R² {fmt(p.run.r2)} · MAE {fmt(p.run.mae)} Nm</Text></Group><Text size="xs" c="dimmed">{chosen.subject} · {posLabel(p.run.pos,3)} rad · source {catalogCode(p.run.exp)} · seed {p.run.seed}</Text><EChart height={310} label={`Comparison waveform ${i===0?'A':'B'}`} option={{...option,yAxis:{...(option.yAxis as object),min:yMin,max:yMax,axisLabel:{color:tokens.textMuted,fontSize:12,formatter:(v:number)=>Number(v.toFixed(1)).toString()}}}}/></div>;})}
+    <Text size="xs" c="dimmed">Drawn every 0.2 s; typical seed chosen by raw R².</Text>
    </Stack>
   </SectionCard>:<EmptyState title="No shared waveform coverage" hint="Choose models with results in the selected direction."/>}
  </Stack>;

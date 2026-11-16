@@ -38,12 +38,6 @@
    "open": false
   },
   {
-   "label": "Calibration experiments",
-   "caption": "10 s gain + offset on measured session-2 torque · not the default",
-   "tone": "amber",
-   "open": true
-  },
-  {
    "label": "Normalization study",
    "caption": "Total torque · four ways to scale the EMG",
    "tone": "blue",

@@ -88,8 +88,8 @@ export function positionIndex(ds: Dataset, subj: string, dir: Dir, pos: number):
   return positionsOf(ds, subj, dir).findIndex((p) => near(p, pos));
 }
 
-/** the 2 most negative (plantarflexed) positions are "toes-down" */
-export function isToesDownIndex(k: number): boolean {
+/** the 2 most negative (most plantarflexed) positions */
+export function isPlantarflexedIndex(k: number): boolean {
   return k < 2;
 }
 

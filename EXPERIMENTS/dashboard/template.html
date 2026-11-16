@@ -106,7 +106,7 @@ details summary { cursor: pointer; color: var(--ink2) }
     <b>R²</b> per position: 1 = perfect, 0 = as good as predicting the trial's average. <b>MAE</b>: mean absolute error (Nm).
     <b>Demeaned</b>: each trial's mean removed from both curves (shape only). <b>Bias</b>: mean of prediction − measured.<br>
     <b>Spread</b>: over training runs (random seeds); the test trials are always the same. Box = 25–75 %, whiskers = 5–95 %, line = median.<br>
-    <b>Toes-down</b>: the 2 most negative (plantarflexed) positions of each person.
+    <b>Plantarflexed</b>: the 2 most negative (plantarflexed) positions of each person.
   </div>
 </aside>
 <main>
@@ -248,7 +248,7 @@ function pooled(which, toes) {
 }
 function kpis() {
   const m = METS[S.met]; const el = $('kpis'); el.innerHTML = '';
-  const cards = [['toes-down positions', 1], ['other 6 positions', 0]];
+  const cards = [['plantarflexed positions', 1], ['other 6 positions', 0]];
   for (const [lab, t] of cards) {
     const a = med(pooled('A', t)), b = med(pooled('B', t)); const d = b - a;
     const better = m.hi === null ? null : (m.hi ? d > 0 : d < 0);
@@ -296,7 +296,7 @@ function boxChart(s, small) {
       g += '</g>';
     });
   });
-  g += `<text x="${L}" y="${H - 4}" font-size="11" fill="var(--muted)">ankle position (rad) · shaded = 2 most toes-down</text></svg>`;
+  g += `<text x="${L}" y="${H - 4}" font-size="11" fill="var(--muted)">ankle position (rad) · shaded = 2 most plantarflexed</text></svg>`;
   return g;
 }
 function perPosition() {
@@ -315,7 +315,7 @@ function perPosition() {
 function heat() {
   const m = METS[S.met]; const W = 640, rowH = 30, L = 52, T = 22, cw = (W - L - 6) / 8; const H = T + rowH * SUBJ.length + 6;
   let g = `<svg viewBox="0 0 ${W} ${H}">`; const cells = [];
-  for (let k = 0; k < 8; k++) g += `<text x="${L + (k + .5) * cw}" y="14" text-anchor="middle" font-size="11" fill="var(--muted)">${k < 2 ? 'toes-down ' + (k + 1) : 'pos ' + (k + 1)}</text>`;
+  for (let k = 0; k < 8; k++) g += `<text x="${L + (k + .5) * cw}" y="14" text-anchor="middle" font-size="11" fill="var(--muted)">${k < 2 ? 'plantarflexed ' + (k + 1) : 'pos ' + (k + 1)}</text>`;
   SUBJ.forEach((s, i) => {
     g += `<text x="${L - 8}" y="${T + i * rowH + 19}" text-anchor="end" font-size="12.5" fill="var(--ink)">${s}</text>`;
     const ea = resolve(S.A, s, S.dir), eb = resolve(S.B, s, S.dir); const pos = positions(s, S.dir);

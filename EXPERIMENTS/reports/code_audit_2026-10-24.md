@@ -51,7 +51,7 @@ Its unbounded quadratic terms produce a few absurd predictions on out-of-range E
 - It lowered his mean RMSE by about 10 % over 5 people.
 - It was chosen and confirmed on the retest session; he calls this retrospective.
 - His metric is dominated by the strong positions.
-- Our 0.5 s test on the final model, with the same seeds, shows the same pattern: the other positions improve a little and the toes-down positions stay about the same.
+- Our 0.5 s test on the final model, with the same seeds, shows the same pattern: the other positions improve a little and the plantarflexed positions stay about the same.
 
 **Passive torque:**
 - His session-specific passive targets are not leakage. They follow the same principle as our answer key.

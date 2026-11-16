@@ -1,12 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { DS } from './dataset';
-import { hashFromState, stateFromHash, themeFromHash, type TabKey, type ViewState } from './lib/hash';
+import { hashFromState, stateFromHash, type TabKey, type ViewState } from './lib/hash';
 import { near, positionsOf } from './lib/data';
 import { DEFAULT_A_ID, DEFAULT_B_ID } from './lib/params';
 import { NEW_MODEL_ID } from './lib/presentation';
 import type { Dir, MetricKey, Params } from './lib/types';
-import { chartTokens, type ChartTokens } from './theme';
+import { TOKENS, type ChartTokens } from './theme';
 
 const DEFAULT_STATE: ViewState = {
   tab: 'study',
@@ -39,8 +38,6 @@ interface Ctx {
   takeWaveScroll: () => boolean;
   /** the position shown in the waveform viewer (resolved against the person's positions) */
   wpos: number | null;
-  scheme: 'light' | 'dark';
-  toggleScheme: () => void;
   tokens: ChartTokens;
 }
 
@@ -63,9 +60,6 @@ function writeHash(h: string) {
 
 export function ViewProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<ViewState>(() => stateFromHash(DS, window.location.hash, DEFAULT_STATE));
-  const { setColorScheme } = useMantineColorScheme();
-  const scheme = useComputedColorScheme('light', { getInitialValueInEffect: false });
-  const [themeInHash, setThemeInHash] = useState(() => themeFromHash(window.location.hash) !== null);
   const lastWritten = useRef('');
   const waveScroll = useRef(false);
   const takeWaveScroll = useCallback(() => {
@@ -78,28 +72,20 @@ export function ViewProvider({ children }: { children: ReactNode }) {
 
   // state -> hash
   useEffect(() => {
-    const h = hashFromState(DS, s, themeInHash ? scheme : null);
+    const h = hashFromState(DS, s);
     lastWritten.current = h;
     writeHash(h);
-  }, [s, scheme, themeInHash]);
+  }, [s]);
 
   // hash -> state (deep links, manual edits, back/forward)
   useEffect(() => {
     const onHash = () => {
       if (window.location.hash === lastWritten.current) return;
       setS((prev) => stateFromHash(DS, window.location.hash, prev));
-      const t = themeFromHash(window.location.hash);
-      if (t) {
-        setThemeInHash(true);
-        setColorScheme(t);
-      }
     };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
-  }, [setColorScheme]);
-
-  // the toggle saves the choice (localStorage); a theme given in the URL stays in the URL and follows the toggle
-  const toggleScheme = useCallback(() => setColorScheme(scheme === 'dark' ? 'light' : 'dark'), [scheme, setColorScheme]);
+  }, []);
 
   const wpos = useMemo(() => {
     const ps = positionsOf(DS, s.wsubj, s.dir);
@@ -134,11 +120,9 @@ export function ViewProvider({ children }: { children: ReactNode }) {
       },
       takeWaveScroll,
       wpos,
-      scheme,
-      toggleScheme,
-      tokens: chartTokens(scheme),
+      tokens: TOKENS,
     }),
-    [s, set, wpos, scheme, toggleScheme, takeWaveScroll],
+    [s, set, wpos, takeWaveScroll],
   );
 
   return <ViewContext.Provider value={value}>{children}</ViewContext.Provider>;

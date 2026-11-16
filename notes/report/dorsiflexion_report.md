@@ -15,7 +15,7 @@
 ## TL;DR
 
 - **The problem:** my model guesses ankle torque from muscle signals (EMG). In the second session (the held-out test data) it was great at most ankle angles but *worse than just guessing the average* at a few (R² below 0; R² = 1 is perfect). Worst: YES at −0.486 rad (≈ −28°), R² = −1.43.
-- **Plot twist:** I'd been calling those the "dorsiflexion" (toes-up) angles. They're actually the most **plantarflexed** (toes-down) ones, where the calf is short and weak.
+- **Plot twist:** I'd been calling those the "dorsiflexion" (dorsiflexed) angles. They're actually the most **plantarflexed** (plantarflexed) ones, where the calf is short and weak.
 - **Why it broke:** at those angles the torque barely moves (~0.4 Nm of wiggle vs ~15 Nm at the strong angles), so errors of a few tenths of a Nm are enough to tank R². I found 5 sources of errors that size (section 4):
   1. the "relaxed" torque level shifting between sessions,
   2. the relaxed torque slowly drifting inside a trial,
@@ -38,9 +38,9 @@ The model looks at muscle activity (EMG) from 4 lower-leg muscles plus the ankle
 
 - **GM, GL** = gastrocnemius medialis / lateralis (the two halves of the big calf muscle)
 - **SOL** = soleus (the calf muscle underneath)
-- **TA** = tibialis anterior (the shin muscle that pulls the toes up)
+- **TA** = tibialis anterior (the shin muscle that pulls the foot into dorsiflexion)
 
-GM, GL and SOL push the toes down (plantarflexion). TA pulls them up (dorsiflexion).
+GM, GL and SOL push the foot into plantarflexion. TA pulls them up (dorsiflexion).
 
 ### The experiment
 
@@ -144,21 +144,21 @@ Most angles were great (R² 0.93-0.99 for YES). But a few were terrible:
 
 ![Old pipeline R² per angle for YES and JM](figures/fig01_problem_r2.png)
 
-*Figure 5: The old model's R² per angle in session 2. Below the dashed line = worse than guessing the average. The bad angles are mostly at the toes-down end (JM −0.078 is a separate bug, see cause 3). Where the 3 runs disagree wildly, the black dots show each run.*
+*Figure 5: The old model's R² per angle in session 2. Below the dashed line = worse than guessing the average. The bad angles are mostly at the plantarflexed end (JM −0.078 is a separate bug, see cause 3). Where the 3 runs disagree wildly, the black dots show each run.*
 
 ### Wait, those angles are plantarflexed, not dorsiflexed
 
-I had been calling these the "dorsiflexion" angles. That's backwards. Negative angle = **plantarflexion** (toes down). The evidence:
+I had been calling these the "dorsiflexion" angles. That's backwards. Negative angle = **plantarflexion** (plantarflexed). The evidence:
 
 - **The lab code says so:** `maxDF = +0.25` and `maxPF = -0.50` rad (DF = dorsiflexion, PF = plantarflexion), in `EMG2TQ_TIDynNLBiLinModel_prbsTQ_HM01_20250411.m`. And `maxPF = -0.5`, `maxDF = +0.2` in `initialize_input_waveform.m`. So positive = dorsiflexion, negative = plantarflexion, and plantarflexion torque is negative.
 - **Max push is weakest at the negative angles.** The **MVC** (maximum voluntary contraction, i.e. pushing as hard as you can) for YES is **13.6 Nm at −0.488 rad** vs **81.6 Nm at +0.139 rad**, only 17% of the peak. Across all 6 subjects the most negative angle gets just 17-30% of their peak. That's exactly what happens when the calf is already short (foot pointed down). It's like trying to curl a dumbbell when your arm is already fully bent.
 
 ![Ankle angle convention and MVC per angle](figures/fig02_ankle_angles.png)
 
-*Figure 6: Left: which way the angles go (from the lab code: negative = toes down). Right: the hardest YES and JM could push at each angle. The "bad" angles are the toes-down ones, where the calf is weakest.*
+*Figure 6: Left: which way the angles go (from the lab code: negative = plantarflexed). Right: the hardest YES and JM could push at each angle. The "bad" angles are the plantarflexed ones, where the calf is weakest.*
 
-- **The passive torque sign fits.** For YES the passive torque is **+7.9 / +10.6 Nm** (session 1 / session 2) at −0.487 rad and **−10.1 / −5.0 Nm** at +0.245 rad. Positive (pulling toes up) at negative angles means the front of the ankle is stretched, which happens when the foot points down. And the other way around at positive angles.
-- **The range of motion fits.** The recorded angles go from about −0.79 rad (−45°) to +0.25 rad (+14°). Ankles go way further toes-down than toes-up, so a range that reaches −0.79 rad only makes sense if negative = plantarflexion.
+- **The passive torque sign fits.** For YES the passive torque is **+7.9 / +10.6 Nm** (session 1 / session 2) at −0.487 rad and **−10.1 / −5.0 Nm** at +0.245 rad. Positive (pulling into dorsiflexion) at negative angles means the front of the ankle is stretched, which happens when the foot points down. And the other way around at positive angles.
+- **The range of motion fits.** The recorded angles go from about −0.79 rad (−45°) to +0.25 rad (+14°). Ankles go way further plantarflexed than dorsiflexed, so a range that reaches −0.79 rad only makes sense if negative = plantarflexion.
 
 Why this matters: the explanation flips. It's not "the calf is stretched and weird". It's "**the calf is short and weak, so there's hardly any torque to predict**". (`notes/YES_passive_torque_issue.md` in the main project folder calls −0.487 "maximum dorsiflexion", which is wrong for the same reason.)
 
@@ -244,7 +244,7 @@ Evidence it's the key for JM: in my quick-test setup (the "sandbox", see section
 
 **The catch: CH.**
 
-- CH pushes **both ways** in session 1 (per-trial push values from −54.8 Nm toes-down to +28.0 Nm toes-up).
+- CH pushes **both ways** in session 1 (per-trial push values from −54.8 Nm plantarflexed to +28.0 Nm dorsiflexed).
 - With auto-gain forced on, CH's pooled MSE blows up to **78.70 Nm²** (vs **3.58** without).
 - My guess: when a muscle is quiet for a whole trial, auto-gain still boosts its noise (up to ~3×, there's a cap), and with pushes in both directions the model can't tell real activity from boosted noise.
 - So the final pipeline has an `auto` mode: it checks the push directions in session 1 and turns auto-gain off if it sees both. Only CH triggers it, out of the 6.
@@ -540,7 +540,7 @@ Mostly recording protocol stuff, since most of the problems came from the data, 
 
 | Term | Plain meaning |
 |---|---|
-| Plantarflexion / dorsiflexion | Toes down / toes up. Here negative angle = plantarflexion. |
+| Plantarflexion / dorsiflexion | Plantarflexed / dorsiflexed. Here negative angle = plantarflexion. |
 | Isometric | Pushing against something that doesn't move, so the joint angle stays fixed. |
 | Session 1 / session 2 | The two recording sessions (both in the same recording file). Session 1 (lab name "test") = training data, session 2 (lab name "retest") = test data. |
 | EMG | Electrical activity of a muscle, measured with skin electrodes. |

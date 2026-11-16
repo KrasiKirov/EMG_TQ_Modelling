@@ -7,7 +7,7 @@
 **Status (2026-10-09): finished.** Read `reports/FINAL_REPORT.md` first.
 
 **Final candidate D01 = clean passive table + EMG auto-gain + equal weight per position.**
-- **All 6 people, original direction, vs the official original-code baseline:** toes-down R² 0.50 → 0.77, RMSE 1.13 → 0.56 Nm.
+- **All 6 people, original direction, vs the official original-code baseline:** plantarflexed R² 0.50 → 0.77, RMSE 1.13 → 0.56 Nm.
 - **YES at −0.49 rad gets worse.**
 - **This candidate was chosen by judgment.** Under the rules written in advance, no change is formally confirmed (`reports/FINAL_REPORT.md` §3).
 

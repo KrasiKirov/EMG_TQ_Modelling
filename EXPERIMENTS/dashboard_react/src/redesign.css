@@ -1,7 +1,6 @@
 /* Redesign, 3 Nov 2026: top navigation, Overview home page, model page around key numbers.
    Loaded after styles.css, so these rules win. */
 :root { --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; --ink-2: #1b2430; --accent: #1f7a72; --accent-2: #16615b; --accent-soft: #e2efec; --warm: #f7f5f0; }
-[data-mantine-color-scheme='dark'] { --ink-2: #eceae4; --accent: #6abfb1; --accent-2: #8fd3c7; --accent-soft: #22332f; --warm: #1c2825; }
 
 /* top bar */
 .topbar { background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
@@ -102,27 +101,6 @@
 .view-tabs button[data-active]::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: var(--accent); }
 .experiment-workspace.mode-method .experiment-overview { display: grid; }
 
-@media (max-width: 62em) {
-  .home-hero { grid-template-columns: 1fr; padding: 28px; }
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .step::after { display: none; }
-  .home-grid { grid-template-columns: 1fr; }
-  .kpi-band { grid-template-columns: 1fr 1fr; }
-  .kpi-meta { display: none; }
-}
-@media (max-width: 48em) {
-  .brand-text { display: none; }
-  .topnav-item { padding: 7px 12px; font-size: 13px; }
-  .home { gap: 36px; }
-  .home-hero { padding: 22px; }
-  .steps { grid-template-columns: 1fr; }
-  .kpi-band { grid-template-columns: 1fr; }
-  .kpi-big, .final-big { font-size: 38px; }
-  .model-bar { position: static; }
-  .model-search { width: 100%; }
-  .recipe > div { grid-template-columns: 96px 1fr; }
-}
-
 /* All experiments catalogue */
 .catalog { display: grid; gap: 40px; }
 .catalog-head { display: grid; gap: 8px; }
@@ -145,18 +123,4 @@
 .catalog-row .num.big { font-size: 17px; font-weight: 600; }
 .catalog-row .num.muted { color: var(--text-3); font-size: 13px; display: grid; justify-items: end; gap: 2px; }
 .catalog-open { font-size: 12px; font-weight: 600; color: var(--accent); opacity: .55; transition: opacity 120ms; }
-@media (max-width: 62em) {
-  .catalog-row { grid-template-columns: minmax(0, 1fr) 80px 56px 80px 56px; }
-  .catalog-row > :last-child { display: none; }
-}
-@media (max-width: 48em) {
-  .catalog-header { display: none; }
-  .catalog-row { grid-template-columns: repeat(4, 1fr); row-gap: 8px; }
-  .catalog-name { grid-column: 1 / -1; }
-  .catalog-row .num { text-align: left; }
-  .catalog-row .num::before { display: block; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
-  .catalog-row > .num:nth-child(2)::before { content: 'Toes-down MAE'; }
-  .catalog-row > .num:nth-child(3)::before { content: 'R²'; }
-  .catalog-row > .num:nth-child(4)::before { content: 'Other MAE'; }
-  .catalog-row > .num:nth-child(5)::before { content: 'R²'; }
-}
+

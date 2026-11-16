@@ -1,4 +1,4 @@
-## Per subject and direction: mean over the 2 toes-down positions (seed-mean; R² floored at −1 per position)
+## Per subject and direction: mean over the 2 plantarflexed positions (seed-mean; R² floored at −1 per position)
 
 | subject | direction | R² baseline | R² final | MSE baseline (Nm²) | MSE final | RMSE baseline (Nm) | RMSE final | NRMSE baseline | NRMSE final |
 |---|---|---|---|---|---|---|---|---|---|
@@ -19,15 +19,15 @@
 
 | group | direction | positions | R² baseline | R² final | RMSE baseline (Nm) | RMSE final | positions improved (R²) |
 |---|---|---|---|---|---|---|---|
-| screening (YES, EG) | S1→S2 | toes-down | 0.156 | 0.453 | 1.38 | 0.61 | 3/4 |
+| screening (YES, EG) | S1→S2 | plantarflexed | 0.156 | 0.453 | 1.38 | 0.61 | 3/4 |
 | screening (YES, EG) | S1→S2 | other | 0.963 | 0.981 | 1.62 | 1.31 | 10/12 |
-| screening (YES, EG) | S2→S1 | toes-down | 0.649 | 0.600 | 0.98 | 0.60 | 3/4 |
+| screening (YES, EG) | S2→S1 | plantarflexed | 0.649 | 0.600 | 0.98 | 0.60 | 3/4 |
 | screening (YES, EG) | S2→S1 | other | 0.907 | 0.978 | 1.71 | 1.42 | 6/12 |
-| validation (JM, IES, CH, HM) | S1→S2 | toes-down | 0.632 | 0.926 | 1.00 | 0.54 | 8/8 |
+| validation (JM, IES, CH, HM) | S1→S2 | plantarflexed | 0.632 | 0.926 | 1.00 | 0.54 | 8/8 |
 | validation (JM, IES, CH, HM) | S1→S2 | other | 0.821 | 0.959 | 1.97 | 1.13 | 21/24 |
-| validation (JM, IES, CH, HM) | S2→S1 | toes-down | 0.746 | 0.929 | 0.79 | 0.52 | 6/8 |
+| validation (JM, IES, CH, HM) | S2→S1 | plantarflexed | 0.746 | 0.929 | 0.79 | 0.52 | 6/8 |
 | validation (JM, IES, CH, HM) | S2→S1 | other | 0.813 | 0.941 | 2.16 | 1.39 | 16/24 |
-| all 6 | S1→S2 | toes-down | 0.473 | 0.768 | 1.13 | 0.56 | 11/12 |
+| all 6 | S1→S2 | plantarflexed | 0.473 | 0.768 | 1.13 | 0.56 | 11/12 |
 | all 6 | S1→S2 | other | 0.869 | 0.966 | 1.85 | 1.19 | 31/36 |
-| all 6 | S2→S1 | toes-down | 0.714 | 0.819 | 0.86 | 0.55 | 9/12 |
+| all 6 | S2→S1 | plantarflexed | 0.714 | 0.819 | 0.86 | 0.55 | 9/12 |
 | all 6 | S2→S1 | other | 0.844 | 0.954 | 2.01 | 1.40 | 22/36 |

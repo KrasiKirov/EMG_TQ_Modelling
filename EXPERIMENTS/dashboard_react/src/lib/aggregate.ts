@@ -60,7 +60,7 @@ function groupSummary(items: { key: string; run: string; v: number }[]): Summary
 export interface KpiSide {
   s: Summary;
   people: string[];
-  /** test positions per person in this group (2 toes-down or 6 others) */
+  /** test positions per person in this group (2 plantarflexed or 6 others) */
   positions: number;
   runsMin: number;
   runsMax: number;
@@ -260,7 +260,7 @@ export interface ExperimentRow {
   toesMae: number;
   refToesMae: number;
   dMae: number;
-  /** peak voluntary torque at the compared toes-down positions */
+  /** peak voluntary torque at the compared plantarflexed positions */
   peak: PeakRange;
   /** position of the row in the preset groups (for the default order) */
   order: number;
@@ -314,7 +314,7 @@ function matchedScores(ds: Dataset, perPerson: { subj: string; exp: string }[], 
 }
 
 /**
- * Median toes-down R² / MAE of each experiment vs the last-semester reference (X00f_baseline_framework),
+ * Median plantarflexed R² / MAE of each experiment vs the last-semester reference (X00f_baseline_framework),
  * computed on the SAME (person, seed) pairs for both (matched runs). Plus one merged row for "ours" on
  * every person, built with the resolution rule (D01, and C01 for YES / EG, as in the Overview).
  */
@@ -407,8 +407,8 @@ export const ROUND2_NAMES: Record<string, string> = {
   E06_final_drift: 'passive drift model',
   E10_final_mvcglobal: 'EMG ÷ MVC (whole leg)',
   E11_final_mvcangle: 'EMG ÷ MVC per position',
-  E13_final_pf3: '×3 toes-down weight',
-  E14_final_pf10: '×10 toes-down weight',
+  E13_final_pf3: '×3 plantarflexed weight',
+  E14_final_pf10: '×10 plantarflexed weight',
   E16_final_ga50: 'random EMG-size augmentation',
   E18_minimal_ga50: 'minimal + augmentation',
   E21_xsub_trainmax: 'pre-train on other 5 (train-max scaling)',
@@ -443,7 +443,7 @@ export interface GroupRow {
   otherR2: number;
   toesMae: number;
   otherMae: number;
-  /** peak voluntary torque of the toes-down / other positions scored (NaN ranges when unknown) */
+  /** peak voluntary torque of the plantarflexed / other positions scored (NaN ranges when unknown) */
   toesPeak: PeakRange;
   otherPeak: PeakRange;
 }

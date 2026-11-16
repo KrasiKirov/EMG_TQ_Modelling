@@ -2,7 +2,7 @@
 
 Reads EXPERIMENTS/results/<results_from>/<subject>/<direction>/seed<k>.{npz,json} for each spec with a
 'dashboard' block; scores every position with pipeline.scoring; writes rows, packed waveforms, timings and the
-experiment entry (title, description, tags, parameters, calibration) to presentation-catalog.json. Entries for the
+experiment entry (title, description, tags, parameters) to presentation-catalog.json. Entries for the
 exported ids are replaced; everything else in the catalogue is kept. Also writes the sidebar groups and landing page
 from EXPERIMENTS/dashboard_groups.json.
 """
@@ -44,23 +44,15 @@ def _drop(data, ident):
     data['experiments'].pop(ident, None)
 
 
-def _calibration_text(cal):
-    if cal['type'] == 'none':
-        return 'None'
-    return f"{cal['seconds']:g} s gain + offset per angle, scored from {cal['score_from_s']:g} s"
-
-
 def _entry(spec, cfg, coverage):
     d = spec.dashboard
     seeds = sorted({s for v in coverage.values() for s in v})
     text = d.text
     settings = text.get('overview', {}).get('settings') or [[k, v if isinstance(v, str) else json.dumps(v)]
                                                            for k, v in sorted(cfg.items())]
-    if not any(k == 'Calibration' for k, _ in settings):
-        settings = [*settings, ['Calibration', _calibration_text(spec.calibration)]]
     return dict(id=d.id, title=d.label, name=d.name, group=d.group, kind='spec', native=spec.id,
                 model=cfg.get('model', 'lstm'), config=cfg, description=spec.description, tags=spec.tags,
-                calibration=spec.calibration, blurb=d.blurb,
+                blurb=d.blurb,
                 purpose=text.get('purpose', spec.description), target=text.get('target', ''),
                 protocol=text.get('protocol', f'People: {", ".join(sorted(coverage))}. Seeds: {", ".join(map(str, seeds))}.'),
                 overview=dict(settings=settings, steps=text.get('overview', {}).get('steps', [])),
@@ -128,7 +120,7 @@ def export(specs, catalog, results, groups, all_specs=None):
                 if len(np.unique(trial[m])) != 1:
                     raise ValueError(f'{f}: position {a} spans several trials')
                 yy, pp, ts = y[m], p[m], tt[m]
-                row, shown = score_trial(yy, pp, ts, spec.calibration)
+                row, shown = score_trial(yy, pp, ts)
                 row.update(exp=ident, subj=subject, dir=direction, seed=seed, pos=round(float(a), 3), toes=int(k < 2))
                 data['rows'].append(row)
                 data['means'][f'{key}|{round(float(a), 3)}'] = [float(yy.mean()), float(shown.mean())]

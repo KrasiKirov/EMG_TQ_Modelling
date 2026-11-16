@@ -14,7 +14,5 @@ export { default as IconFlask } from '@tabler/icons-react/dist/esm/icons/IconFla
 export { default as IconInfoCircle } from '@tabler/icons-react/dist/esm/icons/IconInfoCircle.mjs';
 export { default as IconLayoutDashboard } from '@tabler/icons-react/dist/esm/icons/IconLayoutDashboard.mjs';
 export { default as IconMoodEmpty } from '@tabler/icons-react/dist/esm/icons/IconMoodEmpty.mjs';
-export { default as IconMoon } from '@tabler/icons-react/dist/esm/icons/IconMoon.mjs';
-export { default as IconSun } from '@tabler/icons-react/dist/esm/icons/IconSun.mjs';
 export { default as IconTimeline } from '@tabler/icons-react/dist/esm/icons/IconTimeline.mjs';
 export { default as IconWaveSine } from '@tabler/icons-react/dist/esm/icons/IconWaveSine.mjs';

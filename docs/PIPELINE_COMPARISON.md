@@ -109,7 +109,7 @@ Merged as recommended (merge commit `31142bd` on `cleanup`). Checks:
 - `compare_pipelines.py --ref <pre-merge commit>`: the experiment data is identical (largest difference 0) for all six people.
 - `python -m unittest discover -s ML/tests -t .`: 36 tests pass. `pytest`: all pass, including the slow regression.
 - One full training run of A0's settings on the merged code (EG, session 1 → 2, seed 0, under a temporary id):
-  identical targets; 68 epochs, as in the saved A0 run; MAE toes-down 0.672 vs 0.651 Nm saved, other angles 0.897
+  identical targets; 68 epochs, as in the saved A0 run; MAE plantarflexed 0.672 vs 0.651 Nm saved, other angles 0.897
   vs 0.896 Nm; correlation of the two prediction series 0.9998. The run used 8 threads, Python 3.13 and NumPy 2.4.3
   instead of the original 1 thread, Python 3.11 and NumPy 2.4.4, so bit-identical predictions were not expected.
 

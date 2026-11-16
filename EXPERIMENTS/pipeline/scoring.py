@@ -1,12 +1,10 @@
 """Scores computed from saved predictions (no model is loaded here).
 
-Calibration policy
-  * Default experiments are never calibrated: their predictions are scored as saved, on the whole trial.
-  * Every row also carries an error breakdown: MAE from `score_from_s` to the end of the trial before and after a
-    per-trial gain+offset fitted on the first `seconds`. The difference is the part of the error that is drift
-    (scale/offset); what remains is shape error. This reports error; it does not change the model's score.
-  * An experiment whose spec says calibration {"type": "gain_offset", ...} is a calibration experiment: its
-    predictions are corrected and scored from `score_from_s` only. Compare it only with entries scored the same way.
+Predictions are always scored as saved, on the whole trial.
+
+Every row also carries an error breakdown: MAE from `score_from_s` to the end of the trial before and after a
+per-trial gain+offset fitted on the first `seconds`. The difference is the part of the error that is drift
+(scale/offset); what remains is shape error. This only describes the error; it never changes the model's score.
 """
 import numpy as np
 
@@ -27,7 +25,7 @@ def metrics(y, p):
 
 
 def gain_offset(p_cal, y_cal, p):
-    """p' = a p + b fitted on the calibration block; a clipped to [0.5, 2]; offset only if the torque barely moves."""
+    """p' = a p + b fitted on the first block; a clipped to [0.5, 2]; offset only if the torque barely moves."""
     if np.std(y_cal) < MIN_SD:
         return p + np.mean(y_cal - p_cal)
     a, _ = np.polyfit(p_cal, y_cal, 1)
@@ -36,18 +34,12 @@ def gain_offset(p_cal, y_cal, p):
     return a * p + b
 
 
-def score_trial(y, p, t, calibration, breakdown=DEFAULT_BREAKDOWN):
-    """Score one trial (one position). Returns (row, predictions to display)."""
+def score_trial(y, p, t, *, breakdown=DEFAULT_BREAKDOWN):
+    """Score one trial (one position) on the whole trial. Returns (row, predictions to display)."""
     rel = t - t[0]
-    calibrated = calibration['type'] == 'gain_offset'
-    cal_s = calibration['seconds'] if calibrated else breakdown['seconds']
-    start = calibration['score_from_s'] if calibrated else breakdown['score_from_s']
-    block, scored = rel < cal_s, rel >= start
+    block, scored = rel < breakdown['seconds'], rel >= breakdown['score_from_s']
     corrected = gain_offset(p[block], y[block], p)
-    if calibrated:
-        row, shown = metrics(y[scored], corrected[scored]), corrected
-    else:
-        row, shown = metrics(y, p), p
+    row, shown = metrics(y, p), p
     if scored.sum() > 1 and np.ptp(y[scored]) > 0:
         row['err_raw_mae'] = float(np.mean(abs(p[scored] - y[scored])))
         row['err_after_gain_offset_mae'] = float(np.mean(abs(corrected[scored] - y[scored])))

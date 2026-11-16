@@ -10,10 +10,10 @@ def run(*args):
                           capture_output=True, text=True)
 
 
-def test_list_shows_specs_and_calibration():
+def test_list_shows_specs():
     r = run('list')
     assert r.returncode == 0, r.stderr
-    assert 'N0_total_trainmax' in r.stdout and 'gain_offset' in r.stdout
+    assert 'N0_total_trainmax' in r.stdout and 'cal=' not in r.stdout and 'N0cal' not in r.stdout
 
 
 def test_tag_rejects_unknown_group():

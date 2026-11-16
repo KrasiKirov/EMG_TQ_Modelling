@@ -18,7 +18,7 @@ and no internet. Share that one file.
 
 | Tab | Shows |
 | --- | --- |
-| Overview | KPI cards (median at the toes-down positions and at the other 6, B − A, 5–95 % and 1–99 % ranges), box plots per position with every run as a dot, and a B − A heat map over every person and position (click a cell to open its waveforms) |
+| Overview | KPI cards (median at the plantarflexed positions and at the other 6, B − A, 5–95 % and 1–99 % ranges), box plots per position with every run as a dot, and a B − A heat map over every person and position (click a cell to open its waveforms) |
 | Waveforms | Measured voluntary torque and the predictions of A and B for one person, position and run (typical = median-R² run, best, worst or any seed), zoomable; table of every run at that position |
 | Training | Learning curves (fit / validation / test MAE per epoch, ours vs last semester), a summary at the kept epoch, and where the error comes from (offset, other systematic, run-to-run) with run-average (ensemble) scores |
 | Experiments | All 15 experiments vs the last-semester reference on matched runs (click a row to load it as model B), the earlier round-2 exploration and the report-1 network types |

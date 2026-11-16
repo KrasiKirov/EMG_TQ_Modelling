@@ -13,8 +13,8 @@
 | X01 clean passive table (JM only) | static holds only | JM −0.08: −54.9 → 0.58 | – | 12.5 → 1.08 Nm | – | – | kept as a bug fix |
 
 ## What we learned
-- **The baseline's toes-down failure is not overfitting or a learning-rate problem.** Changing dropout in either direction makes things worse; a smaller learning rate helps a little but hurts other positions.
-- **The two changes that address diagnosed causes help most at the toes-down positions:**
+- **The baseline's plantarflexed failure is not overfitting or a learning-rate problem.** Changing dropout in either direction makes things worse; a smaller learning rate helps a little but hurts other positions.
+- **The two changes that address diagnosed causes help most at the plantarflexed positions:**
   - auto-gain, for the EMG size change between sessions;
   - equal weight per position, for the loss imbalance.
   - Both fix EG −0.74 (R² −0.09 → 0.92 / 0.95).
