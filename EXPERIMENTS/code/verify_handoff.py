@@ -5,13 +5,15 @@
 
 After deliberately updating the included artifacts, create a new inventory with
 --write-manifest and review its diff before committing. This inventories the files
-present; it does not establish scientific validity or completeness of an experiment.
+git tracks (prediction archives kept out of git are not listed); it does not establish
+scientific validity or completeness of an experiment.
 """
 from __future__ import annotations
 
 import argparse
 from collections import Counter
 import hashlib
+import subprocess
 import json
 from pathlib import Path
 
@@ -50,13 +52,19 @@ def manifest_order(path: Path) -> list:
     return [part.lower() for part in path.relative_to(ROOT).parts]
 
 
+def tracked(names) -> list:
+    """Files git tracks under `names` (untracked results on this computer are not part of the transfer)."""
+    out = subprocess.run(['git', 'ls-files', '-z', '--', *names], cwd=ROOT, capture_output=True, check=True).stdout
+    return [ROOT / p for p in out.decode('utf-8').split('\0') if p]
+
+
 def inventory() -> dict:
     paths = set()
     for name in ARTIFACT_ROOTS:
         directory = ROOT / name
         if not directory.is_dir():
             raise ValueError(f'Missing artifact directory: {name}')
-        for path in directory.rglob('*'):
+        for path in tracked([name]):
             if path.is_file() and path.suffix not in {'.pyc', '.md'} and not any(
                 part in {'__pycache__', '_cache', 'local'}
                 for part in path.relative_to(directory).parts

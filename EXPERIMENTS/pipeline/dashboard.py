@@ -53,19 +53,21 @@ def cmd_tag(a):
 
 
 def _ready(specs):
-    """Specs that can appear on the dashboard: untagged ones, and tagged ones with at least one result."""
-    return [s for s in specs if not (s.dashboard and _coverage(s) == 'no results')]
+    """Specs that can appear on the dashboard: untagged ones, tagged ones already in the catalogue (their predictions
+    are not in git, so a fresh clone has none) and tagged ones with at least one result here."""
+    done = set(json.loads(CATALOG.read_text(encoding='utf-8'))['experiments'])
+    return [s for s in specs if not (s.dashboard and s.dashboard.id not in done and _coverage(s) == 'no results')]
 
 
 def cmd_export(a):
     every = S.load_all()
     if a.exp:
         chosen = [S.load(i) for i in a.exp]
-    else:                                   # everything tagged; experiments still waiting for results are skipped
+    else:                                   # everything tagged with predictions here; the others keep their saved scores
         chosen = [s for s in every if s.dashboard]
         waiting = [s.id for s in chosen if _coverage(s) == 'no results']
         if waiting:
-            print(f'skipped (no results yet): {", ".join(waiting)}', file=sys.stderr)
+            print(f'not re-scored (no predictions here, kept as saved): {", ".join(waiting)}', file=sys.stderr)
         chosen = [s for s in chosen if s.id not in waiting]
     print(json.dumps(export(chosen, CATALOG, RESULTS, GROUPS, all_specs=_ready(every)), indent=1))
 

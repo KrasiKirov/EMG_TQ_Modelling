@@ -9,6 +9,9 @@ tracked at a fixed angle, not how well the torque level of each angle is guessed
 length, step, overlap, target, state, epoch limit) are read from the runs' own saved config. Also exported: the peak
 measured torque (max |torque|) at every position, for active and total torque; the software versions the runs
 reported; and the computer they ran on (read when exporting, since the run files record software versions only).
+
+The predictions are not in git. By default the scores are merged into the existing study.json: settings and seeds
+whose predictions are on this computer are re-scored, the rest are kept. --fresh rebuilds from local predictions only.
 """
 import argparse
 import importlib.metadata
@@ -75,7 +78,7 @@ def build(results, titles):
     out = {'built': date.today().isoformat(), 'direction': DIRECTION, 'metrics': list(METRICS), 'people': [],
            'positions': {}, 'settings': {}, 'runs': {}, 'epochs': {}, 'windows': {}, 'times': {},
            'peaks': {'active': {}, 'total': {}}, 'versions': []}
-    for d in sorted(p for p in results.iterdir() if p.is_dir()):
+    for d in sorted(p for p in results.iterdir() if p.is_dir()) if results.is_dir() else []:
         exp = d.name
         q = question(exp)
         if q is None:
@@ -119,7 +122,7 @@ def run_versions(results):
     """Software every results folder's runs reported ({exp: [distinct versions]}, [] if none were saved), for all
     folders, so the experiment pages can tell which runs share the window study's environment."""
     out = {}
-    for d in sorted(p for p in Path(results).iterdir() if p.is_dir()):
+    for d in sorted(p for p in Path(results).iterdir() if p.is_dir()) if Path(results).is_dir() else []:
         seen = []
         for f in sorted(d.glob('*/*/seed*.json')):
             v = json.loads(f.read_text(encoding='utf-8')).get('versions')
@@ -205,18 +208,57 @@ def spec_titles(configs=ROOT / 'EXPERIMENTS/configs'):
     return titles
 
 
+PER_RUN = ('runs', 'epochs', 'times')         # {exp: {person: {seed: value}}}
+
+
+def merge(old, new):
+    """`new` (scored from the predictions on this computer) on top of `old` (the existing study.json), so settings
+    and seeds whose predictions are not here are kept as they were. The predictions are not in git, so a fresh
+    clone re-scores only the runs it has."""
+    out = dict(new)
+    for key in PER_RUN:
+        merged = {exp: {s: dict(seeds) for s, seeds in per.items()} for exp, per in old.get(key, {}).items()}
+        for exp, per in new[key].items():
+            for subj, seeds in per.items():
+                merged.setdefault(exp, {}).setdefault(subj, {}).update(seeds)
+        out[key] = merged
+    out['windows'] = {exp: {**old.get('windows', {}).get(exp, {}), **w} for exp, w in new['windows'].items()}
+    for exp, w in old.get('windows', {}).items():
+        out['windows'].setdefault(exp, w)
+    out['settings'] = {**old.get('settings', {}), **new['settings']}
+    out['positions'] = dict(old.get('positions', {}))
+    for subj, pos in new['positions'].items():
+        if out['positions'].setdefault(subj, pos) != pos:
+            raise ValueError(f'{subj}: positions {pos} differ from {out["positions"][subj]} in the existing study.json')
+    out['peaks'] = {}
+    for kind in ('active', 'total'):
+        a, b = old.get('peaks', {}).get(kind, {}), new['peaks'][kind]
+        out['peaks'][kind] = {s: [max(x, y) for x, y in zip(a[s], b[s])] if s in a and s in b else a.get(s, b.get(s))
+                              for s in {**a, **b}}
+    out['versions'] = old.get('versions', []) + [v for v in new['versions'] if v not in old.get('versions', [])]
+    out['people'] = [p for p in PEOPLE if p in out['positions']] + sorted(set(out['positions']) - set(PEOPLE))
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--results', default=str(ROOT / 'EXPERIMENTS/results'))
     ap.add_argument('--out', default=str(ROOT / 'EXPERIMENTS/dashboard_react/src/data/study.json'))
+    ap.add_argument('--fresh', action='store_true',
+                    help='rebuild from the predictions here only, dropping settings and seeds that are not here')
     ap.add_argument('--workers', type=int, default=_default('scripts/run_window_study.sh', r'WORKERS:-(\d+)', 6),
                     help='runs trained at once (default: what scripts/run_window_study.sh uses)')
     ap.add_argument('--threads', type=int, default=_default('EXPERIMENTS/pipeline/run.py', r"'--threads', type=int, default=(\d+)", 1),
                     help='TensorFlow threads per run (default: run.py\'s)')
     a = ap.parse_args()
+    old = {} if a.fresh or not Path(a.out).exists() else json.loads(Path(a.out).read_text(encoding='utf-8'))
     out = build(a.results, spec_titles())
-    out['machine'] = machine(read_machine(), a.workers, a.threads)
-    out['run_versions'] = run_versions(a.results)
+    out = merge(old, out) if old else out
+    try:
+        out['machine'] = machine(read_machine(), a.workers, a.threads)
+    except (OSError, subprocess.CalledProcessError, KeyError, ValueError):      # not a Mac: keep what was recorded
+        out['machine'] = old.get('machine')
+    out['run_versions'] = {**old.get('run_versions', {}), **run_versions(a.results)}
     Path(a.out).write_text(json.dumps(out, separators=(',', ':'), allow_nan=False), encoding='utf-8')
     n = sum(len(s) for r in out['runs'].values() for s in r.values())
     print(f"{len(out['settings'])} settings, {n} runs -> {a.out}")

@@ -44,7 +44,7 @@ def _drop(data, ident):
     data['experiments'].pop(ident, None)
 
 
-def _entry(spec, cfg, coverage):
+def _entry(spec, cfg, coverage, old=None):
     d = spec.dashboard
     seeds = sorted({s for v in coverage.values() for s in v})
     text = d.text
@@ -57,7 +57,17 @@ def _entry(spec, cfg, coverage):
                 protocol=text.get('protocol', f'People: {", ".join(sorted(coverage))}. Seeds: {", ".join(map(str, seeds))}.'),
                 overview=dict(settings=settings, steps=text.get('overview', {}).get('steps', [])),
                 params=text.get('params', {}),
-                **({'reportText': (ROOT / text['report']).read_text(encoding='utf-8')} if text.get('report') else {}))
+                **({'reportText': _report(text['report'], old)} if text.get('report') else {}))
+
+
+def _report(path, old):
+    """The report's text; the Markdown reports stay out of git, so a clone without the file keeps the saved copy."""
+    f = ROOT / path
+    if f.exists():
+        return f.read_text(encoding='utf-8')
+    if old and old.get('reportText'):
+        return old['reportText']
+    raise FileNotFoundError(f'{path} (the report named in the spec) is missing and the catalogue has no saved copy')
 
 
 def _groups(specs_all, groups_cfg):
@@ -94,6 +104,7 @@ def export(specs, catalog, results, groups, all_specs=None):
         files = sorted(results.glob(f'{spec.results_from}/*/*/seed*.npz'))
         if not files:
             raise FileNotFoundError(f'no results for {spec.results_from} under {results}')
+        old = data['experiments'].get(ident)
         _drop(data, ident)
         coverage, cfg, first = {}, None, None
         for f in files:
@@ -134,7 +145,7 @@ def export(specs, catalog, results, groups, all_specs=None):
             data['times'][key] = dict(seconds=_finite(info.get('train_s')), prep=_finite(info.get('prep_s')),
                                       definition='fit + prediction (pipeline/run.py); data preparation separate')
             coverage.setdefault(subject, []).append(seed)
-        data['experiments'][ident] = _entry(spec, cfg, coverage)
+        data['experiments'][ident] = _entry(spec, cfg, coverage, old)
         summary[ident] = {s: len(v) for s, v in coverage.items()}
     data['dashboard'] = dict(landing=groups_cfg['landing'], groups=sidebar)
     data.pop('calibration', None)   # old home-page calibration summary; replaced by the per-row error breakdown
