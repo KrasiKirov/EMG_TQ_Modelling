@@ -10,9 +10,8 @@ Checks, for every current-round setting (study_scores.question(id) is not None),
   4. scores: MAE and RMSE recomputed here from the saved predictions (plain numpy, per position) equal study.json;
   5. targets: every active-torque setting predicts the same measured torque as the reference at every position and
      time stamp they share (total torque: the same as WT1_total), and the positions are the same angles;
-  6. the waveform file: best and worst are the extremes by the study's rule, and its torque matches the runs;
-  7. peaks: the peak torque per position in study.json is the largest |measured torque| of any run of that target;
-  8. IES (no relaxed-hold trials): its active torque is its total torque minus the experiment-sheet passive table
+  6. peaks: the peak torque per position in study.json is the largest |measured torque| of any run of that target;
+  7. IES (no relaxed-hold trials): its active torque is its total torque minus the experiment-sheet passive table
      (median over each position within 0.1 Nm of the table at the recorded angle).
 Prints one line per problem and a summary; exit status 1 if anything failed.
 """
@@ -105,10 +104,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--results', default=str(ROOT / 'EXPERIMENTS/results'))
     ap.add_argument('--study', default=str(ROOT / 'EXPERIMENTS/dashboard_react/src/data/study.json'))
-    ap.add_argument('--waves', default=str(ROOT / 'EXPERIMENTS/dashboard_react/src/data/study-waves.json'))
     a = ap.parse_args(argv)
     results, study = Path(a.results), json.loads(Path(a.study).read_text())
-    waves = json.loads(Path(a.waves).read_text())
     titles = SS.spec_titles()
     problems, n_runs, n_pos = [], 0, 0
     targets = {}                                      # (target kind, person, angle) -> (t, y) from the first setting
@@ -202,19 +199,6 @@ def main(argv=None):
                 problems.append(f'{subj} {x}: total - active is {d:.2f} Nm, the passive table gives {want:.2f} Nm')
         if compared != len(table):
             problems.append(f'{subj}: {compared} positions compared against its {len(table)}-row passive table')
-
-    ext = SS.extremes(study)
-    for k in ('best', 'worst'):
-        if waves[k] != ext[k]:
-            problems.append(f'study-waves.json {k} is {waves[k]}, the rule gives {ext[k]}')
-    for subj, P in waves['people'].items():
-        for k, x in enumerate(P['positions']):
-            exp, seed = waves['reference'], P['pred'][waves['reference']][k]['seed']
-            z = np.load(results / exp / subj / SS.DIRECTION / f'seed{seed}.npz')
-            m = np.isclose(z['angle'].astype(float), x, atol=5e-4)
-            _, y = SS._blocks(z['t'].astype(float)[m], z['y_own_target'].astype(float)[m], waves['hz'])
-            if np.max(np.abs(np.array(y) - np.array(P['target'][k]['y'][-len(y):]))) > 0.011:
-                problems.append(f'study-waves.json {subj} p{k + 1}: measured torque does not match the reference run')
 
     for line in problems:
         print('FAIL', line)

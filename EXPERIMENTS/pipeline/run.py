@@ -8,12 +8,10 @@ The configuration is read from EXPERIMENTS/configs/<exp>.json.  Every
 configuration starts from the LSTM-8 baseline and lists only what it changes
 (see configs/X00f_baseline_framework.json for the full baseline definition).
 
-Data building, passive-torque models, EMG normalisation and the training loop
-come from ML/research (shown by EXPERIMENTS/analysis/check_equivalence.py to build the same data as
-the frozen original pipeline).  To match the original exactly, the last
-validation window of every training trial is dropped (the original split
-leaves it out).  Training settings default to the original ones
-(Nadam 0.003, batch 8, 200 epochs, ReduceLROnPlateau 0.7/10, EarlyStopping 25).
+Data building, passive-torque models, EMG normalisation and the training loop come from ML/research, which
+builds the same data as the frozen original pipeline. As in the original split, the last validation window of
+every training trial is dropped. Training settings default to the original ones (Nadam 0.003, batch 8,
+200 epochs, ReduceLROnPlateau 0.7/10, EarlyStopping 25).
 
 Outputs: EXPERIMENTS/results/<exp>/<subject>/<direction>/seed<k>.{npz,json}
 """
@@ -170,8 +168,6 @@ def main():
     t_train = time.time() - t0 - t_prep
 
     y, meta = data['y_test'].astype(np.float64), data['meta_test']
-    out = os.path.join(EXP, 'results', a.exp, a.subject, a.direction)
-    os.makedirs(out, exist_ok=True)
     stem = os.path.join(out, f'seed{a.seed}')
     np.savez_compressed(stem + '.npz', y_own_target=y.astype(np.float32), y_pred=pred.astype(np.float32),
                         trial=meta['trial'].astype(np.int16), angle=meta['angle'].astype(np.float32),

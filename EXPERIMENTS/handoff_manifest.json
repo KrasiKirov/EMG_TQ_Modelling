@@ -257,8 +257,8 @@
     {
       "path": "EXPERIMENTS/dashboard_react/dist/index.html",
       "normalization": "none",
-      "bytes": 8799705,
-      "sha256": "e9d213b3e8c01d9835af0870a4fb7aacccffe5539e7008a703c7731c5a630ad5"
+      "bytes": 24239397,
+      "sha256": "c9de6934d822f62834fd5ffafef6b0c77722f16c8dac973ef2889d86ab62e74a"
     },
     {
       "path": "EXPERIMENTS/dashboard_react/src/data/catalog.json",
@@ -269,8 +269,8 @@
     {
       "path": "EXPERIMENTS/dashboard_react/src/data/presentation-catalog.json",
       "normalization": "lf",
-      "bytes": 5634832,
-      "sha256": "623795792de2aab97e3416297ab4847ed0635bbeff6fa47cec2c1e22fd69e386"
+      "bytes": 20378054,
+      "sha256": "818d1c59884be3330b0efcbf6254a664fd2520f447c0ddf274bafc49ebcf9f49"
     },
     {
       "path": "EXPERIMENTS/dashboard_react/src/data/results.json",
@@ -1691,8 +1691,8 @@
     {
       "path": "EXPERIMENTS/results/final_corrections_check.txt",
       "normalization": "lf",
-      "bytes": 2931,
-      "sha256": "f11aa53cf67b7a8ec6edd3fbc418dc8e8791b1e2f09b9874e191bf14a615d0c1"
+      "bytes": 2939,
+      "sha256": "7e7ced3aa1009c1136a40aba966c85ed0991b4a78c24862884653ef3d38822e1"
     },
     {
       "path": "EXPERIMENTS/results/final_per_position.csv",
@@ -1703,8 +1703,8 @@
     {
       "path": "EXPERIMENTS/results/final_summary_tables.md",
       "normalization": "lf",
-      "bytes": 2620,
-      "sha256": "0e93a454a326a71709ebbeaed1232abdf96f8e61d5c2fa456cc1ff1836537194"
+      "bytes": 2648,
+      "sha256": "6d1ebdd7a5de4774ad0350c7f0f4cd37985d3b0e06c5b976bdd1691a13d46ab9"
     },
     {
       "path": "EXPERIMENTS/results/learning_curves/D01_cleanpassive+autogain+equalweight/CH/S1toS2/seed0.json",
@@ -43803,5 +43803,5 @@
       "sha256": "21c48d08cd902ff649091f0a4679b6ac18e702b0ce6df27c8685ee19700ca4a7"
     }
   ],
-  "total_bytes": 1387747023
+  "total_bytes": 1417929973
 }

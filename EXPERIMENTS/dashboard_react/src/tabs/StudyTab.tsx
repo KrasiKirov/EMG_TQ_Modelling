@@ -4,7 +4,7 @@ import { EChart } from '../components/EChart';
 import { DataTable, Note, SectionCard, type Column } from '../components/common';
 import { peakBarOption, R2_FLOOR, runtimeOption, studySeedOption } from '../charts/study';
 import { SEED_KEY, type SeedSide } from '../charts/seedbox';
-import { entry, GROUPS, groupOf, personScore, pickFor, runsOf, scoreCI, START, timesOf, valuesOf, type PersonRuns } from '../lib/results';
+import { entry, GROUPS, groupOf, personScore, pickFor, runsOf, scoreCI, timesOf, valuesOf, type PersonRuns } from '../lib/results';
 import { medianCI, type MedianCI } from '../lib/boxstats';
 import { ciName } from '../lib/score';
 import { ExperimentMachine } from '../components/MachineInfo';
@@ -47,13 +47,6 @@ export function StudyTab() {
           Showing: <b>{e.title}</b> · {people.length} people · {seeds.length === 1 ? seeds[0] : `${Math.min(...seeds)}–${Math.max(...seeds)}`} {seeds.length === 1 && seeds[0] === 1 ? 'seed' : 'seeds'} per person
         </Text>
       </div>
-      {pick === START && (
-        <Note>
-          Last semester's code, unchanged. Same window as the current 200 ms, 95 % overlap run; different elsewhere: the EMG envelope
-          is filtered forwards and backwards (4th order), so it uses future samples; LSTM 8 units × 2 layers, dropout 0.3; learning rate
-          0.003, batch 8, up to 200 epochs; shuffled windows; no gap between training and validation data; last semester's passive table.
-        </Note>
-      )}
       {g.key === 'tuning' && (
         <Note>
           The chosen network (16 units × 2 layers, dropout 0, learning rate 0.01) had the lowest session-1 validation loss: 42 % below the previous
@@ -103,11 +96,11 @@ function PerPosition({ people, m }: { people: PersonRuns[]; m: 'mae' | 'r2' }) {
   const unit = SMETRICS[m].unit ? ` (${SMETRICS[m].unit})` : '';
   return (
     <SectionCard testId={`study-${m}`} title={`${SMETRICS[m].short} per position${unit}`} description={`${boxKey(fewestSeeds(people))}${m === 'r2' ? ` ↓: below ${R2_FLOOR}, value in the label.` : ''}`}>
-      <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
+      <SimpleGrid cols={1} spacing="lg">
         {people.map((p) => (
           <div key={p.subj} className="subject-plot">
             <Text size="md" fw={600} mb={4}>{p.subj}</Text>
-            <EChart label={`${p.subj}: ${SMETRICS[m].short} per position`} height={340}
+            <EChart label={`${p.subj}: ${SMETRICS[m].short} per position`} height={320}
               option={studySeedOption([side(p)], p.positions, m, 'box', tokens, false, p.subj)} />
           </div>
         ))}
@@ -120,7 +113,7 @@ function PerPosition({ people, m }: { people: PersonRuns[]; m: 'mae' | 'r2' }) {
 function PeakTorque({ people }: { people: PersonRuns[] }) {
   const { tokens } = useView();
   return (
-    <SectionCard testId="study-peaks" title="Peak torque per position (Nm)" description="Largest measured |torque| of the predicted target in each trial.">
+    <SectionCard testId="study-peaks" title="Peak torque per position (Nm)" description="Largest absolute measured torque of the predicted target in each trial.">
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
         {people.map((p) => (
           <div key={p.subj} className="subject-plot">

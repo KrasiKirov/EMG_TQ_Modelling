@@ -14,7 +14,7 @@ Keras' own 'loss' is measured with dropout on and averaged while the weights cha
 so it cannot be compared with 'val_loss'; the numbers here can.
 
 fit / val errors are against the target the model is trained on; test errors against
-the primary answer key (passive trials of the tested session, as score.py).  Errors in
+the primary answer key (passive trials of the tested session).  Errors in
 Nm (MAE) and Nm^2 (MSE), after undoing the per-position scaling of 'equal weight'.
 
 How to read them

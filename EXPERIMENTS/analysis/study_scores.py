@@ -1,5 +1,4 @@
-"""Scores of every window-study run, per position, for the dashboard's study page, plus the waveforms of the
-reference, the best and the worst setting (study-waves.json).
+"""Scores of every window-study run, per position, for the dashboard's study page.
 
     python -m EXPERIMENTS.analysis.study_scores [--out EXPERIMENTS/dashboard_react/src/data/study.json]
 
@@ -23,6 +22,7 @@ from pathlib import Path
 import numpy as np
 
 from EXPERIMENTS.pipeline.run import BASE
+from ML.research.config import PROTOCOLS
 from EXPERIMENTS.pipeline.scoring import score_trial
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -38,7 +38,7 @@ def facets(cfg):
             'overlap_pct': int(round(100 * (1 - cfg['train_stride'] * 10 / span_ms))),
             'target': 'total' if cfg['passive'] == 'none' else 'active', 'state': cfg['state'],
             'chunk_s': cfg['chunk'] * 10 / 1000 if cfg.get('chunk') else None, 'shuffle': bool(cfg['shuffle']),
-            'epochs': 400 if cfg['train_protocol'] == 'fast400' else 150}
+            'epochs': PROTOCOLS[cfg['train_protocol']]['epochs']}
 
 
 def question(exp):
@@ -65,7 +65,7 @@ def position_scores(y, p, angle, t):
     rows = []
     for a in sorted(np.unique(angle)):
         m = angle == a
-        r, _ = score_trial(y[m], p[m], t[m])
+        r = score_trial(y[m], p[m], t[m])
         rows.append([round(float(r[k]), 5) for k in METRICS])
     return rows
 
@@ -103,8 +103,9 @@ def build(results, titles):
             nw = info.get('n_windows')
             if subj not in windows and nw is not None:
                 windows[subj] = nw.get('train') if isinstance(nw, dict) else nw
-            if subj not in out['positions']:
-                out['positions'][subj] = [round(float(a), 3) for a in sorted(np.unique(angle))]
+            pos = [round(float(a), 3) for a in sorted(np.unique(angle))]
+            if out['positions'].setdefault(subj, pos) != pos:
+                raise ValueError(f'{f}: positions {pos} differ from {out["positions"][subj]} in another run of {subj}')
         if not runs:
             continue
         out['settings'][exp] = dict(facets(first), id=exp, question=q[0], pair=q[1], title=titles.get(exp, exp))
@@ -196,50 +197,6 @@ def extremes(out, min_seeds=5, band=0.05):
             'clearly_better': sorted(e for e, (m, b, n) in scored.items() if m < 1 - band and b >= max(1, n - 1))}
 
 
-def _blocks(t, y, hz):
-    """Block means at hz (from 100 Hz samples): (time of the first block, values rounded to 0.01 Nm)."""
-    k = max(1, int(round(100 / hz)))
-    n = len(y) // k
-    return round(float(t[:n * k].reshape(n, k).mean(1)[0]), 3), np.round(y[:n * k].reshape(n, k).mean(1), 2).tolist()
-
-
-def waves(results, out, ext, hz=20):
-    """Measured torque and the predictions of the reference, the best and the worst setting (and any clearly better
-    one) at every position, block-averaged to hz. Each prediction is the setting's typical run at that position: the
-    lower-middle seed when its seeds are sorted by MAE there. The target comes from the setting that starts earliest
-    (a longer window gives its first prediction later)."""
-    results = Path(results)
-    exps = [e for e in dict.fromkeys([REFERENCE, ext['best'], ext['worst'], *ext['clearly_better']]) if e in out['runs']]
-    col = METRICS.index('mae')
-    people = {}
-    for subj, positions in out['positions'].items():
-        entry = {'positions': positions, 'target': [None] * len(positions), 'pred': {}}
-        for exp in exps:
-            seeds = out['runs'][exp].get(subj)
-            if not seeds:
-                continue
-            loaded = {}
-            per_pos = []
-            for k, a in enumerate(positions):
-                order = sorted(seeds, key=lambda s: (seeds[s][k][col], int(s)))
-                seed = order[(len(order) - 1) // 2]
-                if seed not in loaded:
-                    loaded[seed] = np.load(results / exp / subj / DIRECTION / f'seed{seed}.npz', allow_pickle=False)
-                z = loaded[seed]
-                m = np.isclose(z['angle'].astype(float), a, atol=5e-4)
-                t = z['t'].astype(float)[m]
-                t0, y = _blocks(t, z['y_pred'].astype(float)[m], hz)
-                per_pos.append({'seed': int(seed), 't0': t0, 'y': y})
-                old = entry['target'][k]
-                if old is None or t0 < old['t0']:
-                    tt0, ty = _blocks(t, z['y_own_target'].astype(float)[m], hz)
-                    entry['target'][k] = {'t0': tt0, 'y': ty}
-            entry['pred'][exp] = per_pos
-        people[subj] = entry
-    return {'hz': hz, 'reference': REFERENCE, 'best': ext['best'], 'worst': ext['worst'],
-            'clearly_better': ext['clearly_better'], 'settings': exps, 'people': people}
-
-
 def spec_titles(configs=ROOT / 'EXPERIMENTS/configs'):
     titles = {}
     for p in Path(configs).glob('W*.json'):
@@ -252,7 +209,6 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--results', default=str(ROOT / 'EXPERIMENTS/results'))
     ap.add_argument('--out', default=str(ROOT / 'EXPERIMENTS/dashboard_react/src/data/study.json'))
-    ap.add_argument('--waves-out', default=str(ROOT / 'EXPERIMENTS/dashboard_react/src/data/study-waves.json'))
     ap.add_argument('--workers', type=int, default=_default('scripts/run_window_study.sh', r'WORKERS:-(\d+)', 6),
                     help='runs trained at once (default: what scripts/run_window_study.sh uses)')
     ap.add_argument('--threads', type=int, default=_default('EXPERIMENTS/pipeline/run.py', r"'--threads', type=int, default=(\d+)", 1),
@@ -265,9 +221,7 @@ def main():
     n = sum(len(s) for r in out['runs'].values() for s in r.values())
     print(f"{len(out['settings'])} settings, {n} runs -> {a.out}")
     ext = extremes(out)
-    w = waves(a.results, out, ext)
-    Path(a.waves_out).write_text(json.dumps(w, separators=(',', ':'), allow_nan=False), encoding='utf-8')
-    print(f"best {ext['best']}, worst {ext['worst']}, clearly better {ext['clearly_better']} -> {a.waves_out}")
+    print(f"best {ext['best']}, worst {ext['worst']}, clearly better {ext['clearly_better']}")
 
 
 if __name__ == '__main__':

@@ -51,7 +51,7 @@ and commit it with the change. The inventory is a transfer check, not a claim th
 - Re-importing the normalization and 60-epoch retest-map results in an isolated tree reproduced all 1,608
   supplementary dashboard score rows exactly, with identical packed targets and predictions.
 - Since then, the spec exporter (`python -m EXPERIMENTS.pipeline.dashboard export`) reproduces every normalization
-  score row to within 1e-9 (`EXPERIMENTS/tests/test_export_regression.py`, run with `pytest -m slow`).
+  score row to within 1e-9 (checked by a regression test, removed in November 2026; see the git history).
 
 ## Environment
 

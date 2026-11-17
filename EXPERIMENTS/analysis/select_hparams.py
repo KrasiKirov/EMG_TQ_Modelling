@@ -63,15 +63,6 @@ def epoch_gain(long, short):
             'better_people': int(np.sum(per < 0)), 'per_person': {p: float(np.mean(v)) for p, v in by_person.items()}}
 
 
-def val_losses(exp, results=ROOT / 'EXPERIMENTS/results'):
-    """{(person, seed): best session-1 validation loss} of one experiment (session 1 -> 2)."""
-    out = {}
-    for p in PEOPLE:
-        for f in sorted((Path(results) / exp / p / 'S1toS2').glob('seed*.json')):
-            out[(p, int(f.stem[4:]))] = json.loads(f.read_text())['train_info']['best_val_loss']
-    return out
-
-
 def n_params(units, layers, n_in=5):
     total, d = 0, n_in
     for _ in range(layers):

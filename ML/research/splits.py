@@ -1,24 +1,12 @@
 """
 Evaluation protocols and sliding windows.
 
-Protocols
----------
-S1toS2   train on session 1 (first 80 % of each trial = train, last 20 % =
-         validation), test on every window of session 2.  This is the
-         original evaluation ("does it work on a new session?").
-S2toS1   the same with the sessions swapped (second fold of a 2-fold
-         cross-session evaluation).
-pooled   both sessions in training: in every trial of both sessions the first
-         60 % is train, the next 20 % validation, the last 20 % test, with a
-         gap of one window (200 ms) at each boundary so no window spans two
-         parts.  Measures within-session accuracy (an easier question).
+S1toS2   train on session 1 (first 80 % of each trial train, last 20 % validation), test on all of session 2
+S2toS1   the same with the sessions swapped
+pooled   every trial of both sessions: 60 % train, 20 % validation, 20 % test, one window span between parts
 
-Windows
--------
-Input window = WINDOW steps x [GM, GL, SOL, TA, ankle angle]; the target is
-the active torque at the window's last step (same as the pipeline).  Every
-window carries metadata (trial, session, angle, time) so results can be
-grouped per angle and re-sliced (e.g. calibration on the first seconds).
+A window is WINDOW steps x [GM, GL, SOL, TA, angle]; the target is the active torque at its last step. Each window
+carries metadata (trial, session, angle, time, rest).
 """
 
 import numpy as np
@@ -83,19 +71,11 @@ def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=Fal
 
 
 def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, train_stride=1, val_gap=False):
-    """Assemble train / val / test arrays for ``protocol``.
+    """Train / val / test arrays for ``protocol``.
 
-    recs     : all active records of the subject (both sessions)
-    feats    : {trial idx: (T, 4) normalised EMG}
-    targets  : {trial idx: (T,) active torque}
-    rest     : optional {trial idx: (T,) bool} EMG-detected rest; stored per
-               window (at its last sample) as meta['rest']
-    step     : samples between time steps inside a window (see ``windows``)
-    train_stride : keep every k-th TRAINING window (k = 1: a new window every sample, consecutive
-               windows share (W-1)/W of their steps). Validation and test always keep every window, so
-               every setting is scored on the same samples.
-    val_gap  : start the validation windows one window span after the training cut, so no validation window
-               takes inputs from the training part of its trial (a purged split). Default False = as before.
+    feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}; rest: optional {trial idx: (T,) bool}
+    train_stride  keep every k-th training window (validation and test keep all)
+    val_gap       start validation one window span after the training cut (purged split)
     """
     spec = PROTOCOLS[protocol]
     parts = {'train': [], 'val': [], 'test': []}

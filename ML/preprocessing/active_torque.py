@@ -1,42 +1,18 @@
 """
-active_torque.py
-----------------
-Better estimates of the passive component of measured torque, so the model
-target (net active torque) stays consistent between sessions.
+Passive-torque estimates that keep the active-torque target consistent between sessions.
 
-Why this exists — the plantarflexed-angle R² drop
--------------------------------------------------
-At the most plantarflexed angles (YES −0.49 rad, JM −0.79/−0.64 rad) the
-active torque is tiny (retest std 0.4–0.8 Nm), so a 0.5 Nm error in the
-subtracted passive torque alone drives per-position R² negative.  Three
-measured problems with plain "measured − passive-hold map" subtraction:
+At the most plantarflexed angles (YES -0.49 rad, JM -0.79/-0.64 rad) the active torque is tiny (retest sd 0.4-0.8
+Nm), so a 0.5 Nm passive error alone makes R² negative. Three problems with plain "measured - passive map":
 
-1.  Movement segments leak into the passive map.  The 20 Nm std / |20 Nm|
-    bounds admitted JM trial 21 (a movement recording) as +11.7 Nm at
-    −0.07 rad.  Every passive trial starts with a clean 20–30 s static hold
-    (torque std 0.02–0.3 Nm); everything after the device step is junk.
-    → ``static_hold_passive_map``: keep only segments with position std
-      < 5 mrad, torque std < 1 Nm and ≥ 5 s.  Identical maps for EG/CH/HM,
-      only removes the bad JM entry.
+1. Movement segments leak into the map (the 20 Nm rules admitted JM trial 21 as +11.7 Nm at -0.07 rad).
+   ``static_hold_passive_map`` keeps segments with position sd < 5 mrad, torque sd < 1 Nm and >= 5 s.
+2. Rest torque during active trials is below the hold torque (YES: about 0.77·P, both sessions), and P differs
+   between sessions, which leaves a session-dependent offset. ``fit_passive_gain`` fits tq_rest = a·P + b on
+   training-session rest only and uses it for both sessions.
+3. Passive torque relaxes within a trial (YES -0.49: 0.6-1 Nm over 90 s). ``rest_baseline`` is a smooth baseline
+   through the rest segments, subtracted from training/validation labels only.
 
-2.  Torque at rest *during active trials* is systematically smaller than the
-    passive-hold torque (YES: ≈ 0.77·P at every angle, both sessions —
-    tissue conditioning / thixotropy after contractions).  Because P differs
-    between sessions (YES −0.49: 7.9 vs 10.6 Nm), plain subtraction leaves a
-    session-dependent offset (1−α)·ΔP that the model cannot learn.
-    → ``fit_passive_gain``: robust fit  tq_rest ≈ α·P + β  on TRAINING-
-      session rest segments only, then P_eff = α·P + β for both sessions.
-      Uses no retest torque — the test target is still defined from the
-      retest passive map alone.
-
-3.  Passive torque relaxes within a trial (YES −0.49: the relaxed plateau
-    sinks ~0.6–1 Nm over 90 s).  EMG cannot explain this, so it corrupts the
-    training labels at weak angles.
-    → ``rest_baseline``: smooth baseline through EMG-detected rest segments,
-      subtracted from TRAINING/VALIDATION labels only (never from the test
-      target).
-
-Rest is always detected from EMG only (never from torque).
+Rest is always detected from EMG, never from torque.
 """
 
 import numpy as np
@@ -44,7 +20,7 @@ import numpy as np
 FS_DS = 100.0   # Hz after downsampling
 
 
-# ── 1. Static-hold passive map ──────────────────────────────────────────────
+# 1. Static-hold passive map
 
 STATIC_MAX_POS_STD = 0.005   # rad
 STATIC_MAX_TQ_STD  = 1.0     # Nm
@@ -80,7 +56,7 @@ def static_hold_passive_map(passive_trials, split_fn, position_col, torque_col,
     return [(p, t) for p, t, _ in clusters]
 
 
-# ── EMG-only rest detection ─────────────────────────────────────────────────
+# EMG-only rest detection
 
 def emg_rest_stats(env_list, q_lo=5.0, q_hi=99.0):
     """Per-channel scale from training-session envelopes (normalised)."""
@@ -127,7 +103,7 @@ def _seg_levels(y, segs):
     return tc, med, n
 
 
-# ── 2. Passive gain correction ──────────────────────────────────────────────
+# 2. Passive gain correction
 
 def fit_passive_gain(records, passive_lookup, huber=3.0, iters=10):
     """Robust fit  tq_rest ≈ α·P(pos) + β  over rest segments of TRAINING
@@ -157,7 +133,7 @@ def fit_passive_gain(records, passive_lookup, huber=3.0, iters=10):
     return float(coef[0]), float(coef[1])
 
 
-# ── 3. Within-trial relaxation baseline (training labels only) ─────────────
+# 3. Within-trial relaxation baseline (training labels only)
 
 def _kernel(t, tc, med, w, sigma):
     d = (t[:, None] - tc[None, :]) / sigma

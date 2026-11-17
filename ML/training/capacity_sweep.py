@@ -19,7 +19,6 @@ Usage
 import os
 import sys
 import argparse
-import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
@@ -41,17 +40,7 @@ def parse_args():
 
 
 def run_sweep(subject_key, unit_counts, lr, epochs, batch_size):
-    """Train one model per unit count; collect per-position metrics for all splits.
-
-    Returns
-    -------
-    sweep_results : list of dict
-        Each dict has:
-          'n_units'      : int
-          'per_position' : {'train': {pos: metrics}, 'val': ..., 'test': ...}
-          'overall'      : {'train': metrics, 'val': metrics, 'test': metrics}
-    known_positions : list of float
-    """
+    """One model per unit count; returns (results [{n_units, per_position {split: {pos: metrics}}, overall}], known positions)."""
     data = load_subject(subject_key)
 
     X_train, y_train = data['X_train'], data['y_train']
@@ -79,12 +68,12 @@ def run_sweep(subject_key, unit_counts, lr, epochs, batch_size):
             verbose=0,
         )
 
-        # ── Test split (denormalized via evaluate_model) ───────────────
+        # Test split (denormalized via evaluate_model)
         result_test = evaluate_model(
             model, X_test, y_test, known_pos,
             mvc_tq_test=data['mvc_tq_test'])
 
-        # ── Train / Val splits ─────────────────────────────────────────
+        # Train / Val splits
         # Note: shown in raw units (no MVC denormalization for train/val)
         y_pred_train = model.predict(X_train, verbose=0).flatten()
         y_pred_val   = model.predict(X_val,   verbose=0).flatten()
@@ -133,7 +122,7 @@ def main():
         subject_key, unit_counts,
         lr=args.lr, epochs=args.epochs, batch_size=args.batch)
 
-    # ── Summary table ──────────────────────────────────────────────────
+    # Summary table
     print(f'\n\n{"="*70}')
     print(f'CAPACITY SWEEP SUMMARY ({subject_key})')
     print(f'{"="*70}')
@@ -147,7 +136,7 @@ def main():
               f'{res["overall"]["test"]["r2"]:9.4f}  '
               f'{res["overall"]["test"]["rmse"]:10.4f}')
 
-    # ── Plot ───────────────────────────────────────────────────────────
+    # Plot
     plot_dir = os.path.join(PLOT_DIR, subject_key)
     os.makedirs(plot_dir, exist_ok=True)
 

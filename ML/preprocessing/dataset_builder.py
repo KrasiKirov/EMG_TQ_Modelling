@@ -1,26 +1,12 @@
 """
-dataset_builder.py
-------------------
-Builds the LSTM input dataset from FLB trial data.
+Build the LSTM dataset from FLB trials (the original pipeline).
 
-Pipeline
---------
-1.  Classify all trials by comment → MVC / passive / active
-2.  Extract EMG envelopes at 1000 Hz and normalize using global max per channel
-3.  Subtract mean passive torque per ankle position → net active torque
-4.  Downsample 1000 Hz → 100 Hz
-5.  Build sliding windows  [N × 20 × 5]
-        Features : MG_env_norm, LG_env_norm, SOL_env_norm, TA_env_norm, position (rad)
-        Target   : active_torque (Nm) = measured_torque − passive_torque
-6.  Temporal split per trial: 80 % train / 20 % validation and then retest trials as test
-
-Design choices
---------------
-- Ankle position kept in raw radians (no scaling).
-- Torque target is net active torque after passive subtraction.
-- EMG normalization uses global max across train/val trials only (no leakage).
-- Passive torque is the mean measured torque over the matching passive trial(s)
-  for each ankle position tag (p1 … p8).
+1. classify trials by comment: MVC / passive / active
+2. EMG envelopes at 1 kHz, divided by the per-channel maximum over the train/validation trials
+3. active torque = measured torque - passive torque at the ankle angle
+4. downsample 1 kHz -> 100 Hz
+5. sliding windows [N x 20 x 5]: four EMG envelopes + angle (rad); target = active torque (Nm) at the last step
+6. each session-1 trial split 80 % train / 20 % validation; session-2 trials are the test set
 """
 
 import re
@@ -42,8 +28,6 @@ except ImportError:
 _POS_FEAT_IDX = 4
 
 
-# ── Constants ──────────────────────────────────────────────────────────────
-
 POSITION_COL      = 'position'   # ankle angle column name (rad)
 TORQUE_COL        = 'torque'     # measured torque column name (Nm)
 
@@ -56,23 +40,12 @@ TRANSIENT_SAMPLES = 1000         # samples to trim from start of each trial at 1
 TRAIN_FRAC        = 0.80
 VAL_FRAC          = 0.20
 
-# Active trials whose torque std exceeds this are likely ramp / dynamic
-# movements (not isometric holds) and are excluded from training.
+# Active trials with a larger torque std are ramps / dynamic movements, not holds; excluded.
 _ACTIVE_STD_THRESHOLD  = 30.0   # Nm
 
 
-# ── Trial classification ────────────────────────────────────────────────────
-
 def _parse_comment(comment: str):
-    """
-    Parse a trial comment string.
-
-    Returns
-    -------
-    trial_type : 'mvc' | 'passive' | 'active'
-    session    : 'test' | 'retest' | None
-    position   : 'p1' .. 'p8'  (or None)
-    """
+    """Parse a trial comment into (trial_type 'mvc'|'passive'|'active', session 'test'|'retest'|None, position 'p1'..'p8'|None)."""
     comment = comment.lower().strip()
 
     # Position: match "p3" style OR "pos indx 3" / "indx 3" style
@@ -100,21 +73,7 @@ def _parse_comment(comment: str):
 
 
 def classify_trials(trials):
-    """
-    Split trial DataFrames into MVC, passive, and active groups.
-
-    Also tags each DataFrame with ``attrs['session']`` ('test', 'retest',
-    or None) parsed from the trial comment.
-
-    Parameters
-    ----------
-    trials : list of pd.DataFrame
-        All trials from ``read_flb``.
-
-    Returns
-    -------
-    mvc, passive, active : list of pd.DataFrame
-    """
+    """Split trials into (mvc, passive, active) lists and tag each with ``attrs['session']`` from its comment."""
     mvc, passive, active = [], [], []
     for df in trials:
         t_type, session, _ = _parse_comment(df.attrs.get('comment', ''))
@@ -128,8 +87,6 @@ def classify_trials(trials):
     return mvc, passive, active
 
 
-# ── Passive torque map ──────────────────────────────────────────────────────
-
 _PASSIVE_STD_THRESHOLD = 20.0   # Nm  — segment rejected if torque still noisy after split
 _PASSIVE_TQ_BOUND      = 20.0   # Nm  — mean passive torque above this is physiologically implausible
 _POSITION_TOLERANCE    = 0.05   # rad — positions within this band are merged into one entry
@@ -139,18 +96,10 @@ _SETTLE_SAMPLES        = 1000   # samples to skip after a step (1 s at 1000 Hz)
 
 def _split_passive_segments(df, position_col=POSITION_COL):
     """
-    Split a passive trial at single-sample position steps made by the device.
+    Split a passive trial at single-sample position steps (two back-to-back static holds in one trial).
 
-    Some passive trials contain two back-to-back static holds: the ankle sits
-    still at position A, the device instantly repositions to position B, then
-    holds there.  The whole-trial torque std is high (two different passive
-    levels averaged together), but each half is clean.
-
-    This function detects position jumps larger than ``_STEP_VEL_THRESHOLD``
-    rad/s (in a single sample), splits there, and discards ``_SETTLE_SAMPLES``
-    after each jump so the transient dies away before we measure torque.
-
-    Returns a list of DataFrame slices — one per static-hold segment.
+    Splits at jumps above ``_STEP_VEL_THRESHOLD`` rad/s and drops ``_SETTLE_SAMPLES`` after each jump.
+    Returns one DataFrame slice per static-hold segment.
     """
     pos   = df[position_col].values
     dt    = df.attrs.get('domainIncr', 0.001)
@@ -180,19 +129,10 @@ def get_passive_torque_map(passive_trials, position_col=POSITION_COL,
                            std_threshold=_PASSIVE_STD_THRESHOLD,
                            pos_tolerance=_POSITION_TOLERANCE):
     """
-    Build a lookup: ankle position → mean passive torque (Nm).
+    Sorted [(mean position rad, mean passive torque Nm)] from the passive trials.
 
-    Each passive trial is first split at any single-sample position steps so
-    that trials containing two concatenated static holds contribute two data
-    points rather than zero.  Segments whose torque std still exceeds
-    ``std_threshold`` after splitting are discarded.
-
-    Nearby positions (within ``pos_tolerance`` rad) are merged into one
-    cluster by weighted averaging to avoid contradictory entries.
-
-    Returns
-    -------
-    list of (mean_position_rad, mean_passive_torque_Nm), sorted by position.
+    Trials are split with ``_split_passive_segments``; segments with torque std above ``std_threshold`` are dropped and
+    positions within ``pos_tolerance`` rad are merged by weighted averaging.
     """
     raw = []
     for df in passive_trials:
@@ -207,9 +147,7 @@ def get_passive_torque_map(passive_trials, position_col=POSITION_COL,
             raw.append((mean_pos, mean_tq))
     raw.sort(key=lambda x: x[0])
 
-    # Merge entries within pos_tolerance of each other into one cluster.
-    # Prevents two nearly-identical passive holds from producing contradictory
-    # offsets for active trials at the same ankle angle.
+    # Merge entries within pos_tolerance so near-identical holds cannot give contradictory offsets.
     clusters = []
     for pos, tq in raw:
         if clusters and abs(pos - clusters[-1][0]) <= pos_tolerance:
@@ -250,15 +188,8 @@ def _extrapolate(positions, torques, x):
 
 def lookup_passive_torque(passive_entries, ankle_position_rad):
     """
-    Interpolate (or extrapolate) passive torque at ``ankle_position_rad``
-    from the known passive-torque map.
-
-    Uses linear interpolation between the two nearest known positions.
-    Outside the measured range, extrapolates linearly from the two closest
-    boundary points.  This is physiologically appropriate: passive torque
-    is a smooth, monotonic function of ankle angle.
-
-    Returns 0.0 only if ``passive_entries`` is empty.
+    Passive torque at ``ankle_position_rad``: linear interpolation in the map, linear extrapolation from the two
+    boundary points outside it; 0.0 if the map is empty.
     """
     if not passive_entries:
         return 0.0
@@ -274,39 +205,12 @@ def lookup_passive_torque(passive_entries, ankle_position_rad):
                  else _extrapolate(positions, torques, ankle_position_rad))
 
 
-# ── MVC normalization map ──────────────────────────────────────────────────
-
 def get_mvc_envelope_map(mvc_trials, emg_columns=None, passive_entries=None,
                          pos_tolerance=_POSITION_TOLERANCE):
     """
-    Build per-position MVC lookup: ankle position → peak EMG envelope per
-    channel + peak net active torque.
+    Sorted [(position rad, {channel: peak envelope}, peak |active torque| Nm)] from the MVC trials.
 
-    For each MVC trial:
-      1. Extract EMG envelope per channel
-      2. Record peak envelope value per channel
-      3. Record peak |net active torque| = max(|raw_torque - passive_torque|)
-      4. Record mean ankle position
-
-    Nearby positions (within ``pos_tolerance``) are merged by taking the
-    element-wise max (not mean) — MVC normalization should use the largest
-    observed activation at each position.
-
-    Parameters
-    ----------
-    mvc_trials : list of pd.DataFrame
-        MVC trial DataFrames from ``classify_trials()``.
-    emg_columns : list of str, optional
-        EMG column names. Auto-detected from first trial if None.
-    passive_entries : list of (float, float), optional
-        Position→passive-torque lookup for net active torque computation.
-    pos_tolerance : float
-        Merge positions within this many radians (default 0.05).
-
-    Returns
-    -------
-    list of (position_rad, emg_peaks_dict, peak_active_torque_Nm),
-    sorted by position.  emg_peaks_dict maps channel name → peak envelope.
+    Active torque uses ``passive_entries``; positions within ``pos_tolerance`` rad are merged by element-wise max.
     """
     if emg_columns is None:
         try:
@@ -360,23 +264,7 @@ def get_mvc_envelope_map(mvc_trials, emg_columns=None, passive_entries=None,
 
 
 def lookup_mvc_max(mvc_entries, ankle_position_rad, channel=None):
-    """
-    Interpolate MVC max at ``ankle_position_rad`` from the MVC map.
-
-    Parameters
-    ----------
-    mvc_entries : list of (pos, emg_peaks_dict, peak_torque)
-        Output of ``get_mvc_envelope_map()``.
-    ankle_position_rad : float
-        Ankle position to look up.
-    channel : str or None
-        If given, return interpolated peak EMG for that channel.
-        If None, return interpolated peak torque.
-
-    Returns
-    -------
-    float — interpolated MVC max value.
-    """
+    """MVC value interpolated at ``ankle_position_rad``: the peak envelope of ``channel``, or the peak torque if None."""
     if not mvc_entries:
         return 1.0  # fallback: no normalization
 
@@ -394,17 +282,8 @@ def lookup_mvc_max(mvc_entries, ankle_position_rad, channel=None):
         return float(_extrapolate(positions, values, ankle_position_rad))
 
 
-# ── Downsampling ────────────────────────────────────────────────────────────
-
 def downsample_trial(df, factor=DOWNSAMPLE_FACTOR):
-    """
-    Downsample all signal columns by ``factor`` using a FIR anti-alias filter.
-
-    'time' is subsampled directly (every ``factor``-th sample).
-    All other columns use ``scipy.signal.decimate`` (zero-phase FIR).
-
-    Returns a new DataFrame with preserved attrs.
-    """
+    """Downsample every column by ``factor`` (zero-phase FIR decimate; 'time' is subsampled); keeps attrs."""
     signal_cols = [c for c in df.columns if c != 'time']
     new_data = {'time': df['time'].values[::factor]}
     for col in signal_cols:
@@ -420,60 +299,18 @@ def downsample_trial(df, factor=DOWNSAMPLE_FACTOR):
     return new_df
 
 
-# ── Sliding-window builder ──────────────────────────────────────────────────
-
 def build_windows(df, emg_columns, passive_entries=None, mvc_entries=None,
                   window=WINDOW_STEPS, stride=STRIDE_STEPS,
                   passive_gain=(1.0, 0.0), label_baseline=None,
                   position_feature='raw', extra_columns=None):
     """
-    Build sliding-window samples from a single downsampled trial DataFrame.
+    Sliding windows of one downsampled trial: X (N, window, 5) [4 EMG envelopes, angle], y (N,), mvc_tq.
 
-    Features (5 columns, fixed order):
-        [MG_env_norm, LG_env_norm, SOL_env_norm, TA_env_norm, position (rad)]
-
-    Target:
-        active_torque = torque − passive_torque(position[t])  (Nm)
-        When ``mvc_entries`` is provided, target is divided by position-specific
-        MVC torque (fraction of max).  The per-window MVC torque is returned
-        as ``mvc_tq`` so callers can denormalize predictions back to Nm.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Downsampled trial with ``*_env_norm`` (or ``*_env`` if mvc_entries)
-        and position/torque columns.
-    emg_columns : list of str
-        Original EMG column names (e.g. ['mg_emg', 'lg_emg', 'sol_emg', 'ta_emg']).
-    passive_entries : list of (float, float) or None
-        Position→passive-torque lookup from ``get_passive_torque_map``.
-    mvc_entries : list of (pos, emg_peaks_dict, peak_torque) or None
-        Per-position MVC map from ``get_mvc_envelope_map()``.
-        When provided, EMG is normalized by per-position MVC peak instead of
-        global max.  Torque target remains in raw Nm.
-    window : int
-        Time steps per window (default 20 = 200 ms at 100 Hz).
-    stride : int
-        Steps between windows (default 1 = 10 ms).
-    passive_gain : (alpha, beta)
-        Effective passive torque = alpha · map(position) + beta
-        (see ``active_torque.fit_passive_gain``).  (1, 0) = plain map.
-    label_baseline : np.ndarray or None
-        Per-sample baseline subtracted from the target (training labels
-        only — see ``active_torque.rest_baseline``).
-    position_feature : 'raw' | 'setpoint'
-        'setpoint' replaces the measured angle by its trial mean.  The
-        measured angle deflects ~2–3 mrad per 10 Nm (footplate compliance),
-        so 'raw' lets the model read torque from the angle sensor at
-        high-torque angles — a shortcut that does not exist at weak angles.
-
-    Returns
-    -------
-    X : np.ndarray  shape (N_windows, window, 5)
-    y : np.ndarray  shape (N_windows,)
-    mvc_tq : np.ndarray shape (N_windows,) or None
-        Per-window MVC torque used for normalization.  Multiply y * mvc_tq
-        to recover Nm.  None when mvc_entries is not provided.
+    y = torque - passive_gain[0] * map(angle) - passive_gain[1] (minus ``label_baseline`` if given) at the last step.
+    With ``mvc_entries`` the EMG is divided by the per-position MVC peak and mvc_tq holds the per-window MVC torque
+    (else None).
+    position_feature 'setpoint' replaces the measured angle by its trial mean: the angle deflects ~2-3 mrad per 10 Nm
+    (footplate compliance), so the raw angle leaks torque at strong angles.
     """
     pos_vals = df[POSITION_COL].values
 
@@ -539,8 +376,6 @@ def build_windows(df, emg_columns, passive_entries=None, mvc_entries=None,
     return X, y, mvc_tq
 
 
-# ── Temporal split ──────────────────────────────────────────────────────────
-
 def _temporal_split(X, y, train_frac=TRAIN_FRAC, val_frac=VAL_FRAC):
     N       = len(X)
     n_train = int(N * train_frac)
@@ -551,8 +386,6 @@ def _temporal_split(X, y, train_frac=TRAIN_FRAC, val_frac=VAL_FRAC):
         (X[n_train + n_val:],          y[n_train + n_val:]),
     )
 
-
-# ── Main entry point ────────────────────────────────────────────────────────
 
 def build_dataset(trials,
                   emg_columns=None,
@@ -575,76 +408,31 @@ def build_dataset(trials,
                   position_feature='raw',
                   passive_entries_override=None):
     """
-    Full pipeline: classify → normalize EMG → passive-subtract torque
-                   → downsample → sliding windows → temporal split → stack.
+    Full pipeline: classify, normalise EMG, subtract passive torque, downsample, window, split, stack.
 
-    Active-torque options (see ``active_torque.py`` for the rationale —
-    these fix the R² collapse at the most plantarflexed angles):
-      passive_method     'static' (passive map from static holds only:
-                         position std < 5 mrad, torque std < 1 Nm, ≥ 5 s) or
-                         'legacy' (old 20 Nm std / |20 Nm| bounds).
-      passive_gain       fit P_eff = α·P + β on TRAINING-session rest
-                         segments (EMG-detected) and use it for both sessions.
-      train_label_rezero remove within-trial passive relaxation from the
-                         TRAINING/VALIDATION labels only (test target untouched).
-      emg_clip           clip normalised envelopes at this value (None = off);
-                         suppresses electrode-pop artefacts.
-      emg_agc_norm       False | True | 'dual' | 'auto' — causal adaptive gain control of
-                         the EMG envelopes (``emg_agc.py``): removes session-to-
-                         session EMG amplitude changes; uses only past EMG of
-                         each trial.  True replaces the envelopes; 'dual' keeps
-                         them and appends the AGC envelopes as 4 extra features
-                         (after position), so the model can use absolute
-                         amplitude where it is informative (weak angles);
-                         'auto' turns AGC on unless the training session shows
-                         pushes in both directions (then absolute amplitude is
-                         needed to tell push from co-contraction).
-      position_feature   'raw' (measured angle) or 'setpoint' (trial mean).
+    Active-torque options (see ``active_torque.py``):
+      passive_method      'static' (map from static holds: position std < 5 mrad, torque std < 1 Nm, >= 5 s) or
+                          'legacy' (old 20 Nm rules)
+      passive_gain        fit P_eff = a*P + b on training-session rest (EMG-detected), used for both sessions
+      train_label_rezero  remove in-trial passive relaxation from the train/validation labels only
+      emg_clip            clip normalised envelopes (None = off)
+      emg_agc_norm        False | True | 'dual' | 'auto': causal adaptive gain control (``emg_agc.py``); 'dual' appends
+                          the AGC envelopes as 4 extra features; 'auto' turns it off if the training session pushes
+                          both ways
+      position_feature    'raw' or 'setpoint' (trial mean)
 
-    Parameters
-    ----------
-    trials : list of pd.DataFrame
-        All trials from ``read_flb`` (MVC + passive + active).
-    emg_columns : list of str, optional
-        EMG column names. Auto-detected from the first trial if None.
-    test_trial_indices : list of int, optional
-        1-indexed trial numbers for train/val split (80/20).
-        If None, auto-detected from comments containing 'test' (not 'retest').
-    retest_trial_indices : list of int, optional
-        1-indexed trial numbers for held-out test set.
-        If None, auto-detected from comments containing 'retest'.
-    downsample_factor : int
-        1000 Hz / target Hz (default 10 → 100 Hz).
-    window, stride : int
-        Window length and step in samples at target Hz.
-    train_frac : float
-        Fraction of test trials used for training (rest → validation).
-    normalize_position : bool
-        If True, min-max normalize the ankle position feature to [0, 1].
-    normalize_mvc : bool
-        If True, normalize EMG by per-position MVC peak and torque by
-        per-position MVC torque.  Converts inputs to %MVC activation and
-        targets to fraction of MVC torque — enables cross-subject transfer.
+    test_trial_indices / retest_trial_indices are 1-based trial numbers (None = from the comments). normalize_mvc
+    divides EMG and torque by the per-position MVC values.
 
-    Returns
-    -------
-    X_train, y_train : np.ndarray
-    X_val,   y_val   : np.ndarray
-    X_test,  y_test  : np.ndarray
-    emg_max          : dict  {emg_col: max_value_used_for_normalization}
-    passive_entries  : list of (position_rad, passive_torque_Nm)
-    operating_positions : list of float — mean ankle position per retest trial, sorted
-    pos_range        : tuple (pos_min, pos_max) or None
-    mvc_tq_test      : np.ndarray or None — per-window MVC torque for denormalization
+    Returns X_train, y_train, X_val, y_val, X_test, y_test, emg_max {channel: max}, passive_entries,
+    operating_positions (mean angle per retest trial, sorted), pos_range or None, mvc_tq_test or None.
     """
-    # ── Step 1: Classify ──────────────────────────────────────────────────
+    # Step 1: classify
     mvc_trials, passive_trials, active_trials = classify_trials(trials)
     print(f"Trials classified:  MVC={len(mvc_trials)}  "
           f"passive={len(passive_trials)}  active={len(active_trials)}")
 
-    # When trial indices are explicitly provided, rescue any matching trials
-    # from passive → active, regardless of comment label.  This handles the
-    # YES subject where some active retest trials are mislabeled as "passive".
+    # Explicit trial indices rescue those trials from passive to active (YES: some active trials are labelled passive).
     if test_trial_indices is not None or retest_trial_indices is not None:
         forced = set()
         if test_trial_indices:
@@ -672,9 +460,7 @@ def build_dataset(trials,
     if not active_trials:
         raise ValueError("No active trials found.")
 
-    # ── Step 2: Determine trial split BEFORE normalization ──────────────
-    # This prevents data leakage: the global max used for EMG normalization
-    # must come only from train/val trials, not from the held-out retest set.
+    # Step 2: split before normalising, so the EMG maximum comes only from train/val trials
     if test_trial_indices is not None and retest_trial_indices is not None:
         test_set   = {i - 1 for i in test_trial_indices}
         retest_set = {i - 1 for i in retest_trial_indices}
@@ -689,9 +475,7 @@ def build_dataset(trials,
                 test_set.add(idx)
             else:
                 unlabelled.add(idx)
-        # Fallback: if retest trials exist but test-session trials have no
-        # explicit "test" keyword (e.g. IES format "PUSH, pos indx 1"),
-        # treat all unlabelled active trials as the test session.
+        # No explicit 'test' keyword (e.g. IES "PUSH, pos indx 1"): unlabelled active trials are the test session.
         if not test_set and retest_set and unlabelled:
             test_set = unlabelled
             print("  (no explicit 'test' keyword — unlabelled active trials "
@@ -708,10 +492,7 @@ def build_dataset(trials,
     retest_trials   = [df for df in active_trials
                        if df.attrs.get('trial_index') in retest_set]
 
-    # ── Step 3: EMG envelope extraction + normalization ──────────────────
-    # Extract envelopes for all active trials.  When normalize_mvc is False
-    # (default), normalize by global max from train/val trials.  When True,
-    # per-position MVC normalization happens later in build_windows().
+    # Step 3: envelopes, divided by the train/val maximum (normalize_mvc: per-position MVC later, in build_windows)
     trainval_trials, emg_max = process_trials(trainval_trials,
                                                emg_columns=emg_columns)
     if emg_columns is None:
@@ -734,11 +515,7 @@ def build_dataset(trials,
     # Recombine for the windowing loop below
     active_trials = trainval_trials + retest_trials
 
-    # ── Step 4: Passive torque lookup — session-specific ─────────────────
-    # Passive torques can differ between test and retest sessions, so we build
-    # two separate maps and apply the session-appropriate one to each trial.
-    # If passive_overrides are provided (hardcoded from worksheet), use those
-    # directly instead of auto-detecting from the FLB passive trials.
+    # Step 4: one passive map per session (or the worksheet overrides)
     def _auto_passive_map(trials_):
         if passive_method == 'static':
             entries = at.static_hold_passive_map(
@@ -777,7 +554,7 @@ def build_dataset(trials,
     for pos, tq in retest_passive_entries:
         print(f"  pos ≈ {pos:+.3f} rad → passive torque = {tq:+.3f} Nm")
 
-    # ── Step 4b: MVC normalization map (optional) ──────────────────────────
+    # Step 4b: MVC map (optional)
     mvc_map = None
     if normalize_mvc and mvc_trials:
         mvc_map = get_mvc_envelope_map(mvc_trials, emg_columns, passive_entries)
@@ -790,7 +567,7 @@ def build_dataset(trials,
         warnings.warn("normalize_mvc=True but no MVC trials found. "
                        "Falling back to global-max normalization.", stacklevel=2)
 
-    # ── Step 5: Per-trial trim + downsample (once) ────────────────────────
+    # Step 5: trim and downsample each trial once
     fs_target = 1000.0 / downsample_factor
     ds_trials = []
     for df in active_trials:
@@ -805,8 +582,7 @@ def build_dataset(trials,
                 df_ds[f'{c}_env_norm'] = df_ds[f'{c}_env_norm'].clip(0.0, emg_clip)
         ds_trials.append((idx, df.attrs.get('comment', ''), df_ds))
 
-    # EMG noise floor from the TRAINING part of the test session only
-    # (pooled 5th percentile per channel) → rest ≈ 0 for the anchored model.
+    # EMG noise floor: 5th percentile per channel over the training part of the test session.
     if emg_floor == 'train':
         env_cols_ = [f'{c}_env_norm' for c in emg_columns]
         parts = [d[env_cols_].values[:int(len(d) * train_frac)]
@@ -817,7 +593,7 @@ def build_dataset(trials,
         for _, _, d in ds_trials:
             d[env_cols_] = np.clip(d[env_cols_].values - floor, 0.0, None)
 
-    # ── Step 5b: EMG-only rest segments → passive gain, training-label rezero
+    # Step 5b: EMG-only rest segments for the passive gain and the training-label rezero
     def _n_train_samples(T):
         """Index of the first label that belongs to the validation part."""
         n_win = (T - window) // stride + 1
@@ -830,8 +606,7 @@ def build_dataset(trials,
     use_rest = bool(subtract_passive and passive_entries and not mvc_map and
                     (passive_gain or train_label_rezero))
     if use_rest:
-        # Rest statistics and segments come from the TRAINING part only; the
-        # validation part gets its own segments (used only for its own labels).
+        # Rest statistics come from the training part only; the validation part gets its own segments.
         env_cols = [f'{c}_env_norm' for c in emg_columns]
         rest_stats = at.emg_rest_stats(
             [d[env_cols].values[:_n_train_samples(len(d))]
@@ -862,16 +637,10 @@ def build_dataset(trials,
             print("\nPassive gain (training-session rest segments): "
                   f"P_eff = {gain[0]:.3f}*P {gain[1]:+.3f} Nm")
 
-    # ── Step 5c: causal EMG adaptive gain control (features only) ─────────
-    # Done AFTER rest detection / passive-gain fitting, which use the
-    # globally normalised envelopes.
+    # Step 5c: causal EMG auto-gain (features only), after rest detection, which uses the global normalisation
     if emg_agc_norm == 'auto':
-        # AGC removes absolute EMG amplitude.  That is what fixes session gain
-        # drift, but a subject who pushes in BOTH directions (e.g. CH:
-        # dorsiflexion tasks at the plantarflexed angles) needs absolute
-        # amplitude to tell a push from co-contraction.  Decide from the
-        # TRAINING part of the training session only: push direction per
-        # trial = torque in high-EMG phases − torque in low-EMG phases.
+        # 'auto': auto-gain removes absolute amplitude, which a subject who pushes both ways (CH) needs to tell a push
+        # from co-contraction. Push direction per training trial = torque in high-EMG phases - torque in low-EMG phases.
         env_cols_ = [f'{c}_env_norm' for c in emg_columns]
         dirs = []
         for i, _, d in ds_trials:
@@ -904,7 +673,7 @@ def build_dataset(trials,
         print(f"EMG adaptive gain control applied ({'dual view' if emg_agc_norm == 'dual' else 'replacing envelopes'}; "
               f"causal; {n_tot} artefact samples held)")
 
-    # ── Steps 6–7: window → split ─────────────────────────────────────────
+    # Steps 6-7: window and split
     trains, vals, tests = [], [], []
     mvc_tq_tests = []
     operating_positions = []  # mean position per retest trial
@@ -916,9 +685,8 @@ def build_dataset(trials,
         else:
             passive_map = passive_entries
 
-        # Training labels: remove within-trial passive relaxation (EMG-detected
-        # rest), computed separately inside the train and val parts so the two
-        # never share label information.  The retest target is never touched.
+        # Training labels: remove in-trial passive relaxation (EMG-detected rest), separately in the train and val parts.
+        # The retest target is never touched.
         baseline = None
         if use_rest and train_label_rezero and idx in test_set:
             T = len(df_ds)
@@ -968,9 +736,7 @@ def build_dataset(trials,
     mvc_tq_test = (np.concatenate(mvc_tq_tests) if mvc_tq_tests
                    else None)
 
-    # ── Optional: min-max normalize position feature to [0, 1] ────────
-    # Computed from train/val data only (no leakage).  Applied AFTER
-    # windowing so passive torque subtraction uses raw position values.
+    # Optional: min-max normalise the position feature from train/val data, after windowing (passive uses raw angle).
     pos_range = None
     if normalize_position:
         pos_min = float(X_train[:, :, _POS_FEAT_IDX].min())

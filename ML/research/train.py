@@ -1,23 +1,10 @@
 """
-Training with per-angle loss balancing.
+Keras training with optional per-angle loss balancing, and a ridge baseline.
 
-Why balancing: with plain MSE the loss is dominated by the strong angles
-(YES: torque std 15 Nm at +0.14 rad vs 0.4 Nm at -0.49 rad), so the weak,
-plantarflexed angles barely influence training.
-
-balance
--------
-none      plain MSE in Nm² (original pipeline)
-weights   sample weight 1 / var(target of its angle)   (angle-weighted MSE)
-scale     train on target / sd(angle) and multiply predictions back
-          (equivalent idea, used with the mixture-of-experts head)
-
-pf_extra : (n_angles, factor) — multiply the loss weight of the ``n_angles``
-most plantarflexed training angles by ``factor`` on top of the balancing
-(tests "push the model harder towards plantarflexion").
-
-Angles are grouped by trial: a window belongs to the angle of the trial it
-was cut from; test windows use the nearest training angle.
+Plain MSE is dominated by the strong angles (YES: torque sd 15 Nm at +0.14 rad vs 0.4 Nm at -0.49 rad).
+balance: 'none' plain MSE (original), 'weights' sample weight 1 / var(target of its angle), 'scale' train on
+target / sd(angle) and scale predictions back. pf_extra = (n, factor) multiplies the weight of the n most
+plantarflexed angles. A window has its trial's angle; test windows use the nearest training angle.
 """
 
 import numpy as np
@@ -44,9 +31,7 @@ def snap(angles, knots):
 
 
 def _weights(k, n_knots, mode, pf_extra, var_per_knot=None):
-    """Per-window loss weights.  ``var_per_knot``: target variance of each
-    angle in the TRAINING part; the same values weight the validation part
-    so that early stopping optimises the same objective as training."""
+    """Per-window loss weights; ``var_per_knot`` comes from the training part and also weights validation."""
     if mode == 'weights':
         w = 1.0 / var_per_knot[k]
     else:
@@ -57,15 +42,12 @@ def _weights(k, n_knots, mode, pf_extra, var_per_knot=None):
     return w
 
 
-# ── classical baseline: ridge regression on lagged envelopes ────────────────
-
 RIDGE_LAG_STEP = 2                          # use every 2nd step of the window
 RIDGE_ALPHAS = np.logspace(-8, 2, 21)        # wide enough that the choice is not at the edge
 
 
 def hat_basis(angles, knots):
-    """Piecewise-linear 'hat' weights over the training angles (same rule as
-    the MoE AngleGate): one-hot at a knot, linear blend in between."""
+    """Piecewise-linear 'hat' weights over the training angles (as the MoE AngleGate)."""
     a = np.clip(np.asarray(angles, float), knots[0], knots[-1])
     B = np.zeros((len(a), len(knots)))
     for j, k in enumerate(knots):
@@ -76,11 +58,8 @@ def hat_basis(angles, knots):
 
 
 def ridge_features(X, knots):
-    """[lagged EMG, lagged EMG squared] x angle hat basis, plus the basis.
-
-    Linear + quadratic terms follow the polynomial EMG-torque models of
-    Clancy et al. 2012 (IEEE TBME 59:1); one coefficient set per training
-    angle (blended in between) lets gain and muscle mix change with angle."""
+    """[lagged EMG, lagged EMG squared] x angle hat basis, plus the basis (polynomial EMG-torque model as in
+    Clancy et al. 2012, IEEE TBME 59:1, with one coefficient set per training angle)."""
     E = X[:, ::-1, :4][:, ::RIDGE_LAG_STEP, :].reshape(len(X), -1)    # newest step first
     F = np.concatenate([E, E ** 2], axis=1)
     B = hat_basis(X[:, -1, 4], knots)
@@ -88,11 +67,8 @@ def ridge_features(X, knots):
 
 
 def fit_ridge(data, knots, w_tr=None, w_va=None):
-    """Weighted ridge, alpha chosen on the validation part (weighted MSE).
-
-    Use it with balance='none': every angle has its own coefficients, so the
-    angles are already fitted separately, and per-angle weights would only
-    change how strongly each angle is regularised."""
+    """Weighted ridge, alpha chosen on validation MSE. Use balance='none': each angle already has its own
+    coefficients."""
     F_tr, F_va = ridge_features(data['X_train'], knots), ridge_features(data['X_val'], knots)
     mu, sd = F_tr.mean(0), F_tr.std(0) + 1e-8
     Z_tr, Z_va = (F_tr - mu) / sd, (F_va - mu) / sd
@@ -119,24 +95,16 @@ def fit_ridge(data, knots, w_tr=None, w_va=None):
 def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                 protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
                 save_weights=None, epoch_windows=None):
-    """Train one model on data['X_train'] / ['X_val'] and predict X_test.
+    """Train on data['X_train'] / ['X_val'] and predict X_test; returns (y_pred_test (Nm), info).
 
-    init_weights : optional .weights.h5 file to start from (fine-tuning a
-                   pre-trained model, see transfer.py); None = random init
-    lr           : optional learning rate overriding the protocol's
-    rest_weight  : None = all windows count normally.  A number w multiplies
-                   the loss weight of windows that end in EMG-detected rest
-                   (data['meta_*']['rest']); w = 0 removes them from training
-                   and validation (relaxed-window ablation).
-    shuffle      : True (default) = Keras reshuffles the fit windows every epoch; False = windows are fed
-                   in their stored order (trial by trial, in time), for the shuffle ablation
-    save_weights : optional path; the trained (best-epoch) weights are saved there as .weights.h5
-    epoch_windows: None (default) = one epoch is one pass over the training windows. A number N = one epoch
-                   is round(N / n_train) whole passes (at least 1), so a setting with few windows gets about
-                   as many weight updates per epoch, and so per validation check, LR step and early-stopping
-                   count, as one with N windows.
-
-    Returns (y_pred_test (Nm), info dict)."""
+    init_weights  optional .weights.h5 to start from
+    lr            overrides the protocol's learning rate
+    rest_weight   multiplies the loss weight of windows ending in EMG-detected rest; 0 drops them
+    shuffle       False feeds the windows in stored order (shuffle ablation)
+    save_weights  path for the best-epoch weights
+    epoch_windows one epoch = round(N / n_train) whole passes (at least 1), so settings with few windows get
+                  about as many updates per epoch as one with N windows
+    """
     import tensorflow as tf
     from tensorflow.keras.optimizers import Nadam
     from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping

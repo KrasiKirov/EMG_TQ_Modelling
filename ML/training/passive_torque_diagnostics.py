@@ -79,14 +79,9 @@ def parse_args():
 
 
 def _collect_raw_segments(passive_trials, std_threshold, pos_tolerance):
-    """Re-collect pre-merge passive segment data with pass/fail labels.
-
-    Mirrors the logic inside get_passive_torque_map but preserves the
-    per-segment details that the production function discards.
-
-    Returns
-    -------
-    list of dict with keys: pos, tq, std, n_samples, passed
+    """
+    Passive segments before merging, with pass/fail labels (the logic of get_passive_torque_map):
+    [{pos, tq, std, n_samples, passed}].
     """
     raw_segments = []
     for df in passive_trials:
@@ -219,11 +214,11 @@ def main():
     print(f'Passive torque diagnostics — subject: {subject_key}')
     print(f'{"─"*60}')
 
-    # ── 1. Load raw trials ────────────────────────────────────────────────────
+    # 1. Load raw trials
     trials = read_flb(flb_path, subject_id=subject_id)
     _, passive_trials, _ = classify_trials(trials)
 
-    # ── 2. Collect raw segment data (pre-merge) ───────────────────────────────
+    # 2. Collect raw segment data (pre-merge)
     raw_segments = _collect_raw_segments(
         passive_trials,
         std_threshold=args.std_threshold,
@@ -233,7 +228,7 @@ def main():
           f'(accepted: {sum(s["passed"] for s in raw_segments)}  '
           f'rejected: {sum(not s["passed"] for s in raw_segments)})')
 
-    # ── 3. Build the final passive map ────────────────────────────────────────
+    # 3. Build the final passive map
     if args.passive_pos and args.passive_tq:
         passive_entries = sorted(zip(args.passive_pos, args.passive_tq), key=lambda x: x[0])
         print(f'\nPassive map (manually overridden — {len(passive_entries)} entries):')
@@ -242,7 +237,7 @@ def main():
     else:
         passive_entries = get_passive_torque_map(passive_trials)
 
-    # ── 4. Full dataset pipeline (for operating_positions + subtracted targets) ─
+    # 4. Full dataset pipeline (operating positions and subtracted targets)
     (X_train, y_train, X_val, y_val, X_test, y_test,
      _, _, operating_positions, _, _) = build_dataset(
         trials,
@@ -255,7 +250,7 @@ def main():
     X_trainval = np.concatenate([X_train, X_val])
     y_trainval = np.concatenate([y_train, y_val])
 
-    # ── 5. Generate plots ─────────────────────────────────────────────────────
+    # 5. Generate plots
     def path(fname):
         return os.path.join(out_dir, fname)
 
@@ -298,7 +293,7 @@ def main():
     else:
         print('Skipping plot 06 (extreme vs middle summary) — no raw segments from FLB.')
 
-    # ── 6. Console summary ────────────────────────────────────────────────────
+    # 6. Console summary
     _print_summary(
         passive_entries, raw_segments, operating_positions,
         std_threshold=args.std_threshold,

@@ -8,7 +8,6 @@ For every window-study spec it builds the arrays exactly as EXPERIMENTS/pipeline
   3. training windows start `train_stride` samples apart; validation and test windows 1 sample apart (scoring identical);
   4. when the stride is a multiple of the step: consecutive training windows share exactly W - stride/step steps,
      so the overlap is (span - stride) / span.
-Unit tests on synthetic data: EXPERIMENTS/tests/test_inputs.py.
 """
 import argparse
 import sys

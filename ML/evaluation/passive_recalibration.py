@@ -20,21 +20,11 @@ from ML.preprocessing.trial_manifest import load_inventory
 
 def audit_passive_recalibration(trials, manifest, data_dir=None, session="retest",
                                 drift_flag_nm=0.5):
-    """Compare source calibration with an independently fitted session curve.
+    """
+    Compare the source passive calibration with a curve fitted to ``session``'s passive plateaus.
 
-    Parameters
-    ----------
-    trials, manifest:
-        The raw frames and immutable inventory returned by ``load_inventory``.
-    data_dir:
-        Required only when the production calibration uses a documented source
-        file whose hash must be checked.
-    session:
-        Session whose passive plateaus are audited. ``retest`` is the normal
-        deployment-style check.
-    drift_flag_nm:
-        Informational threshold for the per-position drift flag. It does not
-        change any target or model output.
+    ``data_dir`` is needed only when the calibration's source file hash must be checked; ``drift_flag_nm`` is an
+    informational per-position threshold and changes no target or output.
     """
     if not 0 < drift_flag_nm:
         raise ValueError("drift_flag_nm must be positive")

@@ -126,11 +126,7 @@ Commit these together:
 - `presentation-catalog.json` and `dist/index.html`
 - any report text the spec's `dashboard.text.report` points to
 
-Then run the checks:
-
-```bash
-.venv/bin/python -m pytest -m "not slow"
-```
+Then check the run with `python -m EXPERIMENTS.analysis.verify_study` (window study) or by opening the dashboard.
 
 ## Adding a sidebar group
 

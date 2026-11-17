@@ -1,33 +1,18 @@
 """
-Passive-torque models: what gets subtracted from the measured torque to obtain
-the target (active / voluntary torque = measured − passive).
+Passive-torque models: the target is measured torque minus the model's passive torque.
 
-Rule for every model: it may use (a) passive recordings (the maps and the
-static "before-holds") of any session and (b) the TRAINING session's own
-active trials during EMG-silent rest periods.  It never uses the torque of the
-trials it is evaluated on.
+A model may use passive recordings (maps, static holds) of any session and the training session's own active
+trials during EMG-silent rest; never the torque of the trials it is evaluated on.
 
-Models (``kind``)
------------------
-legacy        old pipeline: auto-detected map (20 Nm rules), looked up at each
-              sample's angle.  (YES: worksheet values.)
-static        map from static holds only (fixes the JM movement-trial bug).
+legacy        old pipeline's map (20 Nm rules), looked up at each sample's angle (YES: worksheet values)
+static        map from static holds only
 gain          alpha·P_static + beta, fitted on training-session rest periods
-              (the current pipeline's --recommended target).
-hold_gain     alpha·P_hold + beta, where P_hold is the mean of the static hold
-              recorded right before THIS trial (falls back to the map).
-holdend_gain  same with the last 5 s of that hold (the tissue has already
-              relaxed for ~20-30 s at the hold's end).
-drift         alpha·P_hold + beta + gamma·P_hold·ln(1 + t/tau): time-varying
-              passive torque (stress relaxation during the trial).  tau is
-              chosen on the training session's VALIDATION part.
-holdextrap    fit the hold's own relaxation curve  P(t) = a + b·ln(1 + t/tau_h)
-              (t from the start of the hold) and continue it through the
-              active trial (assumes the trial starts when the hold ends), then
-              alpha·P(t) + beta on top.
+hold_gain     alpha·P_hold + beta, P_hold = mean of the static hold just before this trial (else the map)
+holdend_gain  the same with the last 5 s of that hold
+drift         alpha·P_hold + beta + gamma·P_hold·ln(1 + t/tau), tau chosen on the training session's validation part
+holdextrap    the hold's own relaxation curve a + b·ln(1 + t/tau_h) continued through the trial, then alpha·P + beta
 
-Fits are robust (Huber IRLS), one observation per rest segment (its median),
-weighted by sqrt(segment length).
+Fits are Huber IRLS, one observation per rest segment (its median), weighted by sqrt(segment length).
 """
 
 import numpy as np
@@ -39,8 +24,6 @@ from . import config as C
 
 TAU_GRID_S = (2.0, 5.0, 10.0, 20.0, 40.0)
 
-
-# ── small helpers ────────────────────────────────────────────────────────────
 
 def map_lookup(entries, pos):
     """Pipeline-identical map interpolation/extrapolation at each sample."""
@@ -78,16 +61,8 @@ def _hold_curve(hold_series, tau_h):
     return coef, float(np.sqrt(np.mean((A @ coef - hold_series) ** 2)))
 
 
-# ── the model ────────────────────────────────────────────────────────────────
-
 class PassiveModel:
-    """Fit on the training session, then predict P_eff(t) for any trial.
-
-    Parameters
-    ----------
-    kind : see module docstring
-    bundle : subject bundle from data.load_subject
-    """
+    """Fit on the training session, then predict P_eff(t) for any trial (kind: see the module docstring)."""
 
     def __init__(self, kind, bundle):
         self.kind = kind
@@ -96,7 +71,6 @@ class PassiveModel:
         self.tau = None
         self.info = {}
 
-    # base passive level / curve of one trial before alpha, beta, gamma ------
     def _maps(self, rec):
         m = self.bundle['maps']
         return m['legacy'][rec['session']], m['static'][rec['session']]
@@ -137,10 +111,8 @@ class PassiveModel:
             return np.column_stack([P, np.ones_like(P), P * np.log1p(t / self.tau)])
         return np.column_stack([P, np.ones_like(P)])
 
-    # fitting ------------------------------------------------------------------
     def fit(self, train_recs, rest_segs_train, rest_segs_val):
-        """train_recs: training-session records.  rest_segs_*: dict rec idx ->
-        list of (s, e) EMG-detected rest segments in the train / val part."""
+        """rest_segs_*: rec idx -> [(s, e)] EMG-detected rest in the train / validation part of train_recs."""
         if self.kind in ('legacy', 'static'):
             return self
         rows = []
@@ -199,13 +171,10 @@ class PassiveModel:
 
 
 def rest_segments(recs, env_norm, train_frac=C.TRAIN_FRAC, val_end_frac=1.0, window=C.WINDOW):
-    """EMG-only rest detection on the training-session records.
+    """EMG-only rest detection on the training-session records, statistics from the training part only.
 
-    Returns (train_segs, val_segs): dict rec idx -> [(s, e)], split at the same
-    sample where the train / validation windows split (val segs re-indexed to
-    the full trial).  ``val_end_frac`` < 1 stops the validation part early
-    (pooled protocol: validation = 60-80 %, the last 20 % is test data and
-    must not be touched).  Statistics come from the training part only."""
+    Returns (train_segs, val_segs): rec idx -> [(s, e)], split where the train / validation windows split (val segs
+    indexed in the full trial). ``val_end_frac`` < 1 stops the validation part early (pooled: the rest is test)."""
     cuts = {}
     for r in recs:
         T = len(r['t'])

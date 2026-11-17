@@ -196,7 +196,7 @@ function KpiCard({
             {signed(g.delta)}
           </Text>
           <Text size="xs" c="dimmed">
-            {!comparable ? 'needs both models' : isBias ? 'smaller |bias| is better' : md.higherBetter ? 'higher is better' : 'lower is better'}
+            {!comparable ? 'needs both models' : isBias ? 'smaller absolute bias is better' : md.higherBetter ? 'higher is better' : 'lower is better'}
           </Text>
         </Stack>
       </SimpleGrid>
@@ -223,7 +223,7 @@ function KpiCard({
       </Text>
       {isBias && (
         <Text size="xs" c="dimmed" mt={6}>
-          |bias| per run; the box plots keep the sign.
+          absolute bias per run; the box plots keep the sign.
         </Text>
       )}</details>
     </Card>
@@ -436,7 +436,7 @@ function HeatmapCard() {
           <Group mt="md" gap="lg">
             <Note>
               Click a cell to open its waveform. Grey = about the same ({md.floorable ? '±0.02 R²' : '±0.05 Nm or ±2 % of peak'}).
-              {md.floorable && s.floor ? ' R² below 0 counts as 0.' : ''}{isBias ? ' Compared on |bias|.' : ''}
+              {md.floorable && s.floor ? ' R² below 0 counts as 0.' : ''}{isBias ? ' Compared on absolute bias.' : ''}
             </Note>
           </Group>
         </>

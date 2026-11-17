@@ -1,40 +1,17 @@
 """
-Load one subject into a "bundle" of per-trial records at 100 Hz.
+Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subject in config.CACHE_DIR).
 
-A bundle contains
------------------
-active : list of dicts, one per isometric active trial, both sessions
-    idx         0-based trial index in the .flb file
-    comment     the trial comment
-    session     'S1' (lab name "test")  or  'S2' (lab name "retest")
-    angle       mean ankle angle (rad)
-    t           (T,) time since the start of the recording (s), after the
-                1 s start-up trim  ->  t[0] = 1.0 s
-    env_raw     (T, 4) EMG envelopes [GM, GL, SOL, TA] (band-pass 30-300 Hz,
-                rectify, 2 Hz low-pass; computed at 1 kHz, trimmed, decimated)
-    env_max1k   (4,) max of the 1 kHz envelope over the whole trial (used to
-                reproduce the pipeline's "training max" normalisation exactly)
-    pos, tq     (T,) ankle angle (rad), measured torque (Nm)
-    hold        the passive static hold recorded right before this trial at
-                the same angle (dict, see below) or None
-mvc : list of dicts (angle, env_peak (4,), tq_peak) — MVC trials
-holds : list of all static holds found (dict: idx, angle, session, mean,
-    start, end, slope, dur, series (100 Hz torque))
-maps : passive maps per session, as the existing pipeline builds them
-    'legacy' -> old rule (20 Nm std / |20 Nm| bounds), 'static' -> static
-    holds only, 'worksheet' -> hand-entered values (YES only, else None)
+active : one dict per active trial, both sessions: idx (0-based trial index), comment, session ('S1' = lab "test",
+         'S2' = "retest"), angle (rad), t (s, t[0] = 1.0 after the start-up trim), env_raw (T, 4) envelopes
+         [GM, GL, SOL, TA], env_max1k (4,) maximum of the 1 kHz envelope, pos, tq (Nm), hold (the static hold
+         recorded just before at the same angle, or None)
+mvc    : MVC trials (angle, env_peak (4,), tq_peak)
+holds  : every static hold found (idx, angle, session, mean, start, end, slope, dur, series)
+maps   : passive maps per session: 'legacy' (old rule), 'static' (static holds only), 'worksheet' (YES only)
 
-How trials are found
---------------------
-* Active trials, their session and the YES index overrides follow
-  ML.preprocessing.dataset_builder.build_dataset exactly (same rescue rule,
-  same 30 Nm std filter).
-* Static holds are searched in EVERY non-active, non-MVC trial (some YES files
-  are mis-labelled): split at device steps, keep segments with angle std
-  < 5 mrad, torque std < 1 Nm and >= 5 s.  A hold is attached to the next
-  active trial in recording order if their angles match within 0.05 rad.
-
-Processing is cached per subject in config.CACHE_DIR (pickle).
+Active trials and their sessions follow ML.preprocessing.dataset_builder.build_dataset. Static holds are searched in
+every non-active, non-MVC trial (some YES trials are mislabelled) and attached to the next active trial when the
+angles match within 0.05 rad.
 """
 
 import os
@@ -103,13 +80,11 @@ def _envelope_fn(envelope, lp_order=4):
 def _process_active(df, emg_cols, session, envelope='zerophase', trim_end_s=0.0, lp_order=4):
     """One active trial at 100 Hz.
 
-    envelope   'zerophase' (default; forward-backward filters, as every result before Nov 2026) or 'causal'
-               (forward-only filters; the inputs are then plain 1-in-10 samples of the envelope and angle,
-               so no input sample uses later data; the torque target keeps the zero-phase decimation).
-    trim_end_s seconds dropped at the END of the trial, in addition to the first TRIM_START samples.
-    lp_order   order of the 2 Hz envelope low-pass (causal envelope only; the band-pass stays 4th order).
-    With the defaults the EMG scale (env_max1k) is the whole-trial maximum, as the original pipeline;
-    otherwise it is the maximum over the kept samples only.
+    envelope   'zerophase' (forward-backward filters) or 'causal' (forward-only; inputs are plain 1-in-10 samples,
+               so no input uses later data; the torque target keeps the zero-phase decimation)
+    trim_end_s seconds dropped at the end, besides the first TRIM_START samples
+    lp_order   order of the 2 Hz envelope low-pass (causal envelope only)
+    With the defaults env_max1k is the whole-trial maximum (as the original pipeline), otherwise over kept samples.
     """
     env1k = np.column_stack([_envelope_fn(envelope, lp_order)(df[c].values) for c in emg_cols])
     pos = df[db.POSITION_COL].values
@@ -181,8 +156,7 @@ def _passive_maps(subject, passive_trials):
 
 
 def load_subject(subject, use_cache=True, envelope='zerophase', trim_end_s=0.0, lp_order=4):
-    """Return the processed bundle for ``subject`` (see module docstring).
-    envelope / trim_end_s: see ``_process_active``; the defaults reproduce every earlier result."""
+    """The processed bundle for ``subject`` (see the module docstring and ``_process_active``)."""
     _envelope_fn(envelope, lp_order)
     os.makedirs(C.CACHE_DIR, exist_ok=True)
     tag = '' if (envelope == 'zerophase' and not trim_end_s) else f'_{envelope}_end{trim_end_s:g}'
@@ -228,8 +202,3 @@ def load_subject(subject, use_cache=True, envelope='zerophase', trim_end_s=0.0, 
         pickle.dump(bundle, f, protocol=pickle.HIGHEST_PROTOCOL)
     os.replace(tmp, path)
     return bundle
-
-
-def session_records(bundle, session):
-    """Active records of one session ('S1' / 'S2'), sorted by angle."""
-    return sorted([r for r in bundle['active'] if r['session'] == session], key=lambda r: r['angle'])

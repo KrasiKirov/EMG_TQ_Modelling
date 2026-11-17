@@ -1,6 +1,5 @@
 /**
  * Box-plot statistics over training seeds (Tukey box plot) and a distribution-free confidence interval of the median.
- * No imports, so node's test runner can load it directly (tests/boxstats.test.ts).
  */
 
 export interface BoxStats {

@@ -1,59 +1,24 @@
-"""
-Run ONE job: (study, subject, protocol, configuration, seed).
+"""Build the windowed train / validation / test data for one subject and protocol (used by EXPERIMENTS/pipeline/run.py).
 
-    python -m ML.research.run --study screen --subject YES --protocol S1toS2 \
-        --config E03_final --seed 0 --train-protocol fast --threads 2 --plot
-
-Steps
------
-1. load the subject bundle (cached)                         data.load_subject
-2. normalise EMG with statistics of the training data       emg_norm.normalise
-3. detect rest periods (EMG only) in the training data      passive.rest_segments
-4. fit the passive model, build targets (measured − P_eff)  passive.PassiveModel
-5. cut windows for the protocol                             splits.build
-6. train with seed (optionally starting from weights pre-trained
-   on the other subjects, transfer.py), predict the test windows  train.fit_predict
-7. metrics per angle, recalibration, save                   evaluate
-
-Outputs (RESULTS_DIR/<study>/<subject>/<protocol>/<config>/)
-------------------------------------------------------------
-<train-protocol>_seed<k>.json   config, passive/EMG details, training info,
-                                metrics per angle and overall, recalibration
-<train-protocol>_seed<k>.npz    y_true, y_pred and window metadata (float32)
-full_trial_inspection_<session>_<train-protocol>_seed<k>.png   (--plot)
+Steps: load the subject (cached), normalise the EMG on training data, find rest periods from the EMG, build the
+target (measured torque minus a passive model), cut windows.
 """
 
-import os
-import sys
-import json
-import time
-import argparse
-
-os.environ.setdefault('TF_CPP_MIN_LOG_LEVEL', '2')
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+import copy
 
 import numpy as np
 
 from ML.research import config as C
-from ML.research import experiments
+from ML.research import splits
+from ML.research import truth
 from ML.research.data import load_subject
 from ML.research.emg_norm import normalise, push_directions
 from ML.research.passive import PassiveModel, rest_segments
-from ML.research import splits
-from ML.research import truth
-from ML.research.train import fit_predict
-from ML.research.evaluate import metrics, per_group, recalibrated, plot_trials
-
-
-def out_dir(study, subject, protocol, config):
-    return os.path.join(C.RESULTS_DIR, study, subject, protocol, config)
 
 
 def apply_metadata_passive(bundle, subject):
-    """Copy of ``bundle`` whose empty static passive maps are filled from ML.config.METADATA_PASSIVE (IES only).
-    A real relaxed-hold map is never replaced."""
+    """Fill empty static passive maps from ML.config.METADATA_PASSIVE (IES only); a measured map is never replaced."""
     from ML.config import METADATA_PASSIVE
-    import copy
     table = METADATA_PASSIVE.get(subject)
     st = bundle['maps']['static']
     if not table or any(len(st.get(s) or []) for s in ('S1', 'S2')):
@@ -64,7 +29,7 @@ def apply_metadata_passive(bundle, subject):
 
 
 def prepare(subject, protocol, cfg):
-    """Steps 1-5: everything up to the windowed arrays."""
+    """Return (data, details): the windowed arrays of splits.build and a summary of the choices made."""
     bundle = load_subject(subject, envelope=cfg.get('envelope', 'zerophase'), trim_end_s=cfg.get('trim_end_s', 0.0),
                           lp_order=cfg.get('lp_order', 4))
     if cfg.get('metadata_passive'):
@@ -103,13 +68,8 @@ def prepare(subject, protocol, cfg):
 
 
 def restanchor_targets(bundle, protocol):
-    """passive='restanchor': target = measured - in-trial passive baseline B(t)
-    through the EMG-detected rest segments of the SAME trial (truth.py).
-
-    Training sessions: rest segments are searched only in the part of each
-    trial that is training/validation data (pooled: first 80 %), so no
-    test-part torque enters a training label.  Test sessions: the full trial
-    is used, so the test target equals the common reference truth."""
+    """Target = measured torque minus the in-trial passive baseline through the EMG rest segments (truth.py).
+    Training sessions only search the training part of each trial, so no test torque enters a label."""
     spec = splits.PROTOCOLS[protocol]
     targets, n_segs = {}, {}
     for sess in ('S1', 'S2'):
@@ -123,10 +83,7 @@ def restanchor_targets(bundle, protocol):
 
 
 def rest_flags(bundle, protocol):
-    """{trial idx: (T,) bool} EMG-detected rest per sample, used to (a) down-
-    weight / drop rest windows in training (rest_weight option) and (b)
-    report rest-window metrics.  Same restriction as restanchor_targets for
-    the training sessions of the pooled protocol."""
+    """{trial idx: (T,) bool} EMG-detected rest per sample, for the rest_weight option and rest-window metrics."""
     spec = splits.PROTOCOLS[protocol]
     out = {}
     for sess in ('S1', 'S2'):
@@ -136,66 +93,3 @@ def rest_flags(bundle, protocol):
             if r['session'] == sess:
                 out[r['idx']] = truth.rest_mask(len(r['tq']), segs[r['idx']])
     return out
-
-
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--study', required=True)
-    ap.add_argument('--subject', required=True)
-    ap.add_argument('--protocol', required=True, choices=list(splits.PROTOCOLS))
-    ap.add_argument('--config', required=True, choices=list(experiments.CONFIGS))
-    ap.add_argument('--seed', type=int, default=0)
-    ap.add_argument('--train-protocol', default='fast', choices=list(C.PROTOCOLS))
-    ap.add_argument('--threads', type=int, default=2)
-    ap.add_argument('--plot', action='store_true', help='save full-trial inspection plot(s)')
-    a = ap.parse_args()
-
-    import tensorflow as tf
-    tf.config.threading.set_intra_op_parallelism_threads(a.threads)
-    tf.config.threading.set_inter_op_parallelism_threads(max(1, a.threads // 2))
-
-    cfg = experiments.get(a.config)
-    t0 = time.time()
-    data, details = prepare(a.subject, a.protocol, cfg)
-    t_prep = time.time() - t0
-    init, lr = None, None
-    if cfg.get('pretrain'):                      # cross-subject transfer (transfer.py)
-        from ML.research import transfer
-        init, lr = transfer.pretrained_model_path(a.subject, cfg, a.seed), transfer.FINETUNE_LR
-        t_prep = time.time() - t0                # pre-training time is counted as preparation
-    pred, info = fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], a.train_protocol, a.seed,
-                             init_weights=init, lr=lr, rest_weight=cfg.get('rest_weight'))
-    info['train_s'] = time.time() - t0 - t_prep
-    info['prep_s'] = t_prep
-
-    y, meta = data['y_test'].astype(np.float64), data['meta_test']
-    res = {'study': a.study, 'subject': a.subject, 'protocol': a.protocol, 'config': a.config,
-           'config_spec': {k: (list(v) if isinstance(v, tuple) else v) for k, v in cfg.items()},
-           'seed': a.seed, 'train_protocol': a.train_protocol, 'details': details, 'train_info': info,
-           'overall': metrics(y, pred), 'per_angle': per_group(y, pred, meta)}
-    if a.protocol != 'pooled':
-        res['recalibration_15s'] = recalibrated(y, pred, meta, calib_s=15.0)
-
-    d = out_dir(a.study, a.subject, a.protocol, a.config)
-    os.makedirs(d, exist_ok=True)
-    stem = os.path.join(d, f'{a.train_protocol}_seed{a.seed}')
-    np.savez_compressed(stem + '.npz', y_true=y.astype(np.float32), y_pred=pred.astype(np.float32),
-                        trial=meta['trial'].astype(np.int16), angle=meta['angle'].astype(np.float32),
-                        session=(meta['session'] == 'S2').astype(np.int8), t=meta['t'].astype(np.float32))
-    if a.plot:
-        for sess in sorted(set(meta['session'])):
-            m = meta['session'] == sess
-            sub = {k: v[m] for k, v in meta.items()}
-            plot_trials(sub, y[m], pred[m], f"{d}/full_trial_inspection_{sess}_{a.train_protocol}_seed{a.seed}.png",
-                        f"{a.subject} | {a.config} | train {'+'.join(splits.PROTOCOLS[a.protocol]['train'])} -> "
-                        f"test {sess} | {a.train_protocol} seed {a.seed}")
-    with open(stem + '.json.tmp', 'w') as f:
-        json.dump(res, f, indent=1, default=float)
-    os.replace(stem + '.json.tmp', stem + '.json')   # JSON last = job complete
-    pa = '  '.join(f"{k}:{v['r2']:+.2f}" for k, v in res['per_angle'].items())
-    print(f"[{a.subject}/{a.protocol}/{a.config}/{a.train_protocol} s{a.seed}] {info['epochs']} ep "
-          f"{info['train_s']:.0f}s  {pa}", flush=True)
-
-
-if __name__ == '__main__':
-    main()

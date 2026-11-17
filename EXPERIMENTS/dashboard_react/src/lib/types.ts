@@ -1,4 +1,4 @@
-// Shapes of results.json (written by EXPERIMENTS/pipeline/legacy/build_dashboard.py) and of the derived objects.
+// Shapes of results.json (October experiments, frozen) and of the derived objects.
 
 export type Dir = 'S1toS2' | 'S2toS1';
 export type MetricKey = 'r2' | 'mae' | 'r2_demeaned' | 'bias';

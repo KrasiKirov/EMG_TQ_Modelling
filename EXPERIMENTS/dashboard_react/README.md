@@ -58,21 +58,11 @@ npm run build        # type check (tsc --noEmit) + build -> dist/index.html
 
 `npm run build` must finish without TypeScript errors; it then writes `dist/index.html`.
 
-## Refresh the October controlled-experiment data
+## The October controlled-experiment data
 
-The data file `src/data/results.json` is generated; never edit it by hand. From the repository root, once the
-training jobs have finished, run the steps in this order (each reads the previous step's output):
-
-```bash
-python EXPERIMENTS/pipeline/legacy/presentation_metrics.py  # scores every saved run -> results/presentation_runs.csv
-python presentations/2026-10-25-report-deck/code/deck_figures.py          # bias / variance split  -> results/bias_variance_runs.csv
-python EXPERIMENTS/pipeline/legacy/build_dashboard.py       # rewrites src/data/results.json (and the old HTML dashboard)
-cd EXPERIMENTS/dashboard_react
-npm run build                                    # new dist/index.html
-```
-
-The run counts shown in the Training tab (e.g. "10 runs per person") come from the data, so nothing in the
-code needs changing when more seeds are added.
+`src/data/results.json` holds the October controlled experiments and is frozen; never edit it by hand. The
+scripts that generated it (`presentation_metrics.py`, `build_dashboard.py`) were removed in November and are in
+the git history, as is `presentation_metrics.py`, which `scripts/legacy/build_catalog.py` imports.
 
 ## Code layout
 
@@ -131,9 +121,9 @@ Refresh the focused supplement after rebuilding the archived catalogue with `pyt
 
 `main/session-passive` holds 60 runs of the 0.5 s LSTM (6 people × seeds 0–9, session 1 → 2): 50 samples of the four muscle envelopes plus angle, LSTM 8×2, up to 60 epochs, patience 12, batch 64, train stride 5. The target is measured torque minus passive torque; session 1 uses its own passive map and session 2 uses a passive map re-measured in session 2.
 
-Data fixes in the pipeline (`ML/reviewed_overrides.json`, `ML/config.py`, `ML/preprocessing/pipeline.py`): YES trials 27/29/31/33 are the retest pushes at p1–p4 (their recorded notes wrongly say “passive”), and YES session-1 passive values come from the lab worksheet; IES has no passive trials, so its documented pre-test table (`experiment_metadata_IES.docx`) is used for both sessions; CH is added to the subject list. JM needs no fix: the still-hold rule already ignores the movement in passive trial 21.
+Data fixes in that run's code (frozen in `EXPERIMENTS/baseline/retest_map_code/`: `ML/reviewed_overrides.json`, `ML/config.py`, `ML/preprocessing/pipeline.py`): YES trials 27/29/31/33 are the retest pushes at p1–p4 (their recorded notes wrongly say “passive”), and YES session-1 passive values come from the lab worksheet; IES has no passive trials, so its documented pre-test table (`experiment_metadata_IES.docx`) is used for both sessions; CH is added to the subject list. JM needs no fix: the still-hold rule already ignores the movement in passive trial 21.
 
-Train (from the repository root; the data folder holds the `.flb` recordings, the YES worksheet PDF and the IES DOCX, none of which are in git):
+Train with the frozen code (from `EXPERIMENTS/baseline/retest_map_code/`; the data folder holds the `.flb` recordings, the YES worksheet PDF and the IES DOCX, none of which are in git):
 
 ```bash
 python -m ML.training.parallel_benchmark --output <runs folder> --data-dir <data folder> --overrides ML/reviewed_overrides.json --workers 8

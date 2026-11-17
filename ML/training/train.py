@@ -35,7 +35,7 @@ def parse_args():
                    help='Normalize EMG and torque by per-position MVC (for cross-subject transfer)')
     p.add_argument('--no-passive', action='store_true', default=False,
                    help='Skip passive torque subtraction — model predicts raw measured torque')
-    # ── Plantarflexed-angle fixes (see ML/preprocessing/active_torque.py) ──
+    # Plantarflexed-angle fixes (see ML/preprocessing/active_torque.py)
     g = p.add_argument_group('active-torque / weak-angle options')
     g.add_argument('--legacy-passive', action='store_true',
                    help='Old passive map (20 Nm bounds) instead of static holds only')
@@ -108,7 +108,7 @@ def legacy_main():
     os.makedirs(subj_model_dir, exist_ok=True)
     os.makedirs(subj_plot_dir,  exist_ok=True)
 
-    # ── 1. Load & build dataset ───────────────────────────────────────────────
+    # 1. Load & build dataset
     if args.passive_pos and args.passive_tq:
         passive_override = _parse_passive_map(args.passive_pos, args.passive_tq)
     else:
@@ -142,7 +142,7 @@ def legacy_main():
     print(f'  Test  : X={data["X_test"].shape}  y={data["y_test"].shape}')
     print(f'  Target range — min: {y_train.min():.3f} Nm  max: {y_train.max():.3f} Nm')
 
-    # ── 2. Train ──────────────────────────────────────────────────────────────
+    # 2. Train
     ckpt_path = os.path.join(subj_model_dir, 'best_lstm.keras')
 
     sample_weight = None
@@ -173,12 +173,12 @@ def legacy_main():
     )
     model.summary()
 
-    # ── 2b. Convergence plot ─────────────────────────────────────────────────
+    # 2b. Convergence plot
     plot_training_curves(history,
                          os.path.join(subj_plot_dir, 'training_curves.png'),
                          title=f'Training Convergence ({subject_key})')
 
-    # ── 3. Evaluate on held-out retest set ────────────────────────────────────
+    # 3. Evaluate on held-out retest set
     #
     # Pooled R² uses the global mean across all positions, so it gets a boost
     # from separating positions.  Per-position R² uses the local mean at each
@@ -213,7 +213,7 @@ def legacy_main():
     print(f'  MAE   = mean(|e|)                   : {overall["mae"]:.4f} Nm')
     print(f'{"="*70}')
 
-    # ── Per-position table ────────────────────────────────────────────────────
+    # Per-position table
     print(f'\nPer-position test results (retest trials — unseen during training):')
     print(f'  {"Position":>12}  {"R²":>7}  {"VAF (%)":>8}  {"RMSE (Nm)":>10}  {"NRMSE (%)":>10}  {"MAE (Nm)":>9}  {"N":>8}')
     print(f'  {"-"*12}  {"-"*7}  {"-"*8}  {"-"*10}  {"-"*10}  {"-"*9}  {"-"*8}')
@@ -223,7 +223,7 @@ def legacy_main():
               f'{m["nrmse"]*100:10.2f}  {m["mae"]:9.4f}  {m["n"]:8d}')
     print(f'  {"Pooled":>12}  {r2:7.4f}  {"":>8}  {"":>10}  {"":>10}  {"":>9}  {n_test:8d}')
 
-    # ── 4. Predicted vs True on all splits ──────────────────────────────────
+    # 4. Predicted vs True on all splits
     y_pred_train = model.predict(X_train, verbose=0).flatten()
     y_pred_val   = model.predict(X_val, verbose=0).flatten()
 
@@ -239,7 +239,7 @@ def legacy_main():
         known_positions=known_pos,
         title=f'Predicted vs True Torque ({subject_key})')
 
-    # ── 5. Save per-position plots ───────────────────────────────────────────
+    # 5. Save per-position plots
     pos_r2 = plot_per_position_metrics(
         data['X_test'], y_test, y_pred,
         os.path.join(subj_plot_dir, 'per_position_metrics.png'),

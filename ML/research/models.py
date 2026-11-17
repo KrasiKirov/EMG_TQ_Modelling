@@ -1,20 +1,12 @@
 """
-Model builders (thin wrappers around ML.models.lstm.build_model).
+Model builders around ML.models.lstm.build_model.
 
-lstm8   the original model: LSTM(8) -> Dropout(0.3) -> LSTM(8) -> Dropout(0.3)
-        -> Dense(1); 1,001 parameters.
-moe     shared LSTM(16)x2 trunk + one zero-initialised linear "expert" per
-        training ankle angle, selected by the ankle angle (mixture of
-        experts), no per-angle bias; 3,665 parameters with 8 angles.
+lstm8   LSTM(8) -> Dropout(0.3) -> LSTM(8) -> Dropout(0.3) -> Dense(1), the original model (1,001 parameters)
+moe     shared LSTM(16)x2 trunk + one zero-initialised linear expert per training ankle angle, selected by the angle
 
-Suffix ``+ga<NN>`` (e.g. ``lstm8+ga50``) adds EMG gain augmentation in front
-of the model.  During TRAINING ONLY, every EMG channel of every window is
-multiplied by a random factor exp(N(0, sigma)), with sigma = NN/100; the
-ankle-angle input is never touched.  At prediction time the layer does
-nothing.  Purpose: make the model insensitive to the EMG amplitude changes
-seen between sessions (electrode-skin impedance, placement), which were a
-main cause of the cross-session failures (JM: about 0.4-0.5x).  The layer
-has no weights, so the parameter count is unchanged.
+Suffix ``+ga<NN>`` (e.g. ``lstm8+ga50``) adds training-only EMG gain augmentation: each EMG channel of each window is
+multiplied by exp(N(0, NN/100)); the angle input is untouched and the layer has no weights. It targets the
+between-session amplitude changes (electrode contact, placement).
 """
 
 import keras
@@ -27,11 +19,7 @@ from ML.models.lstm import build_model, N_EMG
 
 @keras.saving.register_keras_serializable(package='emg_tq_research')
 class RandomChannelGain(layers.Layer):
-    """Training-time random per-window, per-channel EMG gain (log-normal).
-
-    The gain is constant over a window (a session-level amplitude change
-    lasts much longer than 200 ms) and independent between channels
-    (each electrode's contact changes on its own)."""
+    """Training-time log-normal EMG gain, constant over a window and independent between channels."""
 
     def __init__(self, sigma=0.3, n_emg=N_EMG, **kw):
         super().__init__(**kw)

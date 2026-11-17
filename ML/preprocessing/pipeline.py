@@ -8,8 +8,7 @@ import numpy as np
 from scipy.signal import resample_poly
 
 from ML.config import DATA_DIR
-from ML.preprocessing.calibration import (PassiveCalibration, fit_passive,
-                                           fit_passive_session)
+from ML.preprocessing.calibration import fit_passive, fit_passive_session
 from ML.preprocessing.emg_envelope import extract_envelope
 from ML.preprocessing.trial_manifest import CHANNELS, load_inventory
 

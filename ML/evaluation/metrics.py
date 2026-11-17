@@ -1,9 +1,4 @@
-"""
-Shared evaluation utilities for sEMG-to-torque models.
-
-Consolidates metric computation and position-snapping logic used
-by both train.py and cross_subject.py.
-"""
+"""Metrics and position snapping shared by the training scripts."""
 
 import numpy as np
 
@@ -11,22 +6,7 @@ from ML.config import POSITION_FEATURE_INDEX
 
 
 def snap_to_operating_points(positions, known_positions):
-    """Assign each window's position to the nearest known operating point.
-
-    Parameters
-    ----------
-    positions : np.ndarray, shape (N,)
-        Raw (or normalized) position value per window.
-    known_positions : array-like
-        Set of known operating points.
-
-    Returns
-    -------
-    snapped : np.ndarray, shape (N,)
-        Each entry replaced by the nearest value in *known_positions*.
-    known_sorted : np.ndarray
-        Sorted array of known positions.
-    """
+    """Snap each position to the nearest known operating point; returns (snapped, sorted known positions)."""
     known = np.array(sorted(known_positions))
     dists = np.abs(positions[:, None] - known[None, :])
     return known[np.argmin(dists, axis=1)], known
@@ -60,20 +40,7 @@ def compute_metrics(y_true, y_pred):
 
 
 def compute_per_position_metrics(X_test, y_test, y_pred, known_positions):
-    """Compute R², RMSE, and NRMSE for each operating position.
-
-    Parameters
-    ----------
-    X_test : np.ndarray, shape (N, T, F)
-        Test feature windows.
-    y_test, y_pred : np.ndarray, shape (N,)
-    known_positions : array-like
-        Set of known operating points.
-
-    Returns
-    -------
-    dict  {position_value: {'r2': float, 'rmse': float, 'nrmse': float, 'mae': float, 'n': int}}
-    """
+    """{position: {'r2', 'rmse', 'nrmse', 'mae', 'n'}} for each operating position (angle = last feature)."""
     positions = X_test[:, -1, POSITION_FEATURE_INDEX]
     pos_snapped, valid_pos = snap_to_operating_points(positions, known_positions)
     pos_metrics = {}

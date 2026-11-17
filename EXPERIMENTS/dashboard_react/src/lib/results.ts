@@ -1,6 +1,7 @@
 // Every experiment as one list of runs the Results page can show: the window study (study.json) and the earlier
-// experiments (results.json and the presentation catalog), all trained on session 1 and tested on session 2.
-import { catalogRuns, catalogTitle, EXTRA, runTiming } from './catalog';
+// tuning finalists (the presentation catalog), all trained on session 1 and tested on session 2. Last semester's runs
+// were removed from the page on 17 Nov 2026: they used the old pipeline.
+import { catalogRuns, EXTRA, runTiming } from './catalog';
 import { median } from './stats';
 import { has as inStudy, paramsOf as studyParams, PARAMS as STUDY_PARAMS, STUDY } from './study';
 
@@ -14,11 +15,10 @@ export interface PersonRuns { subj: string; positions: number[]; seeds: number[]
 const DIR = 'S1toS2' as const;
 const PEOPLE = STUDY.people;
 
-// ── the earlier experiments: the tuning finalists, and last semester's LSTM as the starting point of the experiments ──
+// the tuning finalists
 // one list of the 6 finalists (batch 64, up to 400 epochs); the batch-8 rerun was dropped 16 Nov 2026
 const TUNING: Param[] = [{ key: 'network', label: 'Network' }];
 const TUNING_NOTE: Record<string, string> = { HF_u16_l2_d00_lr01: ' (chosen)', HF_u8_l2_d30_lr003: " (last semester's network)" };
-export const START = 'X00_baseline';
 
 // Experiments filters: the window study's, without training order, weight updates and epoch limit (dropped 16 Nov
 // 2026 with the few runs that varied them). The 10 s carried-state run stays: it is the only one with that state.
@@ -31,20 +31,14 @@ const shown = (id: string) => {
 /** the runs titled "Reference" in the study, named by their settings instead */
 const RENAMED: Record<string, string> = { W00_reference: '200 ms, 95 % overlap', WT1_total: '200 ms, 95 % overlap (total)' };
 const expParams = (id: string) => Object.fromEntries(Object.entries(studyParams(id)).filter(([k]) => !DROPPED.has(k)));
-const CURRENT = 'Current';
-export const LAST_SEMESTER = 'Last semester';
 
 export const GROUPS: Group[] = [
-  { key: 'window', label: 'Experiments', params: [{ key: 'pipeline', label: 'Pipeline' }, ...EXP_PARAMS], first: 'W00_reference' },
+  { key: 'window', label: 'Experiments', params: EXP_PARAMS, first: 'W00_reference' },
   { key: 'tuning', label: 'Hyperparameter tuning', params: TUNING, first: 'HF_u16_l2_d00_lr01' },
 ];
 
-function earlier(): Entry[] {
-  // last semester's LSTM in the experiments' own terms (docs/BASELINE.md): 20 × 10 ms windows started every sample,
-  // active torque, a fresh LSTM state per window, shuffled windows, at most 200 epochs
-  const out: Entry[] = [{ id: START, group: 'window', title: catalogTitle(START), target: 'active', params: {
-    pipeline: LAST_SEMESTER, length: '200 ms', overlap: '95 %', step: '10 ms', target: 'Active', state: 'Reset each window',
-  } }];
+function tuning(): Entry[] {
+  const out: Entry[] = [];
   for (const id of Object.keys(EXTRA)) {
     const m = /u(\d+)_l(\d)_d(\d\d)_lr(\d+)/.exec(id);
     if (!m || !id.startsWith('HF_')) continue;
@@ -57,9 +51,9 @@ function earlier(): Entry[] {
 /** every experiment with runs trained on session 1 and tested on session 2 */
 export const ENTRIES: Entry[] = [
   ...Object.keys(STUDY.settings).filter((id) => inStudy(id) && shown(id)).map((id): Entry => ({
-    id, group: 'window', title: RENAMED[id] ?? STUDY.settings[id].title, target: STUDY.settings[id].target, params: { pipeline: CURRENT, ...expParams(id) },
+    id, group: 'window', title: RENAMED[id] ?? STUDY.settings[id].title, target: STUDY.settings[id].target, params: expParams(id),
   })),
-  ...earlier().filter((e) => PEOPLE.some((s) => catalogRuns(e.id, s, DIR).length)),
+  ...tuning().filter((e) => PEOPLE.some((s) => catalogRuns(e.id, s, DIR).length)),
 ];
 const BY_ID = new Map(ENTRIES.map((e) => [e.id, e]));
 export const entry = (id: string) => BY_ID.get(id)!;
@@ -75,7 +69,6 @@ export function valuesOf(group: string, key: string): string[] {
 /** the experiment in the group with key = value that keeps as many of the current choices as possible */
 export function pickFor(current: string, key: string, value: string): string {
   const now = entry(current);
-  if (key === 'pipeline' && value === CURRENT) return GROUPS.find((g) => g.key === now.group)!.first; // back to the reference
   let best = current, score = -1;
   for (const e of ENTRIES) {
     if (e.group !== now.group || e.params[key] !== value) continue;

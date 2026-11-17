@@ -35,12 +35,12 @@ def gain_offset(p_cal, y_cal, p):
 
 
 def score_trial(y, p, t, *, breakdown=DEFAULT_BREAKDOWN):
-    """Score one trial (one position) on the whole trial. Returns (row, predictions to display)."""
+    """Score one trial (one position) on the whole trial. Returns the metrics row."""
     rel = t - t[0]
     block, scored = rel < breakdown['seconds'], rel >= breakdown['score_from_s']
     corrected = gain_offset(p[block], y[block], p)
-    row, shown = metrics(y, p), p
+    row = metrics(y, p)
     if scored.sum() > 1 and np.ptp(y[scored]) > 0:
         row['err_raw_mae'] = float(np.mean(abs(p[scored] - y[scored])))
         row['err_after_gain_offset_mae'] = float(np.mean(abs(corrected[scored] - y[scored])))
-    return row, shown
+    return row

@@ -1,23 +1,9 @@
 """
-Transfer learning via fine-tuning for cross-subject sEMG-to-torque prediction.
+Cross-subject transfer by fine-tuning (e.g. HM -> EG).
 
-Workflow for each transfer direction (e.g. HM→EG):
-  1. Train a base model on the SOURCE subject (same as cross_subject.py)
-  2. Fine-tune on K calibration positions from the TARGET subject's test session
-  3. Evaluate on the TARGET subject's held-out retest session
-
-Sweep:
-  K ∈ {0, 1, 2, 4, 8}  calibration positions
-  Strategies:
-    dense_only  — freeze both LSTM layers, retrain only the Dense output
-    lstm2_dense — freeze first LSTM, retrain second LSTM + Dense
-    all_layers  — retrain everything at a lower learning rate
-
-Calibration data comes exclusively from the target's TEST session (train+val
-windows), so the RETEST session remains a truly held-out evaluation set.
-
-Calibration positions are selected by uniform spacing across the 8 operating
-positions (e.g. K=2 → p2 + p6, K=4 → p1 + p3 + p5 + p7).
+Train a base model on the source subject, fine-tune it on K in {0, 1, 2, 4, 8} calibration positions of the
+target's test session (evenly spaced, e.g. K=2: p2 + p6), evaluate on the target's retest session.
+Strategies: dense_only (freeze both LSTMs), lstm2_dense (freeze the first LSTM), all_layers (lower learning rate).
 """
 
 import os
@@ -42,7 +28,7 @@ from ML.models.lstm import build_model
 from ML.evaluation import (snap_to_operating_points, plot_full_trials,
                             plot_per_position_metrics, plot_r2_summary)
 
-# ── Fine-tuning hyperparameters ───────────────────────────────────────────────
+# Fine-tuning hyperparameters
 
 FINETUNE_LR       = 1e-4   # much lower than base LR to avoid catastrophic forgetting
 FINETUNE_EPOCHS   = 200
@@ -62,7 +48,7 @@ STRATEGY_COLORS = {
 }
 
 
-# ── Calibration data extraction ───────────────────────────────────────────────
+# Calibration data extraction
 
 def _select_cal_positions(operating_positions, k):
     """Pick K uniformly-spaced positions from the sorted operating set."""
@@ -95,7 +81,7 @@ def get_calibration_data(target_data, k):
     return X_pool[mask], y_pool[mask]
 
 
-# ── Layer freezing ────────────────────────────────────────────────────────────
+# Layer freezing
 
 def _clone_and_freeze(base_model, strategy):
     """Clone base_model and set layer trainability per strategy."""
@@ -120,7 +106,7 @@ def _clone_and_freeze(base_model, strategy):
     return cloned
 
 
-# ── Fine-tuning ───────────────────────────────────────────────────────────────
+# Fine-tuning
 
 def _fine_tune(cloned_model, X_cal, y_cal):
     """Fine-tune cloned_model on calibration data with early stopping."""
@@ -147,27 +133,19 @@ def _fine_tune(cloned_model, X_cal, y_cal):
     return cloned_model
 
 
-# ── Sweep ─────────────────────────────────────────────────────────────────────
+# Sweep
 
 def run_transfer_direction(source_key, target_key, source_data, target_data):
-    """Train base model on source, sweep fine-tuning on target.
-
-    Returns a results dict:
-      {
-        'direction'          : 'HM→EG',
-        'r2'                 : {strategy: {k: float}},
-        'per_position'       : {strategy: {k: per_pos_dict}},
-        'within_r2'          : float,     # upper bound
-        'within_per_pos'     : per_pos_dict,
-        'operating_positions': list,
-      }
+    """
+    Train on the source, sweep fine-tuning on the target; returns {direction, r2 {strategy: {k}}, per_position,
+    within_r2 (target trained from scratch, upper bound), within_per_pos, operating_positions}.
     """
     direction = f'{source_key}→{target_key}'
     print(f'\n{"="*60}')
     print(f'  Fine-tune sweep: {direction}')
     print(f'{"="*60}')
 
-    # ── 1. Base model (trained on source) ─────────────────────────────────────
+    # 1. Base model (trained on source)
     print(f'\n  [1/3] Base model (source = {source_key})')
     base_model, _ = train_model(
         source_data['X_train'], source_data['y_train'],
@@ -176,7 +154,7 @@ def run_transfer_direction(source_key, target_key, source_data, target_data):
         save_path=os.path.join(MODEL_DIR,
                                f'finetune_base_{source_key}.keras'))
 
-    # ── 2. Within-subject upper bound (trained on target from scratch) ────────
+    # 2. Within-subject upper bound (trained on target from scratch)
     print(f'\n  [2/3] Within-subject upper bound (target = {target_key})')
     within_model, _ = train_model(
         target_data['X_train'], target_data['y_train'],
@@ -188,7 +166,7 @@ def run_transfer_direction(source_key, target_key, source_data, target_data):
         mvc_tq_test=target_data['mvc_tq_test'])
     print(f'  Within-subject R² = {within_result["overall"]["r2"]:.4f}')
 
-    # ── 3. Fine-tuning sweep ──────────────────────────────────────────────────
+    # 3. Fine-tuning sweep
     print(f'\n  [3/3] Fine-tuning sweep (K × strategy)')
 
     results = {
@@ -235,7 +213,7 @@ def run_transfer_direction(source_key, target_key, source_data, target_data):
     return results
 
 
-# ── Plotting ──────────────────────────────────────────────────────────────────
+# Plotting
 
 def plot_adaptation_curve(results, out_path):
     """R² vs K for each strategy, with within-subject reference."""
@@ -305,7 +283,7 @@ def plot_per_position_recovery(results, strategy, out_path):
     print(f'Per-position recovery saved → {out_path}')
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# Main
 
 def legacy_main():
     os.makedirs(MODEL_DIR, exist_ok=True)

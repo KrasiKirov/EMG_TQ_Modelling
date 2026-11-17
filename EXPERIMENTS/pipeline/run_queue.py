@@ -94,7 +94,8 @@ def main():
     os.makedirs(os.path.join(EXP, 'logs'), exist_ok=True)
     env = dict(os.environ)
     if a.original_baseline:
-        env.pop('PYTHONPATH', None) if not a.exps else None
+        if not a.exps:
+            env.pop('PYTHONPATH', None)
 
     def run(job):
         res, cmd, name, _ = job

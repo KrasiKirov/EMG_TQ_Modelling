@@ -1,10 +1,4 @@
-"""Shared training utilities for sEMG-to-torque LSTM models.
-
-Provides common functions used by the training entry points:
-  - load_subject: load and preprocess one subject's data
-  - train_model: train a fresh LSTM with standard callbacks
-  - evaluate_model: predict, denormalize, and compute metrics
-"""
+"""Shared training utilities: load_subject, train_model, evaluate_model."""
 
 import os
 import numpy as np
@@ -29,31 +23,12 @@ def load_subject(subject_key, normalize_position=False, normalize_mvc=False,
                  test_trial_indices=None, retest_trial_indices=None,
                  flb_path=None, subject_id=None, passive_entries_override=None,
                  **dataset_options):
-    """Load one subject's data with optional normalization.
+    """
+    Load one subject through ``build_dataset``; extra keyword arguments are passed to it.
 
-    Extra keyword arguments (``dataset_options``) are passed to
-    ``build_dataset`` — e.g. passive_method, passive_gain,
-    train_label_rezero, emg_clip, emg_floor, position_feature.
-
-    Parameters
-    ----------
-    subject_key : str
-        Short name from SUBJECTS registry (e.g. 'HM', 'EG').
-    normalize_position : bool
-        Min-max normalize ankle position to [0, 1].
-    normalize_mvc : bool
-        Normalize EMG and torque by per-position MVC.
-    test_trial_indices, retest_trial_indices : list of int or None
-        Override auto-detected trial splits (1-indexed).
-    flb_path : str or None
-        Override the FLB file path from SUBJECTS registry.
-    subject_id : str or None
-        Override the subject ID from SUBJECTS registry.
-
-    Returns
-    -------
-    dict with keys: X_train, y_train, X_val, y_val, X_test, y_test,
-                    emg_max, operating_positions, pos_range, mvc_tq_test
+    Trial indices are 1-based overrides; flb_path / subject_id override the SUBJECTS registry.
+    Returns a dict: X_train, y_train, X_val, y_val, X_test, y_test, emg_max, operating_positions, pos_range,
+    mvc_tq_test.
     """
     if flb_path is None or subject_id is None:
         flb_name, subj_id = SUBJECTS[subject_key]
@@ -119,23 +94,18 @@ def _snap(X, knots):
 
 
 class PositionStandardizer:
-    """Per-angle target standardisation  z = (y − μ_k) / σ_k.
+    """
+    Per-angle target standardisation z = (y - mu_k) / sd_k, from the training windows of each angle.
 
-    μ_k, σ_k come from the TRAINING windows of each operating angle k; the
-    angle of a window is known at prediction time (it is a model input), so
-    de-standardising is causal.  Gives every angle the same weight in the
-    loss: without it, MSE is dominated by the strong (dorsiflexed) angles and
-    the model barely fits the weak plantarflexed ones (YES: σ = 0.4 Nm at
-    −0.49 rad vs 15 Nm at +0.14 rad).
+    The angle is a model input, so de-standardising is causal. Without it MSE is dominated by the strong angles
+    (YES: sd 0.4 Nm at -0.49 rad vs 15 Nm at +0.14 rad).
     """
 
     def __init__(self, X_train, y_train, sd_floor=0.1, center=True):
         self.knots = _position_knots(X_train)
         k = _snap(X_train, self.knots)
-        # center=False → scale only (μ_k = 0): no per-angle mean prior, so the
-        # model cannot carry a training-session torque level/sign into the
-        # test session (CH −0.33 rad switches from a dorsiflexion task in the
-        # test session to a plantarflexion task in the retest session).
+        # center=False: scale only, so no training-session torque level carries into the test session
+        # (CH -0.33 rad switches from a dorsiflexion to a plantarflexion task).
         self.mu = np.array([y_train[k == j].mean() if center else 0.0
                             for j in range(len(self.knots))])
         self.sd = np.array([max(y_train[k == j].std(), sd_floor)
@@ -163,25 +133,7 @@ def position_weights(X, y_train, X_train):
 
 def compute_position_weights(X_train, y_train, operating_positions,
                               clip_max=5.0):
-    """Per-sample weights inversely proportional to per-position torque IQR.
-
-    Compensates for MSE being dominated by high-torque positions by upweighting
-    small-signal positions (e.g. max plantarflexion IQR ~1.5 Nm vs ~11 Nm at
-    max dorsiflexion).  Weights are normalized so their mean equals 1, preserving
-    the effective learning rate.
-
-    Parameters
-    ----------
-    X_train : np.ndarray, shape (N, n_steps, n_features)
-    y_train : np.ndarray, shape (N,)
-    operating_positions : list of float
-    clip_max : float
-        Maximum upweight factor (default 5.0).
-
-    Returns
-    -------
-    weights : np.ndarray, shape (N,), mean == 1.0
-    """
+    """Per-sample weights inversely proportional to the per-position torque IQR, clipped at ``clip_max``, mean 1."""
     positions = X_train[:, -1, POSITION_FEATURE_INDEX]
     pos_snapped, valid_pos = snap_to_operating_points(positions, operating_positions)
 
@@ -203,45 +155,15 @@ def train_model(X_train, y_train, X_val, y_val, label='model',
                 batch_size=BATCH_SIZE, n_units=LSTM_UNITS, verbose=0,
                 position_balance=None, anchored=False, moe=False,
                 moe_expert_bias=True, sample_weight=None):
-    """Train a fresh LSTM model and return it with training history.
+    """
+    Train a fresh LSTM; returns (model with best weights restored, history).
 
-    Parameters
-    ----------
-    X_train, y_train : training data
-    X_val, y_val : validation data
-    label : str
-        Descriptive label for console output.
-    save_path : str or None
-        If given, save best checkpoint to this path.
-    lr, epochs, batch_size, n_units : training hyperparameters
-    verbose : int
-        0 = quiet (for batch/sweep runs), 1 = full output.
-    position_balance : None | 'weights' | 'standardize' | 'scale'
-        Make every operating angle count equally in the loss:
-        'weights'     — per-window sample weights 1/var(angle), applied to
-                        validation too so early stopping follows the same
-                        objective;
-        'standardize' — train on per-angle standardised targets
-                        (``PositionStandardizer``) and de-standardise
-                        predictions in ``evaluate_model``;
-        'scale'       — like 'standardize' but divide by σ_k only (no
-                        per-angle mean prior; robust to a task change).
-    anchored : bool
-        Use the zero-anchored model (see ``build_model``).
-    moe : bool
-        Mixture-of-experts head with one expert per training operating angle
-        (see ``build_model``); implies position_balance='standardize' unless
-        'scale' is given.
-    moe_expert_bias : bool
-        Per-angle bias in the experts (False = no per-angle offset prior).
-    sample_weight : np.ndarray or None
-        Per-window training weights (e.g. ``compute_position_weights``);
-        not combined with position_balance.
-
-    Returns
-    -------
-    model : tensorflow.keras.Model — trained model with best weights restored.
-    history : tensorflow.keras.callbacks.History
+    position_balance  None | 'weights' (1/var(angle), also on validation) | 'standardize' (``PositionStandardizer``,
+                      undone in ``evaluate_model``) | 'scale' (÷ sd_k only, no per-angle mean prior)
+    anchored, moe     model variants (see ``build_model``); moe implies 'standardize' unless 'scale' is given
+    moe_expert_bias   per-angle bias in the experts
+    sample_weight     per-window training weights, not combined with position_balance
+    verbose           0 quiet, 1 full output
     """
     if moe and position_balance != 'scale':
         position_balance = 'standardize'
@@ -298,21 +220,7 @@ def train_model(X_train, y_train, X_val, y_val, label='model',
 
 def evaluate_model(model, X_test, y_test, operating_positions,
                    mvc_tq_test=None):
-    """Predict, denormalize to Nm if needed, compute metrics.
-
-    Parameters
-    ----------
-    model : trained Keras model
-    X_test, y_test : test data
-    operating_positions : list of float
-        Known operating points for per-position breakdown.
-    mvc_tq_test : np.ndarray or None
-        Per-window MVC torque for denormalization.
-
-    Returns
-    -------
-    dict with keys: y_pred, y_test (denormalized), overall, per_position
-    """
+    """Predict, convert back to Nm if MVC-normalised, and score; returns {y_pred, y_test, overall, per_position}."""
     y_pred = model.predict(X_test, verbose=0).flatten()
     std = getattr(model, 'position_standardizer', None)
     if std is not None:

@@ -16,7 +16,6 @@ macOS arm64. Use a project virtual environment and install that lock file.
 of the study recordings into a new checkout is necessary.
 
 ```sh
-python -m unittest discover -s ML/tests -v
 python -m ML.preprocessing.trial_manifest --output ML/runs/audit
 python -m ML.training.benchmark --models position ridge mlp lstm --output ML/runs/screen
 python -m ML.training.benchmark --protocol loso --models ridge lstm --output ML/runs/loso

@@ -11,9 +11,9 @@ Reproduce the numerical check with `python EXPERIMENTS/analysis/compare_pipeline
   - Code: `ML/research/` (data, passive models, EMG scaling, windows, training) driven by `EXPERIMENTS/pipeline/run.py` and the experiment specs.
   - Every result on the dashboard came from this pipeline, including A0, the default model. Making `main`'s pipeline canonical would mean re-running every experiment.
 - **Audited pipeline (from `main`, kept alongside).**
-  - Code: `ML/preprocessing/pipeline.py`, `calibration.py` and `trial_manifest.py`, `ML/training/benchmark.py` and `sweep.py`, `ML/inference.py`, `ML/tests/`.
-  - It adds trial-identity checks, run packages, an inference API and unit tests. Experiments don't use it today.
-  - It stays as `main` has it, with `main`'s unit tests.
+  - Code: `ML/preprocessing/pipeline.py`, `calibration.py` and `trial_manifest.py`, `ML/training/benchmark.py` and `sweep.py`, `ML/inference.py`.
+  - It adds trial-identity checks, run packages and an inference API. Experiments don't use it today.
+  - It stays as `main` has it (its unit tests were removed in November 2026; see the git history).
 - **`EXPERIMENTS/baseline/retest_map_code/`** is a frozen copy of `main`'s `ML/`. Once `main` is merged it duplicates `ML/`. Keep it until the merge is verified, then remove it. The per-run source snapshots inside `run_collections/` stay as evidence.
 
 Why combine instead of choosing a side for the five files:
@@ -77,7 +77,6 @@ So `main`'s versions of the shared reading and filtering code (`flb_reader`, `em
 | Training | Nadam 0.003, batch 8, ≤200 epochs, ReduceLROnPlateau 0.7/10, early stop 25; per-angle balancing | batch 64, ≤200 epochs, early stopping, standardized torque |
 | Scoring | per-position R², MAE, VAF on the test session; dashboard medians | equal-position RMSE per subject, then equal-subject average |
 | Outputs | `EXPERIMENTS/results/<exp>/…/seedK.{npz,json}` → dashboard | run packages with hashes, manifest, preprocessing, model |
-| Tests | `EXPERIMENTS/tests` (pytest) | `ML/tests` (unittest) |
 
 The two pipelines differ in window, split, filtering and scoring, so their scores can't be compared directly.
 
@@ -99,15 +98,13 @@ Start from this branch's version of each file and add `main`'s changes on top:
 
 After the merge, check:
 - `python EXPERIMENTS/analysis/compare_pipelines.py --ref HEAD~1 --subject <S>`: A must be identical for all six people.
-- `python -m unittest discover -s ML/tests`
-- `pytest`
 - one short training run of `python -m EXPERIMENTS.pipeline.run` (EG, seed 0)
 
 ## After the merge (13 Nov 2026)
 
 Merged as recommended (merge commit `31142bd` on `cleanup`). Checks:
 - `compare_pipelines.py --ref <pre-merge commit>`: the experiment data is identical (largest difference 0) for all six people.
-- `python -m unittest discover -s ML/tests -t .`: 36 tests pass. `pytest`: all pass, including the slow regression.
+- `python -m unittest discover -s ML/tests -t .`: 36 tests pass. `pytest`: all pass, including the slow regression (both suites were removed later).
 - One full training run of A0's settings on the merged code (EG, session 1 → 2, seed 0, under a temporary id):
   identical targets; 68 epochs, as in the saved A0 run; MAE plantarflexed 0.672 vs 0.651 Nm saved, other angles 0.897
   vs 0.896 Nm; correlation of the two prediction series 0.9998. The run used 8 threads, Python 3.13 and NumPy 2.4.3

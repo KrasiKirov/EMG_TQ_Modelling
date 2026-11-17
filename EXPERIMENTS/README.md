@@ -26,10 +26,8 @@ Other documents:
 | `code/run_original_baseline.py` | runs the frozen original code (only adds a seed and saves predictions) |
 | `pipeline/run.py` | runs one experiment (one config × subject × direction × seed) |
 | `pipeline/run_queue.py` | runs many jobs in parallel; skips finished ones |
-| `analysis/check_equivalence.py` | shows the experiment framework builds the same data as the original |
-| `pipeline/legacy/score.py` | scores every run → `results/all_evaluations.csv` |
-| `analysis/diagnostics.py` | Phase 2 diagnostics of the baseline |
-| `results/` | per-run predictions (`.npz`), run info (`.json`), and the complete metric tables |
+| `pipeline/scoring.py`, `pipeline/export.py` | scores runs and exports them to the dashboard |
+| `results/` | per-run predictions (`.npz`), run info (`.json`), and the October metric tables (their scoring scripts are in the git history) |
 | `plots/`, `reports/`, `logs/`, `literature/` | figures, written interpretations, console logs, verified references |
 
 ## Fixed definitions
@@ -49,6 +47,4 @@ Other documents:
 PY=.venv/bin/python; export EMG_DATA_DIR="$PWD/ML/subjects"   # from the repository root
 $PY EXPERIMENTS/pipeline/run_queue.py --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
 $PY EXPERIMENTS/pipeline/run_queue.py --exps X01_clean_passive --subjects YES JM --directions S1toS2 S2toS1 --seeds 0 1
-$PY EXPERIMENTS/pipeline/legacy/score.py
-$PY EXPERIMENTS/analysis/diagnostics.py
 ```

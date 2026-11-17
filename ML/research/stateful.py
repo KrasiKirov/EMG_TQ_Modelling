@@ -1,21 +1,13 @@
 """
-LSTM with carried state (experiment setting ``"state": "carry"``).
+LSTM with carried state (experiment setting ``"state": "carry"``); ``train.fit_predict`` is the stateless version.
 
-The usual models (``train.fit_predict``) are stateless: every window starts from a zero hidden/cell state, so a
-prediction sees only its window. Here the network runs through each trial in time order instead:
+training   the training trials run side by side, one batch lane each, in chunks of ``chunk`` samples; the weights
+           update after each chunk and the hidden and cell states carry into the next chunk (truncated BPTT).
+           Every training sample is a target. The state is zero at the start of every trial and epoch.
+validation after each epoch the whole training-session trial runs from a zero state; loss on the validation part.
+test       each test trial runs once from a zero state.
 
-* training  : the training trials run side by side (one batch lane per trial). Each trial is cut into consecutive
-              chunks of ``chunk`` samples; after each chunk the weights are updated and the final hidden and cell
-              states of both LSTM layers are passed on as the starting state of the next chunk of the same trial.
-              Every sample of the training part is a target (per-sample loss). Gradients span one chunk
-              (truncated back-propagation through time). The state starts at zero at the start of every trial
-              and every epoch.
-* validation: after each epoch, the whole session-1 trial runs forward from a zero state (the training part warms
-              the state up) and the loss is taken on the validation part only.
-* test      : each test trial runs forward once from a zero state; every sample gets a prediction.
-
-Loss balancing ('scale'), Nadam, ReduceLROnPlateau, early stopping with best weights restored and the epoch limit
-follow ``train.fit_predict`` so the only change against the stateless model is the state and the windowing.
+Balancing, optimiser, LR schedule and early stopping follow ``train.fit_predict``.
 """
 import numpy as np
 
@@ -37,8 +29,7 @@ def build_seq(n_features, units=8, layers=2, dropout=0.3):
 
 
 def make_optimizer(lr, clipnorm=None):
-    """Nadam; with ``clipnorm`` each gradient is rescaled so its norm is at most that value (needed when the
-    learning signal runs back through long chunks, where gradients can blow up). None = no clipping."""
+    """Nadam, optionally with gradient-norm clipping (useful for long chunks)."""
     import tensorflow as tf
     return tf.keras.optimizers.Nadam(learning_rate=lr, clipnorm=clipnorm)
 

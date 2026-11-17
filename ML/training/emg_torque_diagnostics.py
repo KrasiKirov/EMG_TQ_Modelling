@@ -29,8 +29,7 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from ML.config import (SUBJECTS, DATA_DIR, MODEL_DIR, PLOT_DIR,
-                        POSITION_FEATURE_INDEX)
+from ML.config import SUBJECTS, MODEL_DIR, PLOT_DIR, POSITION_FEATURE_INDEX
 from ML.training import load_subject, evaluate_model
 from ML.evaluation import (
     compute_metrics, compute_per_position_metrics, snap_to_operating_points,
@@ -127,7 +126,7 @@ def _print_summary(X, y_true, y_pred, operating_positions,
     print(f'  {"Pooled":>10}  {len(y_true):>6d}  {overall["r2"]:>7.4f}  '
           f'{overall["rmse"]:>8.4f}  {"—":>7}  {overall["mae"]:>7.4f}')
 
-    # ── Flags ──────────────────────────────────────────────────────────────
+    # Flags
     flags = []
 
     # Keep numerical ordering explicit. Anatomical labels are audited
@@ -238,7 +237,7 @@ def main():
     print(f'EMG-torque diagnostics — subject: {subject_key}')
     print(f'{"─"*60}')
 
-    # ── Load data and model ───────────────────────────────────────────────────
+    # Load data and model
     data = load_subject(
         subject_key,
         test_trial_indices=args.test_trials,
@@ -250,7 +249,7 @@ def main():
     known_pos    = data['operating_positions']
     mvc_tq_test  = data['mvc_tq_test']
 
-    # ── Generate predictions on all splits ───────────────────────────────────
+    # Generate predictions on all splits
     y_pred_train = model.predict(data['X_train'], verbose=0).flatten()
     y_pred_val   = model.predict(data['X_val'],   verbose=0).flatten()
 
@@ -260,7 +259,7 @@ def main():
     y_pred_test  = result_test['y_pred']
     y_test       = result_test['y_test']
 
-    # ── Select diagnostic split ───────────────────────────────────────────────
+    # Select diagnostic split
     split_map = {
         'train': (data['X_train'], data['y_train'], y_pred_train, 'Train'),
         'val':   (data['X_val'],   data['y_val'],   y_pred_val,   'Validation'),
@@ -279,31 +278,31 @@ def main():
     if target_pos is None:
         target_pos = float(max(known_pos))   # default: most plantarflexed
 
-    # ── Plot 01: NRMSE + residual overview ────────────────────────────────────
+    # Plot 01: NRMSE + residual overview
     plot_nrmse_and_residual_boxplots(
         X_diag, y_diag, yp_diag, known_pos,
         path('01_nrmse_residual_overview.png'),
         title=f'Error Overview — {subject_key} ({split_label})')
 
-    # ── Plot 02: EMG-torque scatter per position ──────────────────────────────
+    # Plot 02: EMG-torque scatter per position
     plot_emg_torque_scatter_by_position(
         X_diag, y_diag, known_pos,
         path('02_emg_torque_scatter.png'),
         title=f'EMG-Torque Scatter — {subject_key} ({split_label})')
 
-    # ── Plot 03: EMG-torque linearity ─────────────────────────────────────────
+    # Plot 03: EMG-torque linearity
     plot_emg_torque_linearity_by_position(
         X_diag, y_diag, known_pos,
         path('03_emg_torque_linearity.png'),
         title=f'EMG-Torque Linearity — {subject_key} ({split_label})')
 
-    # ── Plot 04: Deep dive at target position ─────────────────────────────────
+    # Plot 04: Deep dive at target position
     plot_plantarflexion_residual_detail(
         X_diag, y_diag, yp_diag, known_pos, target_pos,
         path('04_detail_plantarflexion.png'),
         title=f'Deep Dive — {subject_key} ({target_pos:+.3f} rad, {split_label})')
 
-    # ── Plot 05: Cross-split NRMSE comparison ─────────────────────────────────
+    # Plot 05: Cross-split NRMSE comparison
     _plot_cross_split_nrmse(
         [{'label': 'Train',      'X': data['X_train'], 'y_true': data['y_train'], 'y_pred': y_pred_train},
          {'label': 'Validation', 'X': data['X_val'],   'y_true': data['y_val'],   'y_pred': y_pred_val},
@@ -312,7 +311,7 @@ def main():
         path('05_cross_split_nrmse.png'),
         subject_key=subject_key)
 
-    # ── Console summary ───────────────────────────────────────────────────────
+    # Console summary
     _print_summary(X_diag, y_diag, yp_diag, known_pos, subject_key, split_label)
 
     print(f'\nAll plots saved → {out_dir}/')

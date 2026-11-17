@@ -23,11 +23,11 @@ torque (each session's own passive torque from its relaxed holds subtracted), EM
 | `ML/research/` | Data loading, passive-torque models, EMG scaling, windows, training used by the experiments | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | `ML/preprocessing/`, `ML/models/`, `ML/training/`, `ML/evaluation/` | Shared reading, filtering, model and training code | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | `ML/subjects/` | The six `.flb` recordings and their metadata | [`docs/DATA.md`](docs/DATA.md) |
-| `ML/preprocessing/pipeline.py`, `ML/training/benchmark.py`, `ML/inference.py`, `ML/tests/` | The audited pipeline from `main`: trial manifests, run packages, inference | [`docs/PIPELINE_COMPARISON.md`](docs/PIPELINE_COMPARISON.md) |
+| `ML/preprocessing/pipeline.py`, `ML/training/benchmark.py`, `ML/inference.py` | The audited pipeline from `main`: trial manifests, run packages, inference | [`docs/PIPELINE_COMPARISON.md`](docs/PIPELINE_COMPARISON.md) |
 | `ML/archive/` | The first experiment harness, kept for traceability | its README |
 | `functions/`, `exp_gui/`, `exp_model/`, `ES_sandbox/` | MATLAB: system identification, experiment GUI, real-time Simulink model | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | `presentations/` | Meeting decks, figures and videos | its README |
-| `scripts/`, `EXPERIMENTS/tests/`, `.github/workflows/` | Repository checks, the test suite and CI | `pytest` |
+| `scripts/`, `.github/workflows/` | Run scripts and the CI check that the transferred artifacts are present | the workflow file |
 
 ## Quickstart
 
@@ -37,8 +37,7 @@ macOS / Linux:
 
 ```bash
 python3.11 -m venv .venv
-.venv/bin/python -m pip install -r EXPERIMENTS/requirements-handoff.txt -r EXPERIMENTS/requirements-dev.txt
-.venv/bin/python -m pytest -m "not slow"
+.venv/bin/python -m pip install -r EXPERIMENTS/requirements-handoff.txt
 open EXPERIMENTS/dashboard_react/dist/index.html
 ```
 
@@ -46,8 +45,7 @@ Windows (PowerShell):
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r EXPERIMENTS/requirements-handoff.txt -r EXPERIMENTS/requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest -m "not slow"
+.\.venv\Scripts\python.exe -m pip install -r EXPERIMENTS/requirements-handoff.txt
 start EXPERIMENTS/dashboard_react/dist/index.html
 ```
 

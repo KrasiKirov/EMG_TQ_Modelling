@@ -1,19 +1,14 @@
-"""
-Shared configuration for the EMG-to-torque modelling pipeline.
-
-Central source of truth for subject registry, hyperparameters,
-and feature-layout constants used across the ML pipeline.
-"""
+"""Subject registry, data overrides, hyperparameters and feature-layout constants."""
 
 import os
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+# Paths
 ML_DIR    = os.path.dirname(__file__)
 DATA_DIR  = os.environ.get('EMG_DATA_DIR', os.path.join(ML_DIR, 'subjects'))
 MODEL_DIR = os.path.join(ML_DIR, 'checkpoints')
 PLOT_DIR  = os.path.join(ML_DIR, 'plots')
 
-# ── Subject registry ─────────────────────────────────────────────────────────
+# Subject registry
 # Maps a short name to (flb_filename, subject_id_for_channel_ordering)
 SUBJECTS = {
     'IES': ('IES_081024.flb', 'IES01'),   # S1 — non-standard channel order
@@ -24,7 +19,7 @@ SUBJECTS = {
     'HM':  ('HM_110425.flb',  'IES01'),   # S7 — same non-standard channel order as IES01
 }
 
-# ── Per-subject trial index overrides ────────────────────────────────────────
+# Per-subject trial index overrides
 # Used when auto-detection from comment strings is unreliable.
 # Values are 1-indexed trial numbers (as passed to build_dataset).
 # YES: passive/dynamic trials lack the "passive" keyword → must specify explicitly.
@@ -35,7 +30,7 @@ TRIAL_OVERRIDES = {
     },
 }
 
-# ── Per-subject passive torque overrides ─────────────────────────────────────
+# Per-subject passive torque overrides
 # Hardcoded (position_rad, passive_torque_Nm) pairs read from the experimenter
 # worksheet.  Used when auto-detection from the FLB passive trials is unreliable
 # (e.g. most passive trials are movement recordings, not static holds).
@@ -69,7 +64,7 @@ PASSIVE_TORQUE_OVERRIDES = {
     },
 }
 
-# ── Passive torque from experiment metadata (opt-in) ───────────────────────────
+# Passive torque from experiment metadata (opt-in)
 # Used only when an experiment sets "metadata_passive": true AND the subject has no relaxed-hold passive map.
 # IES: no relaxed holds or usable passive trials were recorded; these are the passive torques noted at each
 # position during the MVC trials (ML/subjects/experiment_metadata_IES.docx, recorded once for both sessions).
@@ -79,7 +74,7 @@ METADATA_PASSIVE = {
             (-0.1714, -1.0), (-0.0643, -2.4), (0.0429, -5.6), (0.15, -5.8)],
 }
 
-# ── Training hyperparameters ─────────────────────────────────────────────────
+# Training hyperparameters
 LEARNING_RATE  = 0.003
 LR_FACTOR      = 0.7
 LR_PATIENCE    = 10
@@ -88,7 +83,7 @@ EARLY_PATIENCE = 25
 BATCH_SIZE     = 8
 EPOCHS         = 200
 
-# ── Model / feature layout ───────────────────────────────────────────────────
+# Model / feature layout
 N_STEPS    = 20          # window length in timesteps at 100 Hz (200 ms)
 N_FEATURES = 5           # [MG_env, LG_env, SOL_env, TA_env, position]
 LSTM_UNITS = 8           # hidden units per LSTM layer (default)
@@ -96,6 +91,6 @@ LSTM_UNITS = 8           # hidden units per LSTM layer (default)
 POSITION_FEATURE_INDEX = 4   # column index of position in feature array
 TIME_STEP_S            = 0.01  # seconds per window step (stride=1 at 100 Hz)
 
-# ── Capacity sweep ────────────────────────────────────────────────────────────
+# Capacity sweep
 # Unit counts compared in training/capacity_sweep.py
 CAPACITY_SWEEP_UNITS = [8, 16, 32]

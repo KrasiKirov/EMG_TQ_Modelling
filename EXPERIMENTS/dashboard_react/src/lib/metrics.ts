@@ -27,7 +27,7 @@ export function metricLabel(m: MetricKey, withUnit = true): string {
 
 /**
  * R² display rule: each run's R² below 0 is set to 0 BEFORE medians / percentiles are taken
- * (same as the deck's box plots and headline numbers, deck_figures.py / presentation_metrics.py).
+ * (same as the October deck's box plots and headline numbers).
  */
 export function metricValue(r: Run, m: MetricKey, floor: boolean): number {
   const v = r[m];
@@ -47,9 +47,9 @@ export function compareValue(r: Run, m: MetricKey, floor: boolean): number {
   return m === 'bias' ? Math.abs(r.bias) : metricValue(r, m, floor);
 }
 
-/** label of the compared quantity, e.g. "R²" or "|bias|" */
+/** label of the compared quantity, e.g. "R²" or "absolute bias" */
 export function compareLabel(m: MetricKey, withUnit = true): string {
-  if (m === 'bias') return withUnit ? '|bias| (Nm)' : '|bias|';
+  if (m === 'bias') return withUnit ? 'absolute bias (Nm)' : 'absolute bias';
   return metricLabel(m, withUnit);
 }
 

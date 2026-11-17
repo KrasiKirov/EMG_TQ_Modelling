@@ -17,7 +17,7 @@ const fmt = (v: number, d = 3) => (Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(
 export const STAGE_TITLES = [
   '1 · Raw EMG',
   '2 · Offset removed, band-pass 30–300 Hz',
-  '3 · Rectified |x|',
+  '3 · Rectified (absolute value)',
   '4 · Envelope: 2 Hz low-pass',
   '5 · Model input: every 10th sample ÷ session-1 maximum',
 ];

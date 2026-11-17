@@ -54,32 +54,31 @@ graph TD
 | `scoring.py` | Per-position metrics from saved predictions, and the drift/shape error breakdown |
 | `export.py` | Scores every tagged experiment and writes rows, packed waveforms, sidebar groups and the landing page into `presentation-catalog.json` |
 | `dashboard.py` | Command line: `list`, `tag`, `export`, `build` (export + `npm run build`), `remove` |
-| `legacy/` | Scoring and the old single-page dashboard for the October controlled experiments; not used by the current dashboard |
 
-`EXPERIMENTS/code/` keeps three standalone tools: `run_original_baseline.py` (runs the frozen original LSTM-8 code in
-`EXPERIMENTS/baseline/original_code/`), `verify_handoff.py` (checks the transferred artifacts against
-`handoff_manifest.json`) and `ledger.py` (edits `experiment_ledger.csv`).
+`EXPERIMENTS/code/` keeps two standalone tools: `run_original_baseline.py` (runs the frozen original LSTM-8 code in
+`EXPERIMENTS/baseline/original_code/`) and `verify_handoff.py` (checks the transferred artifacts against
+`handoff_manifest.json`).
 
 `EXPERIMENTS/dashboard_react/` is a React + Vite app built into one HTML file. Its data are
 `src/data/presentation-catalog.json` (every current entry) and `src/data/results.json` (the October controlled
-experiments, written by `pipeline/legacy/build_dashboard.py`); it never reads result folders. Sidebar
+experiments, frozen; its generator is in the git history); it never reads result folders. Sidebar
 groups, the landing page, names and blurbs come from the catalogue, so adding an experiment needs no React change.
 
 ## `ML/research/` — the data and training behind every experiment
 
 | Module | What it does |
 | --- | --- |
-| `config.py` | Paths, subjects, signal constants, training protocols |
+| `config.py` | Cache path, signal constants, training protocols |
 | `data.py` | Loads one subject into per-trial records at 100 Hz: EMG envelopes, angle, torque, the relaxed hold before each trial, MVC trials, passive maps; cached |
 | `passive.py` | Passive-torque models, i.e. what is subtracted from measured torque to get the target (`legacy`, `static`, gain-corrected, hold-based, drift) |
 | `emg_norm.py` | EMG scaling options (session-1 maximum, p99, MVC, per-session, causal auto-gain) |
 | `splits.py` | The `S1toS2`, `S2toS1` and `pooled` protocols and sliding windows |
-| `run.py` | `prepare(subject, direction, cfg)` builds the train/validation/test arrays; also runs a named job on its own |
+| `run.py` | `prepare(subject, direction, cfg)` builds the train/validation/test arrays |
 | `train.py` | Training with per-angle loss balancing; ridge baseline |
 | `models.py` | Model builders around `ML.models.lstm.build_model` (LSTM, mixture-of-experts LSTM) |
-| `truth.py` | The common reference truth used by the earlier research study |
-| `transfer.py` | Cross-subject pre-training and fine-tuning |
-| `experiments.py`, `queue.py`, `analyze.py`, `tables.py`, `figures.py`, `evaluate.py` | The earlier research study's named configurations, queue, analysis and figures |
+| `truth.py` | In-trial passive baseline through the EMG-detected rest (`restanchor` target, rest flags) |
+| `stateful.py` | LSTM trained on whole trials with the state carried between chunks |
+| `evaluate.py` | `metrics()`, kept for the presentation figure scripts |
 
 ## `ML/` shared code
 
@@ -98,8 +97,7 @@ groups, the landing page, names and blurbs come from the catalogue, so adding an
 | `archive/experiments/` | The first experiment harness (see its README) |
 
 The audited pipeline merged from `main` sits next to these: `ML/preprocessing/pipeline.py`, `calibration.py` and
-`trial_manifest.py`, `ML/training/benchmark.py` and `sweep.py` (`python ML/training/train.py` runs it), `ML/inference.py`,
-and its unit tests in `ML/tests/`. The older training entry point is `legacy_main()` in `ML/training/train.py`. How the
+`trial_manifest.py`, `ML/training/benchmark.py` and `sweep.py` (`python ML/training/train.py` runs it) and `ML/inference.py`. The older training entry point is `legacy_main()` in `ML/training/train.py`. How the
 two pipelines relate is in [`PIPELINE_COMPARISON.md`](PIPELINE_COMPARISON.md).
 
 ## MATLAB

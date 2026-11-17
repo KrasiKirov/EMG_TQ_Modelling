@@ -1,50 +1,19 @@
 """
-EMG normalisation options.  Each returns {trial idx: (T, 4) features}.
+EMG normalisation options; each returns {trial idx: (T, 4) features}.
 
-All statistics come from the TRAINING session only, except the MVC options
-which use the MVC calibration trials (recorded once, at the start of the
-experiment, separate from every active trial that is evaluated).
+Statistics come from the training session only (MVC options: the MVC trials). The per-channel maximum uses the
+training and validation parts of the training trials, as the original pipeline (pooled: only the first
+``val_end_frac``); the auto-gain priors use the training part only.
 
-Which part of a training trial: the per-channel maximum ('trainmax', also
-the starting scale of the auto-gain options) follows the original pipeline
-and uses the training AND validation parts of the training trials (cross-
-session protocols: the whole trial).  In the pooled protocol, whose last
-20 % of every trial is test data, it uses only the first ``val_end_frac``
-(= 80 %) of each trial.  The auto-gain priors use the training part only.
-
-kinds
------
-trainmax     divide each channel by its largest 1 kHz envelope value in the
-             training-session trials (the original pipeline).
-mvc_global   divide each channel by its largest MVC envelope (any angle):
-             EMG in "% of maximal voluntary activation".
-mvc_angle    divide each channel by the MVC envelope peak at THIS trial's
-             angle (linear interpolation between MVC angles).
-agc          trainmax, then causal adaptive gain control (ML.preprocessing.
-             emg_agc): per channel (x - floor_t) / max(top_t - floor_t, rmin),
-             floor = running 10th percentile of the past 20 s, top = running
-             95th percentile of the past 45 s, rmin = 0.35 x prior range.
-agc_auto     report 1's 'auto' rule: 'agc' unless the training session shows
-             pushes in BOTH directions (some trial's push direction > +2 Nm
-             and another's < -2 Nm, see push_directions), then 'trainmax'.
-             Auto-gain removes absolute EMG amplitude, which a subject who
-             pushes both ways (CH) needs to tell a push from co-contraction.
-             Decided from the training part of the training session only.
-agc_soft     same with rmin = 0.7 x prior range: amplifies a near-silent
-             channel at most ~1.4x instead of ~2.9x (less noise blow-up at
-             weak angles).
-train_p99    divide each channel by its 99th percentile over the TRAINING
-             part of the training-session trials (100 Hz envelope).  Same
-             idea as 'trainmax', but one spike cannot set the scale, and the
-             validation part is not used.
-session_p99  every session is divided by ITS OWN per-channel 99th percentile
-             of the envelope (training session: training part only; test
-             session: all of its active-trial EMG, without any torque).
-             TRANSDUCTIVE: it uses unlabelled test-session EMG, i.e. the
-             model needs the whole test session before it can predict.
-             The unsupervised re-normalisation idea follows AdaBN (Du et
-             al. 2017, Sensors 17:458), which re-estimates normalisation
-             statistics on the new session's unlabelled data.
+trainmax     ÷ largest 1 kHz envelope value per channel in the training-session trials (original pipeline)
+mvc_global   ÷ largest MVC envelope (any angle)
+mvc_angle    ÷ MVC envelope peak interpolated at this trial's angle
+agc          trainmax, then causal adaptive gain control (ML.preprocessing.emg_agc), rmin = 0.35 x prior range
+agc_auto     'agc', unless the training session pushes both ways (> +2 Nm and < -2 Nm, see push_directions): 'trainmax'
+agc_soft     'agc' with rmin = 0.7 x prior range (less noise blow-up on near-silent channels)
+train_p99    ÷ 99th percentile over the training part of the training-session trials
+session_p99  each session ÷ its own 99th percentile (test session: all its EMG, no torque). Transductive, after
+             AdaBN (Du et al. 2017, Sensors 17:458)
 """
 
 import numpy as np
@@ -76,15 +45,9 @@ def _agc(env, prior_lo, prior_hi, rmin_frac):
 
 def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_end_frac=1.0,
               window=C.WINDOW):
-    """Normalised envelopes for every record in ``all_recs``.
+    """Normalised envelopes for every record in ``all_recs``; statistics from ``train_recs``.
 
-    train_recs   : the records of the training session (statistics source)
-    train_frac   : fraction of each training record that is training data
-                   (auto-gain priors use only that part)
-    val_end_frac : end of the validation part (pooled protocol: 0.8); the
-                   maximum is taken before it.  1.0 = whole trial (1 kHz
-                   envelope maximum, exactly as the original pipeline)
-    window       : window length (steps) of the configuration
+    val_end_frac: the maximum is taken before this fraction of each trial (1.0 = whole-trial 1 kHz maximum).
     """
     if val_end_frac >= 1.0:
         emg_max = np.max(np.stack([r['env_max1k'] for r in train_recs]), axis=0)
@@ -148,8 +111,7 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
 
 
 def push_directions(bundle, train_recs, env_norm, train_frac=C.TRAIN_FRAC, window=C.WINDOW):
-    """Push direction per training trial (Nm): torque in high-EMG phases minus
-    torque in low-EMG phases (same rule as the pipeline's AGC 'auto' mode)."""
+    """Push direction per training trial (Nm): torque in high-EMG phases minus torque in low-EMG phases."""
     dirs = []
     for r in train_recs:
         cut = _train_part(r, train_frac, window)

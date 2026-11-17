@@ -63,28 +63,14 @@ def build_model(n_steps: int = 20, n_features: int = 5,
                 n_units: int = 8, dropout: float = 0.3,
                 anchored: bool = False, moe_knots=None,
                 moe_expert_bias: bool = True) -> Model:
-    """Two-layer stacked LSTM for ankle torque regression (Nm).
+    """
+    Two-layer stacked LSTM for ankle torque (Nm): LSTM(n_units, return_sequences) -> Dropout -> LSTM(n_units) ->
+    Dropout -> Dense(1).
 
-    Architecture
-    ------------
-    Input  : [batch, n_steps, n_features]
-    LSTM 1 : n_units, tanh, return_sequences=True
-    Dropout: dropout (default 30%)
-    LSTM 2 : n_units, tanh, return_sequences=False
-    Dropout: dropout
-    Dense  : 1 unit  → predicted ankle torque (Nm)
-
-    moe_knots (list of training operating angles) → mixture-of-experts head:
-        shared LSTM(16)×2 trunk, ẑ = shared(h) + Σ_k g_k(angle)·expert_k(h),
-        one L2-shrunk, zero-initialised linear expert per angle.  Each angle
-        gets its own correction of the EMG→torque read-out (the gain and
-        muscle mix change with muscle length; a shared read-out is otherwise
-        fitted to the strong dorsiflexed angles).  Train it on per-angle
-        standardised targets (train_model(position_balance='standardize')).
-
-    anchored=True  →  ŷ = F(emg, pos) − F(0, pos)  with the baseline F.
-        Enforces "silent muscles → zero active torque" at every angle.
-        Requires EMG inputs where rest ≈ 0 (build_dataset(emg_floor='train')).
+    moe_knots (training angles): mixture-of-experts head, shared LSTM(16)x2 trunk, z = shared(h) + sum_k g_k(angle) *
+    expert_k(h) with one L2-shrunk, zero-initialised linear expert per angle. Train on per-angle standardised targets.
+    anchored=True: y = F(emg, pos) - F(0, pos), so silent muscles give zero active torque (needs EMG with rest near 0,
+    build_dataset(emg_floor='train')).
     """
     if moe_knots is not None:
         inp = Input(shape=(n_steps, n_features))

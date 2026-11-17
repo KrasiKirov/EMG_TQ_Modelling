@@ -120,12 +120,12 @@ def export(specs, catalog, results, groups, all_specs=None):
                 if len(np.unique(trial[m])) != 1:
                     raise ValueError(f'{f}: position {a} spans several trials')
                 yy, pp, ts = y[m], p[m], tt[m]
-                row, shown = score_trial(yy, pp, ts)
+                row = score_trial(yy, pp, ts)
                 row.update(exp=ident, subj=subject, dir=direction, seed=seed, pos=round(float(a), 3), toes=int(k < 2))
                 data['rows'].append(row)
-                data['means'][f'{key}|{round(float(a), 3)}'] = [float(yy.mean()), float(shown.mean())]
+                data['means'][f'{key}|{round(float(a), 3)}'] = [float(yy.mean()), float(pp.mean())]
                 targets.append(_sample(grid, ts, yy))
-                predictions.append(_sample(grid, ts, shown))
+                predictions.append(_sample(grid, ts, pp))
             blob = packed(np.concatenate(targets))
             target_id = hashlib.sha256(blob.encode()).hexdigest()[:16]
             data['targetPool'][target_id] = blob

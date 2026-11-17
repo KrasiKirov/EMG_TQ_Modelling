@@ -1,23 +1,13 @@
 """
-emg_agc.py
-----------
 Causal adaptive gain control (AGC) of EMG envelopes.
 
-Why: between the test and retest sessions the EMG amplitude for the same
-torque changes, differently per channel and per angle (JM −0.64 / −0.36 rad:
-retest plantarflexor envelopes ≈ 0.4–0.5× the test-session size for the same
-torque; YES −0.38 rad: ≈ 1.3× larger).  A model with a fixed EMG→torque gain
-then under/over-predicts the amplitude, which is what limits JM's per-position
-R² at the plantarflexed angles.
+The EMG amplitude for the same torque changes between sessions, per channel and angle (JM -0.64 / -0.36 rad:
+retest plantarflexor envelopes about 0.4-0.5x; YES -0.38 rad: about 1.3x), so a fixed EMG->torque gain mispredicts.
 
-What: per channel and per trial,
-    a_k(t) = clip((env_k(t) − lo_k(t)) / max(hi_k(t) − lo_k(t), rmin_k), 0, 2)
-with lo = running 10th percentile of the past 20 s (noise floor) and hi =
-running 95th percentile of the past 45 s (active level), refreshed every 0.5 s
-from PAST samples only and blended at the start of a trial with priors from the
-TRAINING part of the test session.  Electrode pops / drop-outs are removed
-first (sample-and-hold).  Everything is causal — a real-time decoder can
-compute exactly the same features — and no torque is used.
+Per channel and trial: a(t) = clip((env(t) - lo(t)) / max(hi(t) - lo(t), rmin), 0, 2), lo = running 10th
+percentile of the past 20 s, hi = running 95th percentile of the past 45 s, refreshed every 0.5 s from past samples
+and blended at the trial start with priors from the training part. Pops / drop-outs are removed first
+(sample-and-hold). Fully causal; no torque is used.
 """
 
 import numpy as np

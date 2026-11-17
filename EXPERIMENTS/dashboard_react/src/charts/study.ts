@@ -7,13 +7,13 @@ import { posLabel } from '../lib/format';
 import { seedSeries, seedTooltip, type SeedSide, type SpreadMode } from './seedbox';
 import { boxStats } from '../lib/boxstats';
 
-/** text under a box: the median in bold, its interval below it in grey ("" without runs) */
+/** text under a box: the median in bold, then its interval in grey on the same line ("" without runs) */
 function ciLabels(cells: { v: number }[][], d: number): string[] {
   const f = (v: number) => v.toFixed(Math.abs(v) >= 10 ? Math.min(d, 1) : d);
   return cells.map((c) => {
     const s = boxStats(c.map((p) => p.v));
     if (!s.n) return '';
-    return `{m|${f(s.median)}}` + (s.n > 1 ? `\n{ci|[${f(s.ci.lo)}, ${f(s.ci.hi)}]}` : '');
+    return `{m|${f(s.median)}}` + (s.n > 1 ? ` {ci|[${f(s.ci.lo)}, ${f(s.ci.hi)}]}` : '');
   });
 }
 const ciRich = (t: ChartTokens) => ({
@@ -209,7 +209,7 @@ export function studySeedOption(sides: SeedSide[], positions: number[], m: SMetr
       { type: 'category', data: positions.map((p, i) => `p${i + 1}\n${posLabel(p)}`), ...axisCommon(t),
         axisLabel: compact ? { color: t.textMuted, fontSize: 9, interval: 0, lineHeight: 12 }
           : { color: t.text, fontSize: 12, interval: 0, lineHeight: 16, rich: ciRich(t), formatter: (v: string, k: number) => `${v}\n${labels[k] ?? ''}` },
-        ...(compact ? {} : { name: 'ankle position (rad) · median [interval]', nameLocation: 'middle', nameGap: 76, nameTextStyle: { color: t.textMuted, fontSize: 12 } }) },
+        ...(compact ? {} : { name: 'ankle position (rad) · median [interval]', nameLocation: 'middle', nameGap: 60, nameTextStyle: { color: t.textMuted, fontSize: 12 } }) },
       { type: 'value', min: -0.5, max: positions.length - 0.5, show: false },
     ],
     yAxis: [{
@@ -305,7 +305,7 @@ export function runtimeOption(people: { subj: string; seeds: number[]; seconds: 
     xAxis: [
       { type: 'category', data: people.map((p) => p.subj), ...axisCommon(t),
         axisLabel: { color: t.text, fontSize: 13, lineHeight: 18, rich: ciRich(t), formatter: (v: string, k: number) => `${v}\n${labels[k] ?? ''}` },
-        name: 'median [interval], min', nameLocation: 'middle', nameGap: 62, nameTextStyle: { color: t.textMuted, fontSize: 12 } },
+        name: 'median [interval]', nameLocation: 'middle', nameGap: 44, nameTextStyle: { color: t.textMuted, fontSize: 12 } },
       { type: 'value', min: -0.5, max: people.length - 0.5, show: false },
     ],
     yAxis: { type: 'value', min: 0, ...axisCommon(t), axisLine: { onZero: false, lineStyle: { color: t.axis } }, name: 'minutes per run', nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' },

@@ -147,16 +147,7 @@ def plot_r2_summary(pos_r2_dict, pooled_r2, out_path, title=None):
 
 
 def plot_pred_vs_true(splits, out_path, known_positions=None, title=None):
-    """Scatter plots of predicted vs true torque for train / val / test splits.
-
-    Parameters
-    ----------
-    splits : list of dict
-        Each dict has keys: 'X', 'y_true', 'y_pred', 'label' (e.g. 'Train').
-    out_path : str
-    known_positions : array-like or None
-    title : str or None
-    """
+    """Predicted vs true torque scatter per split; each split dict has 'X', 'y_true', 'y_pred', 'label'."""
     n_splits = len(splits)
     fig, axes = plt.subplots(1, n_splits, figsize=(6 * n_splits, 5), squeeze=False)
 
@@ -205,14 +196,7 @@ def plot_pred_vs_true(splits, out_path, known_positions=None, title=None):
 
 
 def plot_training_curves(history, out_path, title=None):
-    """Plot training & validation loss and MAE over epochs.
-
-    Parameters
-    ----------
-    history : keras History object (or dict with same keys)
-    out_path : str
-    title : str or None
-    """
+    """Training and validation loss and MAE over epochs (Keras History or a dict with the same keys)."""
     h = history.history if hasattr(history, 'history') else history
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
@@ -253,23 +237,10 @@ def plot_training_curves(history, out_path, title=None):
 
 
 def plot_capacity_comparison(sweep_results, known_positions, out_path, title=None):
-    """Per-position R² across LSTM unit counts for train / validation / test.
+    """
+    Per-position R² across LSTM unit counts, one subplot per split (train / val / test).
 
-    Each subplot (train, val, test) shows one line per unit count so you can
-    see whether adding capacity helps at the extreme positions and whether any
-    gain carries through to the held-out retest session.
-
-    Parameters
-    ----------
-    sweep_results : list of dict
-        Each dict has keys:
-          'n_units'       : int
-          'per_position'  : {'train': {pos: metrics}, 'val': ..., 'test': ...}
-          'overall'       : {'train': metrics, 'val': metrics, 'test': metrics}
-    known_positions : array-like
-        Sorted operating positions (used as x-axis labels).
-    out_path : str
-    title : str or None
+    Each sweep result has 'n_units', 'per_position' {split: {pos: metrics}} and 'overall' {split: metrics}.
     """
     positions  = np.array(sorted(known_positions))
     pos_labels = [f'{p:+.2f}' for p in positions]
@@ -352,19 +323,14 @@ def plot_r2_overlay(results, out_path):
     print(f'R\u00b2 overlay saved \u2192 {out_path}')
 
 
-# ── Passive torque diagnostic plots ───────────────────────────────────────────
+# Passive torque diagnostic plots
 
 
 def plot_passive_coverage(raw_segments, passive_entries, operating_positions,
                           out_path):
-    """Scatter + bar chart showing how many passive segments exist per cluster.
-
-    Top panel : scatter of all raw segment means (accepted = blue circle,
-                rejected = red ×).  Final cluster positions shown as vertical
-                dashed lines.
-    Bottom panel : bar chart of accepted segment count per cluster.
-                   Green = ≥2 segments (reliable), orange = 1 (flagged).
-                   Rejected count annotated above each bar in red.
+    """
+    Passive segments per cluster: top, every segment mean (accepted blue, rejected red x) with the cluster
+    positions; bottom, accepted count per cluster (green >= 2, orange 1) with the rejected count in red.
     """
     passive_entries = sorted(passive_entries, key=lambda x: x[0])
     cluster_pos  = [p for p, _ in passive_entries]
@@ -384,7 +350,7 @@ def plot_passive_coverage(raw_segments, passive_entries, operating_positions,
 
     fig, axes = plt.subplots(2, 1, figsize=(12, 7), sharex=False)
 
-    # ── Top: scatter of raw segment means ────────────────────────────────────
+    # Top: scatter of raw segment means
     ax = axes[0]
     if accepted:
         ax.scatter([s['pos'] for s in accepted],
@@ -405,7 +371,7 @@ def plot_passive_coverage(raw_segments, passive_entries, operating_positions,
     ax.grid(True, linewidth=0.3)
     ax.axhline(0, color='k', linewidth=0.4)
 
-    # ── Bottom: bar chart of counts per cluster ───────────────────────────────
+    # Bottom: bar chart of counts per cluster
     ax2 = axes[1]
     x  = np.arange(len(cluster_pos))
     counts = [acc_counts.get(cp, 0) for cp in cluster_pos]
@@ -444,12 +410,9 @@ def plot_passive_coverage(raw_segments, passive_entries, operating_positions,
 
 def plot_passive_interpolation_range(passive_entries, operating_positions,
                                      out_path):
-    """Show where operating positions fall relative to the passive measurement range.
-
-    Blue curve: passive torque evaluated on a dense position grid.
-    Black circles: measured cluster positions.
-    Vertical lines: operating positions, green = interpolated, red = extrapolated.
-    Gray shading: extrapolation zones (outside measured range).
+    """
+    Operating positions against the measured passive range: passive curve, measured clusters, operating
+    positions (green interpolated, red extrapolated), extrapolation zones shaded.
     """
     from ML.preprocessing.dataset_builder import lookup_passive_torque
 
@@ -764,20 +727,12 @@ def plot_extreme_vs_middle_summary(passive_entries, raw_segments,
     print(f'Extreme vs middle summary saved → {out_path}')
 
 
-# ── EMG-torque relationship diagnostic plots ──────────────────────────────────
+# EMG-torque relationship diagnostic plots
 
 
 def plot_nrmse_and_residual_boxplots(X, y_true, y_pred, operating_positions,
                                      out_path, title=None):
-    """3-panel error overview: NRMSE bars, signed residual boxes, bias ± std bars.
-
-    Panel 1 — NRMSE (%) per position: range-normalised error that removes the
-              small-signal R² artifact at the most dorsiflexed position.
-    Panel 2 — Signed residual box plot: reveals whether errors are symmetric
-              and proportional to the torque range.
-    Panel 3 — Bias (mean error) ± std per position: separates systematic from
-              random error components.
-    """
+    """Error overview per position: NRMSE (%), signed residual box plot, bias ± std."""
     positions = X[:, -1, POSITION_FEATURE_INDEX]
     pos_snapped, valid_pos = snap_to_operating_points(positions, operating_positions)
     cmap = plt.cm.coolwarm
@@ -807,7 +762,7 @@ def plot_nrmse_and_residual_boxplots(X, y_true, y_pred, operating_positions,
 
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
-    # ── Panel 1: NRMSE ────────────────────────────────────────────────────────
+    # Panel 1: NRMSE
     ax = axes[0]
     bars = ax.bar(x, nrmses, color=colors, alpha=0.85)
     for xi, v in zip(x, nrmses):
@@ -822,7 +777,7 @@ def plot_nrmse_and_residual_boxplots(X, y_true, y_pred, operating_positions,
     ax.legend(fontsize=8)
     ax.grid(True, axis='y', linewidth=0.3)
 
-    # ── Panel 2: Residual box plot ────────────────────────────────────────────
+    # Panel 2: Residual box plot
     ax2 = axes[1]
     tick_labels = [f'{p:+.3f}\nIQR={iq:.1f}Nm'
                    for p, iq in zip(valid_pos, iqrs)]
@@ -837,7 +792,7 @@ def plot_nrmse_and_residual_boxplots(X, y_true, y_pred, operating_positions,
     ax2.tick_params(axis='x', labelsize=7)
     ax2.grid(True, axis='y', linewidth=0.3)
 
-    # ── Panel 3: Bias ± std ───────────────────────────────────────────────────
+    # Panel 3: Bias ± std
     ax3 = axes[2]
     bar_colors = ['coral' if b >= 0 else 'steelblue' for b in biases]
     ax3.bar(x, biases, color=bar_colors, alpha=0.85, zorder=3)
@@ -940,14 +895,7 @@ def plot_emg_torque_scatter_by_position(X, y_true, operating_positions, out_path
 
 def plot_emg_torque_linearity_by_position(X, y_true, operating_positions, out_path,
                                           title=None):
-    """Linear EMG-torque R² and fit residuals per position.
-
-    Panel 1 — bar chart of R²(EMG_sum → torque) per position.
-              Low R² at a position means the relationship is intrinsically
-              nonlinear there, independent of the LSTM.
-    Panel 2 — box plot of residuals from the linear fit per position.
-              Large residuals confirm the linear model is insufficient.
-    """
+    """Per position: R² of a linear EMG-sum -> torque fit, and the box plot of its residuals."""
     positions = X[:, -1, POSITION_FEATURE_INDEX]
     pos_snapped, valid_pos = snap_to_operating_points(positions, operating_positions)
     cmap = plt.cm.coolwarm
@@ -1014,13 +962,9 @@ def plot_emg_torque_linearity_by_position(X, y_true, operating_positions, out_pa
 
 def plot_plantarflexion_residual_detail(X, y_true, y_pred, operating_positions,
                                         target_pos, out_path, title=None):
-    """Deep-dive on one position: true vs pred scatter + residual vs true torque.
-
-    Panel 1 — True vs predicted scatter with identity line and linear fit.
-              Slope < 1 means the model compresses the dynamic range.
-    Panel 2 — Residual (y_pred - y_true) vs true torque, coloured by EMG sum.
-              A curved trend confirms nonlinearity; a funnel suggests
-              heteroscedastic noise; a constant offset means systematic bias.
+    """
+    One position in detail: true vs predicted (slope < 1 = compressed range) and residual vs true torque
+    coloured by EMG sum.
     """
     positions = X[:, -1, POSITION_FEATURE_INDEX]
     pos_snapped, valid_pos = snap_to_operating_points(positions, operating_positions)
@@ -1042,7 +986,7 @@ def plot_plantarflexion_residual_detail(X, y_true, y_pred, operating_positions,
 
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
-    # ── Panel 1: True vs predicted ────────────────────────────────────────────
+    # Panel 1: True vs predicted
     ax = axes[0]
     lo = min(yt.min(), yp.min())
     hi = max(yt.max(), yp.max())
@@ -1063,7 +1007,7 @@ def plot_plantarflexion_residual_detail(X, y_true, y_pred, operating_positions,
     ax.legend(fontsize=8)
     ax.grid(True, linewidth=0.3)
 
-    # ── Panel 2: Residual vs true torque ─────────────────────────────────────
+    # Panel 2: Residual vs true torque
     ax2 = axes[1]
     sc = ax2.scatter(yt, res, c=esum, cmap='viridis', s=4, alpha=0.4,
                      edgecolors='none', vmin=0, vmax=4)
