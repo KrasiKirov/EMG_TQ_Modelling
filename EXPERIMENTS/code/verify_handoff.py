@@ -62,8 +62,8 @@ def inventory() -> dict:
     paths = set()
     for name in ARTIFACT_ROOTS:
         directory = ROOT / name
-        if not directory.is_dir():
-            raise ValueError(f'Missing artifact directory: {name}')
+        if not directory.is_dir():          # archived outside the repository in this checkout
+            continue
         for path in tracked([name]):
             if path.is_file() and path.suffix not in {'.pyc', '.md'} and not any(
                 part in {'__pycache__', '_cache', 'local'}
