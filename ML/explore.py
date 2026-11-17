@@ -1,32 +1,9 @@
 """
-explore.py
-----------
-Exploratory CLI: reads a REKLAB .flb file, exports every trial to CSV, and
-generates signal plots.
+Exploratory CLI: read a REKLAB .flb file, export every trial to CSV and plot the signals.
 
-Usage
------
-    python -m ML.explore <path/to/file.flb> [options]
+    python -m ML.explore <file.flb> [--output_dir DIR] [--subject_id IES01] [--downsample N] [--no_csv] [--no_plots]
 
-Options
--------
-    --output_dir DIR    Root output directory (default: <flb_name>_output/)
-    --subject_id ID     Subject ID; use 'IES01' for that channel order
-                        (default: default)
-    --downsample N      Downsample factor for the overlay plot (default: 10)
-    --no_csv            Skip CSV export
-    --no_plots          Skip plot generation
-
-Output structure
-----------------
-    <output_dir>/
-        csv/
-            <flb_name>_trial001.csv
-            <flb_name>_trial002.csv
-            ...
-        plots/
-            trial01_all_channels.png   — all 6 channels for Trial 1
-            all_trials_overlay.png     — all trials overlaid per channel
+Writes <output_dir>/csv/<flb_name>_trialNNN.csv and plots/ (trial01_all_channels.png, all_trials_overlay.png).
 """
 
 import os
@@ -42,8 +19,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing.dataset_builder import build_dataset, classify_trials
 
-
-# ── Plotting helpers ──────────────────────────────────────────────────────
 
 # Per-channel display names and units (two separate strings for two-line y-label)
 CHANNEL_META = {
@@ -89,19 +64,7 @@ def _ch_color(col: str, idx: int = 0) -> str:
 
 
 def plot_trial(df, trial_num: int, output_path: str) -> None:
-    """
-    Save a figure showing all signal channels for a single trial,
-    styled to match the reference image.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Trial DataFrame with a 'time' column plus one column per channel.
-    trial_num : int
-        1-based trial index (used in the figure title).
-    output_path : str
-        Full path for the saved PNG file.
-    """
+    """Save a figure of every channel of one trial (``trial_num`` is 1-based)."""
     signal_cols = [c for c in df.columns if c != 'time']
     n_ch  = len(signal_cols)
     n_smp = len(df)
@@ -152,21 +115,7 @@ def plot_trial(df, trial_num: int, output_path: str) -> None:
 
 
 def plot_emg_envelopes(df, output_path: str, title: str = '') -> None:
-    """
-    Plot raw EMG (blue) with the extracted envelope overlaid (red).
-
-    Expects the DataFrame to already have ``*_env`` columns added by
-    ``process_trials``.  One subplot per EMG channel.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Trial DataFrame with ``*_env`` columns present.
-    output_path : str
-        Full path for the saved PNG file.
-    title : str
-        Figure suptitle (e.g. "Ankle Position = -0.5 rad").
-    """
+    """Plot raw EMG (blue) with its ``*_env`` envelope (red), one subplot per channel."""
     # Identify channel names by finding *_env columns
     env_cols  = [c for c in df.columns if c.endswith('_env') and not c.endswith('_env_norm')]
     base_cols = [c[:-4] for c in env_cols]   # strip '_env'
@@ -211,8 +160,6 @@ def plot_emg_envelopes(df, output_path: str, title: str = '') -> None:
     print(f"Saved envelope plot → '{output_path}'")
 
 
-# ── Main ──────────────────────────────────────────────────────────────────
-
 def main():
     parser = argparse.ArgumentParser(
         description='Read a REKLAB .flb file, export CSVs, and generate plots.')
@@ -252,14 +199,14 @@ def main():
     csv_dir   = os.path.join(output_dir, 'csv')
     plots_dir = os.path.join(output_dir, 'plots')
 
-    # ── Read all trials ───────────────────────────────────────────────────
+    # Read all trials
     trials = read_flb(flb_path, subject_id=args.subject_id)
 
     if not trials:
         print("No trials found in the file. Exiting.")
         return
 
-    # ── Export CSVs ───────────────────────────────────────────────────────
+    # Export CSVs
     if not args.no_csv:
         os.makedirs(csv_dir, exist_ok=True)
         csv_paths = []
@@ -275,7 +222,7 @@ def main():
         print("\nTrial 1 preview (first 5 rows):")
         print(pd.read_csv(csv_paths[0]).head().to_string(index=False))
 
-    # ── Generate raw signal plots (before build_dataset adds envelope columns) ─
+    # Raw signal plots (before build_dataset adds envelope columns)
     if not args.no_plots:
         os.makedirs(plots_dir, exist_ok=True)
 
@@ -289,9 +236,10 @@ def main():
         plot_trial(trials[t_idx], trial_num=t_idx + 1, output_path=trial_path)
         print(f"Saved trial-{t_idx+1} plot     → '{trial_path}'")
 
-    # ── Build dataset (classify → envelopes → passive subtract → windows) ─
+    # Build the dataset
     (X_train, y_train, X_val, y_val, X_test, y_test,
-     emg_max, passive_entries, _operating_pos, _pos_range) = \
+     emg_max, passive_entries, _operating_pos, _pos_range,
+     _mvc_tq_test) = \
         build_dataset(trials,
                       test_trial_indices=args.test_trials,
                       retest_trial_indices=args.retest_trials)
@@ -301,7 +249,7 @@ def main():
     print(f"  EMG range     : [{X_train[:, :, :4].min():.4f},  {X_train[:, :, :4].max():.4f}]  (expect ≈ [0, 1])")
     print(f"  Torque range  : [{y_train.min():.2f},  {y_train.max():.2f}] Nm")
 
-    # ── Envelope check plot (after build_dataset adds *_env/*_rect columns) ─
+    # Envelope check plot
     if not args.no_plots:
         _, _, active_trials = classify_trials(trials)
         if active_trials:

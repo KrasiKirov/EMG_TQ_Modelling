@@ -8,9 +8,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from ML.config import (SUBJECTS, MODEL_DIR, PLOT_DIR,
                         LEARNING_RATE, BATCH_SIZE, EPOCHS)
-from ML.training import load_subject, train_model, evaluate_model
+from ML.training import load_subject, train_model, evaluate_model, compute_position_weights
 from ML.evaluation import (plot_full_trials, plot_per_position_metrics,
-                            plot_r2_summary)
+                            plot_r2_summary, plot_pred_vs_true,
+                            plot_training_curves)
 
 
 def parse_args():
@@ -32,27 +33,104 @@ def parse_args():
                    help='Min-max normalize ankle position to [0,1] (for cross-subject transfer)')
     p.add_argument('--normalize-mvc', action='store_true', default=False,
                    help='Normalize EMG and torque by per-position MVC (for cross-subject transfer)')
-    return p.parse_args()
+    p.add_argument('--no-passive', action='store_true', default=False,
+                   help='Skip passive torque subtraction — model predicts raw measured torque')
+    # Plantarflexed-angle fixes (see ML/preprocessing/active_torque.py)
+    g = p.add_argument_group('active-torque / weak-angle options')
+    g.add_argument('--legacy-passive', action='store_true',
+                   help='Old passive map (20 Nm bounds) instead of static holds only')
+    g.add_argument('--no-passive-gain', action='store_true',
+                   help='Disable P_eff = alpha*P + beta passive correction (fit on training session)')
+    g.add_argument('--label-rezero', action='store_true',
+                   help='Remove within-trial passive relaxation from the training labels '
+                        '(EMG-detected rest; test target untouched) - neutral in screening')
+    g.add_argument('--emg-clip', type=float, default=None,
+                   help='Clip normalised envelopes at this value (artefact suppression)')
+    g.add_argument('--emg-floor', choices=['train'], default=None,
+                   help='Subtract training-session EMG noise floor (needed for --anchored)')
+    g.add_argument('--emg-agc', choices=['off', 'on', 'dual', 'auto'], default='off',
+                   help="Causal adaptive gain control of EMG envelopes (session gain drift): "
+                        "'on' replaces envelopes, 'dual' adds AGC envelopes as extra features, "
+                        "'auto' = on unless the subject pushes in both directions")
+    g.add_argument('--position-feature', choices=['raw', 'setpoint'], default='raw',
+                   help="'setpoint' = trial-constant angle (removes footplate-compliance shortcut)")
+    g.add_argument('--position-balance', choices=['none', 'weights', 'standardize', 'scale'],
+                   default='none', help='Equalise the loss across operating angles')
+    g.add_argument('--anchored', action='store_true',
+                   help='Zero-anchored model: silent EMG -> zero active torque')
+    g.add_argument('--moe', action='store_true',
+                   help='Mixture-of-experts head, one expert per operating angle '
+                        '(implies --position-balance standardize unless scale)')
+    g.add_argument('--no-expert-bias', action='store_true',
+                   help='MoE experts without per-angle bias (no per-angle offset prior)')
+    g.add_argument('--recommended', action='store_true',
+                   help='Final configuration of the plantarflexed-angle investigation: '
+                        '--emg-agc auto --moe --position-balance scale --no-expert-bias '
+                        '(static passive map + passive gain are already the defaults)')
+    p.add_argument('--position-weights', action='store_true', default=False,
+                   help='Weight training loss inversely by per-position torque IQR '
+                        '(improves small-signal positions like max plantarflexion)')
+    p.add_argument('--passive-pos', nargs='+', type=float, default=None,
+                   metavar='RAD',
+                   help='Ankle positions (rad) for manual passive torque map. '
+                        'Must be paired with --passive-tq in the same order.')
+    p.add_argument('--passive-tq', nargs='+', type=float, default=None,
+                   metavar='NM',
+                   help='Passive torque values (Nm) for manual passive torque map. '
+                        'Must be paired with --passive-pos in the same order.')
+    args = p.parse_args()
+    if args.recommended:
+        args.emg_agc, args.moe = 'auto', True
+        args.position_balance, args.no_expert_bias = 'scale', True
+    return args
 
 
-def main():
+def _parse_passive_map(pos_list, tq_list):
+    """Zip two lists into [(pos, tq), ...] passive entries."""
+    if len(pos_list) != len(tq_list):
+        raise ValueError(
+            f'--passive-pos ({len(pos_list)} values) and '
+            f'--passive-tq ({len(tq_list)} values) must have the same length.')
+    return list(zip(pos_list, tq_list))
+
+
+def legacy_main():
     args = parse_args()
-    subject_key = args.subject or next(iter(SUBJECTS))
+    if args.subject:
+        subject_key = args.subject
+    elif args.flb:
+        subject_key = os.path.splitext(os.path.basename(args.flb))[0].split('_')[0]
+    else:
+        subject_key = next(iter(SUBJECTS))
 
     subj_model_dir = os.path.join(MODEL_DIR, subject_key)
     subj_plot_dir  = os.path.join(PLOT_DIR, subject_key)
     os.makedirs(subj_model_dir, exist_ok=True)
     os.makedirs(subj_plot_dir,  exist_ok=True)
 
-    # ── 1. Load & build dataset ───────────────────────────────────────────────
+    # 1. Load & build dataset
+    if args.passive_pos and args.passive_tq:
+        passive_override = _parse_passive_map(args.passive_pos, args.passive_tq)
+    else:
+        passive_override = None
+
     data = load_subject(
         subject_key,
         normalize_position=args.normalize_position,
         normalize_mvc=args.normalize_mvc,
+        subtract_passive=not args.no_passive,
         test_trial_indices=args.test_trials,
         retest_trial_indices=args.retest_trials,
         flb_path=args.flb,
         subject_id=args.subject_id,
+        passive_method='legacy' if args.legacy_passive else 'static',
+        passive_gain=not args.no_passive_gain,
+        train_label_rezero=args.label_rezero,
+        emg_clip=args.emg_clip,
+        emg_floor=args.emg_floor,
+        emg_agc_norm={'off': False, 'on': True, 'dual': 'dual', 'auto': 'auto'}[args.emg_agc],
+        position_feature=args.position_feature,
+        passive_entries_override=passive_override,
     )
 
     X_train, y_train = data['X_train'], data['y_train']
@@ -64,18 +142,43 @@ def main():
     print(f'  Test  : X={data["X_test"].shape}  y={data["y_test"].shape}')
     print(f'  Target range — min: {y_train.min():.3f} Nm  max: {y_train.max():.3f} Nm')
 
-    # ── 2. Train ──────────────────────────────────────────────────────────────
+    # 2. Train
     ckpt_path = os.path.join(subj_model_dir, 'best_lstm.keras')
+
+    sample_weight = None
+    if args.position_weights:
+        from ML.evaluation import snap_to_operating_points
+        from ML.config import POSITION_FEATURE_INDEX
+        sample_weight = compute_position_weights(
+            X_train, y_train, data['operating_positions'])
+        positions = X_train[:, -1, POSITION_FEATURE_INDEX]
+        pos_snapped, valid_pos = snap_to_operating_points(
+            positions, data['operating_positions'])
+        print(f'\n  Position weights (mean per position):')
+        for p in valid_pos:
+            w = float(sample_weight[pos_snapped == p].mean())
+            print(f'    {p:+.3f} rad  →  {w:.2f}x')
+
     model, history = train_model(
         X_train, y_train, X_val, y_val,
         label=f'LSTM ({subject_key})',
         save_path=ckpt_path,
         lr=args.lr, epochs=args.epochs, batch_size=args.batch,
         verbose=1,
+        position_balance=None if args.position_balance == 'none' else args.position_balance,
+        anchored=args.anchored,
+        moe=args.moe,
+        moe_expert_bias=not args.no_expert_bias,
+        sample_weight=sample_weight,
     )
     model.summary()
 
-    # ── 3. Evaluate on held-out retest set ────────────────────────────────────
+    # 2b. Convergence plot
+    plot_training_curves(history,
+                         os.path.join(subj_plot_dir, 'training_curves.png'),
+                         title=f'Training Convergence ({subject_key})')
+
+    # 3. Evaluate on held-out retest set
     #
     # Pooled R² uses the global mean across all positions, so it gets a boost
     # from separating positions.  Per-position R² uses the local mean at each
@@ -100,7 +203,8 @@ def main():
     print(f'TEST RESULTS')
     print(f'  Data split : held-out retest session ({n_pos} positions, '
           f'{n_test} windows, fully unseen during training)')
-    print(f'  Targets    : net active torque (Nm) = measured − passive')
+    target_desc = 'raw measured torque (Nm)' if args.no_passive else 'net active torque (Nm) = measured − passive'
+    print(f'  Targets    : {target_desc}')
     print(f'{"="*70}')
     print(f'  R²    = 1 − SS_res/SS_tot          : {r2:.4f}')
     print(f'  VAF   = (1 − var(e)/var(y)) × 100  : {overall["vaf"]:.2f}%')
@@ -109,7 +213,7 @@ def main():
     print(f'  MAE   = mean(|e|)                   : {overall["mae"]:.4f} Nm')
     print(f'{"="*70}')
 
-    # ── Per-position table ────────────────────────────────────────────────────
+    # Per-position table
     print(f'\nPer-position test results (retest trials — unseen during training):')
     print(f'  {"Position":>12}  {"R²":>7}  {"VAF (%)":>8}  {"RMSE (Nm)":>10}  {"NRMSE (%)":>10}  {"MAE (Nm)":>9}  {"N":>8}')
     print(f'  {"-"*12}  {"-"*7}  {"-"*8}  {"-"*10}  {"-"*10}  {"-"*9}  {"-"*8}')
@@ -119,7 +223,23 @@ def main():
               f'{m["nrmse"]*100:10.2f}  {m["mae"]:9.4f}  {m["n"]:8d}')
     print(f'  {"Pooled":>12}  {r2:7.4f}  {"":>8}  {"":>10}  {"":>10}  {"":>9}  {n_test:8d}')
 
-    # ── 4. Save plots ─────────────────────────────────────────────────────────
+    # 4. Predicted vs True on all splits
+    y_pred_train = model.predict(X_train, verbose=0).flatten()
+    y_pred_val   = model.predict(X_val, verbose=0).flatten()
+
+    # Note: when MVC-normalized, train/val values are shown in normalized units
+    # (no per-window MVC arrays stored for train/val to denormalize)
+    y_train_plot, y_val_plot = y_train.copy(), y_val.copy()
+
+    plot_pred_vs_true(
+        [{'X': X_train, 'y_true': y_train_plot, 'y_pred': y_pred_train, 'label': 'Train'},
+         {'X': X_val,   'y_true': y_val_plot,   'y_pred': y_pred_val,   'label': 'Validation'},
+         {'X': data['X_test'], 'y_true': y_test, 'y_pred': y_pred, 'label': 'Test (retest)'}],
+        os.path.join(subj_plot_dir, 'pred_vs_true.png'),
+        known_positions=known_pos,
+        title=f'Predicted vs True Torque ({subject_key})')
+
+    # 5. Save per-position plots
     pos_r2 = plot_per_position_metrics(
         data['X_test'], y_test, y_pred,
         os.path.join(subj_plot_dir, 'per_position_metrics.png'),
@@ -133,6 +253,11 @@ def main():
                      known_positions=known_pos)
 
     print(f'\nBest model saved → {ckpt_path}')
+
+
+def main():
+    from ML.training.benchmark import main as audited_main
+    audited_main(default_protocol='within')
 
 
 if __name__ == '__main__':

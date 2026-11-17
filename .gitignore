@@ -11,3 +11,34 @@ __pycache__/
 ML/plots/
 ML/*_output/
 .venv/
+.ipynb_checkpoints/
+.venv311/
+debug/
+
+# Local working material that stays out of the repository
+ML/data/
+ML/runs/
+ML/reports/
+ML/presentation*/
+ML/.presentation_build/
+docs/superpowers/
+*.key
+/*.docx
+/Capstone LSTM Comparison Implementation Plan.md
+
+# Participant recordings and their metadata are never committed (the repository is public); share them privately.
+/ML/subjects/
+
+# Deliberately included saved models for the teammate handoff.
+!/EXPERIMENTS/results/V0_saved_weights/EG/S1toS2/seed0.weights.h5
+!/EXPERIMENTS/run_collections/**/*.keras
+ML/research/_cache/
+EXPERIMENTS/run_collections/local/
+
+# Markdown (docs, reports, notes) stays local; only the one-line README is in the repository
+*.md
+!/README.md
+
+# Saved predictions and run collections are archived with the lab, not in git
+*.npz
+EXPERIMENTS/run_collections/

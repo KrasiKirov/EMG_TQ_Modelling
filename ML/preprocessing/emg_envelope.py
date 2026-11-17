@@ -1,30 +1,13 @@
-"""
-emg_envelope.py
----------------
-EMG envelope extraction pipeline for sEMG-to-torque modelling.
-
-Implements the standard processing pipeline:
-    1. Bandpass filter  — remove motion artefacts and high-frequency noise
-    2. Full-wave rectify — |x(t)|
-    3. Low-pass filter  — extract the linear envelope
-    4. Normalize ÷ global max  — scale to [0, 1] using the global max across active trials
-
-"""
+"""EMG linear envelope: band-pass, full-wave rectify, low-pass; optional division by the per-channel global maximum."""
 
 import numpy as np
-import pandas as pd
-from scipy.signal import butter, sosfiltfilt
+from scipy.signal import butter, sosfilt, sosfilt_zi, sosfiltfilt
 
 
-# Default parameters 
+# Default parameters
 
-# Canonical EMG muscle order used across all subjects.
-# flb_reader normalises column names (e.g. mg_emg → gm) so that every
-# subject's DataFrame uses these four names, but detect_emg_columns()
-# also enforces this ordering so the feature array is always
-#     [MG, LG, SOL, TA, position].
+# Canonical muscle order; detect_emg_columns enforces it so the features are [MG, LG, SOL, TA, position].
 CANONICAL_EMG_ORDER = ['gm', 'gl', 'sol', 'ta']
-DEFAULT_EMG_COLUMNS = CANONICAL_EMG_ORDER
 DEFAULT_FS = 1000.0        # Hz — sampling frequency used in REKLAB experiments
 DEFAULT_BP_LOW = 30.0      # Hz — bandpass lower cutoff
 DEFAULT_BP_HIGH = 300.0    # Hz — bandpass upper cutoff
@@ -37,28 +20,14 @@ _NON_EMG_NAMES = {'time', 'pos', 'tq', 'position', 'torque'}
 
 def detect_emg_columns(df):
     """
-    Auto-detect EMG column names in a trial DataFrame.
-
-    Identifies columns by checking for known EMG-related keywords
-    (e.g. 'emg', 'gm', 'sol') while excluding non-EMG columns
-    (e.g. 'time', 'pos', 'torque').
-
-    Returns columns sorted to CANONICAL_EMG_ORDER so that the feature
-    array is always [MG, LG, SOL, TA] regardless of file header order.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        A trial DataFrame as returned by ``read_flb``.
-
-    Returns
-    -------
-    list of str
-        Column names identified as EMG channels, in canonical order.
+    EMG column names of a trial DataFrame (by keyword, excluding time / position / torque), sorted to
+    CANONICAL_EMG_ORDER so the features are always [MG, LG, SOL, TA].
     """
     emg_cols = set()
     for col in df.columns:
         col_lower = col.lower()
+        if col_lower.endswith(('_env', '_env_norm', '_rect')):
+            continue
         if col_lower in _NON_EMG_NAMES:
             continue
         if any(kw in col_lower for kw in _EMG_KEYWORDS):
@@ -71,8 +40,29 @@ def detect_emg_columns(df):
     return ordered
 
 
-
 # Single-signal envelope extraction
+
+def extract_envelope_causal(signal, fs=DEFAULT_FS,
+                            bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
+                            lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
+                            settle_s=1.0, lp_order=None):
+    """
+    Forward-only version of ``extract_envelope``: each output sample uses only current and earlier input.
+
+    Lags the zero-phase envelope by about 0.23 s (4th-order 2 Hz low-pass) or 0.12 s (``lp_order=2``). The offset is
+    the mean of the first ``settle_s`` seconds and the low-pass starts from the mean rectified value of the first
+    200 ms; the pipeline drops that start (filter start-up), so no kept sample depends on later data.
+    """
+    x = np.asarray(signal, dtype=np.float64)
+    head = max(1, int(settle_s * fs))
+    x = x - np.mean(x[:head])
+    nyq = 0.5 * fs
+    sos_bp = butter(order, [bp_low / nyq, bp_high / nyq], btype='band', output='sos')
+    rectified = np.abs(sosfilt(sos_bp, x))
+    sos_lp = butter(lp_order or order, lp_cutoff / nyq, btype='low', output='sos')
+    zi = sosfilt_zi(sos_lp) * np.mean(rectified[:max(1, int(0.2 * fs))])
+    return sosfilt(sos_lp, rectified, zi=zi)[0]
+
 
 def extract_envelope(signal, fs=DEFAULT_FS,
                      bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
@@ -80,54 +70,25 @@ def extract_envelope(signal, fs=DEFAULT_FS,
                      demean=True,
                      return_intermediates=False):
     """
-    Extract the linear envelope from a single raw EMG signal.
+    Linear envelope of one raw EMG signal: demean (as MATLAB ``demean.m``), zero-phase Butterworth band-pass,
+    full-wave rectify, zero-phase Butterworth low-pass.
 
-    Steps:
-        0. Demean (remove DC offset) — matches MATLAB ``demean.m``
-        1. Bandpass filter (zero-phase Butterworth)
-        2. Full-wave rectification  |x(t)|
-        3. Lowpass filter (zero-phase Butterworth)
-
-    Parameters
-    ----------
-    signal : array-like
-        1-D array of raw EMG samples.
-    fs : float
-        Sampling frequency in Hz (default 1000).
-    bp_low : float
-        Bandpass lower cutoff in Hz (default 30).
-    bp_high : float
-        Bandpass upper cutoff in Hz (default 300).
-    lp_cutoff : float
-        Lowpass cutoff in Hz for envelope extraction (default 2).
-    order : int
-        Butterworth filter order (default 4).
-    demean : bool
-        If True, subtract mean before filtering (default True).
-        Required for wireless EMG sensors with DC offset.
-    return_intermediates : bool
-        If True, also return the bandpass-filtered+rectified signal
-        (``rectified``) alongside the envelope.
-
-    Returns
-    -------
-    envelope : np.ndarray
-        Un-normalized linear envelope (same length as input).
-    rectified : np.ndarray
-        Bandpass-filtered and rectified signal — only returned when
-        ``return_intermediates=True``.
+    Returns the un-normalised envelope (same length), plus a dict of the stages ``demeaned``, ``filtered``,
+    ``rectified`` if ``return_intermediates``.
     """
     signal = np.asarray(signal, dtype=np.float64)
 
     # Step 0: Remove DC offset (matches MATLAB demean.m: y = x - mean(x))
     if demean:
-        signal = signal - np.mean(signal)
+        demeaned = signal - np.mean(signal)
+    else:
+        demeaned = signal
 
     nyq = 0.5 * fs
 
     # Step 1: Bandpass filter
     sos_bp = butter(order, [bp_low / nyq, bp_high / nyq], btype='band', output='sos')
-    filtered = sosfiltfilt(sos_bp, signal)
+    filtered = sosfiltfilt(sos_bp, demeaned)
 
     # Step 2: Full-wave rectification
     rectified = np.abs(filtered)
@@ -140,7 +101,11 @@ def extract_envelope(signal, fs=DEFAULT_FS,
     envelope = np.clip(envelope, 0, None)
 
     if return_intermediates:
-        return envelope, rectified
+        return envelope, {
+            'demeaned': demeaned,
+            'filtered': filtered,
+            'rectified': rectified,
+        }
     return envelope
 
 
@@ -152,57 +117,25 @@ def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
                    lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
                    demean=True):
     """
-    Process all trials for one subject: extract envelopes and normalize.
+    Add ``{col}_env`` and ``{col}_env_norm`` (÷ per-channel max) columns to every trial.
 
-    For each EMG column in each trial DataFrame, this function:
-        1. Extracts the linear envelope via ``extract_envelope``
-        2. Determines the normalization max per channel from the global max
-           across the provided trials
-        3. Normalizes each envelope to [0, 1]
-
-    New columns are added to each DataFrame:
-        - ``{col}_env``      — un-normalized envelope
-        - ``{col}_env_norm`` — normalized envelope [0, 1]
-
-    Parameters
-    ----------
-    trials : list of pd.DataFrame
-        Trial DataFrames as returned by ``read_flb``.  Each must contain the
-        columns listed in *emg_columns*.
-    emg_columns : list of str, optional
-        EMG column names to process (default: auto-detected).
-    max_values : dict, optional
-        Pre-computed per-channel max values.  If provided, these are used
-        for normalization instead of the global max computed across *trials*.
-    fs : float
-        Sampling frequency in Hz.
-    bp_low, bp_high : float
-        Bandpass cutoffs in Hz.
-    lp_cutoff : float
-        Lowpass cutoff in Hz for envelope extraction.
-    order : int
-        Butterworth filter order.
-
-    Returns
-    -------
-    trials : list of pd.DataFrame
-        Same DataFrames with ``*_env`` and ``*_env_norm`` columns added.
-    max_values : dict
-        ``{column_name: max_used}`` — the global max values used for
-        normalization.
+    The maximum is taken over ``trials`` unless ``max_values`` is given. Returns (trials, {column: max used}).
     """
+    trials = [df.copy(deep=True) for df in trials]
+    if not trials:
+        raise ValueError('At least one trial is required.')
     if emg_columns is None:
         emg_columns = detect_emg_columns(trials[0])
 
     # Step 1: Extract envelopes
     for df in trials:
         for col in emg_columns:
-            env, rect = extract_envelope(df[col].values, fs=fs,
+            env, stages = extract_envelope(df[col].values, fs=fs,
                                          bp_low=bp_low, bp_high=bp_high,
                                          lp_cutoff=lp_cutoff, order=order,
                                          demean=demean,
                                          return_intermediates=True)
-            df[f'{col}_rect'] = rect
+            df[f'{col}_rect'] = stages['rectified']
             df[f'{col}_env'] = env
 
     # Step 2: Determine max per channel
@@ -225,5 +158,4 @@ def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
         print(f"  {col} max used: {max_values[col]:.6f}")
 
     return trials, max_values
-
 

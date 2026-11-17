@@ -74,9 +74,9 @@ def train_and_evaluate(train_data, test_data, label):
     }
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# Main
 
-def main():
+def legacy_main():
     os.makedirs(MODEL_DIR, exist_ok=True)
     os.makedirs(PLOT_DIR,  exist_ok=True)
 
@@ -117,7 +117,7 @@ def main():
         o = r['overall']
         print(f'  {r["label"]:<10}  {o["r2"]:7.4f}  {o["rmse"]:10.4f}  {o["mae"]:9.4f}')
 
-    # ── Per-scenario subfolders ────────────────────────────────────────────────
+    # Per-scenario subfolders
     for res in results:
         label    = res['label']
         folder   = label.replace('→', '_')
@@ -147,11 +147,16 @@ def main():
             os.path.join(scen_dir, 'r2_vs_position.png'),
             title=f'{label} — R\u00b2 vs Position (Retest Session)')
 
-    # ── Cross-subject comparison overlay ──────────────────────────────────────
+    # Cross-subject comparison overlay
     plot_r2_overlay(results,
                     os.path.join(PLOT_DIR, 'cross_subject_r2_overlay.png'))
 
     print(f'\nDone. All plots saved to {PLOT_DIR}/')
+
+
+def main():
+    from ML.training.benchmark import main as audited_main
+    audited_main(default_protocol='loso')
 
 
 if __name__ == '__main__':
