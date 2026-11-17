@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / 'EXPERIMENTS/handoff_manifest.json'
 ARTIFACT_ROOTS = (
-    'ML/subjects', 'ML/archive/experiments/results', 'ML/research/results',
+    'ML/archive/experiments/results', 'ML/research/results',
     'EXPERIMENTS/results', 'EXPERIMENTS/run_collections',
     'EXPERIMENTS/baseline/retest_map_code',
 )
@@ -113,7 +113,7 @@ def main() -> int:
     counts = Counter(Path(item['path']).suffix for item in data['files'])
     mode = 'paths and sizes' if args.quick else 'paths, sizes and SHA-256'
     print(f'PASS: {len(data["files"])} files checked ({mode})')
-    print(f'Prediction archives: {counts[".npz"]}; recordings: {counts[".flb"]}; '
+    print(f'Prediction archives: {counts[".npz"]}; '
           f'saved models: {counts[".keras"] + counts[".h5"]}')
     return 0
 

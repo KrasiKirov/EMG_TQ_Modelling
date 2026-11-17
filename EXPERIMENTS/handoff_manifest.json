@@ -43753,55 +43753,7 @@
       "normalization": "none",
       "bytes": 663393,
       "sha256": "94627b176f105702a8fb9c1d898378f6d1284948b65c8889028f2960fa1cb7bb"
-    },
-    {
-      "path": "ML/subjects/CH_151224.flb",
-      "normalization": "none",
-      "bytes": 75712730,
-      "sha256": "a4dee240500e68bffd3b928198d518973393e663cc1f2cf18192b765b2af7fa8"
-    },
-    {
-      "path": "ML/subjects/EG_121224.flb",
-      "normalization": "none",
-      "bytes": 73544864,
-      "sha256": "5d8c241c8c9a24a3ab55d333e88e85b3d9d0dd22cdaf6c54a483269fcfaa9d11"
-    },
-    {
-      "path": "ML/subjects/experiment_metadata_IES.docx",
-      "normalization": "none",
-      "bytes": 33270,
-      "sha256": "226c5cc7f83258c96a86a733f1df75d3a32294c837945573b8d1286320d47cf0"
-    },
-    {
-      "path": "ML/subjects/HM_110425.flb",
-      "normalization": "none",
-      "bytes": 73544976,
-      "sha256": "53871d4ac397c00b8768b7a21a9328ce93d81c95237a670a76648b5256afa898"
-    },
-    {
-      "path": "ML/subjects/IES_081024.flb",
-      "normalization": "none",
-      "bytes": 41828274,
-      "sha256": "b9873aa9106b8c0423eb05bcdecb8bf119f9e9c2122861c301c1310eace806f8"
-    },
-    {
-      "path": "ML/subjects/JM_140325.flb",
-      "normalization": "none",
-      "bytes": 73544970,
-      "sha256": "5369714ee649b3cbcad1968712f48d3fd49f85df7d9f66366359ddad1a7c0cfb"
-    },
-    {
-      "path": "ML/subjects/reklab_trial_worksheet_YES_20241128.pdf",
-      "normalization": "none",
-      "bytes": 296051,
-      "sha256": "9c905c91c83d69e5eb4994fb2975edcd59fb7e1ef60fe94137165e66e54ec851"
-    },
-    {
-      "path": "ML/subjects/YES_281124.flb",
-      "normalization": "none",
-      "bytes": 75707375,
-      "sha256": "21c48d08cd902ff649091f0a4679b6ac18e702b0ce6df27c8685ee19700ca4a7"
     }
   ],
-  "total_bytes": 1417929973
+  "total_bytes": 1003717463
 }

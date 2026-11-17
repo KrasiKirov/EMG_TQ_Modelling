@@ -87,7 +87,7 @@ Start from this branch's version of each file and add `main`'s changes on top:
 1. **`ML/config.py`.**
    - Keep this branch's `TRIAL_OVERRIDES`, `PASSIVE_TORQUE_OVERRIDES` and the CH entry.
    - Add `main`'s `EMG_DATA_DIR` environment override, `LSTM_UNITS` and `CAPACITY_SWEEP_UNITS`.
-   - Keep `DATA_DIR`'s default as `ML/subjects`, where the recordings are tracked; `main` defaults to `ML/data`.
+   - Keep `DATA_DIR`'s default as `ML/subjects`, where the recordings go (kept out of git); `main` defaults to `ML/data`.
    - **Decision needed:** this branch gives HM and IES the `'IES01'` channel profile; `main` gives them `'default'`. The experiment pipeline produces identical data either way (see the table above), but the older `dataset_builder` path uses the profile. Ask whoever recorded HM which channel order is right.
 2. **`ML/models/lstm.py`.** Combine the two signatures into `build_model(n_steps=20, n_features=5, n_units=8, dropout=0.3, anchored=False, moe_knots=None, moe_expert_bias=True)`. Keep `N_EMG` and this branch's MoE/anchored layers, and use `n_units`/`dropout` where `main` does.
 3. **`ML/preprocessing/dataset_builder.py`.**

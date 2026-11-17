@@ -26,14 +26,10 @@ docs/superpowers/
 /*.docx
 /Capstone LSTM Comparison Implementation Plan.md
 
-# Deliberately included inputs and saved models for the teammate handoff.
-# Other recordings/checkpoints remain ignored until explicitly selected.
-!/ML/subjects/CH_151224.flb
-!/ML/subjects/EG_121224.flb
-!/ML/subjects/HM_110425.flb
-!/ML/subjects/IES_081024.flb
-!/ML/subjects/JM_140325.flb
-!/ML/subjects/YES_281124.flb
+# Participant recordings and their metadata are never committed (the repository is public); share them privately.
+/ML/subjects/
+
+# Deliberately included saved models for the teammate handoff.
 !/EXPERIMENTS/results/V0_saved_weights/EG/S1toS2/seed0.weights.h5
 !/EXPERIMENTS/run_collections/**/*.keras
 ML/research/_cache/

@@ -6,9 +6,12 @@ shipped with the repository and how to verify them.
 
 ## What is included
 
+The six FLB recordings, the YES worksheet PDF and the IES metadata DOCX are not in the repository: they are
+participant data and the repository is public. Get them privately from the lab and put them in `ML/subjects/`
+(ignored by git), or point `EMG_DATA_DIR` at their folder.
+
 | Location | Contents |
 | --- | --- |
-| `ML/subjects/` | The six FLB recordings, the YES worksheet PDF and the IES metadata DOCX |
 | `EXPERIMENTS/configs/` | Experiment specs (controlled, normalization, A0 and the calibration variants) |
 | `EXPERIMENTS/results/` | Saved predictions and metadata: normalization, A0, the October controlled experiments, and the partial S0/V0 runs |
 | `ML/archive/experiments/results/` | Earlier model-family predictions and their metadata |

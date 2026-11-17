@@ -2,7 +2,8 @@
 
 ## Subjects and files
 
-Six people, one `.flb` file each in `ML/subjects/`. Each file holds both sessions. The registry is `SUBJECTS` in
+Six people, one `.flb` file each in `ML/subjects/`. Each file holds both sessions. The recordings and their metadata
+files are not in git (participant data; the repository is public). Get them privately from the lab and put them here (the folder is ignored by git). The registry is `SUBJECTS` in
 `ML/config.py`; set `EMG_DATA_DIR` to read the files from somewhere else.
 
 | Subject | File | Channel profile | Notes |

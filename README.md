@@ -22,7 +22,7 @@ torque (each session's own passive torque from its relaxed holds subtracted), EM
 | `EXPERIMENTS/analysis/` | One-off analysis scripts behind the reports | each script's docstring |
 | `ML/research/` | Data loading, passive-torque models, EMG scaling, windows, training used by the experiments | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
 | `ML/preprocessing/`, `ML/models/`, `ML/training/`, `ML/evaluation/` | Shared reading, filtering, model and training code | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
-| `ML/subjects/` | The six `.flb` recordings and their metadata | [`docs/DATA.md`](docs/DATA.md) |
+| `ML/subjects/` | The six `.flb` recordings and their metadata: not in git (participant data; the repository is public). Get them privately from the lab and put them here | [`docs/DATA.md`](docs/DATA.md) |
 | `ML/preprocessing/pipeline.py`, `ML/training/benchmark.py`, `ML/inference.py` | The audited pipeline from `main`: trial manifests, run packages, inference | [`docs/PIPELINE_COMPARISON.md`](docs/PIPELINE_COMPARISON.md) |
 | `ML/archive/` | The first experiment harness, kept for traceability | its README |
 | `functions/`, `exp_gui/`, `exp_model/`, `ES_sandbox/` | MATLAB: system identification, experiment GUI, real-time Simulink model | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
