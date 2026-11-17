@@ -57,7 +57,7 @@ def inventory() -> dict:
         if not directory.is_dir():
             raise ValueError(f'Missing artifact directory: {name}')
         for path in directory.rglob('*'):
-            if path.is_file() and path.suffix != '.pyc' and not any(
+            if path.is_file() and path.suffix not in {'.pyc', '.md'} and not any(
                 part in {'__pycache__', '_cache', 'local'}
                 for part in path.relative_to(directory).parts
             ):
@@ -69,7 +69,7 @@ def inventory() -> dict:
         files.append(dict(path=path.relative_to(ROOT).as_posix(),
                           normalization=normalization, bytes=size(path, normalization),
                           sha256=digest(path, normalization)))
-    return dict(schema_version=1, description='Teammate artifact transfer snapshot; see EXPERIMENTS/HANDOFF.md',
+    return dict(schema_version=1, description='Teammate artifact transfer snapshot',
                 files=files, total_bytes=sum(item['bytes'] for item in files))
 
 

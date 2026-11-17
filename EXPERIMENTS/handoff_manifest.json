@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Teammate artifact transfer snapshot; see EXPERIMENTS/HANDOFF.md",
+  "description": "Teammate artifact transfer snapshot",
   "files": [
     {
       "path": "EXPERIMENTS/baseline/retest_map_code/ML/__init__.py",
@@ -247,12 +247,6 @@
       "normalization": "lf",
       "bytes": 4181,
       "sha256": "9f427fe042e8463aba81f4c1d7d67059bbc0a91788070d2bb46c39b7281fb909"
-    },
-    {
-      "path": "EXPERIMENTS/baseline/retest_map_code/README.md",
-      "normalization": "lf",
-      "bytes": 1295,
-      "sha256": "937bc54573bf138b13e3950e0bb20181ce9d4fcc5ecbe0893fc61eeff8d6285c"
     },
     {
       "path": "EXPERIMENTS/dashboard_react/dist/index.html",
@@ -1699,12 +1693,6 @@
       "normalization": "lf",
       "bytes": 115277,
       "sha256": "21e49ffb9cb5cef5e957489fa7c1877bf1fe58aa146a06d1c9edeaf58ca41e04"
-    },
-    {
-      "path": "EXPERIMENTS/results/final_summary_tables.md",
-      "normalization": "lf",
-      "bytes": 2648,
-      "sha256": "6d1ebdd7a5de4774ad0350c7f0f4cd37985d3b0e06c5b976bdd1691a13d46ab9"
     },
     {
       "path": "EXPERIMENTS/results/learning_curves/D01_cleanpassive+autogain+equalweight/CH/S1toS2/seed0.json",
@@ -5349,12 +5337,6 @@
       "sha256": "5732d0635bf440296c4f10d1ba80d62802d640f8796ac6662aa9991ba2ca511c"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "c6cd295c9a6e7f9d6c905ab882a9ed2f5f8400f6e4a94362080a034efb419029"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -5695,12 +5677,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "313dfc662f2af020a74515cfcf73412ea29d2ce742411a77f36384ab89b5d5ab"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "84b258807df7efcfc090575b0d6f7105c97f4e29cb5120ee8fde7aeb74e117ac"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed1/reviewed_overrides.json",
@@ -6045,12 +6021,6 @@
       "sha256": "73301fb459cb083e93c6c0f4911ea493eb35b121ec7ccb216d5145a432c468e1"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "4bf6759f791196d735e67459224989c06be688dbb81439225b19bd5fdc4072b6"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -6391,12 +6361,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "58f3128174ca3a6ad15682bb7501cc030848b5ecaf66d5cd574ca45e6cce0c60"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed3/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "14481fcf750ddc55a70c76764ed58b3d8d1506d7648201259a2f58c32f88f153"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed3/reviewed_overrides.json",
@@ -6741,12 +6705,6 @@
       "sha256": "e27bce8f85c38763bc3df1d7d3c4c3832736e844f6e474691003b8fa9805eaed"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed4/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "2a5edf7d53f29ec4f5b7e54c4707310f26df4662262b9b8f0571b037961555f7"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed4/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -7087,12 +7045,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "dd2111d2a43614d4a174c7d77ca2e410489c03394822a83bbca4a7568dfdc053"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed5/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "e9fa0277e6748075d8049c480855ee3cb8439931dfc0997b5153656aead2cc61"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed5/reviewed_overrides.json",
@@ -7437,12 +7389,6 @@
       "sha256": "489797585821fc0eb92ed49aa9e669768305c2b47d4dbebdbbabe864791bcbc5"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed6/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "6f1599167429c8c0e608088c3e9177c98658b3ce84b3f61a87a5674604a2bf5e"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed6/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -7783,12 +7729,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "efd1e3440ccbb69884ac63b652a2ca7375240fd6086730a29038f4d839ad6060"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed7/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "eaaffcc1f815ae8dddd3792510d87c5466a259cf0342a65a4cb3b7fa319e2451"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed7/reviewed_overrides.json",
@@ -8133,12 +8073,6 @@
       "sha256": "cbba911d449867143fd858bf33b1913cd5fd5ec28e98cd8f43b6eb8f8f236b41"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed8/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "6cc804b55c0a4f8767ea248675d85e7001b686051f1e31eede8ade7b99056b87"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed8/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -8479,12 +8413,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "9320cf8b9167b0741c9ea9ffcd8c05c8a80325f24ecac6d105915190e6d26431"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed9/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "72c4d290499a9647ed38152ecf28052fc766914d23647f4b8d4e18bc53d8f0ea"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/CH_seed9/reviewed_overrides.json",
@@ -8829,12 +8757,6 @@
       "sha256": "1bb0e89318c051022ddd323ae2cd15668e35276202e0e65201ab8aefd6a7a058"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "2d5fd3a33e9cca0387f65125f9baecf913ac8300eaea32be128a82b9e877dadf"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -9175,12 +9097,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "1d33d2205646ee2c8c751111c976165f0f7ebcc3feaf32a677b6880e46cdd969"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "0865e4970f5484d014259030db751a3e9fec21b2e52f442a2eaa90110b1f230a"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed1/reviewed_overrides.json",
@@ -9525,12 +9441,6 @@
       "sha256": "5ae2478fc7e623830e2c25889bebe6aaef8fec66682da1ee6be38a2f1285100d"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "7a70e9812cbeb9b71a9f4540781f4d76dcf96144606e8f59550d4c885937f33f"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -9871,12 +9781,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "b9b386745027c50710edfc4b1013fbd580896e4737b2603e7edd2e0ba94e284b"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed3/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "aa518634cef24f7c2328dafa84c0c3795db6c54ff397b33ca516f5e057eb4605"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed3/reviewed_overrides.json",
@@ -10221,12 +10125,6 @@
       "sha256": "b884ec82b9a94c8752a39ac757dd0ae252467db2840264257a33b26ddf64cb6f"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed4/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "42cf4dc5038871ef2c1e21bee17fad52b6e0f895d1d5bdd1c5f6b379f3f64c5c"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed4/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -10567,12 +10465,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "655b06568c5073d7491ea7b49e5360d523e4465119c87a46b96305520a91616e"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed5/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "6c36b54d649711e5da7d80ccd84f963f27774b7450280d844a64dc105f58f9eb"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed5/reviewed_overrides.json",
@@ -10917,12 +10809,6 @@
       "sha256": "46f488ce67e2678c733fe67a569d34f1f61a738d54b8b92597cee4a33d12fd11"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed6/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "15848a39899276134b153796033baa1d1bb72c27b49806ad96d902ce429d1045"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed6/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -11263,12 +11149,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "c68b8b206b5a75f338d88f5eaa608f7d46e62e1a0bb999c7cad6d3cef66dd53d"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed7/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "3a5650a0c134f9623c7be0528d42664922b60899318795e0f74e8b9730a67d5e"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed7/reviewed_overrides.json",
@@ -11613,12 +11493,6 @@
       "sha256": "f78f9fc2507b80247f2dfd1b3b865ab7e7489cb9ed2a46028f0d667124dbda32"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed8/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "ef4fccfd552687a92f0e2f0469e7e05361a460b67586d5216f36ef54dd7335e6"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed8/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -11959,12 +11833,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "707a10db990334400061c92bb82294ea158de797d47d64c45cf733b149bb88fd"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed9/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "2b5770b7040cb37f81ae39606d25e5e37fc2442fc1e29543da60584a06c65931"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/EG_seed9/reviewed_overrides.json",
@@ -12309,12 +12177,6 @@
       "sha256": "da30db98777158a4ec3bf44288e8de99c990791a2efa0000234d121c07c06d11"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "7fb6da5bf456ddeaa95c981f9c61b984479bd821a66631076170dc71db078577"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -12655,12 +12517,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "34d08837051b2e3e01e2a63d8c48c06c0dcd1047818aa14ae70bff43c260ad96"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "9dd9429876c3bcb763bc5a833b9c98ecf8b84615f9e2b1496b2048aa8e2a3706"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed1/reviewed_overrides.json",
@@ -13005,12 +12861,6 @@
       "sha256": "e8eb52f57f46e755be996d6e64305a06021f521bc550a89e047a056b810531c0"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "ffc2bd65aa27ace2278c62a3b3ae960fbd60d367162a7efa7ea56d46b11623a6"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -13351,12 +13201,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "2e944887bf17809c691d6a672f66b8b92c983817831b413a094dea7eaa29de7f"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed3/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "c6481320d66510e2a5367a3f29fcbf2336c27cfb53d849bb7f152cebdc75e2a5"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed3/reviewed_overrides.json",
@@ -13701,12 +13545,6 @@
       "sha256": "07c97862ee9c1ae985ecf9e2cecd80d004df41eff2e5292ff5c5aa7f475bda34"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed4/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "b271810e9cbd16cc1fa3eb630bea4cc1d3ab36dd9bab09e25c52a3b170d93f6b"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed4/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -14047,12 +13885,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "a57909dea8b638fbe6519e129d4847fa9f9bf34f7d2df9a6d046982aaeb88bb2"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed5/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "75d123e0b475456d0e7f30016813d37dc38c3d44d2f7677661dff7b1c350f720"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed5/reviewed_overrides.json",
@@ -14397,12 +14229,6 @@
       "sha256": "e2072d832dc62e040e9f5e4d3af9a9fc293d27ff38ecbeb02a86ddfa7eb85c1c"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed6/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "e7b7abf0fbd94d6451f53623519f8dc048f439b7f5dd130a3d4fdce2ee54a7aa"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed6/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -14743,12 +14569,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "8d76017706bc8a1555e84aff5cb109a20ae2747590784eb74e3e94fbb3097c65"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed7/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "1f753b3f56d835576460792b987aaf2b4479d9cddd0b4e932459fef4f95cef8f"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed7/reviewed_overrides.json",
@@ -15093,12 +14913,6 @@
       "sha256": "230a6a5f2eee6ffad7d8abf055f0bfb7d72c1dc9bcf27056480b51e30707f899"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed8/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "dcc84043103bdee76d9502c58ef53f3b60b3be18fc998d6cc52f64201c7e5148"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed8/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -15439,12 +15253,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "304869227a24d318a080929d404fd9c14f5f0c55822da8a7c83a85d7f9cf6036"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed9/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "5d892deb90ec99eee69a9014dd4ab8932befbf4aefc67fff983057286b73914e"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/HM_seed9/reviewed_overrides.json",
@@ -15789,12 +15597,6 @@
       "sha256": "4e4647ead7cca496660b23dd638edb0260b0f57adb0978681e553414f9b640e6"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "2940f361fdc710a3f41c4e56b55462dbee66b7c109dc45924a4daa4781ca9389"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -16135,12 +15937,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "0e81ecd859a8a404fdeb42241f41f9fed812da922c3a3597e01a2bceaafa6faf"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "13da18710325f8f843332981a83818a32d69869b37a3b5426fe058bac725d021"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed1/reviewed_overrides.json",
@@ -16485,12 +16281,6 @@
       "sha256": "a5d080c257de92c17139fd79c159406d9cdc299560a4b015d864c237e32a2681"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "4b23f0128ae364b6ac977c24305a028961e86240674ef794998075dabbceac56"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -16831,12 +16621,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "ec66d912aba87f6e125d1c10d6ab18c8bb655b0dd3c0e56c0bdcdfb18c579d9c"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed3/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "a1e3217869427061e79e28e5eaa4ae07946b21558a5258050d46a76c60c76ba3"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed3/reviewed_overrides.json",
@@ -17181,12 +16965,6 @@
       "sha256": "6a3947c0b6be48d0ddf97c02436e1ff769de6bf16715629abce52e56be119dc9"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed4/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "a48e4dbcc1050185cadd294140999e13cc95c49204d541a46d08ebb2e2964591"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed4/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -17527,12 +17305,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "bfd706e107696ab828fcbcdeaffb61b2ac399c5697389b357c887685b9f4c871"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed5/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "1bec582b752984b4c02b606554724a855661ad90151b619b2af0b0f88ea0df8a"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed5/reviewed_overrides.json",
@@ -17877,12 +17649,6 @@
       "sha256": "8500d102e48bb638e71851eeb9f1515e5d46f3a46b80804754e15cd34fb7eae8"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed6/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "be4fa5791339191c4c870ee274b31ac2ae6cfb29fe54f7101c88d5d50f0dd693"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed6/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -18223,12 +17989,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "eb6a71bfa9e6f948f33799f6093031ee751296c491360f9c46f4b6816f2462cd"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed7/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "3a93ccdabf9e01fb81e110230f24e9846c3a339b96e5d4a45aa019a1075d0ee0"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed7/reviewed_overrides.json",
@@ -18573,12 +18333,6 @@
       "sha256": "e5bc7397967a741dfcfda15e40d2c9555011b2abecec04104aad189c4e864f77"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed8/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "9a466fd3562754a74ab49e272f5b7ab78cd42c58e61f4f96d396e7f2c2c3da9f"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed8/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -18919,12 +18673,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "6e4889a6d9a99dde28318b5e515d52bf3fdd83fc6d5008ae330728ddbfd4772c"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed9/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "1aadb66ac8c51053ed86ea915fa6829d373c7912ea691fbf5ffd55f13c9b76bf"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/IES_seed9/reviewed_overrides.json",
@@ -19269,12 +19017,6 @@
       "sha256": "da86acfffb995f115f77657f67d34da8bc0ec27d4089ee731a77a66c23072e0e"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "39a64ae628d909cb2d514150fa257083f9f0abbef9e6ccecd48a9d6aa17e4adb"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -19615,12 +19357,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "836974fa1c2c902e4895666f63391c3f22eab2341528e928b894d2ad29e7847f"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "7c97f5ea2313cbc21af794d9d1d7546a40357681b0546e710dada1152f52121e"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed1/reviewed_overrides.json",
@@ -19965,12 +19701,6 @@
       "sha256": "5ffcd04cd066c64c3a1f30af5436599dcbdd3c77e43c68b73475af855ca96730"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "e8c7ad491d5328f4408d80e284fea3b1fdf201e8e4812c1527749e9f2104da38"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -20311,12 +20041,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "f4dc7ff24ce981f2f8a3d0721d41aa10de9223852cf17f6b96cdf13a840d89df"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed3/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "3c169fbbdcaa8240aa01134326eea25ed46d6f2a3ef824e4cb44813a6ed153c3"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed3/reviewed_overrides.json",
@@ -20661,12 +20385,6 @@
       "sha256": "21e2b966eee8daf519a13f5abec3bef05a6bff082cd294560a615601f9a74c38"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed4/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "5cf0784f3abd55706ca1377a04510f92c20f1a9c0f63115fe8c738e05932e6a0"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed4/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -21007,12 +20725,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "94a8e928c44d890138c867ef9a38504e0488250aa2da9c9372613fd6f425fb1b"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed5/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "266424403ac42a3bb0782998dcab827176657b292a26344fc094c0824c30d306"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed5/reviewed_overrides.json",
@@ -21357,12 +21069,6 @@
       "sha256": "ac3cf9a459ed9c947ae4928d06ad52be442de0e233eae2208251a60ff666e695"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed6/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "29d5c4a431e0d1a1c443fbb52ddb16cb4775acd5c68ffad1ce38b961d6a8cbd6"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed6/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -21703,12 +21409,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "48957d1da7dd74806d9dfd7f7b96c80a603acf7f96db07a876beedde831617ef"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed7/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "51cb9b91ad807af422e3db2546b2f46ff9ec9b960944d307f54004f6bde5e07e"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed7/reviewed_overrides.json",
@@ -22053,12 +21753,6 @@
       "sha256": "8e53c4eda9453d8f270a53e8a1f5b1a7e2ad98fcb8acdfe3312fad0eb4ab2feb"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed8/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "466cbf3d3a9ce330644549bcc41bc6973b9ba549515068c185079836f230c56f"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed8/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -22399,12 +22093,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "df5c9b5245547155fcf78e399f3f3aa97480a37415d7970b977587cafb167dd6"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed9/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "d72f1c9f1762c6e71ae15fd8c997005e6e3f159a37475987547f206da8cd2382"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/JM_seed9/reviewed_overrides.json",
@@ -23049,12 +22737,6 @@
       "sha256": "1cdbacaae01fea62e9317f20261cd5e42b80651365aa34bcc4351a75141f2b17"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "0564a43bc1955c77a64760f47c936b8b622fcdb9d6e5bf9603b38b5bbe8965a5"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -23395,12 +23077,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "24a08934bb3c05f23ad09a92e19b998588b7daba9c9b3c20615ac5aa8e840d63"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "443beaab1ea1aacc1d79bf4aed6fafb8ea10b01595cfdc1f20e21c3168c9be9c"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed1/reviewed_overrides.json",
@@ -23745,12 +23421,6 @@
       "sha256": "602732f40db915de21a57de2f7597c1127793830391fcf798bc2372bf00dbd1e"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "54fbbbd9522cb8c6f71ca6abc3fa43cdd5ebacfdafc467c545b52136e81bf3fd"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -24091,12 +23761,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "17c917b65c10db6c19e9e9c12ece8011206e353a0b463ffb659c08ec005e2b44"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed3/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "c520e3f059b51de935a1c3eca5d8f67edceff11ef7b389fc7b86ecae16410d05"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed3/reviewed_overrides.json",
@@ -24441,12 +24105,6 @@
       "sha256": "5b881ff6c7c8a12feb01458f5129bd1a1b9f509f7a414b060806fbbe29667b6d"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed4/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "973fe80f0c2f7dcee1f65be3487e45dae188347ad1178c07fd4609d24e55f573"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed4/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -24787,12 +24445,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "8b4c4f75da7f524694b3d383ca633591b6f2c929dbb60f26ee0e556d85ae9956"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed5/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "e590cdddc2b7627577df7b54d5e6fb7ad63139297457f51bf8c3b7b0ce1abdc4"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed5/reviewed_overrides.json",
@@ -25137,12 +24789,6 @@
       "sha256": "2eea27c4c651b01526b741291010eac772660eda9965092401bfa76f7dcbbbbf"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed6/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "5afb5bbfc0e23098886c8b8e228fcfb68199f44279a2310fdc8039d9c68fd745"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed6/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -25483,12 +25129,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "3e0f26b56631f9b7eb290edc25e2f25af7b8e117ee114682d7f7972d547fccf4"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed7/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "fd8d308e64b1aa6ba7d8efb32d293b46576827e691f1a5a638a0b4010dcab018"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed7/reviewed_overrides.json",
@@ -25833,12 +25473,6 @@
       "sha256": "f2c768ca56b6904f87195c573b9316a87f70dff8c58f32d5e06c46b5764addef"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed8/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "44cf51fd1d43f07f6dd24fd565d04d6d8b6dc4128a77a5cfd1fcc9983cf8aa24"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed8/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -26179,12 +25813,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "c54c284554116e3ddd390a9d7b8afb0d2a5fc02fc910b6918a0c0f3aef428d51"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed9/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "9b95e43592741de2b0f1d2eb9a35be0ff306fa8ab2b34bca80db7b2d1d276c5d"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map/YES_seed9/reviewed_overrides.json",
@@ -26589,12 +26217,6 @@
       "sha256": "c1cd868c2c845c33f020b8fabf1c8cbf3981e175bfd4e6e97c7dcfce174ca67d"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/CH_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "40843ccbacf2f701df224c2d28007ec73105282c2366d1a6a79b8f5480639742"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/CH_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -26935,12 +26557,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "fcbb24277967075f06d0bb6de99a0f1ebd77e8d0ea19ec697664fc52107e3ad2"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/CH_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "c2afbb4a84faf08fb3fc33076d8f1a99ebd09a27ce4818c8c0dff89636940b27"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/CH_seed1/reviewed_overrides.json",
@@ -27285,12 +26901,6 @@
       "sha256": "8f3653f4effe8e1fab513e18e36d0eb35b054dcf7817b9b116ddef3e1c20a25a"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/CH_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "53f7d0fb86b129c5c322625821fe6c5dc08e159243bf0a2c211ca25df3fb7528"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/CH_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -27631,12 +27241,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "6f048a4faa43744eeafaf103fccb873d163b173c4acfed7e57ef6c0e93a2d537"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/EG_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "5c8262ea783dfa6fc6f0cc0c3b84ff46fcce0db1b3b4e8192e7c9d7afcb74a9f"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/EG_seed0/reviewed_overrides.json",
@@ -27981,12 +27585,6 @@
       "sha256": "96eecec497b38acc5dc64310a09d54de8b07bf90a4ab7c51cdf8dc666c9acce3"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/EG_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "cf0fc97b7caf6058f5cc14cf80a97ff907bf7a17be6ac4145eb8f1e7c75d8987"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/EG_seed1/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -28327,12 +27925,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "f5167383f4fc0dfc263dd09184defa977982b29ea38c248681cdcd1ec10d124e"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/EG_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "9cc57eba7567ac57d447c891a11108a672ddad7987b4ce84d27f8add326cefdf"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/EG_seed2/reviewed_overrides.json",
@@ -28677,12 +28269,6 @@
       "sha256": "aa4688126c43c71de46273893c003a5c24a9e3b2076465e0098a80b52c98b5c1"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/HM_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "ca67d05411a7e23647ee67cb4fb505ad2dce670810c63408f9af6c4cdbd15ccf"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/HM_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -29023,12 +28609,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "f3a8c2760479fe3fb3c6138ab563bbaf114ad717b0e67ee4f2db67021784c6de"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/HM_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "42a9793956b69a6775248683145ca5b4203a7728a93507b8ca66c3156110beb3"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/HM_seed1/reviewed_overrides.json",
@@ -29373,12 +28953,6 @@
       "sha256": "362bf30372d459cb25b8c198e19cd74ddee1628ae95565f123674417231aa773"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/HM_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "cf04be09cc37a1afc239a0efd4487cc3a753274ca01eda3dd64c601d2fc20061"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/HM_seed2/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -29719,12 +29293,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "528d2b57ac1ed1cfa9e683a63500e23114069a92310026a3e8c7dbd7e68b42a4"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/IES_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "9123191094f2d63d618949c09a808ff5a7b99ea423f32aecc71f1294b2dd2645"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/IES_seed0/reviewed_overrides.json",
@@ -30069,12 +29637,6 @@
       "sha256": "7c6d6a3e61d11b841058f9438f2f3a18ad4734df76efe751aa1b97e48a09bfa9"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/IES_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "9d2598ae827a91c689b1cc30215abac11ca5aa3395deace20dc050562333aac3"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/IES_seed1/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -30415,12 +29977,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "2a19229760d9d92827cd9b3ee110e90eccd22ce6abf399d7ad0ee9e4321b45f8"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/IES_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "e62c582b615fe0241fb3c6dd513723322a30720f23c2b23ba7b2a25d65f71d18"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/IES_seed2/reviewed_overrides.json",
@@ -30765,12 +30321,6 @@
       "sha256": "44f4fde76386c9626fa143f059d3ccf555681d8503ab10ed2c3151d8680c403b"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/JM_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "0f030962ecdd2ed5af9473a88cee6d45bd4ba4dab726f21e7ee946b68c6b8edd"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/JM_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -31113,12 +30663,6 @@
       "sha256": "fc8e9cad418f80d4ac66488a4d28028c62485b9af427d80ff77bb5ff3432593b"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/JM_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "594bb7ac37833eeab3b7390c13a975e3fa30c58472e92b7def8e19fb68ed060a"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/JM_seed1/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -31459,12 +31003,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "73fa81a066127ae41179cdbfe68b46cce28d7f33244e25a63845fafb987f27c2"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/JM_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 337,
-      "sha256": "7282f986edb09e1578a0748397d0f2b5bbc39a0bab2aa763c31ff5f3c160e480"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/JM_seed2/reviewed_overrides.json",
@@ -31857,12 +31395,6 @@
       "sha256": "8ffe886730553c4c2f88c6df47c540c469f07ce5e0d27647b25f1b113a420007"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/YES_seed0/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "261f1cdc02708d3c12727fb3b0d83f5a8c5e1667567b16f1c73901f05694f2ff"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/YES_seed0/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -32205,12 +31737,6 @@
       "sha256": "18211923e23a3563b59bfb446ba6b6c28cd61f3740b6e35e76189c81a0c4d39a"
     },
     {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/YES_seed1/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "13280592582dbc130b2875b6450a290034e34a15ad4459ffd08e5f48abfe2e77"
-    },
-    {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/YES_seed1/reviewed_overrides.json",
       "normalization": "lf",
       "bytes": 2027,
@@ -32551,12 +32077,6 @@
       "normalization": "lf",
       "bytes": 1593,
       "sha256": "8714add2c731668be0e542c81cc00dc555300f9abded5ad101f8141b97e1d580"
-    },
-    {
-      "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/YES_seed2/REPORT.md",
-      "normalization": "lf",
-      "bytes": 338,
-      "sha256": "d1a032bb10ac6394679da5173d873f8e0f7a85d6aa3692a8537d6ddaf31df40d"
     },
     {
       "path": "EXPERIMENTS/run_collections/window50_retest_map_150ep/YES_seed2/reviewed_overrides.json",
@@ -34497,12 +34017,6 @@
       "sha256": "7ab41d24f6d6568df23bc3ded65a9f65d9ca10c39463a8d5265e4102d99c4730"
     },
     {
-      "path": "ML/research/results/confirm/_summary/tables.md",
-      "normalization": "lf",
-      "bytes": 2485,
-      "sha256": "bd2c7a775aacf1e9c5e81ccb1ce9678d599cdbff4ed14a4677891b4974cb0afd"
-    },
-    {
       "path": "ML/research/results/confirm/CH/S1toS2/E01_old/fast_seed0.json",
       "normalization": "lf",
       "bytes": 8365,
@@ -36061,12 +35575,6 @@
       "normalization": "lf",
       "bytes": 715629,
       "sha256": "d65817e741839a30e3c4df029dcf557c374a43b4938efca685a7b8c97ff6321f"
-    },
-    {
-      "path": "ML/research/results/screen/_summary/tables.md",
-      "normalization": "lf",
-      "bytes": 5509,
-      "sha256": "537ca848324dfb09cec97f3bff3783484bff493977886b6464605fa965c6323e"
     },
     {
       "path": "ML/research/results/screen/EG/S1toS2/E01_old/fast_seed0.json",
@@ -43521,12 +43029,6 @@
       "sha256": "e6a7699ae13780253fdc1248836a0db58bcb94d2bd4effac1d0124917055d5c3"
     },
     {
-      "path": "ML/research/results/SELECTION_RULE.md",
-      "normalization": "lf",
-      "bytes": 2082,
-      "sha256": "c164279b7adc221c12ecd6be831e3cdcde7a31cebc660513fa96755ae6393bfd"
-    },
-    {
       "path": "ML/research/results/superseded_val_weights/EG/S1toS2/E02_minimal/fast_seed0.json",
       "normalization": "lf",
       "bytes": 8470,
@@ -43755,5 +43257,5 @@
       "sha256": "94627b176f105702a8fb9c1d898378f6d1284948b65c8889028f2960fa1cb7bb"
     }
   ],
-  "total_bytes": 1003717463
+  "total_bytes": 1003677132
 }

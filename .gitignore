@@ -34,3 +34,7 @@ docs/superpowers/
 !/EXPERIMENTS/run_collections/**/*.keras
 ML/research/_cache/
 EXPERIMENTS/run_collections/local/
+
+# Markdown (docs, reports, notes) stays local; only the one-line README is in the repository
+*.md
+!/README.md
