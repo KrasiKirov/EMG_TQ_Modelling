@@ -1,0 +1,9 @@
+{
+ "title": "Clean passive table (static holds only)",
+ "changes": {
+  "passive": "static"
+ },
+ "hypothesis": "The original passive table accepted pieces of passive trials that were not relaxed (JM: +11.7 Nm entry). Using only the still, steady holds removes that labelling error; it should fix JM at −0.08 rad and change nothing elsewhere.",
+ "motivation": "Diagnosis of the passive table (bug found in report 1, re-checked this semester). Supervisor: passive torque must come from the passive trials.",
+ "id": "X01_clean_passive"
+}

@@ -1,0 +1,2 @@
+experiment,status,c1,c2,c3,c4,pf_d_r2,pf_ref_r2,pf_r2,pf_d_rmse,pf_cells_improved,other_min_d_r2,other_mean_d_r2,other_max_d_rmse_pct,ref_noise_sd,supp_pf_d_r2
+D01_cleanpassive+autogain+equalweight,trade-off,True,True,False,True,0.22003390225040034,0.706086133997883,0.9261200362482833,-0.43089550052777226,8,-0.008750617408965655,2.209754906400663,17.618177836309613,0.1071683215298279,

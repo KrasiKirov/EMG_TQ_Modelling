@@ -1,0 +1,40 @@
+{
+ "id": "WO4_00_eq",
+ "title": "Overlap 0 %, same weight updates per epoch as the reference",
+ "description": "Training uses every 20th window: windows do not share any sample (a twentieth of the training windows). Everything else as the reference: Active torque (each session's own relaxed-hold passive torque subtracted), EMG ÷ session-1 maximum, no per-angle loss scaling (plain mean-squared error, every angle weighted by its own torque), LSTM 16 units × 2 layers, dropout 0.0, learning rate 0.01 (chosen by a validation-loss search), trained with batch 64 for at most 150 epochs (fast protocol: learning rate × 0.5 after 6 flat epochs, early stop 15, at most 150 epochs), trained on session 1 and tested on session 2, 6 people × 10 seeds. The EMG envelope is causal (forward-only filters: no input uses later EMG, as in a real-time device; 2nd-order 2 Hz low-pass, about 125 ms lag) and the first and last 1 s of every trial are cut. Equal-updates version of WO4_00: one epoch is 20 whole passes over the training windows (epoch_windows 56,256, the reference's training-window count), so every epoch has about 880 weight updates, as in the reference. The validation check, the learning-rate halving after 6 flat epochs, early stopping after 15 and the 150-epoch limit therefore mean the same number of updates as for the reference; only the variety of the training windows differs. Compare with WO4_00, which gets 1/20 of the updates per epoch. Validation windows start one window span after the training part of each trial, so no validation window reuses training inputs (purged split). Training windows are fed in time order (no shuffling).",
+ "tags": [
+  "window study",
+  "overlap",
+  "2nd-order envelope"
+ ],
+ "changes": {
+  "passive": "static",
+  "emg": "trainmax",
+  "balance": "none",
+  "window": 20,
+  "envelope": "causal",
+  "trim_end_s": 1.0,
+  "train_stride": 20,
+  "train_protocol": "fast",
+  "lp_order": 2,
+  "val_gap": true,
+  "metadata_passive": true,
+  "shuffle": false,
+  "units": 16,
+  "layers": 2,
+  "dropout": 0.0,
+  "lr": 0.01,
+  "epoch_windows": 56256
+ },
+ "dashboard": {
+  "group": "Window study",
+  "label": "Overlap 0 %, equal updates",
+  "name": "Overlap 0 %, same weight updates per epoch as the reference",
+  "order": 26,
+  "blurb": "As WO4_00, but each epoch repeats the training windows 20 times, so it gets as many weight updates as the reference.",
+  "text": {
+   "purpose": "Training uses every 20th window: windows do not share any sample (a twentieth of the training windows). Everything else as the reference: Active torque (each session's own relaxed-hold passive torque subtracted), EMG ÷ session-1 maximum, no per-angle loss scaling (plain mean-squared error, every angle weighted by its own torque), LSTM 16 units × 2 layers, dropout 0.0, learning rate 0.01 (chosen by a validation-loss search), trained with batch 64 for at most 150 epochs (fast protocol: learning rate × 0.5 after 6 flat epochs, early stop 15, at most 150 epochs), trained on session 1 and tested on session 2, 6 people × 10 seeds. The EMG envelope is causal (forward-only filters: no input uses later EMG, as in a real-time device; 2nd-order 2 Hz low-pass, about 125 ms lag) and the first and last 1 s of every trial are cut. Equal-updates version of WO4_00: one epoch is 20 whole passes over the training windows (epoch_windows 56,256, the reference's training-window count), so every epoch has about 880 weight updates, as in the reference. The validation check, the learning-rate halving after 6 flat epochs, early stopping after 15 and the 150-epoch limit therefore mean the same number of updates as for the reference; only the variety of the training windows differs. Compare with WO4_00, which gets 1/20 of the updates per epoch. Validation windows start one window span after the training part of each trial, so no validation window reuses training inputs (purged split). Training windows are fed in time order (no shuffling).",
+   "target": "Active torque = measured torque − passive torque from the same session's 30 s relaxed holds (IES recorded no relaxed holds: its passive torque comes from the MVC-trial table in its experiment metadata, one table for both sessions). No calibration."
+  }
+ }
+}

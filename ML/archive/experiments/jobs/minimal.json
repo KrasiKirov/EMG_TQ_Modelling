@@ -1,0 +1,158 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "IES",
+  "name": "P0_core_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "EG",
+  "name": "P0_core_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "HM",
+  "name": "P0_core_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": false
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "IES",
+  "name": "P7auto_core_agc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": "auto"
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "EG",
+  "name": "P7auto_core_agc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": "auto"
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "HM",
+  "name": "P7auto_core_agc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": false,
+    "emg_clip": null,
+    "position_feature": "raw",
+    "emg_agc_norm": "auto"
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false,
+    "moe": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

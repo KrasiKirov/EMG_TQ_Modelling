@@ -1,0 +1,86 @@
+{
+ "experiment": "N3_total_sessionp99",
+ "subject": "EG",
+ "direction": "S1toS2",
+ "seed": 2,
+ "config": {
+  "passive": "none",
+  "emg": "session_p99",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "scale",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "A static, one-number-per-muscle-per-session version of auto-gain. Transductive: it needs the whole of session 2's EMG before predicting.",
+ "details": {
+  "passive": {
+   "kind": "none"
+  },
+  "emg": {
+   "kind": "session_p99",
+   "transductive": true
+  },
+  "push_directions": [
+   -8.434537491265047,
+   -19.3102505141852,
+   -7.540015391739494,
+   -16.9771657294514,
+   -12.815234164111978,
+   -4.160743570348661,
+   -21.86450634345157,
+   -24.40388293407211
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.2890537120359955
+ },
+ "train_info": {
+  "epochs": 38,
+  "best_epoch": 13,
+  "best_val_loss": 0.017578059807419777,
+  "knots": [
+   -0.739,
+   -0.599,
+   -0.458,
+   -0.317,
+   -0.178,
+   -0.038,
+   0.104,
+   0.247
+  ],
+  "sd_per_knot": [
+   2.017267950752833,
+   3.640915523916091,
+   4.2448735668805275,
+   6.394631539127734,
+   8.019789426108098,
+   10.882349551877205,
+   12.875107447539914,
+   11.253191049214323
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 0.6061842441558838,
+ "train_s": 1841.5595529079437,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

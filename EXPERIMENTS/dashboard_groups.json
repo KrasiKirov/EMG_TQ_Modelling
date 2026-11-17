@@ -1,0 +1,91 @@
+{
+ "landing": "norm/A0",
+ "groups": [
+  {
+   "label": "Models",
+   "caption": "Session 1 → session 2 · each session's own passive torque · no calibration",
+   "tone": "teal",
+   "open": true
+  },
+  {
+   "label": "Window study",
+   "caption": "One change at a time from the reference · causal EMG, 2nd-order low-pass, first and last 1 s cut, purged validation split, no shuffling · 6 people × 10 seeds",
+   "tone": "blue",
+   "open": true
+  },
+  {
+   "label": "Window study · overlap × length",
+   "caption": "Each window length at 90 / 75 / 50 / 0 % overlap between training windows · same training budget · 2nd-order envelope",
+   "tone": "blue",
+   "open": true
+  },
+  {
+   "label": "Window study · total torque",
+   "caption": "Every window-study setting predicting total torque instead of active torque · 5 seeds",
+   "tone": "blue",
+   "open": false
+  },
+  {
+   "label": "Window study · earlier rounds",
+   "caption": "Kept for comparison: 4th-order envelope low-pass (first round) and runs before the train/validation gap",
+   "tone": "blue",
+   "open": false
+  },
+  {
+   "label": "Hyperparameter search",
+   "caption": "Finalists, chosen on session-1 validation loss only (the session-2 scores shown were not used for the choice) · window-study reference, batch 64, up to 400 epochs · 6 people × 3 seeds",
+   "tone": "blue",
+   "open": false
+  },
+  {
+   "label": "Normalization study",
+   "caption": "Total torque · four ways to scale the EMG",
+   "tone": "blue",
+   "open": false
+  },
+  {
+   "label": "Exploration",
+   "caption": "Preliminary · not a model ranking",
+   "tone": "violet",
+   "open": false
+  }
+ ],
+ "extra_items": [
+  {
+   "group": "Models",
+   "id": "X00_baseline",
+   "label": "Last semester’s LSTM",
+   "order": 0
+  },
+  {
+   "group": "Models",
+   "id": "main/session-passive",
+   "label": "LSTM, 0.5 s window + session-2 passive map",
+   "order": 90
+  },
+  {
+   "group": "Exploration",
+   "id": "X02a_dropout_0.0",
+   "label": "",
+   "order": 10
+  },
+  {
+   "group": "Exploration",
+   "id": "X02b_dropout_0.1",
+   "label": "",
+   "order": 11
+  },
+  {
+   "group": "Exploration",
+   "id": "X02c_dropout_0.5",
+   "label": "",
+   "order": 12
+  },
+  {
+   "group": "Exploration",
+   "id": "family/F_gru8",
+   "label": "",
+   "order": 13
+  }
+ ]
+}

@@ -1,8 +1,5 @@
 """
-flb_reader.py
--------------
-Reads REKLAB .flb binary files and converts each trial to a pandas DataFrame.
-Optionally exports all trials to CSV files.
+Read REKLAB .flb binary files into one pandas DataFrame per trial (optionally export them to CSV).
 
 FLB binary format (reverse-engineered from flbio.m / flb2mat.m by R. Kearney, McGill):
   Each trial block:
@@ -41,15 +38,13 @@ import numpy as np
 import pandas as pd
 
 
-# ── Channel name map (MATLAB is 1-indexed, Python 0-indexed) ─────────────
+# Channel name map (MATLAB is 1-indexed, Python 0-indexed)
 DEFAULT_CHANNEL_NAMES = ['position', 'torque', 'gm', 'gl', 'sol', 'ta']
 
 # IES01 subject has a different channel order in the raw file
 IES01_CHANNEL_ORDER = [0, 1, 3, 5, 4, 2]   # reorder to: pos, tq, gm, gl, sol, ta
 
-# Map common short names to canonical names used throughout the pipeline.
-# EMG columns from different FLB files use different naming conventions;
-# this ensures a consistent set of column names across all subjects.
+# Short names to the canonical column names used throughout the pipeline.
 _CANONICAL_NAMES = {
     'pos': 'position',
     'tq': 'torque',
@@ -60,12 +55,12 @@ _CANONICAL_NAMES = {
 }
 
 
-# ── Low-level binary helpers ──────────────────────────────────────────────
-
 def _read_int32(f):
     raw = f.read(4)
-    if len(raw) < 4:
+    if not raw:
         return None
+    if len(raw) != 4:
+        raise IOError('Truncated FLB integer/header.')
     return struct.unpack('<i', raw)[0]
 
 
@@ -78,12 +73,17 @@ def _read_float64(f):
 
 
 def _read_string(f, length):
-    if length <= 0:
+    if length is None or length < 0:
+        raise IOError('Invalid or truncated FLB string length.')
+    if length == 0:
         return 'DEFAULT'
-    return f.read(length).decode('latin-1', errors='replace')
+    raw = f.read(length)
+    if len(raw) != length:
+        raise IOError('Truncated FLB string.')
+    return raw.decode('latin-1', errors='replace')
 
 
-# ── Read one trial header (flbrdet equivalent) ────────────────────────────
+# One trial header (flbrdet equivalent)
 
 def _read_header(f):
     """Read the header of the next trial. Returns None at EOF."""
@@ -91,7 +91,7 @@ def _read_header(f):
     if flb_version is None:
         return None  # clean EOF
 
-    if flb_version < 2:
+    if flb_version not in (2, 3, 4):
         raise ValueError(f"Unsupported FLB version: {flb_version}")
 
     h = {'version': flb_version}
@@ -139,17 +139,22 @@ def _read_header(f):
     return h
 
 
-# ── Read one trial's data block (flbrdata equivalent) ────────────────────
+# One trial's data block (flbrdata equivalent)
 
 def _read_data(f, h):
     """Read the raw data block for a trial given its header dict."""
+    if any(not isinstance(h[k], int) or h[k] <= 0
+           for k in ('nChan', 'chanLen', 'nReal')):
+        raise ValueError('Invalid FLB dimensions.')
+    if h['nReal'] != 1:
+        raise ValueError('Multiple FLB realizations require explicit selection; refusing to discard data.')
     n_samples = h['nChan'] * h['chanLen'] * h['nReal']
 
     if h['chanFormat'] == 4:
-        dtype = np.float32
+        dtype = np.dtype('<f4')
         itemsize = 4
     elif h['chanFormat'] == 2:
-        dtype = np.int16
+        dtype = np.dtype('<i2')
         itemsize = 2
     else:
         raise ValueError(f"Unknown chanFormat: {h['chanFormat']}")
@@ -165,29 +170,10 @@ def _read_data(f, h):
     return arr[:, :, 0]   # shape: (chanLen, nChan)
 
 
-# ── Public API ────────────────────────────────────────────────────────────
-
 def read_flb(filepath, subject_id='default', channel_names=None):
     """
-    Read all trials from an FLB file.
-
-    Parameters
-    ----------
-    filepath : str
-        Path to the .flb file.
-    subject_id : str
-        Subject identifier. Use 'IES01' to apply the alternate channel order
-        for that subject. All others use the default order.
-    channel_names : list of str, optional
-        Custom column names for the DataFrame. Defaults to
-        ['pos', 'tq', 'gm', 'gl', 'sol', 'ta'].
-
-    Returns
-    -------
-    list of pd.DataFrame
-        One DataFrame per trial. Each has columns:
-        ['time', 'pos', 'tq', 'gm', 'gl', 'sol', 'ta']
-        and metadata attributes: trial_index, domainIncr, comment, chanName.
+    All trials of an FLB file as DataFrames with columns ['time', 'pos', 'tq', 'gm', 'gl', 'sol', 'ta'] and attrs
+    trial_index, domainIncr, comment, chanName. subject_id 'IES01' applies that subject's channel order.
     """
     if channel_names is None:
         channel_names = DEFAULT_CHANNEL_NAMES
@@ -203,16 +189,19 @@ def read_flb(filepath, subject_id='default', channel_names=None):
 
             data = _read_data(f, h)   # (chanLen, nChan)
 
-            # Enforce 1 ms sampling rate (as done in read_preprocess_data.m)
-            Ts = 0.001
+            # Retain the acquisition interval; callers can validate/override explicitly.
+            Ts = float(h['domainIncr'])
+            if not np.isfinite(Ts) or Ts <= 0:
+                raise ValueError('FLB sampling interval must be finite and positive.')
             n_samples = data.shape[0]
             time = h['domainStart'] + np.arange(n_samples) * Ts
 
             # Reorder channels for IES01
             if subject_id.upper() == 'IES01' and data.shape[1] >= 6:
+                if data.shape[1] != 6:
+                    raise ValueError('IES channel mapping expects exactly six channels.')
                 data = data[:, IES01_CHANNEL_ORDER]
-                # After reorder, data matches DEFAULT_CHANNEL_NAMES order
-                # (pos, tq, gm, gl, sol, ta) — ignore file header names
+                # After the reorder the data follow DEFAULT_CHANNEL_NAMES; the file's header names are ignored.
                 col_names = channel_names
             else:
                 # Use channel names from the file header if available, else defaults
@@ -225,8 +214,9 @@ def read_flb(filepath, subject_id='default', channel_names=None):
             # Normalize to canonical names (e.g. 'pos' -> 'position')
             col_names = [_CANONICAL_NAMES.get(c, c) for c in col_names]
 
-            n_ch = min(data.shape[1], len(col_names))
-            df = pd.DataFrame(data[:, :n_ch], columns=col_names[:n_ch])
+            if len(col_names) != data.shape[1] or len(set(col_names)) != len(col_names):
+                raise ValueError('Channel mapping must name every channel uniquely.')
+            df = pd.DataFrame(data, columns=col_names)
             df.insert(0, 'time', time)
 
             # Attach metadata as DataFrame attributes
@@ -236,11 +226,11 @@ def read_flb(filepath, subject_id='default', channel_names=None):
             df.attrs['comment']     = h['comment']
             df.attrs['chanName']    = h['chanName']
             df.attrs['source_file'] = os.path.basename(filepath)
+            df.attrs['raw_domainIncr'] = h['domainIncr']
+            df.attrs['chanFormat'] = h['chanFormat']
 
             trials.append(df)
             trial_idx += 1
 
     print(f"Read {len(trials)} trials from '{os.path.basename(filepath)}'")
     return trials
-
-

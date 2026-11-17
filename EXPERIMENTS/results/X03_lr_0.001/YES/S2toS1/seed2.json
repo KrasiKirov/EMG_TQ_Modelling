@@ -1,0 +1,85 @@
+{
+ "experiment": "X03_lr_0.001",
+ "subject": "YES",
+ "direction": "S2toS1",
+ "seed": 2,
+ "config": {
+  "passive": "legacy",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "none",
+  "pf_extra": null,
+  "window": 20,
+  "lr": 0.001,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "If training is unstable (large run-to-run differences), a smaller learning rate gives more stable and better solutions.",
+ "details": {
+  "passive": {
+   "kind": "legacy"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   -9.153984222074474,
+   -25.412613559235524,
+   -4.74329141020741,
+   -16.50520958739174,
+   -15.043878785347232,
+   -0.9193313591803429,
+   -25.969186780818966,
+   -28.451091860320066
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.27602994938132736
+ },
+ "train_info": {
+  "epochs": 43,
+  "best_epoch": 18,
+  "best_val_loss": 1.07802152633667,
+  "knots": [
+   -0.486,
+   -0.381,
+   -0.278,
+   -0.176,
+   -0.071,
+   0.031,
+   0.138,
+   0.245
+  ],
+  "sd_per_knot": [
+   0.4195326059310136,
+   2.2421596197522393,
+   4.5237616611811005,
+   7.457654477342509,
+   8.51482052313137,
+   13.616251874793099,
+   15.189058639454448,
+   13.12764255346838
+  ],
+  "n_params": 1001,
+  "lr": 0.001
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 2.1514787673950195,
+ "train_s": 3571.0097484588623,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

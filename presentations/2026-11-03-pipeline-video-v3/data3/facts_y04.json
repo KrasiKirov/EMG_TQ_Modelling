@@ -1,0 +1,4118 @@
+{
+ "y04": {
+  "source": "learning_curves seed0 json (X00f, D01), X00_baseline seed jsons, original_code config.py",
+  "epoch_convention": "1-based; logged lr[e] is read after the end-of-epoch callbacks, so the first epoch with a lower lr is the epoch whose end fired the cut; the smaller rate first trains epoch e+1",
+  "hyperparameters": {
+   "LEARNING_RATE": 0.003,
+   "LR_FACTOR": 0.7,
+   "LR_PATIENCE": 10,
+   "LR_MIN": 1e-06,
+   "EARLY_PATIENCE": 25,
+   "BATCH_SIZE": 8,
+   "EPOCHS": 200
+  },
+  "x00f_available_subjects": [
+   "CH",
+   "EG",
+   "HM",
+   "IES",
+   "JM",
+   "YES"
+  ],
+  "x00f_experiment": "X00f_baseline_framework",
+  "x00f_curves": {
+   "CH": {
+    "epochs_run": 55,
+    "best_epoch": 30,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     20,
+     40,
+     50
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     21,
+     41,
+     51
+    ],
+    "n_lr_cuts": 3,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936
+    ],
+    "kept_epoch_lr": 0.002099999925121665,
+    "final_lr": 0.0010289999190717936,
+    "epoch_with_lowest_mae_test": 9,
+    "lowest_mae_test": 1.5600590591658072,
+    "mae_test_at_kept": 1.58280052732932,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 30,
+    "epoch_with_lowest_mae_fit": 30,
+    "kept": {
+     "epoch": 30.0,
+     "keras_loss": 36.23472213745117,
+     "keras_val_loss": 3.8958258628845215,
+     "lr": 0.002099999925121665,
+     "mae_fit": 1.2387192658003976,
+     "mae_val": 1.3245326647053535,
+     "mae_test": 1.58280052732932,
+     "mse_fit": 3.116193495221396,
+     "mse_val": 3.8958276489120056,
+     "mse_test": 6.1189667816794575,
+     "ratio_test_over_val": 1.1949879149876752,
+     "ratio_val_over_fit": 1.0692759055858452,
+     "ratio_test_over_fit": 1.2777717849625876
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.6508325225804864,
+    "val_loss_first_epoch": 10.462912559509277,
+    "val_loss_at_kept": 3.8958258628845215,
+    "keras_loss_first_epoch": 103.59819030761719,
+    "keras_loss_last_epoch": 34.83759307861328,
+    "seconds": 4073.6113934516907,
+    "config": {
+     "passive": "legacy",
+     "emg": "trainmax",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "none",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.45550996921340203,
+     0.2391068385372145,
+     -0.5974428275479751,
+     -0.18375872614918315,
+     -0.31175731715918836,
+     -0.7398073298798864,
+     -0.04655310910247957,
+     0.09570428135314359
+    ]
+   },
+   "EG": {
+    "epochs_run": 35,
+    "best_epoch": 10,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     20,
+     30
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     21,
+     31
+    ],
+    "n_lr_cuts": 2,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368
+    ],
+    "kept_epoch_lr": 0.003000000026077032,
+    "final_lr": 0.0014699999010190368,
+    "epoch_with_lowest_mae_test": 3,
+    "lowest_mae_test": 1.1391610728265236,
+    "mae_test_at_kept": 1.1958011819023753,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 10,
+    "epoch_with_lowest_mae_fit": 25,
+    "kept": {
+     "epoch": 10.0,
+     "keras_loss": 5.087268829345703,
+     "keras_val_loss": 0.9688083529472351,
+     "lr": 0.003000000026077032,
+     "mae_fit": 0.6032644181783503,
+     "mae_val": 0.580063761466046,
+     "mae_test": 1.1958011819023753,
+     "mse_fit": 0.9280669571079039,
+     "mse_val": 0.968808460423643,
+     "mse_test": 2.7217473452545593,
+     "ratio_test_over_val": 2.0614995477051044,
+     "ratio_val_over_fit": 0.9615414799660118,
+     "ratio_test_over_fit": 1.9822173260496299
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.30509482361147755,
+    "val_loss_first_epoch": 1.5442113876342773,
+    "val_loss_at_kept": 0.9688083529472351,
+    "keras_loss_first_epoch": 12.575819969177246,
+    "keras_loss_last_epoch": 4.810267925262451,
+    "seconds": 3302.9885170459747,
+    "config": {
+     "passive": "legacy",
+     "emg": "trainmax",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "none",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.4576809085474474,
+     0.2469399829299836,
+     -0.5989645190845755,
+     -0.17788008540602915,
+     -0.317498622303378,
+     -0.7392464201163509,
+     -0.03768745205646191,
+     0.10417819955018684
+    ]
+   },
+   "HM": {
+    "epochs_run": 78,
+    "best_epoch": 53,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     20,
+     30,
+     44,
+     63,
+     73
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     21,
+     31,
+     45,
+     64,
+     74
+    ],
+    "n_lr_cuts": 5,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936,
+     0.0007202999549917877,
+     0.0005042099510319531
+    ],
+    "kept_epoch_lr": 0.0010289999190717936,
+    "final_lr": 0.0005042099510319531,
+    "epoch_with_lowest_mae_test": 20,
+    "lowest_mae_test": 0.5778985754678518,
+    "mae_test_at_kept": 0.6077502822073482,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 53,
+    "epoch_with_lowest_mae_fit": 53,
+    "kept": {
+     "epoch": 53.0,
+     "keras_loss": 1.0220099687576294,
+     "keras_val_loss": 0.26090994477272034,
+     "lr": 0.0010289999190717936,
+     "mae_fit": 0.3177123485386244,
+     "mae_val": 0.36457707947171974,
+     "mae_test": 0.6077502822073482,
+     "mse_fit": 0.22248466552634072,
+     "mse_val": 0.2609100043284877,
+     "mse_test": 0.865788379638563,
+     "ratio_test_over_val": 1.6670007974390266,
+     "ratio_val_over_fit": 1.147506797103286,
+     "ratio_test_over_fit": 1.9128947458378809
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.7530731194249446,
+    "val_loss_first_epoch": 0.8654066324234009,
+    "val_loss_at_kept": 0.26090994477272034,
+    "keras_loss_first_epoch": 1.9663394689559937,
+    "keras_loss_last_epoch": 1.0103594064712524,
+    "seconds": 5747.532512664795,
+    "config": {
+     "passive": "legacy",
+     "emg": "trainmax",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "none",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.5047007686529826,
+     0.19776450866877618,
+     -0.6465238383038834,
+     -0.22198311452079483,
+     -0.3636416581732506,
+     -0.7876244419884749,
+     -0.08102784399391494,
+     0.05441853470784039
+    ]
+   },
+   "IES": {
+    "epochs_run": 71,
+    "best_epoch": 46,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     32,
+     42,
+     56,
+     66
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     33,
+     43,
+     57,
+     67
+    ],
+    "n_lr_cuts": 4,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936,
+     0.0007202999549917877
+    ],
+    "kept_epoch_lr": 0.0014699999010190368,
+    "final_lr": 0.0007202999549917877,
+    "epoch_with_lowest_mae_test": 25,
+    "lowest_mae_test": 0.8973171816320237,
+    "mae_test_at_kept": 1.1724887802819055,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 53,
+    "epoch_with_lowest_mae_fit": 22,
+    "kept": {
+     "epoch": 46.0,
+     "keras_loss": 4.0075531005859375,
+     "keras_val_loss": 0.7730321288108826,
+     "lr": 0.0014699999010190368,
+     "mae_fit": 0.5654693805444573,
+     "mae_val": 0.6331020102958106,
+     "mae_test": 1.1724887802819055,
+     "mse_fit": 0.6225623837622264,
+     "mse_val": 0.7730321415313709,
+     "mse_test": 2.6066454404348316,
+     "ratio_test_over_val": 1.8519745020775906,
+     "ratio_val_over_fit": 1.1196044066722655,
+     "ratio_test_over_fit": 2.073478813570745
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.5625463931909229,
+    "val_loss_first_epoch": 1.682569980621338,
+    "val_loss_at_kept": 0.7730321288108826,
+    "keras_loss_first_epoch": 9.745545387268066,
+    "keras_loss_last_epoch": 4.000099182128906,
+    "seconds": 5489.354319095612,
+    "config": {
+     "passive": "legacy",
+     "emg": "trainmax",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "none",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.380043602243853,
+     -0.5898096733509489,
+     0.038997562316852294,
+     -0.484878522403635,
+     -0.16979891370776198,
+     -0.061481604212563545,
+     0.14416485977812607,
+     -0.27160609112454903
+    ]
+   },
+   "JM": {
+    "epochs_run": 50,
+    "best_epoch": 25,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     16,
+     35,
+     45
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     17,
+     36,
+     46
+    ],
+    "n_lr_cuts": 3,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936
+    ],
+    "kept_epoch_lr": 0.002099999925121665,
+    "final_lr": 0.0010289999190717936,
+    "epoch_with_lowest_mae_test": 1,
+    "lowest_mae_test": 1.9509799622972956,
+    "mae_test_at_kept": 2.1202992660772826,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 25,
+    "epoch_with_lowest_mae_fit": 43,
+    "kept": {
+     "epoch": 25.0,
+     "keras_loss": 1.3192986249923706,
+     "keras_val_loss": 0.21105234324932098,
+     "lr": 0.002099999925121665,
+     "mae_fit": 0.34079938434208007,
+     "mae_val": 0.353830770924418,
+     "mae_test": 2.1202992660772826,
+     "mse_fit": 0.20512301193477467,
+     "mse_val": 0.21105228028563092,
+     "mse_test": 19.94778887174586,
+     "ratio_test_over_val": 5.9924106106933275,
+     "ratio_val_over_fit": 1.0382377057619845,
+     "ratio_test_over_fit": 6.221546644430013
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.7867250181903562,
+    "val_loss_first_epoch": 0.6506034135818481,
+    "val_loss_at_kept": 0.21105234324932098,
+    "keras_loss_first_epoch": 7.731224060058594,
+    "keras_loss_last_epoch": 1.2920737266540527,
+    "seconds": 4094.139102935791,
+    "config": {
+     "passive": "legacy",
+     "emg": "trainmax",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "none",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.5046635461651396,
+     0.1988995638485248,
+     -0.6450674879113688,
+     -0.21820663022815248,
+     -0.3600248213553751,
+     -0.786878918015024,
+     -0.07675907325412835,
+     0.0563087722816685
+    ]
+   },
+   "YES": {
+    "epochs_run": 55,
+    "best_epoch": 30,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     25,
+     40,
+     50
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     26,
+     41,
+     51
+    ],
+    "n_lr_cuts": 3,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936
+    ],
+    "kept_epoch_lr": 0.002099999925121665,
+    "final_lr": 0.0010289999190717936,
+    "epoch_with_lowest_mae_test": 34,
+    "lowest_mae_test": 0.7567719123527287,
+    "mae_test_at_kept": 0.8236731512038802,
+    "test_best_is_earlier_than_kept": false,
+    "test_best_is_later_than_kept": true,
+    "epoch_with_lowest_mae_val": 15,
+    "epoch_with_lowest_mae_fit": 43,
+    "kept": {
+     "epoch": 30.0,
+     "keras_loss": 6.702621936798096,
+     "keras_val_loss": 0.8236880302429199,
+     "lr": 0.002099999925121665,
+     "mae_fit": 0.5870538335664905,
+     "mae_val": 0.606943540640503,
+     "mae_test": 0.8236731512038802,
+     "mse_fit": 0.9106238658088018,
+     "mse_val": 0.823688434902228,
+     "mse_test": 2.103667825647244,
+     "ratio_test_over_val": 1.3570836429607012,
+     "ratio_val_over_fit": 1.0338805505334627,
+     "ratio_test_over_fit": 1.4030623839041667
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.7249912279032595,
+    "val_loss_first_epoch": 2.3898894786834717,
+    "val_loss_at_kept": 0.8236880302429199,
+    "keras_loss_first_epoch": 16.749492645263672,
+    "keras_loss_last_epoch": 6.565363883972168,
+    "seconds": 4679.527503967285,
+    "config": {
+     "passive": "legacy",
+     "emg": "trainmax",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "none",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.2774759527480375,
+     0.24464143128846624,
+     -0.3818133407659487,
+     -0.06908631039811336,
+     -0.17418531510579832,
+     -0.4864838723727353,
+     0.03113220486875007,
+     0.1372121867160906
+    ]
+   }
+  },
+  "d01_available_subjects": [
+   "CH",
+   "EG",
+   "HM",
+   "IES",
+   "JM",
+   "YES"
+  ],
+  "d01_experiment": "D01_cleanpassive+autogain+equalweight",
+  "d01_curves": {
+   "CH": {
+    "epochs_run": 45,
+    "best_epoch": 20,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     30,
+     40
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     31,
+     41
+    ],
+    "n_lr_cuts": 2,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368
+    ],
+    "kept_epoch_lr": 0.003000000026077032,
+    "final_lr": 0.0014699999010190368,
+    "epoch_with_lowest_mae_test": 43,
+    "lowest_mae_test": 1.2612083339144236,
+    "mae_test_at_kept": 1.3798587328044032,
+    "test_best_is_earlier_than_kept": false,
+    "test_best_is_later_than_kept": true,
+    "epoch_with_lowest_mae_val": 43,
+    "epoch_with_lowest_mae_fit": 20,
+    "kept": {
+     "epoch": 20.0,
+     "keras_loss": 0.11418037116527557,
+     "keras_val_loss": 0.010253315791487694,
+     "lr": 0.003000000026077032,
+     "mae_fit": 0.9360283364157579,
+     "mae_val": 1.0786276714047245,
+     "mae_test": 1.3798587328044032,
+     "mse_fit": 2.472226032718297,
+     "mse_val": 3.334793789041745,
+     "mse_test": 4.9210898249846915,
+     "ratio_test_over_val": 1.2792725139411432,
+     "ratio_val_over_fit": 1.1523451047807038,
+     "ratio_test_over_fit": 1.474163419120581
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.13731511402024774,
+    "val_loss_first_epoch": 0.021421974524855614,
+    "val_loss_at_kept": 0.010253315791487694,
+    "keras_loss_first_epoch": 0.14416855573654175,
+    "keras_loss_last_epoch": 0.11115743964910507,
+    "seconds": 2573.2320165634155,
+    "config": {
+     "passive": "static",
+     "emg": "agc_auto",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "scale",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.45550996921340203,
+     0.2391068385372145,
+     -0.5974428275479751,
+     -0.18375872614918315,
+     -0.31175731715918836,
+     -0.7398073298798864,
+     -0.04655310910247957,
+     0.09570428135314359
+    ]
+   },
+   "EG": {
+    "epochs_run": 38,
+    "best_epoch": 13,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     23,
+     33
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     24,
+     34
+    ],
+    "n_lr_cuts": 2,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368
+    ],
+    "kept_epoch_lr": 0.003000000026077032,
+    "final_lr": 0.0014699999010190368,
+    "epoch_with_lowest_mae_test": 10,
+    "lowest_mae_test": 0.8338036135542656,
+    "mae_test_at_kept": 0.8507249222980107,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 15,
+    "epoch_with_lowest_mae_fit": 15,
+    "kept": {
+     "epoch": 13.0,
+     "keras_loss": 0.06878653168678284,
+     "keras_val_loss": 0.014504178427159786,
+     "lr": 0.003000000026077032,
+     "mae_fit": 0.5686157104510374,
+     "mae_val": 0.6196050519644951,
+     "mae_test": 0.8507249222980107,
+     "mse_fit": 0.8425121986368286,
+     "mse_val": 1.1027804636858267,
+     "mse_test": 1.598856996879084,
+     "ratio_test_over_val": 1.3730115976310007,
+     "ratio_val_over_fit": 1.0896727624233455,
+     "ratio_test_over_fit": 1.4961333404298636
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.8267700756368016,
+    "val_loss_first_epoch": 0.030245106667280197,
+    "val_loss_at_kept": 0.014504178427159786,
+    "keras_loss_first_epoch": 0.10362550616264343,
+    "keras_loss_last_epoch": 0.06414472311735153,
+    "seconds": 2842.0241692066193,
+    "config": {
+     "passive": "static",
+     "emg": "agc_auto",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "scale",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.4576809085474474,
+     0.2469399829299836,
+     -0.5989645190845755,
+     -0.17788008540602915,
+     -0.317498622303378,
+     -0.7392464201163509,
+     -0.03768745205646191,
+     0.10417819955018684
+    ]
+   },
+   "HM": {
+    "epochs_run": 68,
+    "best_epoch": 43,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     24,
+     53,
+     63
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     25,
+     54,
+     64
+    ],
+    "n_lr_cuts": 3,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936
+    ],
+    "kept_epoch_lr": 0.002099999925121665,
+    "final_lr": 0.0010289999190717936,
+    "epoch_with_lowest_mae_test": 36,
+    "lowest_mae_test": 0.5208008718620769,
+    "mae_test_at_kept": 0.5654037340684711,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 43,
+    "epoch_with_lowest_mae_fit": 42,
+    "kept": {
+     "epoch": 43.0,
+     "keras_loss": 0.07309812307357788,
+     "keras_val_loss": 0.02123131975531578,
+     "lr": 0.002099999925121665,
+     "mae_fit": 0.2990548989231362,
+     "mae_val": 0.35772465454442015,
+     "mae_test": 0.5654037340684711,
+     "mse_fit": 0.22261782828074814,
+     "mse_val": 0.29662885279113554,
+     "mse_test": 0.7851487196832352,
+     "ratio_test_over_val": 1.5805556784687944,
+     "ratio_val_over_fit": 1.1961838974467474,
+     "ratio_test_over_fit": 1.8906352516023908
+    },
+    "share_of_val_drop_in_first_3_epochs": -0.06952592968907285,
+    "val_loss_first_epoch": 0.03664505481719971,
+    "val_loss_at_kept": 0.02123131975531578,
+    "keras_loss_first_epoch": 0.1266607642173767,
+    "keras_loss_last_epoch": 0.07138896733522415,
+    "seconds": 4173.974622964859,
+    "config": {
+     "passive": "static",
+     "emg": "agc_auto",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "scale",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.5047007686529826,
+     0.19776450866877618,
+     -0.6465238383038834,
+     -0.22198311452079483,
+     -0.3636416581732506,
+     -0.7876244419884749,
+     -0.08102784399391494,
+     0.05441853470784039
+    ]
+   },
+   "IES": {
+    "epochs_run": 78,
+    "best_epoch": 53,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     36,
+     63,
+     73
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     37,
+     64,
+     74
+    ],
+    "n_lr_cuts": 3,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936
+    ],
+    "kept_epoch_lr": 0.002099999925121665,
+    "final_lr": 0.0010289999190717936,
+    "epoch_with_lowest_mae_test": 16,
+    "lowest_mae_test": 0.5885111105080403,
+    "mae_test_at_kept": 0.6092090945764052,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 44,
+    "epoch_with_lowest_mae_fit": 44,
+    "kept": {
+     "epoch": 53.0,
+     "keras_loss": 0.06779087334871292,
+     "keras_val_loss": 0.014258474111557007,
+     "lr": 0.002099999925121665,
+     "mae_fit": 0.44690163465244365,
+     "mae_val": 0.5071748726884067,
+     "mae_test": 0.6092090945764052,
+     "mse_fit": 0.45461475943165985,
+     "mse_val": 0.5700660148941747,
+     "mse_test": 0.7357073651431387,
+     "ratio_test_over_val": 1.2011815399038615,
+     "ratio_val_over_fit": 1.1348691375515725,
+     "ratio_test_over_fit": 1.363183858233565
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.5411485229873215,
+    "val_loss_first_epoch": 0.03814111277461052,
+    "val_loss_at_kept": 0.014258474111557007,
+    "keras_loss_first_epoch": 0.10358475893735886,
+    "keras_loss_last_epoch": 0.06717834621667862,
+    "seconds": 5010.460367441177,
+    "config": {
+     "passive": "static",
+     "emg": "agc_auto",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "scale",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.380043602243853,
+     -0.5898096733509489,
+     0.038997562316852294,
+     -0.484878522403635,
+     -0.16979891370776198,
+     -0.061481604212563545,
+     0.14416485977812607,
+     -0.27160609112454903
+    ]
+   },
+   "JM": {
+    "epochs_run": 39,
+    "best_epoch": 14,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     24,
+     34
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     25,
+     35
+    ],
+    "n_lr_cuts": 2,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368
+    ],
+    "kept_epoch_lr": 0.003000000026077032,
+    "final_lr": 0.0014699999010190368,
+    "epoch_with_lowest_mae_test": 36,
+    "lowest_mae_test": 0.35837400073299874,
+    "mae_test_at_kept": 0.38868832147430726,
+    "test_best_is_earlier_than_kept": false,
+    "test_best_is_later_than_kept": true,
+    "epoch_with_lowest_mae_val": 36,
+    "epoch_with_lowest_mae_fit": 36,
+    "kept": {
+     "epoch": 14.0,
+     "keras_loss": 0.10182403028011322,
+     "keras_val_loss": 0.05359171703457832,
+     "lr": 0.003000000026077032,
+     "mae_fit": 0.2896594089313763,
+     "mae_val": 0.29105478296328796,
+     "mae_test": 0.38868832147430726,
+     "mse_fit": 0.16294540745697392,
+     "mse_val": 0.161790129185759,
+     "mse_test": 0.3305260273237735,
+     "ratio_test_over_val": 1.3354472911147255,
+     "ratio_val_over_fit": 1.0048172922711522,
+     "ratio_test_over_fit": 1.3418805310287436
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.23051800683446733,
+    "val_loss_first_epoch": 0.10494531691074371,
+    "val_loss_at_kept": 0.05359171703457832,
+    "keras_loss_first_epoch": 0.18270587921142578,
+    "keras_loss_last_epoch": 0.09187605232000351,
+    "seconds": 3010.4149518013,
+    "config": {
+     "passive": "static",
+     "emg": "agc_auto",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "scale",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.5046635461651396,
+     0.1988995638485248,
+     -0.6450674879113688,
+     -0.21820663022815248,
+     -0.3600248213553751,
+     -0.786878918015024,
+     -0.07675907325412835,
+     0.0563087722816685
+    ]
+   },
+   "YES": {
+    "epochs_run": 67,
+    "best_epoch": 42,
+    "patience_epochs_after_best": 25,
+    "lr_cut_at_end_of_epoch": [
+     20,
+     52,
+     62
+    ],
+    "lr_cut_first_epoch_with_new_lr": [
+     21,
+     53,
+     63
+    ],
+    "n_lr_cuts": 3,
+    "lr_values_visited": [
+     0.003000000026077032,
+     0.002099999925121665,
+     0.0014699999010190368,
+     0.0010289999190717936
+    ],
+    "kept_epoch_lr": 0.002099999925121665,
+    "final_lr": 0.0010289999190717936,
+    "epoch_with_lowest_mae_test": 12,
+    "lowest_mae_test": 0.7268895106568332,
+    "mae_test_at_kept": 0.7774622966911755,
+    "test_best_is_earlier_than_kept": true,
+    "test_best_is_later_than_kept": false,
+    "epoch_with_lowest_mae_val": 42,
+    "epoch_with_lowest_mae_fit": 66,
+    "kept": {
+     "epoch": 42.0,
+     "keras_loss": 0.0951327532529831,
+     "keras_val_loss": 0.01780823804438114,
+     "lr": 0.002099999925121665,
+     "mae_fit": 0.586984537683095,
+     "mae_val": 0.6040073268300756,
+     "mae_test": 0.7774622966911755,
+     "mse_fit": 1.0678501975473806,
+     "mse_val": 1.0155031456158876,
+     "mse_test": 1.7358366158992546,
+     "ratio_test_over_val": 1.2871736188556164,
+     "ratio_val_over_fit": 1.029000404702604,
+     "ratio_test_over_fit": 1.3245021747249446
+    },
+    "share_of_val_drop_in_first_3_epochs": 0.8007797066274254,
+    "val_loss_first_epoch": 0.03852768987417221,
+    "val_loss_at_kept": 0.01780823804438114,
+    "keras_loss_first_epoch": 0.1791006326675415,
+    "keras_loss_last_epoch": 0.09425199031829834,
+    "seconds": 5017.28559088707,
+    "config": {
+     "passive": "static",
+     "emg": "agc_auto",
+     "units": 8,
+     "layers": 2,
+     "dropout": 0.3,
+     "model": "lstm",
+     "balance": "scale",
+     "pf_extra": null,
+     "window": 20,
+     "lr": null,
+     "train_protocol": "orig",
+     "rest_weight": null,
+     "extra_input": null
+    },
+    "n_windows": {
+     "fit": 56896,
+     "val": 14224,
+     "test": 71128
+    },
+    "final_per_trial_angles_fit": [
+     -0.2774759527480375,
+     0.24464143128846624,
+     -0.3818133407659487,
+     -0.06908631039811336,
+     -0.17418531510579832,
+     -0.4864838723727353,
+     0.03113220486875007,
+     0.1372121867160906
+    ]
+   }
+  },
+  "steps_per_epoch": {
+   "n_fit_windows": 56896,
+   "batch_size": 8,
+   "steps": 7112,
+   "exact_division": true,
+   "n_val_windows": 14224,
+   "n_test_windows": 71128,
+   "per_trial_fit": 7112,
+   "per_trial_val": 1778,
+   "n_trials_session1": 8
+  },
+  "total_weight_updates_example": {
+   "CH": 391160,
+   "EG": 248920,
+   "HM": 554736,
+   "IES": 504952,
+   "JM": 355600,
+   "YES": 391160
+  },
+  "x00_runs": {
+   "n_runs": 60,
+   "epochs_run_min": 32,
+   "epochs_run_max": 115,
+   "epochs_run_median": 56.0,
+   "best_epoch_min": 7,
+   "best_epoch_max": 90,
+   "best_epoch_median": 31.0,
+   "n_runs_reaching_200_epochs": 0,
+   "all_epochs_run_equals_best_plus_25": true,
+   "argmin_epochs_run": {
+    "subject": "EG",
+    "seed": 2
+   },
+   "argmax_epochs_run": {
+    "subject": "IES",
+    "seed": 1
+   },
+   "argmin_best_epoch": {
+    "subject": "EG",
+    "seed": 2
+   },
+   "argmax_best_epoch": {
+    "subject": "IES",
+    "seed": 1
+   },
+   "per_subject": {
+    "CH": {
+     "epochs_run": [
+      55,
+      39,
+      57,
+      54,
+      50,
+      42,
+      54,
+      68,
+      56,
+      56
+     ],
+     "best_epoch": [
+      30,
+      14,
+      32,
+      29,
+      25,
+      17,
+      29,
+      43,
+      31,
+      31
+     ],
+     "epochs_run_min": 39,
+     "epochs_run_max": 68,
+     "best_epoch_min": 14,
+     "best_epoch_max": 43
+    },
+    "EG": {
+     "epochs_run": [
+      78,
+      36,
+      32,
+      76,
+      38,
+      63,
+      57,
+      67,
+      56,
+      39
+     ],
+     "best_epoch": [
+      53,
+      11,
+      7,
+      51,
+      13,
+      38,
+      32,
+      42,
+      31,
+      14
+     ],
+     "epochs_run_min": 32,
+     "epochs_run_max": 78,
+     "best_epoch_min": 7,
+     "best_epoch_max": 53
+    },
+    "HM": {
+     "epochs_run": [
+      78,
+      49,
+      64,
+      42,
+      87,
+      48,
+      54,
+      54,
+      46,
+      41
+     ],
+     "best_epoch": [
+      53,
+      24,
+      39,
+      17,
+      62,
+      23,
+      29,
+      29,
+      21,
+      16
+     ],
+     "epochs_run_min": 41,
+     "epochs_run_max": 87,
+     "best_epoch_min": 16,
+     "best_epoch_max": 62
+    },
+    "IES": {
+     "epochs_run": [
+      71,
+      115,
+      76,
+      42,
+      65,
+      46,
+      41,
+      40,
+      92,
+      61
+     ],
+     "best_epoch": [
+      46,
+      90,
+      51,
+      17,
+      40,
+      21,
+      16,
+      15,
+      67,
+      36
+     ],
+     "epochs_run_min": 40,
+     "epochs_run_max": 115,
+     "best_epoch_min": 15,
+     "best_epoch_max": 90
+    },
+    "JM": {
+     "epochs_run": [
+      78,
+      98,
+      76,
+      63,
+      52,
+      43,
+      75,
+      76,
+      94,
+      90
+     ],
+     "best_epoch": [
+      53,
+      73,
+      51,
+      38,
+      27,
+      18,
+      50,
+      51,
+      69,
+      65
+     ],
+     "epochs_run_min": 43,
+     "epochs_run_max": 98,
+     "best_epoch_min": 18,
+     "best_epoch_max": 73
+    },
+    "YES": {
+     "epochs_run": [
+      40,
+      66,
+      76,
+      41,
+      112,
+      49,
+      63,
+      43,
+      67,
+      56
+     ],
+     "best_epoch": [
+      15,
+      41,
+      51,
+      16,
+      87,
+      24,
+      38,
+      18,
+      42,
+      31
+     ],
+     "epochs_run_min": 40,
+     "epochs_run_max": 112,
+     "best_epoch_min": 15,
+     "best_epoch_max": 87
+    }
+   },
+   "train_hours_total": 76.66258927543959,
+   "per_run": [
+    {
+     "subject": "CH",
+     "seed": 0,
+     "epochs_run": 55,
+     "best_epoch": 30,
+     "n_params": 1001,
+     "train_s": 4339.672488212585,
+     "min_val_loss": 3.6942317485809326
+    },
+    {
+     "subject": "CH",
+     "seed": 1,
+     "epochs_run": 39,
+     "best_epoch": 14,
+     "n_params": 1001,
+     "train_s": 3202.9977910518646,
+     "min_val_loss": 3.7944517135620117
+    },
+    {
+     "subject": "CH",
+     "seed": 2,
+     "epochs_run": 57,
+     "best_epoch": 32,
+     "n_params": 1001,
+     "train_s": 4122.337411880493,
+     "min_val_loss": 3.1860806941986084
+    },
+    {
+     "subject": "CH",
+     "seed": 3,
+     "epochs_run": 54,
+     "best_epoch": 29,
+     "n_params": 1001,
+     "train_s": 4309.225091218948,
+     "min_val_loss": 3.5655198097229004
+    },
+    {
+     "subject": "CH",
+     "seed": 4,
+     "epochs_run": 50,
+     "best_epoch": 25,
+     "n_params": 1001,
+     "train_s": 4119.730263948441,
+     "min_val_loss": 3.797518491744995
+    },
+    {
+     "subject": "CH",
+     "seed": 5,
+     "epochs_run": 42,
+     "best_epoch": 17,
+     "n_params": 1001,
+     "train_s": 3207.4022328853607,
+     "min_val_loss": 3.7047836780548096
+    },
+    {
+     "subject": "CH",
+     "seed": 6,
+     "epochs_run": 54,
+     "best_epoch": 29,
+     "n_params": 1001,
+     "train_s": 4088.0250062942505,
+     "min_val_loss": 4.0166754722595215
+    },
+    {
+     "subject": "CH",
+     "seed": 7,
+     "epochs_run": 68,
+     "best_epoch": 43,
+     "n_params": 1001,
+     "train_s": 5116.351784229279,
+     "min_val_loss": 3.316422939300537
+    },
+    {
+     "subject": "CH",
+     "seed": 8,
+     "epochs_run": 56,
+     "best_epoch": 31,
+     "n_params": 1001,
+     "train_s": 4128.753576993942,
+     "min_val_loss": 3.342055559158325
+    },
+    {
+     "subject": "CH",
+     "seed": 9,
+     "epochs_run": 56,
+     "best_epoch": 31,
+     "n_params": 1001,
+     "train_s": 3565.485097885132,
+     "min_val_loss": 3.7064030170440674
+    },
+    {
+     "subject": "EG",
+     "seed": 0,
+     "epochs_run": 78,
+     "best_epoch": 53,
+     "n_params": 1001,
+     "train_s": 5784.024263381958,
+     "min_val_loss": 0.9479095339775085
+    },
+    {
+     "subject": "EG",
+     "seed": 1,
+     "epochs_run": 36,
+     "best_epoch": 11,
+     "n_params": 1001,
+     "train_s": 2728.3170347213745,
+     "min_val_loss": 1.3671010732650757
+    },
+    {
+     "subject": "EG",
+     "seed": 2,
+     "epochs_run": 32,
+     "best_epoch": 7,
+     "n_params": 1001,
+     "train_s": 2325.5397114753723,
+     "min_val_loss": 1.205610990524292
+    },
+    {
+     "subject": "EG",
+     "seed": 3,
+     "epochs_run": 76,
+     "best_epoch": 51,
+     "n_params": 1001,
+     "train_s": 6121.67001247406,
+     "min_val_loss": 1.0634346008300781
+    },
+    {
+     "subject": "EG",
+     "seed": 4,
+     "epochs_run": 38,
+     "best_epoch": 13,
+     "n_params": 1001,
+     "train_s": 3105.443824529648,
+     "min_val_loss": 1.102906584739685
+    },
+    {
+     "subject": "EG",
+     "seed": 5,
+     "epochs_run": 63,
+     "best_epoch": 38,
+     "n_params": 1001,
+     "train_s": 4809.64444899559,
+     "min_val_loss": 0.9403559565544128
+    },
+    {
+     "subject": "EG",
+     "seed": 6,
+     "epochs_run": 57,
+     "best_epoch": 32,
+     "n_params": 1001,
+     "train_s": 4350.559050798416,
+     "min_val_loss": 1.0415254831314087
+    },
+    {
+     "subject": "EG",
+     "seed": 7,
+     "epochs_run": 67,
+     "best_epoch": 42,
+     "n_params": 1001,
+     "train_s": 5042.692280292511,
+     "min_val_loss": 0.9540780782699585
+    },
+    {
+     "subject": "EG",
+     "seed": 8,
+     "epochs_run": 56,
+     "best_epoch": 31,
+     "n_params": 1001,
+     "train_s": 4179.160837650299,
+     "min_val_loss": 0.9353172183036804
+    },
+    {
+     "subject": "EG",
+     "seed": 9,
+     "epochs_run": 39,
+     "best_epoch": 14,
+     "n_params": 1001,
+     "train_s": 2770.347272157669,
+     "min_val_loss": 1.2515149116516113
+    },
+    {
+     "subject": "HM",
+     "seed": 0,
+     "epochs_run": 78,
+     "best_epoch": 53,
+     "n_params": 1001,
+     "train_s": 6225.660530328751,
+     "min_val_loss": 0.252301424741745
+    },
+    {
+     "subject": "HM",
+     "seed": 1,
+     "epochs_run": 49,
+     "best_epoch": 24,
+     "n_params": 1001,
+     "train_s": 3993.563735485077,
+     "min_val_loss": 0.27560168504714966
+    },
+    {
+     "subject": "HM",
+     "seed": 2,
+     "epochs_run": 64,
+     "best_epoch": 39,
+     "n_params": 1001,
+     "train_s": 4498.330909490585,
+     "min_val_loss": 0.2520964741706848
+    },
+    {
+     "subject": "HM",
+     "seed": 3,
+     "epochs_run": 42,
+     "best_epoch": 17,
+     "n_params": 1001,
+     "train_s": 3359.201964378357,
+     "min_val_loss": 0.2989487946033478
+    },
+    {
+     "subject": "HM",
+     "seed": 4,
+     "epochs_run": 87,
+     "best_epoch": 62,
+     "n_params": 1001,
+     "train_s": 7077.033813714981,
+     "min_val_loss": 0.2321394383907318
+    },
+    {
+     "subject": "HM",
+     "seed": 5,
+     "epochs_run": 48,
+     "best_epoch": 23,
+     "n_params": 1001,
+     "train_s": 3678.4629244804382,
+     "min_val_loss": 0.2774415612220764
+    },
+    {
+     "subject": "HM",
+     "seed": 6,
+     "epochs_run": 54,
+     "best_epoch": 29,
+     "n_params": 1001,
+     "train_s": 4065.5553810596466,
+     "min_val_loss": 0.32145053148269653
+    },
+    {
+     "subject": "HM",
+     "seed": 7,
+     "epochs_run": 54,
+     "best_epoch": 29,
+     "n_params": 1001,
+     "train_s": 4051.141337156296,
+     "min_val_loss": 0.27600011229515076
+    },
+    {
+     "subject": "HM",
+     "seed": 8,
+     "epochs_run": 46,
+     "best_epoch": 21,
+     "n_params": 1001,
+     "train_s": 3434.8831849098206,
+     "min_val_loss": 0.2969202995300293
+    },
+    {
+     "subject": "HM",
+     "seed": 9,
+     "epochs_run": 41,
+     "best_epoch": 16,
+     "n_params": 1001,
+     "train_s": 2622.7743513584137,
+     "min_val_loss": 0.3358328342437744
+    },
+    {
+     "subject": "IES",
+     "seed": 0,
+     "epochs_run": 71,
+     "best_epoch": 46,
+     "n_params": 1001,
+     "train_s": 5550.540251255035,
+     "min_val_loss": 0.7730321288108826
+    },
+    {
+     "subject": "IES",
+     "seed": 1,
+     "epochs_run": 115,
+     "best_epoch": 90,
+     "n_params": 1001,
+     "train_s": 8744.923339605331,
+     "min_val_loss": 0.6926928162574768
+    },
+    {
+     "subject": "IES",
+     "seed": 2,
+     "epochs_run": 76,
+     "best_epoch": 51,
+     "n_params": 1001,
+     "train_s": 5558.705909490585,
+     "min_val_loss": 0.6982445120811462
+    },
+    {
+     "subject": "IES",
+     "seed": 3,
+     "epochs_run": 42,
+     "best_epoch": 17,
+     "n_params": 1001,
+     "train_s": 3601.3729598522186,
+     "min_val_loss": 0.8657220602035522
+    },
+    {
+     "subject": "IES",
+     "seed": 4,
+     "epochs_run": 65,
+     "best_epoch": 40,
+     "n_params": 1001,
+     "train_s": 5379.471759319305,
+     "min_val_loss": 0.7070317268371582
+    },
+    {
+     "subject": "IES",
+     "seed": 5,
+     "epochs_run": 46,
+     "best_epoch": 21,
+     "n_params": 1001,
+     "train_s": 3512.5175344944,
+     "min_val_loss": 0.8713943958282471
+    },
+    {
+     "subject": "IES",
+     "seed": 6,
+     "epochs_run": 41,
+     "best_epoch": 16,
+     "n_params": 1001,
+     "train_s": 3127.2041239738464,
+     "min_val_loss": 0.9207587838172913
+    },
+    {
+     "subject": "IES",
+     "seed": 7,
+     "epochs_run": 40,
+     "best_epoch": 15,
+     "n_params": 1001,
+     "train_s": 3063.8502626419067,
+     "min_val_loss": 0.7180758714675903
+    },
+    {
+     "subject": "IES",
+     "seed": 8,
+     "epochs_run": 92,
+     "best_epoch": 67,
+     "n_params": 1001,
+     "train_s": 6206.899605035782,
+     "min_val_loss": 0.6801617741584778
+    },
+    {
+     "subject": "IES",
+     "seed": 9,
+     "epochs_run": 61,
+     "best_epoch": 36,
+     "n_params": 1001,
+     "train_s": 3856.500138282776,
+     "min_val_loss": 0.7402244210243225
+    },
+    {
+     "subject": "JM",
+     "seed": 0,
+     "epochs_run": 78,
+     "best_epoch": 53,
+     "n_params": 1001,
+     "train_s": 6065.7138023376465,
+     "min_val_loss": 0.20376962423324585
+    },
+    {
+     "subject": "JM",
+     "seed": 1,
+     "epochs_run": 98,
+     "best_epoch": 73,
+     "n_params": 1001,
+     "train_s": 7252.960914373398,
+     "min_val_loss": 0.2097964733839035
+    },
+    {
+     "subject": "JM",
+     "seed": 2,
+     "epochs_run": 76,
+     "best_epoch": 51,
+     "n_params": 1001,
+     "train_s": 5618.719374418259,
+     "min_val_loss": 0.19663231074810028
+    },
+    {
+     "subject": "JM",
+     "seed": 3,
+     "epochs_run": 63,
+     "best_epoch": 38,
+     "n_params": 1001,
+     "train_s": 5230.500740766525,
+     "min_val_loss": 0.20235732197761536
+    },
+    {
+     "subject": "JM",
+     "seed": 4,
+     "epochs_run": 52,
+     "best_epoch": 27,
+     "n_params": 1001,
+     "train_s": 4372.588596105576,
+     "min_val_loss": 0.1938798576593399
+    },
+    {
+     "subject": "JM",
+     "seed": 5,
+     "epochs_run": 43,
+     "best_epoch": 18,
+     "n_params": 1001,
+     "train_s": 3437.8590807914734,
+     "min_val_loss": 0.29254043102264404
+    },
+    {
+     "subject": "JM",
+     "seed": 6,
+     "epochs_run": 75,
+     "best_epoch": 50,
+     "n_params": 1001,
+     "train_s": 5668.675065755844,
+     "min_val_loss": 0.21547704935073853
+    },
+    {
+     "subject": "JM",
+     "seed": 7,
+     "epochs_run": 76,
+     "best_epoch": 51,
+     "n_params": 1001,
+     "train_s": 5768.954134464264,
+     "min_val_loss": 0.20107951760292053
+    },
+    {
+     "subject": "JM",
+     "seed": 8,
+     "epochs_run": 94,
+     "best_epoch": 69,
+     "n_params": 1001,
+     "train_s": 6680.341354131699,
+     "min_val_loss": 0.2610768973827362
+    },
+    {
+     "subject": "JM",
+     "seed": 9,
+     "epochs_run": 90,
+     "best_epoch": 65,
+     "n_params": 1001,
+     "train_s": 5800.347980499268,
+     "min_val_loss": 0.21688120067119598
+    },
+    {
+     "subject": "YES",
+     "seed": 0,
+     "epochs_run": 40,
+     "best_epoch": 15,
+     "n_params": 1001,
+     "train_s": 3023.3768553733826,
+     "min_val_loss": 0.8414626717567444
+    },
+    {
+     "subject": "YES",
+     "seed": 1,
+     "epochs_run": 66,
+     "best_epoch": 41,
+     "n_params": 1001,
+     "train_s": 4967.278163194656,
+     "min_val_loss": 0.809471607208252
+    },
+    {
+     "subject": "YES",
+     "seed": 2,
+     "epochs_run": 76,
+     "best_epoch": 51,
+     "n_params": 1001,
+     "train_s": 5592.036311864853,
+     "min_val_loss": 0.7701793909072876
+    },
+    {
+     "subject": "YES",
+     "seed": 3,
+     "epochs_run": 41,
+     "best_epoch": 16,
+     "n_params": 1001,
+     "train_s": 3588.549030303955,
+     "min_val_loss": 0.8790658712387085
+    },
+    {
+     "subject": "YES",
+     "seed": 4,
+     "epochs_run": 112,
+     "best_epoch": 87,
+     "n_params": 1001,
+     "train_s": 8813.170833826065,
+     "min_val_loss": 0.8561325073242188
+    },
+    {
+     "subject": "YES",
+     "seed": 5,
+     "epochs_run": 49,
+     "best_epoch": 24,
+     "n_params": 1001,
+     "train_s": 3887.622794151306,
+     "min_val_loss": 0.9521922469139099
+    },
+    {
+     "subject": "YES",
+     "seed": 6,
+     "epochs_run": 63,
+     "best_epoch": 38,
+     "n_params": 1001,
+     "train_s": 4798.041965246201,
+     "min_val_loss": 0.9784630537033081
+    },
+    {
+     "subject": "YES",
+     "seed": 7,
+     "epochs_run": 43,
+     "best_epoch": 18,
+     "n_params": 1001,
+     "train_s": 3154.652621269226,
+     "min_val_loss": 0.925868809223175
+    },
+    {
+     "subject": "YES",
+     "seed": 8,
+     "epochs_run": 67,
+     "best_epoch": 42,
+     "n_params": 1001,
+     "train_s": 5209.971556663513,
+     "min_val_loss": 0.9141767621040344
+    },
+    {
+     "subject": "YES",
+     "seed": 9,
+     "epochs_run": 56,
+     "best_epoch": 31,
+     "n_params": 1001,
+     "train_s": 4027.9867186546326,
+     "min_val_loss": 0.8916884064674377
+    }
+   ]
+  },
+  "x00_eg_seed0": {
+   "epochs_run": 78,
+   "best_epoch": 53,
+   "train_loss_first": 12.626243591308594,
+   "train_loss_last": 4.6476263999938965,
+   "val_loss_first": 1.691995620727539,
+   "val_loss_best": 0.9479095339775085,
+   "val_loss_last": 1.031313419342041,
+   "train_loss_above_val_loss_all_epochs": true,
+   "note": "train_loss is Keras' running mean over the epoch with dropout ON, so it sits above val_loss (dropout OFF)"
+  },
+  "kept_epoch_x00f_seed0": {
+   "per_subject": [
+    {
+     "subject": "CH",
+     "best_epoch": 30,
+     "mae_fit": 1.2387192658003976,
+     "mae_val": 1.3245326647053535,
+     "mae_test": 1.58280052732932,
+     "ratio_test_over_val": 1.1949879149876752,
+     "ratio_val_over_fit": 1.0692759055858452,
+     "ratio_test_over_fit": 1.2777717849625876
+    },
+    {
+     "subject": "EG",
+     "best_epoch": 10,
+     "mae_fit": 0.6032644181783503,
+     "mae_val": 0.580063761466046,
+     "mae_test": 1.1958011819023753,
+     "ratio_test_over_val": 2.0614995477051044,
+     "ratio_val_over_fit": 0.9615414799660118,
+     "ratio_test_over_fit": 1.9822173260496299
+    },
+    {
+     "subject": "HM",
+     "best_epoch": 53,
+     "mae_fit": 0.3177123485386244,
+     "mae_val": 0.36457707947171974,
+     "mae_test": 0.6077502822073482,
+     "ratio_test_over_val": 1.6670007974390266,
+     "ratio_val_over_fit": 1.147506797103286,
+     "ratio_test_over_fit": 1.9128947458378809
+    },
+    {
+     "subject": "IES",
+     "best_epoch": 46,
+     "mae_fit": 0.5654693805444573,
+     "mae_val": 0.6331020102958106,
+     "mae_test": 1.1724887802819055,
+     "ratio_test_over_val": 1.8519745020775906,
+     "ratio_val_over_fit": 1.1196044066722655,
+     "ratio_test_over_fit": 2.073478813570745
+    },
+    {
+     "subject": "JM",
+     "best_epoch": 25,
+     "mae_fit": 0.34079938434208007,
+     "mae_val": 0.353830770924418,
+     "mae_test": 2.1202992660772826,
+     "ratio_test_over_val": 5.9924106106933275,
+     "ratio_val_over_fit": 1.0382377057619845,
+     "ratio_test_over_fit": 6.221546644430013
+    },
+    {
+     "subject": "YES",
+     "best_epoch": 30,
+     "mae_fit": 0.5870538335664905,
+     "mae_val": 0.606943540640503,
+     "mae_test": 0.8236731512038802,
+     "ratio_test_over_val": 1.3570836429607012,
+     "ratio_val_over_fit": 1.0338805505334627,
+     "ratio_test_over_fit": 1.4030623839041667
+    }
+   ],
+   "median_over_subjects": {
+    "mae_fit": 0.5762616070554739,
+    "mae_val": 0.5935036510532745,
+    "mae_test": 1.1841449810921403,
+    "ratio_test_over_val": 1.7594876497583085,
+    "ratio_val_over_fit": 1.0537568056739148,
+    "ratio_test_over_fit": 1.9475560359437554
+   },
+   "median_of_ratios_vs_ratio_of_medians": {
+    "median_of_ratios": 1.7594876497583085,
+    "ratio_of_medians": 1.9951772478411396
+   },
+   "n_subjects_test_gt_val": 6,
+   "n_subjects_val_gt_fit": 5,
+   "n_subjects_test_best_epoch_earlier_than_kept": 5,
+   "n_subjects_test_best_epoch_later_than_kept": 1,
+   "n_subjects_test_best_epoch_equal_kept": 0,
+   "test_best_vs_kept": {
+    "CH": {
+     "kept_epoch": 30,
+     "test_best_epoch": 9,
+     "mae_test_kept": 1.58280052732932,
+     "mae_test_best": 1.5600590591658072
+    },
+    "EG": {
+     "kept_epoch": 10,
+     "test_best_epoch": 3,
+     "mae_test_kept": 1.1958011819023753,
+     "mae_test_best": 1.1391610728265236
+    },
+    "HM": {
+     "kept_epoch": 53,
+     "test_best_epoch": 20,
+     "mae_test_kept": 0.6077502822073482,
+     "mae_test_best": 0.5778985754678518
+    },
+    "IES": {
+     "kept_epoch": 46,
+     "test_best_epoch": 25,
+     "mae_test_kept": 1.1724887802819055,
+     "mae_test_best": 0.8973171816320237
+    },
+    "JM": {
+     "kept_epoch": 25,
+     "test_best_epoch": 1,
+     "mae_test_kept": 2.1202992660772826,
+     "mae_test_best": 1.9509799622972956
+    },
+    "YES": {
+     "kept_epoch": 30,
+     "test_best_epoch": 34,
+     "mae_test_kept": 0.8236731512038802,
+     "mae_test_best": 0.7567719123527287
+    }
+   }
+  },
+  "kept_epoch_d01_seed0": {
+   "per_subject": [
+    {
+     "subject": "CH",
+     "best_epoch": 20,
+     "mae_fit": 0.9360283364157579,
+     "mae_val": 1.0786276714047245,
+     "mae_test": 1.3798587328044032,
+     "ratio_test_over_val": 1.2792725139411432
+    },
+    {
+     "subject": "EG",
+     "best_epoch": 13,
+     "mae_fit": 0.5686157104510374,
+     "mae_val": 0.6196050519644951,
+     "mae_test": 0.8507249222980107,
+     "ratio_test_over_val": 1.3730115976310007
+    },
+    {
+     "subject": "HM",
+     "best_epoch": 43,
+     "mae_fit": 0.2990548989231362,
+     "mae_val": 0.35772465454442015,
+     "mae_test": 0.5654037340684711,
+     "ratio_test_over_val": 1.5805556784687944
+    },
+    {
+     "subject": "IES",
+     "best_epoch": 53,
+     "mae_fit": 0.44690163465244365,
+     "mae_val": 0.5071748726884067,
+     "mae_test": 0.6092090945764052,
+     "ratio_test_over_val": 1.2011815399038615
+    },
+    {
+     "subject": "JM",
+     "best_epoch": 14,
+     "mae_fit": 0.2896594089313763,
+     "mae_val": 0.29105478296328796,
+     "mae_test": 0.38868832147430726,
+     "ratio_test_over_val": 1.3354472911147255
+    },
+    {
+     "subject": "YES",
+     "best_epoch": 42,
+     "mae_fit": 0.586984537683095,
+     "mae_val": 0.6040073268300756,
+     "mae_test": 0.7774622966911755,
+     "ratio_test_over_val": 1.2871736188556164
+    }
+   ],
+   "median_over_subjects": {
+    "mae_fit": 0.5077586725517406,
+    "mae_val": 0.5555910997592411,
+    "mae_test": 0.6933356956337904,
+    "ratio_test_over_val": 1.311310454985171
+   }
+  },
+  "epochs_visual_candidates_x00f": [
+   {
+    "subject": "CH",
+    "epochs_run": 55,
+    "best_epoch": 30,
+    "n_lr_cuts": 3,
+    "cuts_at_end_of_epoch": [
+     20,
+     40,
+     50
+    ],
+    "val_first_over_best": 2.685672544861232,
+    "share_drop_first3": 0.6508325225804864,
+    "val_loss_first": 10.462912559509277,
+    "val_loss_best": 3.8958258628845215,
+    "cut_before_best": 1,
+    "cut_after_best": 2,
+    "test_best_earlier": true,
+    "score": 5.0
+   },
+   {
+    "subject": "EG",
+    "epochs_run": 35,
+    "best_epoch": 10,
+    "n_lr_cuts": 2,
+    "cuts_at_end_of_epoch": [
+     20,
+     30
+    ],
+    "val_first_over_best": 1.5939286474322758,
+    "share_drop_first3": 0.30509482361147755,
+    "val_loss_first": 1.5442113876342773,
+    "val_loss_best": 0.9688083529472351,
+    "cut_before_best": 0,
+    "cut_after_best": 2,
+    "test_best_earlier": true,
+    "score": 2.5
+   },
+   {
+    "subject": "HM",
+    "epochs_run": 78,
+    "best_epoch": 53,
+    "n_lr_cuts": 5,
+    "cuts_at_end_of_epoch": [
+     20,
+     30,
+     44,
+     63,
+     73
+    ],
+    "val_first_over_best": 3.316878676959822,
+    "share_drop_first3": 0.7530731194249446,
+    "val_loss_first": 0.8654066324234009,
+    "val_loss_best": 0.26090994477272034,
+    "cut_before_best": 3,
+    "cut_after_best": 2,
+    "test_best_earlier": true,
+    "score": 5.0
+   },
+   {
+    "subject": "IES",
+    "epochs_run": 71,
+    "best_epoch": 46,
+    "n_lr_cuts": 4,
+    "cuts_at_end_of_epoch": [
+     32,
+     42,
+     56,
+     66
+    ],
+    "val_first_over_best": 2.1765847988874056,
+    "share_drop_first3": 0.5625463931909229,
+    "val_loss_first": 1.682569980621338,
+    "val_loss_best": 0.7730321288108826,
+    "cut_before_best": 2,
+    "cut_after_best": 2,
+    "test_best_earlier": true,
+    "score": 4.0
+   },
+   {
+    "subject": "JM",
+    "epochs_run": 50,
+    "best_epoch": 25,
+    "n_lr_cuts": 3,
+    "cuts_at_end_of_epoch": [
+     16,
+     35,
+     45
+    ],
+    "val_first_over_best": 3.0826637769819754,
+    "share_drop_first3": 0.7867250181903562,
+    "val_loss_first": 0.6506034135818481,
+    "val_loss_best": 0.21105234324932098,
+    "cut_before_best": 1,
+    "cut_after_best": 2,
+    "test_best_earlier": true,
+    "score": 5.0
+   },
+   {
+    "subject": "YES",
+    "epochs_run": 55,
+    "best_epoch": 30,
+    "n_lr_cuts": 3,
+    "cuts_at_end_of_epoch": [
+     25,
+     40,
+     50
+    ],
+    "val_first_over_best": 2.901449809800747,
+    "share_drop_first3": 0.7249912279032595,
+    "val_loss_first": 2.3898894786834717,
+    "val_loss_best": 0.8236880302429199,
+    "cut_before_best": 1,
+    "cut_after_best": 2,
+    "test_best_earlier": false,
+    "score": 5.0
+   }
+  ],
+  "epochs_visual_recommendation": {
+   "subject": "HM",
+   "reason": "HM: val loss falls 0.87 -> 0.26 (best epoch 53), 5 lr cuts at the end of epochs [20, 30, 44, 63, 73], stops at epoch 78 of 200",
+   "scores": {
+    "CH": 5.0,
+    "EG": 2.5,
+    "HM": 5.0,
+    "IES": 4.0,
+    "JM": 5.0,
+    "YES": 5.0
+   }
+  },
+  "storyboard_cross_check": {
+   "c09_b03 steps per epoch": {
+    "storyboard": 7112,
+    "computed": 7112,
+    "match": true
+   },
+   "c09_b06 epochs_run min": {
+    "storyboard": 32,
+    "computed": 32,
+    "match": true
+   },
+   "c09_b06 epochs_run max": {
+    "storyboard": 115,
+    "computed": 115,
+    "match": true
+   },
+   "c09_b06 best_epoch min": {
+    "storyboard": 7,
+    "computed": 7,
+    "match": true
+   },
+   "c09_b06 best_epoch max": {
+    "storyboard": 90,
+    "computed": 90,
+    "match": true
+   },
+   "c13_b02 median MAE fit (Nm)": {
+    "storyboard": 0.58,
+    "computed": 0.58,
+    "match": true
+   },
+   "c13_b02 median MAE val (Nm)": {
+    "storyboard": 0.59,
+    "computed": 0.59,
+    "match": true
+   },
+   "c13_b02 median MAE test (Nm)": {
+    "storyboard": 1.18,
+    "computed": 1.18,
+    "match": true
+   },
+   "c13_b04 test/val CH": {
+    "storyboard": 1.2,
+    "computed": 1.2,
+    "match": true
+   },
+   "c13_b04 test/val EG": {
+    "storyboard": 2.1,
+    "computed": 2.1,
+    "match": true
+   },
+   "c13_b04 test/val HM": {
+    "storyboard": 1.7,
+    "computed": 1.7,
+    "match": true
+   },
+   "c13_b04 test/val IES": {
+    "storyboard": 1.9,
+    "computed": 1.9,
+    "match": true
+   },
+   "c13_b04 test/val JM": {
+    "storyboard": 6.0,
+    "computed": 6.0,
+    "match": true
+   },
+   "c13_b04 test/val YES": {
+    "storyboard": 1.4,
+    "computed": 1.4,
+    "match": true
+   },
+   "c13_b05 subjects with test-best epoch earlier than kept": {
+    "storyboard": 5,
+    "computed": 5,
+    "match": true
+   },
+   "c13_b05 JM lowest test MAE (Nm)": {
+    "storyboard": 1.95,
+    "computed": 1.95,
+    "match": true
+   },
+   "c13_b05 JM test MAE at kept epoch (Nm)": {
+    "storyboard": 2.12,
+    "computed": 2.12,
+    "match": true
+   },
+   "c09_b05 lr cut factor": {
+    "storyboard": 0.7,
+    "computed": 0.7,
+    "match": true
+   },
+   "c09_b06 epoch limit": {
+    "storyboard": 200,
+    "computed": 200,
+    "match": true
+   },
+   "c09_b06 patience": {
+    "storyboard": 25,
+    "computed": 25,
+    "match": true
+   }
+  },
+  "storyboard_mismatches": [],
+  "display": {
+   "steps_per_epoch": "7,112",
+   "x00_epochs_range": "32-115",
+   "x00_best_range": "7-90",
+   "median_mae_fit_val_test_nm": [
+    0.58,
+    0.59,
+    1.18
+   ],
+   "ratios_test_over_val": {
+    "CH": 1.19,
+    "EG": 2.06,
+    "HM": 1.67,
+    "IES": 1.85,
+    "JM": 5.99,
+    "YES": 1.36
+   },
+   "recommended_epochs_visual": "HM"
+  },
+  "checks": [
+   {
+    "check": "config.py hyper-parameters",
+    "ok": true,
+    "detail": "{'LEARNING_RATE': 0.003, 'LR_FACTOR': 0.7, 'LR_PATIENCE': 10, 'LR_MIN': 1e-06, 'EARLY_PATIENCE': 25, 'BATCH_SIZE': 8, 'EPOCHS': 200}"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00f_baseline_framework/CH: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "55 vs 55"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 30 vs 30"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "55 vs 30+25"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: keras_val_loss ~ mse_val (rel < 1e-3)",
+    "ok": true,
+    "detail": "max rel 1.29e-06"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[20, 40, 50] vs [20, 40, 50]"
+   },
+   {
+    "check": "X00f_baseline_framework/CH: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "55 vs 55"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00f_baseline_framework/EG: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "35 vs 35"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 10 vs 10"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "35 vs 10+25"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: keras_val_loss ~ mse_val (rel < 1e-3)",
+    "ok": true,
+    "detail": "max rel 1.31e-06"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7]"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[20, 30] vs [20, 30]"
+   },
+   {
+    "check": "X00f_baseline_framework/EG: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "35 vs 35"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00f_baseline_framework/HM: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "78 vs 78"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 53 vs 53"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "78 vs 53+25"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: keras_val_loss ~ mse_val (rel < 1e-3)",
+    "ok": true,
+    "detail": "max rel 1.20e-06"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[20, 30, 44, 63, 73] vs [20, 30, 44, 63, 73]"
+   },
+   {
+    "check": "X00f_baseline_framework/HM: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "78 vs 78"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00f_baseline_framework/IES: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "71 vs 71"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 46 vs 46"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "71 vs 46+25"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: keras_val_loss ~ mse_val (rel < 1e-3)",
+    "ok": true,
+    "detail": "max rel 1.11e-06"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[32, 42, 56, 66] vs [32, 42, 56, 66]"
+   },
+   {
+    "check": "X00f_baseline_framework/IES: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "71 vs 71"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00f_baseline_framework/JM: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "50 vs 50"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 25 vs 25"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "50 vs 25+25"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: keras_val_loss ~ mse_val (rel < 1e-3)",
+    "ok": true,
+    "detail": "max rel 1.23e-06"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[16, 35, 45] vs [16, 35, 45]"
+   },
+   {
+    "check": "X00f_baseline_framework/JM: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "50 vs 50"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00f_baseline_framework/YES: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "55 vs 55"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 30 vs 30"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "55 vs 30+25"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: keras_val_loss ~ mse_val (rel < 1e-3)",
+    "ok": true,
+    "detail": "max rel 1.31e-06"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[25, 40, 50] vs [25, 40, 50]"
+   },
+   {
+    "check": "X00f_baseline_framework/YES: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "55 vs 55"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "45 vs 45"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 20 vs 20"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "45 vs 20+25"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[30, 40] vs [30, 40]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/CH: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "45 vs 45"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "38 vs 38"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 13 vs 13"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "38 vs 13+25"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[23, 33] vs [23, 33]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/EG: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "38 vs 38"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "68 vs 68"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 43 vs 43"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "68 vs 43+25"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[24, 53, 63] vs [24, 53, 63]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/HM: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "68 vs 68"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "78 vs 78"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 53 vs 53"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "78 vs 53+25"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[36, 63, 73] vs [36, 63, 73]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/IES: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "78 vs 78"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "39 vs 39"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 14 vs 14"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "39 vs 14+25"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[24, 34] vs [24, 34]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/JM: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "39 vs 39"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: epochs are 1..n",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: json 'epochs' == len(history)",
+    "ok": true,
+    "detail": "67 vs 67"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: best_epoch == argmin(keras_val_loss)+1",
+    "ok": true,
+    "detail": "argmin 42 vs 42"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: epochs == best_epoch + 25 (early stop)",
+    "ok": true,
+    "detail": "67 vs 42+25"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: every lr cut is x0.7",
+    "ok": true,
+    "detail": "[0.7, 0.7, 0.7]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: lr starts at 0.003",
+    "ok": true,
+    "detail": "0.003000000026077032"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: lr cut epochs == Keras ReduceLROnPlateau emulation",
+    "ok": true,
+    "detail": "[20, 52, 62] vs [20, 52, 62]"
+   },
+   {
+    "check": "D01_cleanpassive+autogain+equalweight/YES: stop epoch == EarlyStopping emulation",
+    "ok": true,
+    "detail": "67 vs 67"
+   },
+   {
+    "check": "steps per epoch = 56896/8 = 7112",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "x00f/CH: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "x00f/EG: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "x00f/HM: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "x00f/IES: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "x00f/JM: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "x00f/YES: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "d01/CH: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "d01/EG: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "d01/HM: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "d01/IES: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "d01/JM: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "d01/YES: n_windows fit/val/test",
+    "ok": true,
+    "detail": "{'fit': 56896, 'val': 14224, 'test': 71128}"
+   },
+   {
+    "check": "X00 CH seed0: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed0: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "30 vs 30"
+   },
+   {
+    "check": "X00 CH seed0: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "55 vs 30+25"
+   },
+   {
+    "check": "X00 CH seed0: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed1: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed1: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "14 vs 14"
+   },
+   {
+    "check": "X00 CH seed1: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "39 vs 14+25"
+   },
+   {
+    "check": "X00 CH seed1: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed2: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed2: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "32 vs 32"
+   },
+   {
+    "check": "X00 CH seed2: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "57 vs 32+25"
+   },
+   {
+    "check": "X00 CH seed2: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed3: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed3: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "29 vs 29"
+   },
+   {
+    "check": "X00 CH seed3: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "54 vs 29+25"
+   },
+   {
+    "check": "X00 CH seed3: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed4: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed4: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "25 vs 25"
+   },
+   {
+    "check": "X00 CH seed4: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "50 vs 25+25"
+   },
+   {
+    "check": "X00 CH seed4: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed5: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed5: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "17 vs 17"
+   },
+   {
+    "check": "X00 CH seed5: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "42 vs 17+25"
+   },
+   {
+    "check": "X00 CH seed5: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed6: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed6: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "29 vs 29"
+   },
+   {
+    "check": "X00 CH seed6: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "54 vs 29+25"
+   },
+   {
+    "check": "X00 CH seed6: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed7: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed7: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "43 vs 43"
+   },
+   {
+    "check": "X00 CH seed7: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "68 vs 43+25"
+   },
+   {
+    "check": "X00 CH seed7: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed8: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed8: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "31 vs 31"
+   },
+   {
+    "check": "X00 CH seed8: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "56 vs 31+25"
+   },
+   {
+    "check": "X00 CH seed8: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed9: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 CH seed9: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "31 vs 31"
+   },
+   {
+    "check": "X00 CH seed9: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "56 vs 31+25"
+   },
+   {
+    "check": "X00 CH seed9: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed0: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed0: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "53 vs 53"
+   },
+   {
+    "check": "X00 EG seed0: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "78 vs 53+25"
+   },
+   {
+    "check": "X00 EG seed0: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed1: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed1: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "11 vs 11"
+   },
+   {
+    "check": "X00 EG seed1: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "36 vs 11+25"
+   },
+   {
+    "check": "X00 EG seed1: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed2: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed2: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "7 vs 7"
+   },
+   {
+    "check": "X00 EG seed2: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "32 vs 7+25"
+   },
+   {
+    "check": "X00 EG seed2: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed3: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed3: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "51 vs 51"
+   },
+   {
+    "check": "X00 EG seed3: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "76 vs 51+25"
+   },
+   {
+    "check": "X00 EG seed3: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed4: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed4: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "13 vs 13"
+   },
+   {
+    "check": "X00 EG seed4: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "38 vs 13+25"
+   },
+   {
+    "check": "X00 EG seed4: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed5: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed5: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "38 vs 38"
+   },
+   {
+    "check": "X00 EG seed5: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "63 vs 38+25"
+   },
+   {
+    "check": "X00 EG seed5: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed6: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed6: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "32 vs 32"
+   },
+   {
+    "check": "X00 EG seed6: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "57 vs 32+25"
+   },
+   {
+    "check": "X00 EG seed6: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed7: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed7: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "42 vs 42"
+   },
+   {
+    "check": "X00 EG seed7: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "67 vs 42+25"
+   },
+   {
+    "check": "X00 EG seed7: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed8: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed8: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "31 vs 31"
+   },
+   {
+    "check": "X00 EG seed8: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "56 vs 31+25"
+   },
+   {
+    "check": "X00 EG seed8: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed9: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 EG seed9: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "14 vs 14"
+   },
+   {
+    "check": "X00 EG seed9: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "39 vs 14+25"
+   },
+   {
+    "check": "X00 EG seed9: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed0: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed0: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "53 vs 53"
+   },
+   {
+    "check": "X00 HM seed0: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "78 vs 53+25"
+   },
+   {
+    "check": "X00 HM seed0: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed1: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed1: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "24 vs 24"
+   },
+   {
+    "check": "X00 HM seed1: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "49 vs 24+25"
+   },
+   {
+    "check": "X00 HM seed1: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed2: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed2: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "39 vs 39"
+   },
+   {
+    "check": "X00 HM seed2: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "64 vs 39+25"
+   },
+   {
+    "check": "X00 HM seed2: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed3: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed3: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "17 vs 17"
+   },
+   {
+    "check": "X00 HM seed3: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "42 vs 17+25"
+   },
+   {
+    "check": "X00 HM seed3: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed4: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed4: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "62 vs 62"
+   },
+   {
+    "check": "X00 HM seed4: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "87 vs 62+25"
+   },
+   {
+    "check": "X00 HM seed4: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed5: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed5: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "23 vs 23"
+   },
+   {
+    "check": "X00 HM seed5: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "48 vs 23+25"
+   },
+   {
+    "check": "X00 HM seed5: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed6: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed6: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "29 vs 29"
+   },
+   {
+    "check": "X00 HM seed6: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "54 vs 29+25"
+   },
+   {
+    "check": "X00 HM seed6: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed7: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed7: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "29 vs 29"
+   },
+   {
+    "check": "X00 HM seed7: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "54 vs 29+25"
+   },
+   {
+    "check": "X00 HM seed7: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed8: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed8: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "21 vs 21"
+   },
+   {
+    "check": "X00 HM seed8: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "46 vs 21+25"
+   },
+   {
+    "check": "X00 HM seed8: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed9: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 HM seed9: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "16 vs 16"
+   },
+   {
+    "check": "X00 HM seed9: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "41 vs 16+25"
+   },
+   {
+    "check": "X00 HM seed9: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed0: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed0: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "46 vs 46"
+   },
+   {
+    "check": "X00 IES seed0: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "71 vs 46+25"
+   },
+   {
+    "check": "X00 IES seed0: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed1: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed1: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "90 vs 90"
+   },
+   {
+    "check": "X00 IES seed1: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "115 vs 90+25"
+   },
+   {
+    "check": "X00 IES seed1: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed2: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed2: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "51 vs 51"
+   },
+   {
+    "check": "X00 IES seed2: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "76 vs 51+25"
+   },
+   {
+    "check": "X00 IES seed2: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed3: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed3: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "17 vs 17"
+   },
+   {
+    "check": "X00 IES seed3: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "42 vs 17+25"
+   },
+   {
+    "check": "X00 IES seed3: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed4: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed4: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "40 vs 40"
+   },
+   {
+    "check": "X00 IES seed4: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "65 vs 40+25"
+   },
+   {
+    "check": "X00 IES seed4: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed5: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed5: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "21 vs 21"
+   },
+   {
+    "check": "X00 IES seed5: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "46 vs 21+25"
+   },
+   {
+    "check": "X00 IES seed5: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed6: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed6: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "16 vs 16"
+   },
+   {
+    "check": "X00 IES seed6: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "41 vs 16+25"
+   },
+   {
+    "check": "X00 IES seed6: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed7: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed7: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "15 vs 15"
+   },
+   {
+    "check": "X00 IES seed7: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "40 vs 15+25"
+   },
+   {
+    "check": "X00 IES seed7: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed8: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed8: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "67 vs 67"
+   },
+   {
+    "check": "X00 IES seed8: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "92 vs 67+25"
+   },
+   {
+    "check": "X00 IES seed8: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed9: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 IES seed9: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "36 vs 36"
+   },
+   {
+    "check": "X00 IES seed9: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "61 vs 36+25"
+   },
+   {
+    "check": "X00 IES seed9: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed0: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed0: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "53 vs 53"
+   },
+   {
+    "check": "X00 JM seed0: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "78 vs 53+25"
+   },
+   {
+    "check": "X00 JM seed0: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed1: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed1: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "73 vs 73"
+   },
+   {
+    "check": "X00 JM seed1: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "98 vs 73+25"
+   },
+   {
+    "check": "X00 JM seed1: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed2: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed2: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "51 vs 51"
+   },
+   {
+    "check": "X00 JM seed2: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "76 vs 51+25"
+   },
+   {
+    "check": "X00 JM seed2: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed3: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed3: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "38 vs 38"
+   },
+   {
+    "check": "X00 JM seed3: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "63 vs 38+25"
+   },
+   {
+    "check": "X00 JM seed3: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed4: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed4: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "27 vs 27"
+   },
+   {
+    "check": "X00 JM seed4: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "52 vs 27+25"
+   },
+   {
+    "check": "X00 JM seed4: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed5: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed5: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "18 vs 18"
+   },
+   {
+    "check": "X00 JM seed5: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "43 vs 18+25"
+   },
+   {
+    "check": "X00 JM seed5: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed6: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed6: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "50 vs 50"
+   },
+   {
+    "check": "X00 JM seed6: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "75 vs 50+25"
+   },
+   {
+    "check": "X00 JM seed6: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed7: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed7: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "51 vs 51"
+   },
+   {
+    "check": "X00 JM seed7: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "76 vs 51+25"
+   },
+   {
+    "check": "X00 JM seed7: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed8: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed8: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "69 vs 69"
+   },
+   {
+    "check": "X00 JM seed8: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "94 vs 69+25"
+   },
+   {
+    "check": "X00 JM seed8: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed9: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 JM seed9: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "65 vs 65"
+   },
+   {
+    "check": "X00 JM seed9: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "90 vs 65+25"
+   },
+   {
+    "check": "X00 JM seed9: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed0: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed0: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "15 vs 15"
+   },
+   {
+    "check": "X00 YES seed0: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "40 vs 15+25"
+   },
+   {
+    "check": "X00 YES seed0: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed1: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed1: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "41 vs 41"
+   },
+   {
+    "check": "X00 YES seed1: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "66 vs 41+25"
+   },
+   {
+    "check": "X00 YES seed1: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed2: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed2: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "51 vs 51"
+   },
+   {
+    "check": "X00 YES seed2: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "76 vs 51+25"
+   },
+   {
+    "check": "X00 YES seed2: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed3: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed3: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "16 vs 16"
+   },
+   {
+    "check": "X00 YES seed3: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "41 vs 16+25"
+   },
+   {
+    "check": "X00 YES seed3: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed4: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed4: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "87 vs 87"
+   },
+   {
+    "check": "X00 YES seed4: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "112 vs 87+25"
+   },
+   {
+    "check": "X00 YES seed4: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed5: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed5: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "24 vs 24"
+   },
+   {
+    "check": "X00 YES seed5: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "49 vs 24+25"
+   },
+   {
+    "check": "X00 YES seed5: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed6: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed6: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "38 vs 38"
+   },
+   {
+    "check": "X00 YES seed6: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "63 vs 38+25"
+   },
+   {
+    "check": "X00 YES seed6: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed7: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed7: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "18 vs 18"
+   },
+   {
+    "check": "X00 YES seed7: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "43 vs 18+25"
+   },
+   {
+    "check": "X00 YES seed7: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed8: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed8: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "42 vs 42"
+   },
+   {
+    "check": "X00 YES seed8: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "67 vs 42+25"
+   },
+   {
+    "check": "X00 YES seed8: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed9: len(train_loss)==len(val_loss)==epochs_run",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "X00 YES seed9: best_epoch == argmin(val_loss)+1",
+    "ok": true,
+    "detail": "31 vs 31"
+   },
+   {
+    "check": "X00 YES seed9: epochs_run == best_epoch + 25",
+    "ok": true,
+    "detail": "56 vs 31+25"
+   },
+   {
+    "check": "X00 YES seed9: settings match config",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "all 60 runs have 1001 parameters",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "per-subject kept-epoch MAEs, best_epoch and test-best epoch agree with facts_y01 E",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "check": "median MAE fit/val/test agree with facts_y01 E",
+    "ok": true,
+    "detail": "{'epochs_run': 55.0, 'best_epoch': 30.0, 'mae_fit': 0.5763, 'mae_val': 0.5935, 'mae_test': 1.1842, 'ratio_test_over_val': 1.76, 'ratio_val_over_fit': 1.054, 'ratio_test_over_fit': 1.948, 'n_subjects_with_test_gt_val': 6, 'n_subjects_with_val_gt_fit': 5} vs {'mae_fit': 0.5762616070554739, 'mae_val': 0.5935036510532745, 'mae_test': 1.1841449810921403, 'ratio_test_over_val': 1.7594876497583085, 'ratio_val_over_fit': 1.0537568056739148, 'ratio_test_over_fit': 1.9475560359437554}"
+   },
+   {
+    "check": "x00f/CH: mean of final per-trial fit MAE == mae_fit at the kept epoch",
+    "ok": true,
+    "detail": "1.238719 vs 1.238719"
+   },
+   {
+    "check": "x00f/CH: mean of final per-trial val MAE == mae_val at the kept epoch",
+    "ok": true,
+    "detail": "1.324533 vs 1.324533"
+   },
+   {
+    "check": "x00f/CH: mean of final per-trial test MAE == mae_test at the kept epoch",
+    "ok": true,
+    "detail": "1.582801 vs 1.582801"
+   },
+   {
+    "check": "x00f/EG: mean of final per-trial fit MAE == mae_fit at the kept epoch",
+    "ok": true,
+    "detail": "0.603264 vs 0.603264"
+   },
+   {
+    "check": "x00f/EG: mean of final per-trial val MAE == mae_val at the kept epoch",
+    "ok": true,
+    "detail": "0.580064 vs 0.580064"
+   },
+   {
+    "check": "x00f/EG: mean of final per-trial test MAE == mae_test at the kept epoch",
+    "ok": true,
+    "detail": "1.195801 vs 1.195801"
+   },
+   {
+    "check": "x00f/HM: mean of final per-trial fit MAE == mae_fit at the kept epoch",
+    "ok": true,
+    "detail": "0.317712 vs 0.317712"
+   },
+   {
+    "check": "x00f/HM: mean of final per-trial val MAE == mae_val at the kept epoch",
+    "ok": true,
+    "detail": "0.364577 vs 0.364577"
+   },
+   {
+    "check": "x00f/HM: mean of final per-trial test MAE == mae_test at the kept epoch",
+    "ok": true,
+    "detail": "0.607750 vs 0.607750"
+   },
+   {
+    "check": "x00f/IES: mean of final per-trial fit MAE == mae_fit at the kept epoch",
+    "ok": true,
+    "detail": "0.565469 vs 0.565469"
+   },
+   {
+    "check": "x00f/IES: mean of final per-trial val MAE == mae_val at the kept epoch",
+    "ok": true,
+    "detail": "0.633102 vs 0.633102"
+   },
+   {
+    "check": "x00f/IES: mean of final per-trial test MAE == mae_test at the kept epoch",
+    "ok": true,
+    "detail": "1.172489 vs 1.172489"
+   },
+   {
+    "check": "x00f/JM: mean of final per-trial fit MAE == mae_fit at the kept epoch",
+    "ok": true,
+    "detail": "0.340799 vs 0.340799"
+   },
+   {
+    "check": "x00f/JM: mean of final per-trial val MAE == mae_val at the kept epoch",
+    "ok": true,
+    "detail": "0.353831 vs 0.353831"
+   },
+   {
+    "check": "x00f/JM: mean of final per-trial test MAE == mae_test at the kept epoch",
+    "ok": true,
+    "detail": "2.120299 vs 2.120299"
+   },
+   {
+    "check": "x00f/YES: mean of final per-trial fit MAE == mae_fit at the kept epoch",
+    "ok": true,
+    "detail": "0.587054 vs 0.587054"
+   },
+   {
+    "check": "x00f/YES: mean of final per-trial val MAE == mae_val at the kept epoch",
+    "ok": true,
+    "detail": "0.606944 vs 0.606944"
+   },
+   {
+    "check": "x00f/YES: mean of final per-trial test MAE == mae_test at the kept epoch",
+    "ok": true,
+    "detail": "0.823673 vs 0.823673"
+   }
+  ],
+  "n_checks": 377,
+  "all_checks_ok": true
+ }
+}

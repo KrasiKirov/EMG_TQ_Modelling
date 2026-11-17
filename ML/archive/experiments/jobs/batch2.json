@@ -1,0 +1,220 @@
+[
+ {
+  "subject": "YES",
+  "name": "anc_floor_const",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_const"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm"
+ },
+ {
+  "subject": "JM",
+  "name": "anc_floor_const",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_const"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm"
+ },
+ {
+  "subject": "YES",
+  "name": "anc_floor_drift",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm"
+ },
+ {
+  "subject": "JM",
+  "name": "anc_floor_drift",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm"
+ },
+ {
+  "subject": "YES",
+  "name": "anc_floor_drift_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "anc_floor_drift_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "ancgain_floor_drift_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_gain",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "ancgain_floor_drift_posw",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_gain",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "anc16_clip_floor_drift_poswstd",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:clip_env",
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm16",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_std_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "anc16_clip_floor_drift_poswstd",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:clip_env",
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm16",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_std_weights"
+ },
+ {
+  "subject": "YES",
+  "name": "anc_clip_floor_drift_posw_TRIALNORM",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:clip_env",
+    "ML.experiments.plugins.core:trial_norm",
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ },
+ {
+  "subject": "JM",
+  "name": "anc_clip_floor_drift_posw_TRIALNORM",
+  "opts": {
+   "plugins": [
+    "ML.experiments.plugins.core:clip_env",
+    "ML.experiments.plugins.core:trial_norm",
+    "ML.experiments.plugins.core:floor_subtract",
+    "ML.experiments.plugins.core:rezero_drift"
+   ]
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "model": "ML.experiments.plugins.anchored:anchored_lstm",
+  "sample_weight": "ML.experiments.plugins.core:pos_inv_var_weights"
+ }
+]

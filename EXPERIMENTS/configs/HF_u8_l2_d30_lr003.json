@@ -1,0 +1,33 @@
+{
+ "id": "HF_u8_l2_d30_lr003",
+ "title": "Tuning finalist, 400 epochs: 8 units × 2, dropout 0.3, learning rate 0.003",
+ "description": "Finalist round of the hyperparameter search: at 150 epochs many runs were still improving, so the best grid configurations and the previous network are trained again with a 400-epoch limit (batch 64), 3 seeds. Same data and network as the tuning run HT_u8_l2_d30_lr003; chosen by session-1 validation loss only. Training windows are fed in time order (no shuffling).",
+ "tags": [
+  "finalist",
+  "hyperparameter search"
+ ],
+ "changes": {
+  "passive": "static",
+  "emg": "trainmax",
+  "balance": "none",
+  "window": 20,
+  "envelope": "causal",
+  "trim_end_s": 1.0,
+  "train_protocol": "fast400",
+  "lp_order": 2,
+  "val_gap": true,
+  "metadata_passive": true,
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "lr": 0.003,
+  "shuffle": false
+ },
+ "dashboard": {
+  "group": "Hyperparameter search",
+  "label": "8×2 · dropout 0.3 · lr 0.003 (previous)",
+  "name": "Previous network: 8 units × 2 layers, dropout 0.3, learning rate 0.003",
+  "order": 6,
+  "blurb": "The original A0 hyperparameters, trained the same way (batch 64, no shuffling, up to 400 epochs): the reference for the search."
+ }
+}

@@ -1,0 +1,86 @@
+{
+ "experiment": "S0_noshuffle",
+ "subject": "CH",
+ "direction": "S1toS2",
+ "seed": 0,
+ "config": {
+  "passive": "none",
+  "emg": "trainmax",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "scale",
+  "pf_extra": null,
+  "window": 20,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null,
+  "shuffle": false
+ },
+ "hypothesis": "Shuffling the window order during training should not be what makes the model work; turning it off changes training, not what each window contains.",
+ "details": {
+  "passive": {
+   "kind": "none"
+  },
+  "emg": {
+   "kind": "trainmax"
+  },
+  "push_directions": [
+   18.03851835374673,
+   -54.794036573371415,
+   16.492651515362102,
+   -31.586012348960217,
+   27.95270044900236,
+   9.368439407894453,
+   -45.13225371176253,
+   -54.47030321858709
+  ],
+  "n_windows": {
+   "train": 56896,
+   "val": 14232,
+   "test": 71128
+  },
+  "rest_frac_train": 0.31626124859392574
+ },
+ "train_info": {
+  "epochs": 200,
+  "best_epoch": 200,
+  "best_val_loss": 0.0280632171779871,
+  "knots": [
+   -0.74,
+   -0.597,
+   -0.456,
+   -0.312,
+   -0.184,
+   -0.047,
+   0.096,
+   0.239
+  ],
+  "sd_per_knot": [
+   4.532637483694875,
+   8.066166626899154,
+   8.573856187033384,
+   13.213292492919464,
+   16.357066206010078,
+   23.603324781454035,
+   27.865454073201857,
+   29.015322461266262
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56896,
+  "val": 14224,
+  "test": 71128
+ },
+ "prep_s": 0.7719161510467529,
+ "train_s": 11791.197698116302,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

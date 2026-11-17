@@ -1,0 +1,12 @@
+{
+ "id": "D02_D01+window_0.5s",
+ "title": "Final candidate D01 with a 0.5 s input window (50 samples instead of 20)",
+ "changes": {
+  "passive": "static",
+  "emg": "agc_auto",
+  "balance": "scale",
+  "window": 50
+ },
+ "hypothesis": "A teammate reported that a 500 ms window helped the original pipeline. A longer history might also help D01, although X06 (0.4 s on the baseline) was worse at Stage A.",
+ "motivation": "One change relative to D01 (window only), all 6 subjects, so the window question is answered for our final approach."
+}

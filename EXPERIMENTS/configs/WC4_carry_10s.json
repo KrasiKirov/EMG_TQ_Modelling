@@ -1,0 +1,43 @@
+{
+ "id": "WC4_carry_10s",
+ "title": "LSTM state carried, 10 s chunks, gradients clipped",
+ "description": "Carried LSTM state trained on 10 s chunks: the learning signal runs back through the last 10 s, so the network can be taught to use EMG history up to 10 s old (the 500 ms and 1 s chunk settings only teach the last 0.5 or 1 s). Tests whether torque depends on what happened more than 1 s earlier; compare with the reference and with the plain 10 s window (WL5_10s) on matched seeds. Two training changes come with the long chunks: gradients are clipped to norm 1 (long chunks can make them blow up), and the epoch limit is 400 (fast400 protocol: learning rate × 0.5 after 6 flat epochs, early stop 15), because 10 s chunks give only about 7 weight updates per epoch. The 8 session-1 trials train side by side (one batch lane each); the state starts at zero at the start of every trial and epoch. Everything else as the reference: active torque (each session's own relaxed-hold passive torque subtracted), EMG ÷ session-1 maximum, plain mean-squared error, LSTM 16 units × 2 layers, dropout 0.0, learning rate 0.01, causal envelope (2nd-order 2 Hz low-pass), first and last 1 s of every trial cut, trained on session 1 and tested on session 2.",
+ "tags": [
+  "window study",
+  "state",
+  "sequential",
+  "chunk length",
+  "long history"
+ ],
+ "changes": {
+  "passive": "static",
+  "emg": "trainmax",
+  "balance": "none",
+  "window": 20,
+  "envelope": "causal",
+  "trim_end_s": 1.0,
+  "state": "carry",
+  "train_protocol": "fast400",
+  "lp_order": 2,
+  "val_gap": true,
+  "metadata_passive": true,
+  "chunk": 1000,
+  "shuffle": false,
+  "units": 16,
+  "layers": 2,
+  "dropout": 0.0,
+  "lr": 0.01,
+  "clipnorm": 1.0
+ },
+ "dashboard": {
+  "group": "Window study",
+  "label": "State carried, 10 s chunks",
+  "name": "LSTM state carried, 10 s chunks",
+  "order": 44,
+  "blurb": "Carried LSTM state trained on 10 s chunks, so the network is taught to use EMG history up to 10 s old. Gradients clipped, epoch limit 400.",
+  "text": {
+   "purpose": "Carried LSTM state trained on 10 s chunks: the learning signal runs back through the last 10 s, so the network can be taught to use EMG history up to 10 s old (the 500 ms and 1 s chunk settings only teach the last 0.5 or 1 s). Tests whether torque depends on what happened more than 1 s earlier; compare with the reference and with the plain 10 s window (WL5_10s) on matched seeds. Two training changes come with the long chunks: gradients are clipped to norm 1 (long chunks can make them blow up), and the epoch limit is 400 (fast400 protocol: learning rate × 0.5 after 6 flat epochs, early stop 15), because 10 s chunks give only about 7 weight updates per epoch. The 8 session-1 trials train side by side (one batch lane each); the state starts at zero at the start of every trial and epoch. Everything else as the reference: active torque (each session's own relaxed-hold passive torque subtracted), EMG ÷ session-1 maximum, plain mean-squared error, LSTM 16 units × 2 layers, dropout 0.0, learning rate 0.01, causal envelope (2nd-order 2 Hz low-pass), first and last 1 s of every trial cut, trained on session 1 and tested on session 2.",
+   "target": "Active torque = measured torque − passive torque from the same session's 30 s relaxed holds (IES recorded no relaxed holds: its passive torque comes from the MVC-trial table in its experiment metadata, one table for both sessions). No calibration."
+  }
+ }
+}

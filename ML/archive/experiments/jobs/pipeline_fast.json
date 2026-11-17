@@ -1,0 +1,176 @@
+[
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "legacy",
+  "config": "legacy",
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P1_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": true,
+    "emg_clip": 3.0,
+    "position_feature": "setpoint",
+    "emg_floor": null
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P1_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": true,
+    "emg_clip": 3.0,
+    "position_feature": "setpoint",
+    "emg_floor": null
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": false
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P2_anc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": true,
+    "emg_clip": 3.0,
+    "position_feature": "setpoint",
+    "emg_floor": "train"
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P2_anc_w",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": true,
+    "emg_clip": 3.0,
+    "position_feature": "setpoint",
+    "emg_floor": "train"
+   },
+   "train": {
+    "position_balance": "weights",
+    "anchored": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "YES",
+  "name": "P3_anc_std",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": true,
+    "emg_clip": 3.0,
+    "position_feature": "setpoint",
+    "emg_floor": "train"
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ },
+ {
+  "runner": "pipeline",
+  "subject": "JM",
+  "name": "P3_anc_std",
+  "config": {
+   "dataset": {
+    "passive_method": "static",
+    "passive_gain": true,
+    "train_label_rezero": true,
+    "emg_clip": 3.0,
+    "position_feature": "setpoint",
+    "emg_floor": "train"
+   },
+   "train": {
+    "position_balance": "standardize",
+    "anchored": true
+   }
+  },
+  "protocol": "fast",
+  "seeds": [
+   0,
+   1,
+   2
+  ]
+ }
+]

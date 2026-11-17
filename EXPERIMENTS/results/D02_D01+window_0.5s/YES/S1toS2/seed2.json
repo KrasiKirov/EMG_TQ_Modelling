@@ -1,0 +1,87 @@
+{
+ "experiment": "D02_D01+window_0.5s",
+ "subject": "YES",
+ "direction": "S1toS2",
+ "seed": 2,
+ "config": {
+  "passive": "static",
+  "emg": "agc_auto",
+  "units": 8,
+  "layers": 2,
+  "dropout": 0.3,
+  "model": "lstm",
+  "balance": "scale",
+  "pf_extra": null,
+  "window": 50,
+  "lr": null,
+  "train_protocol": "orig",
+  "rest_weight": null,
+  "extra_input": null
+ },
+ "hypothesis": "A teammate reported that a 500 ms window helped the original pipeline. A longer history might also help D01, although X06 (0.4 s on the baseline) was worse at Stage A.",
+ "details": {
+  "passive": {
+   "kind": "static"
+  },
+  "emg": {
+   "kind": "agc_auto",
+   "rmin_frac": 0.35,
+   "auto_decision": "AGC ON"
+  },
+  "push_directions": [
+   -9.291360845567988,
+   -25.179493009476833,
+   -5.640097895425671,
+   -16.82462256071569,
+   -15.168488090940667,
+   -1.4444405655600816,
+   -26.75623727157575,
+   -29.020828105734996
+  ],
+  "n_windows": {
+   "train": 56704,
+   "val": 14184,
+   "test": 70888
+  },
+  "rest_frac_train": 0.2519046275395034
+ },
+ "train_info": {
+  "epochs": 51,
+  "best_epoch": 26,
+  "best_val_loss": 0.01286009605973959,
+  "knots": [
+   -0.486,
+   -0.382,
+   -0.277,
+   -0.174,
+   -0.069,
+   0.031,
+   0.137,
+   0.245
+  ],
+  "sd_per_knot": [
+   0.6913693276963698,
+   2.6890273097324298,
+   4.594541854190671,
+   7.57492576740637,
+   8.565765634154012,
+   13.783386738202493,
+   15.1764553828186,
+   13.083101334411758
+  ],
+  "n_params": 1001,
+  "lr": 0.003
+ },
+ "n_windows": {
+  "train": 56704,
+  "val": 14176,
+  "test": 70888
+ },
+ "prep_s": 4.72003436088562,
+ "train_s": 6878.572645664215,
+ "versions": {
+  "tensorflow": "2.21.0",
+  "numpy": "2.4.4",
+  "python": "3.11.1"
+ }
+}

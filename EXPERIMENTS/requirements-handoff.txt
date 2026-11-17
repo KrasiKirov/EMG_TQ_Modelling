@@ -1,0 +1,10 @@
+# Direct dependencies from the Windows/Python 3.11 environment used for these runs.
+# Run metadata and collection provenance retain their recorded package versions.
+# This is not a complete lock of every transitive dependency.
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+matplotlib==3.10.8
+tensorflow==2.21.0
+keras==3.14.0
+h5py==3.14.0
