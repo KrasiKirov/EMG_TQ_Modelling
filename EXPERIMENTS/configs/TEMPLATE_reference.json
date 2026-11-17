@@ -1,0 +1,48 @@
+{
+ "id": "TEMPLATE_reference",
+ "title": "Template: the reference setting of the window study",
+ "description": "Copy this file to start a new experiment: save it as EXPERIMENTS/configs/<new id>.json, set \"id\" to the same name, change \"title\", \"description\" and the values under \"changes\". As it stands it trains the reference setting: active torque, EMG divided by the session-1 maximum, 200 ms windows with a new one every 10 ms (95 % overlap), LSTM 16 units x 2 layers, trained on session 1 and tested on session 2. Run one person and seed with: python -m EXPERIMENTS.pipeline.run --exp TEMPLATE_reference --subject EG --direction S1toS2 --seed 0. Predictions are written to EXPERIMENTS/results/<id>/<person>/<direction>/seed<k>.npz with the full settings in the matching .json. Settings not listed under \"changes\" take the defaults in BASE (EXPERIMENTS/pipeline/run.py). Add a \"dashboard\" block (see EXPERIMENTS/pipeline/spec.py) only to show the experiment on the dashboard.",
+ "tags": [
+  "template"
+ ],
+ "changes": {
+  "passive": "static",
+  "metadata_passive": true,
+  "emg": "trainmax",
+  "envelope": "causal",
+  "lp_order": 2,
+  "trim_end_s": 1.0,
+  "window": 20,
+  "input_step": 1,
+  "train_stride": 1,
+  "val_gap": true,
+  "state": "reset",
+  "shuffle": false,
+  "balance": "none",
+  "units": 16,
+  "layers": 2,
+  "dropout": 0.0,
+  "lr": 0.01,
+  "train_protocol": "fast"
+ },
+ "settings_help": {
+  "passive": "target: 'static' = measured torque minus the passive torque of the same session's relaxed holds (active torque); 'none' = total measured torque; other models in ML/research/passive.py",
+  "metadata_passive": "true = IES's passive torque comes from its experiment-metadata table (IES has no relaxed holds)",
+  "emg": "EMG scaling: 'trainmax' = divide by the session-1 maximum; 'train_p99', 'session_p99', 'mvc_global', 'mvc_angle', 'agc', 'agc_soft', 'agc_auto' in ML/research/emg_norm.py",
+  "envelope": "'causal' = forward-only filters (only past EMG, as in a real-time device); 'zerophase' = forward-backward filters",
+  "lp_order": "order of the envelope's low-pass filter",
+  "trim_end_s": "seconds cut from the end of each trial (the first 1 s is always cut)",
+  "window": "time steps per input window; one step = 10 ms x input_step, so 20 = 200 ms",
+  "input_step": "samples between the steps of one window (1 = every 10 ms sample)",
+  "train_stride": "samples between consecutive training windows: 1 = a new window every 10 ms; equal to window = no overlap. Validation and test always use every window",
+  "val_gap": "true = validation starts one window span after the training part of each trial, so no validation window reuses training samples",
+  "state": "'reset' = LSTM state reset at every window; 'carry' = state carried between windows within a trial",
+  "shuffle": "false = training windows fed in time order",
+  "balance": "'none' = plain mean-squared error; 'scale' or 'weights' = per-angle loss scaling (ML/research/train.py)",
+  "units": "LSTM units per layer",
+  "layers": "LSTM layers",
+  "dropout": "dropout after each LSTM layer",
+  "lr": "learning rate (null = the protocol's default)",
+  "train_protocol": "'fast' = batch 64, at most 150 epochs, learning rate x 0.5 after 6 flat epochs, early stop 15; 'fast400' = the same with at most 400 epochs; 'orig' = batch 8, at most 200 epochs, x 0.7 after 10, early stop 25 (ML/research/config.py)"
+ }
+}
