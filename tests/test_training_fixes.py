@@ -164,3 +164,10 @@ def test_info_logs_clipnorm_cap_shuffle(run_unit):
 def test_epoch_windows_full(run_unit):
     res, _ = run_unit('TS2_unit_s', train_stride=20, epoch_windows='full')
     assert res['train_info']['epoch_windows'] == res['n_windows']['train_full']
+
+
+def test_ridge_lagged_run(run_unit):
+    res, v = run_unit('FE_unit_ridge', model='ridge_lagged', window=51)
+    ti = res['train_info']
+    assert str(ti['alpha']) in ti['val_mae_by_alpha'] and ti['n_params'] == 50
+    assert np.isclose(ti['val_mae'], np.mean(np.abs(v['y_pred'] - v['y'])))

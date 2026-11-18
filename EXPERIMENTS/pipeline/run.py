@@ -118,6 +118,19 @@ def add_passive_input(data, subject):
     return data
 
 
+def fit_ridge(data):
+    """Study v2 A1: ridge on lagged envelopes (ML.models.baselines.LaggedRidge); alpha chosen on the session-1
+    validation block from the protocol's grid. Deterministic: the seed is not used."""
+    from ML.models.baselines import LaggedRidge
+    with open(PROTOCOL, encoding='utf-8') as f:
+        rp = json.load(f)['ridge']
+    m = LaggedRidge(rp['alphas'], rp['lags_steps']).fit(data['X_train'], data['y_train'], data['X_val'], data['y_val'])
+    vp = m.predict(data['X_val'])
+    info = {'epochs': 0, 'alpha': m.alpha, 'val_mae_by_alpha': {str(k): v for k, v in m.val_mae.items()}, 'n_params': int(len(m.weights)),
+            'val_pred': vp, 'val_mae': float(np.mean(np.abs(vp - data['y_val'])))}
+    return m.predict(data['X_test']), info
+
+
 def fit_carry(data, cfg, seed):
     """state='carry': train ML.research.stateful on whole trials; return test predictions on the same samples
     (and in the same order) as the windowed model's data['y_test'] / data['meta_test']."""
@@ -208,6 +221,8 @@ def main(argv=None):
     os.makedirs(out, exist_ok=True)
     if cfg['state'] == 'carry':
         pred, info, data = fit_carry(data, cfg, a.seed)
+    elif cfg['model'] == 'ridge_lagged':
+        pred, info = fit_ridge(data)
     else:
         pred, info = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], cfg['train_protocol'], a.seed,
                                     lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
