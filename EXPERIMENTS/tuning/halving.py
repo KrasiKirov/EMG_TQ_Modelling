@@ -1,4 +1,4 @@
-"""Successive halving and the long-window gates (decisions D4, D23) on validation nMAE tables.
+"""Cuts inside a cell and the long-window gates (decisions D4, D23) on validation nMAE tables.
 
 A table is {config: {person: validation nMAE}} (median over seeds). Nothing here reads test predictions.
 """
@@ -26,19 +26,19 @@ def best(val: dict[str, dict[str, float]]) -> dict[str, float]:
     return val[keep(val, 1)[0]]
 
 
-def gate(screen: dict[str, dict[str, float]], shorter: list[dict[str, dict[str, float]]],
-         margin: float = _G['margin'], min_people: int = _G['min_people']) -> tuple[bool, list[dict[str, float]]]:
-    """D23: the screened length stops when its best R1 config is worse than the best R1 config of any shorter length
-    (full overlap) by more than ``margin`` in the median over people of the ratio, and for at least ``min_people``
-    people (on D24 common targets). Returns (continues, per-person ratios screened / shorter, one per shorter length)."""
+def gate(screen: dict[str, dict[str, float]], shorter: dict[str, dict[str, dict[str, float]]],
+         margin: float = _G['margin'], min_people: int = _G['min_people']) -> tuple[bool, str, dict[str, float]]:
+    """D23: one comparison. The reference is the shorter length (full overlap) whose best R1 config has the best
+    score; the screened length stops when its best R1 config is worse than the reference's by more than ``margin``
+    in the median over people of the ratio, and for at least ``min_people`` people (on D24 common targets).
+    ``shorter`` is {length cell: R1 table}. Returns (continues, reference cell, per-person ratios screened / ref)."""
     s = best(screen)
-    ratios = []
-    for t in shorter:
-        b = best(t)
-        ratios.append({p: s[p] / b[p] for p in s if p in b})
-    stops = any(np.median(list(rat.values())) > 1 + margin
-                and sum(r > 1 + margin for r in rat.values()) >= min_people for rat in ratios)
-    return not stops, ratios
+    bests = {c: best(t) for c, t in shorter.items()}
+    ref = min(bests, key=lambda c: (float(np.mean(np.log(list(bests[c].values())))), c))
+    rat = {p: s[p] / bests[ref][p] for p in s if p in bests[ref]}
+    stops = (np.median(list(rat.values())) > 1 + margin
+             and sum(r > 1 + margin for r in rat.values()) >= min_people)
+    return not stops, ref, rat
 
 
 def gated_lengths_to_run(decisions: dict[str, bool], order: list[str] = _G['order']) -> list[str]:

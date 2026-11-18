@@ -6,5 +6,13 @@
   "why": "v1 tuning runs (504 runs, 150-epoch cap) peaked at a median epoch of 145 and 92 % after epoch 60, so a 60-epoch cut ranks learning speed, not final quality; coarse-to-fine random search chosen by the user.",
   "runs_affected": "all study v2 tuning runs (none had run)",
   "results_seen": "none: no study v2 run had started"
+ },
+ {
+  "date": "2026-11-18",
+  "commit": "the commit that adds this entry",
+  "what": "Three rule changes after the code review: (1) A0 = the cell winner with the best score on common targets, no 1-SE rule (the 1-SE rule still picks each cell's winner); (2) the D23 gate makes one comparison, against the shorter full-overlap length with the best R1 score, instead of against every shorter length; (3) each pre-registered comparison is scored on the samples both of its arms predict, replacing 'every arm from the latest first prediction of any final arm'; that shared start is kept for the descriptive scores and the val-test agreement (D2b). Adds 'limitations' (no shuffling vs overlap, fixed training settings, ridge lags, conservative rule). Considered and not adopted: drawing 1 or 2 layers in the fine round (fine draws keep the centre's layers).",
+  "why": "(1) parameter count does not depend on window length, so the fewest-parameters tie-break ignored the setting being chosen and, with 6 people, many cells fall within 1 SE; (2) comparing against every shorter length made stopping more likely by multiplicity; (3) the old rule made F3's scored samples depend on F1's gate results and dropped up to 10 s of every trial from comparisons not involving long windows, while the descriptive curve and D2b need one shared sample set to line up. Layers stay fixed in the fine round because drawing them afresh would move most fine draws off the centre whose learning-rate and dropout ranges were narrowed, and the seed check already pools coarse and fine configs, so the other layer count stays in contention.",
+  "runs_affected": "all study v2 runs (none had run)",
+  "results_seen": "none: no study v2 run had started"
  }
 ]

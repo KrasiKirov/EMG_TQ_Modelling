@@ -29,3 +29,9 @@ def test_rounds_coarse_fine_full_budget():
     r = PT.load()['rounds']
     assert [r[k]['name'] for k in ('R1', 'R2', 'R3')] == ['coarse', 'fine', 'seed check']
     assert all(r[k]['protocol'] == 'study400' for k in r) and r['R3']['keep'] == 2
+
+
+def test_review_rules_18_nov():
+    p = PT.load()
+    assert 'no 1-SE' in p['a0_rule'] and p['fine']['layers'] == 'same'
+    assert p['gates']['reference'].startswith('one comparison') and 'both of its arms' in p['score_from_rule']

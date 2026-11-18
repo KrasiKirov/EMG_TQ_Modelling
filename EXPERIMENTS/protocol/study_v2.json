@@ -16,7 +16,7 @@
  "d24_max_window_steps": 1000,
  "metric": "nmae",
  "score_from_s": 1.0,
- "score_from_rule": "per person and direction, every final arm is scored from max(score_from_s, the latest first prediction of any final arm after the trial start), so all arms use the same samples",
+ "score_from_rule": "per person and direction, each pre-registered comparison is scored on the samples both of its arms predict: from max(score_from_s, the later first prediction of the two arms after the trial start); the descriptive scores and the val-test agreement (D2b) score every final arm on one shared start: max(score_from_s, the latest first prediction of any final arm)",
  "selection": "s1_val",
  "one_se": "paired",
  "fixed": {
@@ -312,7 +312,8 @@
   ],
   "margin": 0.1,
   "min_people": 4,
-  "stopped_stops_longer": true
+  "stopped_stops_longer": true,
+  "reference": "one comparison: against the shorter full-overlap length whose best R1 config has the best score (mean over people of log validation nMAE on D24 common targets)"
  },
  "rounds": {
   "R1": {
@@ -458,5 +459,13 @@
  },
  "min_agree": 6,
  "min_effect": 0.05,
- "val_test_agreement": "descriptive (D2b): per person, Spearman rho between session-1 validation nMAE and session-2 nMAE over the cell winners; changes no choice"
+ "val_test_agreement": "descriptive (D2b): per person, Spearman rho between session-1 validation nMAE and session-2 nMAE over the cell winners; changes no choice",
+ "one_se_scope": "cell winners only (R3); A0 is the cell winner with the best score on the D24 common targets",
+ "a0_rule": "best score (mean over people of log validation nMAE on D24 common targets) among the cell winners; no 1-SE rule",
+ "limitations": [
+  "No shuffling (D27): with stride-1 windows in time order a batch of 64 is 0.64 s of one trial, while at 0 % overlap a batch spans 64 distinct windows; the overlap family (F2) therefore also measures batch diversity, and an overlap effect may partly be a shuffling effect.",
+  "Fixed, untuned training settings: ReduceLROnPlateau 0.5/6, early-stopping patience 15, clipnorm 1.0, dropout at most 0.3, no weight decay.",
+  "The lagged ridge baseline (A1) sees 0.5 s of lags, while the networks get up to 10 s of history: a reference, not an equal competitor.",
+  "The decision rule (all 6 people agree in sign and median effect >= 5 %) is conservative, so 'no clear difference' is the expected outcome for small effects."
+ ]
 }

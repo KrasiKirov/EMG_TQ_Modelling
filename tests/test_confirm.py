@@ -110,6 +110,7 @@ def test_end_to_end_synthetic(study):
     assert f3['A0 vs A1']['decision'] == 'no clear difference'
     assert set(f3['A3 vs A0']['per_person']) == set(PEOPLE)
     assert out['provenance_check']['commits'] == ['c1']
+    assert out['limitations'] == P['limitations'] and len(out['limitations']) == 4
     f1 = out['families']['F1']
     assert f1['w200_full']['decision'] == 'stopped' and f1['w50_full']['decision'] == 'no clear difference'
 
@@ -127,11 +128,20 @@ def test_a0_seeds_from_cell_winner(study):
     assert set(out['families']['F3']['A3 vs A0']['comparator_seeds']['CH']) == set(range(10, 20))
 
 
-def test_arms_scored_on_common_samples(study):
-    """One arm with a 300-step window first predicts 2.99 s into each trial; every arm of that direction is then
-    scored from 2.99 s, so all arms are scored on the same samples."""
-    out = CF.run(study(window={'FE_cell_w50_full': 300}), P)
+def test_comparison_scored_on_samples_both_arms_predict(study):
+    """An arm with a 300-step window first predicts 2.99 s into each trial: its own comparison (vs 0.2 s) is scored
+    from 2.99 s, every other comparison keeps the 1 s start; the descriptive scores and D2b put every arm on one
+    shared start (2.99 s), so they line up as one curve."""
+    rd = study(window={'FE_cell_w50_full': 300})
+    out = CF.run(rd, P)
+    f1, f3 = out['families']['F1'], out['families']['F3']
+    assert f1['w50_full']['score_from_s'] == dict.fromkeys(PEOPLE, 2.99)
+    assert f1['w100_full']['score_from_s'] == dict.fromkeys(PEOPLE, 1.0)
+    assert f3['A0 vs A1']['score_from_s'] == dict.fromkeys(PEOPLE, 1.0)
     assert out['score_from_s'] == {p: {'S1toS2': 2.99} for p in PEOPLE}
+    runs = CF._load_runs(rd, P)
+    shared = CF._scores(runs, P, {e for e, _, _, _ in runs}, CF._timing(runs))[0]
+    assert out['descriptive']['FE_A0 S1toS2'] == {p: shared['FE_A0', p, 'S1toS2'] for p in PEOPLE}
 
 
 def test_same_angle_trials_kept_apart(study, monkeypatch):

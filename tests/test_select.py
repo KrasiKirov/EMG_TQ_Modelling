@@ -63,8 +63,14 @@ def test_a0_on_common_targets(tmp_path):
     full = {'a': dict.fromkeys(P6, 0.1), 'b': dict.fromkeys(P6, 0.2)}
     common = {'a': dict.fromkeys(P6, 0.3), 'b': dict.fromkeys(P6, 0.2)}
     out = tmp_path / 'choice.json'
-    a0 = SEL.choose_a0({'full': full, 'common': common}, {'a': 10, 'b': 10}, out=out, cell_winners={'w': 'b'})
+    a0 = SEL.choose_a0({'full': full, 'common': common}, out=out, cell_winners={'w': 'b'})
     assert a0 == 'b' and json.loads(out.read_text())['A0'] == 'b'
+
+
+def test_a0_is_best_score_not_fewest_params(tmp_path):
+    """Within 1 SE of the best, A0 is still the best score (no parameter-count tie-break)."""
+    t = _tab(1, [0.05, -0.03, 0.04, -0.02, 0.03, -0.01])
+    assert SEL.choose_a0({'full': t, 'common': t}, out=tmp_path / 'c.json') == 'best'
 
 
 def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
@@ -81,10 +87,9 @@ def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
     assert json.loads(capsys.readouterr().out)['best'] == 'TS2_R1_w20_full_anchor'   # fake error grows with position
     r2 = MS.for_round('R2', 'w20_full')
     assert r2 == [f'TS2_R2_w20_full_f{i}' for i in range(8)]
-    anchor = SPC.ANCHOR
     for i in r2:
         ch = SPEC.load(i, cfg).changes
-        assert ch['layers'] == anchor['layers'] and ch['units'] in (8, 16) and ch['train_protocol'] == 'study400'
+        assert ch['layers'] == SPC.ANCHOR['layers'] and ch['units'] in (8, 16) and ch['train_protocol'] == 'study400'
     _fake_results(tmp_path, r2, seeds=(0, 1), err={i: 0.05 for i in r2[:2]})
     cands = SEL.r3_ids('w20_full', P6)
     assert sorted(cands) == sorted(r2[:2])
@@ -93,7 +98,7 @@ def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
     assert json.loads(capsys.readouterr().out)['winner'] in cands
     SEL.main(['--gate', 'w200_full'])
     g = json.loads(capsys.readouterr().out)
-    assert g['continues'] is False and list(g['ratios']) == ['w20_full', 'w50_full', 'w100_full']   # w200 last: worst
+    assert g['continues'] is False and g['reference'] == 'w20_full' and len(g['ratios']) == 6   # w200 last: worst
 
 
 def test_choose_ridge_alpha():

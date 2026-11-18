@@ -1,4 +1,5 @@
-"""Selection on session-1 validation nMAE (decision D4) with the paired 1-SE rule; writes results_v2/choice.json.
+"""Selection on session-1 validation nMAE (decision D4): the paired 1-SE rule picks each cell's winner, the best
+score picks A0 among the cell winners; writes results_v2/choice.json.
 
 Reads only ``seedN.json`` and ``seedN_val.npz``; session-2 predictions (``seedN.npz``) are never opened here.
 
@@ -86,9 +87,11 @@ def winner(table, params: dict[str, int]) -> str:
     return min(within_one_se(table), key=lambda c: (params[c], s[c], c))
 
 
-def choose_a0(tables, params, out=None, cell_winners=None, ridge_alpha=None) -> str:
-    """A0 across cell winners on D24 common targets (paired 1-SE). Writes choice.json, which opens session 2."""
-    a0 = winner(tables['common'], params)
+def choose_a0(tables, out=None, cell_winners=None, ridge_alpha=None) -> str:
+    """A0 = the cell winner with the best score on D24 common targets (no 1-SE rule: parameter count does not
+    depend on window length, so it says nothing about the setting being chosen). Writes choice.json, which opens
+    session 2."""
+    a0 = HV.keep(tables['common'], 1)[0]
     out = Path(out or Path(RESULTS_V2) / 'choice.json')
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({'A0': a0, 'cell_winners': cell_winners or {}, 'ridge_alpha': ridge_alpha or {},
@@ -136,14 +139,14 @@ def main(argv=None):
         missing = [c for c in shorter if not round_ids('R1', c)]
         if missing:
             raise FileNotFoundError(f'the gate needs R1 of every shorter length first; missing {missing}')
-        short = [load_val(round_ids('R1', c), r1, people)[0]['common'] for c in shorter]
-        cont, ratios = HV.gate(screen, short)
-        res = {'continues': cont, 'ratios': dict(zip(shorter, ratios))}
+        short = {c: load_val(round_ids('R1', c), r1, people)[0]['common'] for c in shorter}
+        cont, ref, ratios = HV.gate(screen, short)
+        res = {'continues': cont, 'reference': ref, 'ratios': ratios}
     elif a.a0:
         winners = {c: _r3_winner(c, people) for c in P['cells'] if round_ids('R2', c)}
         ids = list(winners.values())
         tables, _ = load_val(ids, P['rounds']['R3']['seeds'], people)
-        res = {'A0': choose_a0(tables, n_params(ids, people), cell_winners=winners)}
+        res = {'A0': choose_a0(tables, cell_winners=winners)}
     else:
         ap.error('give --round with --cell, --gate or --a0')
     print(json.dumps(res, indent=1))

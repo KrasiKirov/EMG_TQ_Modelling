@@ -90,20 +90,25 @@ def _fake_results(tmp, ids, seeds=(0,), err=None, n_params=None):
 def test_gate_stops_10pct_4of6():
     short = {'s': dict.fromkeys(P6, 0.2)}
     screen = {'x': {p: 0.2 * (1.15 if i < 4 else 1.0) for i, p in enumerate(P6)}}
-    cont, ratios = HV.gate(screen, [short])
-    assert cont is False and len(ratios[0]) == 6
+    cont, ref, ratios = HV.gate(screen, {'w20_full': short})
+    assert cont is False and ref == 'w20_full' and len(ratios) == 6
 
 
 def test_gate_passes_within_margin():
-    short = {'s': dict.fromkeys(P6, 0.2)}
-    assert HV.gate({'x': dict.fromkeys(P6, 0.2 * 1.08)}, [short])[0] is True
+    short = {'w20_full': {'s': dict.fromkeys(P6, 0.2)}}
+    assert HV.gate({'x': dict.fromkeys(P6, 0.2 * 1.08)}, short)[0] is True
     # 15 % worse for only 3 people: continues
-    assert HV.gate({'x': {p: 0.2 * (1.15 if i < 3 else 1.0) for i, p in enumerate(P6)}}, [short])[0] is True
+    assert HV.gate({'x': {p: 0.2 * (1.15 if i < 3 else 1.0) for i, p in enumerate(P6)}}, short)[0] is True
 
 
-def test_gate_against_any_shorter_length():
+def test_gate_one_comparison_against_best_shorter_length():
+    """Only the best shorter length is compared (b, 0.2), not every shorter length."""
     a, b = {'s': dict.fromkeys(P6, 0.3)}, {'s': dict.fromkeys(P6, 0.2)}
-    assert HV.gate({'x': dict.fromkeys(P6, 0.25)}, [a, b])[0] is False
+    cont, ref, ratios = HV.gate({'x': dict.fromkeys(P6, 0.25)}, {'w20_full': a, 'w50_full': b})
+    assert cont is False and ref == 'w50_full' and np.allclose(list(ratios.values()), 1.25)
+    # 8 % worse than the best shorter length: continues
+    cont, ref, _ = HV.gate({'x': dict.fromkeys(P6, 0.216)}, {'w20_full': a, 'w50_full': b})
+    assert cont is True and ref == 'w50_full'
 
 
 def test_stopped_length_stops_longer():
@@ -117,10 +122,12 @@ CENTER = dict(units=16, layers=2, dropout=0.05, lr=0.001, batch=64)
 
 
 def test_fine_draws_narrowed_around_center():
-    for d in SPC.fine_draws(CENTER, 200, 7):
+    fine = SPC.fine_draws(CENTER, 200, 7)
+    for d in fine:
         assert 0.001 / 3 - 1e-12 <= d['lr'] <= 0.001 * 3 + 1e-12
         assert 0.0 <= d['dropout'] <= 0.15 and d['units'] in (8, 16, 32) and d['layers'] == 2
         assert d['batch'] in (32, 64, 128)
+    assert all(d['layers'] == 1 for d in SPC.fine_draws(dict(CENTER, layers=1), 200, 7))   # the centre's layers
     edge = SPC.fine_draws(dict(CENTER, lr=0.025, units=64, batch=128, dropout=0.3), 200, 7)
     assert all(d['lr'] <= 0.03 and d['units'] in (32, 64) and d['batch'] in (64, 128) and d['dropout'] >= 0.2
                for d in edge)                                      # stays inside the coarse space

@@ -8,9 +8,11 @@ recording. Opens session-2 predictions only through ``lock.load_test`` (so only 
 
 Score of a run: per trial (position), MAE divided by the person's scale (99th percentile of |measured active
 target| of the tested session, from FE_A0, also used for A3: D6); the run's nMAE is the mean over positions.
-Every arm of one person and direction is scored on the same samples: from the protocol's ``score_from_s`` after the
-trial's start, or later if some final arm first predicts later (a w-step window first predicts (w - 1) x 10 ms in);
-the start used is reported as ``score_from_s``. The trial start is the first prediction time minus the run's
+Each comparison is scored on the samples both of its arms predict: per person, from the protocol's ``score_from_s``
+after the trial's start, or later if one of the two arms first predicts later (a w-step window first predicts
+(w - 1) x 10 ms in); each comparison reports its start as ``score_from_s``. The descriptive scores and D2b put every
+final arm on one shared start, from max(score_from_s, the latest first prediction of any final arm), so they line up
+as one curve; the top-level ``score_from_s`` {person: {direction: s}} is that shared start. The trial start is the first prediction time minus the run's
 window span. FE_A0's session 1 -> 2 seeds that its cell winner already ran (10-14) are read from FE_cell_<cell>.
 """
 from __future__ import annotations
@@ -103,24 +105,37 @@ def _span_s(js):
     return (int(c.get('window', 20)) - 1) * int(c.get('input_step', 1)) / MC.FS
 
 
-def _scores(runs, protocol):
-    """{(arm, person, direction): {seed: nmae}}, per-position nMAE {(arm, person, direction): {trial: {angle,
-    nmae}}} and the scoring start {person: {direction: s}}."""
+def _timing(runs):
+    """Trial starts {(person, direction, trial): s}, each arm's first-prediction delay after the start
+    {(arm, person, direction, trial): s} (the latest over its seeds) and the person's scale {(person, direction)}."""
     start, first, scale = {}, {}, {}
     for (e, p, d, s), (js, z) in runs.items():
         t, tr = np.asarray(z['t'], float), np.asarray(z['trial'])
         for i in np.unique(tr):
             f = float(t[tr == i].min())
             start[p, d, int(i)] = min(start.get((p, d, int(i)), np.inf), f - _span_s(js))
-            first.setdefault((p, d, int(i)), []).append(f)
+            first.setdefault((e, p, d, int(i)), []).append(f)
         if e == 'FE_A0' and (p, d) not in scale:
             scale[p, d] = person_scale(z['y_own_target'])
+    delay = {(e, p, d, i): max(fs) - start[p, d, i] for (e, p, d, i), fs in first.items()}
+    return start, delay, scale
+
+
+def _scores(runs, protocol, arms, timing):
+    """Score the runs of ``arms`` on the samples every one of them predicts: per person and direction, from
+    max(score_from_s, the latest first prediction of these arms after the trial start). Returns
+    ({(arm, person, direction): {seed: nmae}}, per-position nMAE {(arm, person, direction): {trial: {angle, nmae}}},
+    the scoring start {person: {direction: s}})."""
+    start, delay, scale = timing
+    arms = set(arms)
     sfrom = {}
-    for (p, d, i), fs in first.items():
-        sfrom.setdefault(p, {})[d] = max(sfrom.get(p, {}).get(d, protocol['score_from_s']),
-                                         round(max(fs) - start[p, d, i], 2))
+    for (e, p, d, i), f in delay.items():
+        if e in arms:
+            sfrom.setdefault(p, {})[d] = max(sfrom.get(p, {}).get(d, protocol['score_from_s']), round(f, 2))
     nm, pos = {}, {}
     for (e, p, d, s), (_, z) in runs.items():
+        if e not in arms:
+            continue
         y, yp, t, tr = (np.asarray(z[k], float) for k in ('y_own_target', 'y_pred', 't', 'trial'))
         per = {}
         for i in np.unique(tr):
@@ -135,7 +150,9 @@ def _scores(runs, protocol):
     return nm, pos, sfrom
 
 
-def _compare(nm, pos, arm, ref, people, d, protocol):
+def _compare(runs, timing, arm, ref, people, d, protocol):
+    """One pre-registered comparison, scored on the samples both arms predict."""
+    nm, pos, sfrom = _scores(runs, protocol, {arm, ref}, timing)
     a = {p: nm[arm, p, d] for p in people}
     r = {p: nm[ref, p, d] for p in people}
     eff = ST.person_effects(a, r)
@@ -143,6 +160,7 @@ def _compare(nm, pos, arm, ref, people, d, protocol):
     return {'arm': arm, 'comparator': ref, 'per_person': a, 'comparator_seeds': {p: sorted(r[p]) for p in people},
             'effects': eff, 'effect': float(np.median(list(eff.values()))),
             'ci': [m, lo, hi], 'decision': ST.decide(eff, protocol['min_agree'], protocol['min_effect']),
+            'score_from_s': {p: sfrom[p][d] for p in people},
             'per_position': {p: pos[arm, p, d] for p in people}}
 
 
@@ -152,15 +170,17 @@ def run(results_dir=None, protocol=None) -> dict:
         raise LK.TestLocked(f'no {rd / "choice.json"}: A0 is not chosen yet')
     runs = _load_runs(rd, protocol)
     prov = provenance_check(runs, protocol)
-    nm, pos, sfrom = _scores(runs, protocol)
+    timing = _timing(runs)
     people, d1, fam = protocol['people'], protocol['primary_direction'], protocol['families']
-    have = {e for e, _, _ in nm}
+    have = {e for e, _, _, _ in runs}
+    nm, _, sfrom = _scores(runs, protocol, have, timing)  # descriptive and D2b: every arm on one shared start
     out = {'families': {'F1': {}, 'F2': {}, 'F3': {}}, 'score_from_s': sfrom}
 
     f1 = fam['F1']
     for c in f1['arms']:
         if f'FE_cell_{c}' in have:
-            out['families']['F1'][c] = _compare(nm, pos, f'FE_cell_{c}', f'FE_cell_{f1["comparator"]}', people, d1, protocol)
+            out['families']['F1'][c] = _compare(runs, timing, f'FE_cell_{c}', f'FE_cell_{f1["comparator"]}', people,
+                                                 d1, protocol)
         else:
             g = rd / f'gate_{c}.json'
             out['families']['F1'][c] = {'decision': 'stopped',
@@ -170,8 +190,11 @@ def run(results_dir=None, protocol=None) -> dict:
                       and all(f'FE_cell_{c.split("_")[0]}_{o}' in have for o in ('full', 'o75', 'o50', 'o0'))},
                      key=lambda w: int(w[1:]))
     for o in fam['F2']['arms']:
-        per_len = {w: ST.person_effects({p: nm[f'FE_cell_{w}_{o}', p, d1] for p in people},
-                                        {p: nm[f'FE_cell_{w}_full', p, d1] for p in people}) for w in lengths}
+        per_len = {}
+        for w in lengths:
+            arm, ref = f'FE_cell_{w}_{o}', f'FE_cell_{w}_full'
+            pn = _scores(runs, protocol, {arm, ref}, timing)[0]
+            per_len[w] = ST.person_effects({p: pn[arm, p, d1] for p in people}, {p: pn[ref, p, d1] for p in people})
         eff = {p: float(np.mean([per_len[w][p] for w in lengths])) for p in people}
         m, lo, hi = ST.t_interval(eff)
         out['families']['F2'][o] = {'lengths': lengths, 'per_length': per_len, 'effects': eff,
@@ -179,12 +202,13 @@ def run(results_dir=None, protocol=None) -> dict:
                                     'decision': ST.decide(eff, protocol['min_agree'], protocol['min_effect'])}
 
     for a, b in fam['F3']['pairs']:
-        out['families']['F3'][f'{a} vs {b}'] = _compare(nm, pos, ARM[a], ARM[b], people, d1, protocol)
+        out['families']['F3'][f'{a} vs {b}'] = _compare(runs, timing, ARM[a], ARM[b], people, d1, protocol)
 
     out['descriptive'] = {f'{e} {d}': {p: nm[e, p, d] for p in people} for e, d in sorted({(e, d) for e, _, d in nm})}
     out['val_test_agreement'] = _agreement(rd, nm, people, d1, [e for e in have if e.startswith('FE_cell_')])
     out['provenance_check'] = prov
     out['deviations'] = protocol.get('deviations', [])
+    out['limitations'] = protocol.get('limitations', [])
     out['choice'] = json.loads((rd / 'choice.json').read_text())
     return out
 
