@@ -42,7 +42,7 @@ def _expected(rd: Path, protocol: dict) -> dict[str, tuple[list[str], list[int]]
     for c, v in protocol['cells'].items():
         if not v['gated'] or (rd / f'FE_cell_{c}').exists():
             out[f'FE_cell_{c}'] = ([s1], fs['cell'])
-    out['FE_A0'] = ([s1, protocol['supporting_direction']], fs['A0'])
+    out['FE_A0'] = ([s1], fs['A0'])
     out['FE_A1'] = ([s1], [fs['A0'][0]])
     out['FE_A2'] = ([s1], fs['A2'])
     out['FE_A3'] = ([s1], fs['A3'])

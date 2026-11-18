@@ -18,3 +18,8 @@ def test_cells_and_gates():
     assert p['gates']['order'] == ['w200_full', 'w500_full', 'w1000_full']
     assert all(s >= 10 for seeds in p['final_seeds'].values() for s in seeds)
     assert p['fixed']['shuffle'] is False
+
+
+def test_primary_direction_only():
+    p = PT.load()
+    assert p['primary_direction'] == 'S1toS2' and 'supporting_direction' not in p

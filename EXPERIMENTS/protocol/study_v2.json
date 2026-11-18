@@ -2,7 +2,6 @@
  "id": "study_v2",
  "status": "draft: becomes the pre-registration once D1, D6 and D23 are confirmed and this file is committed with status 'pre-registered'",
  "primary_direction": "S1toS2",
- "supporting_direction": "S2toS1",
  "people": [
   "CH",
   "EG",
@@ -17,6 +16,7 @@
  "d24_max_window_steps": 1000,
  "metric": "nmae",
  "score_from_s": 1.0,
+ "score_from_rule": "per person and direction, every final arm is scored from max(score_from_s, the latest first prediction of any final arm after the trial start), so all arms use the same samples",
  "selection": "s1_val",
  "one_se": "paired",
  "fixed": {
@@ -444,5 +444,6 @@
   }
  },
  "min_agree": 6,
- "min_effect": 0.05
+ "min_effect": 0.05,
+ "val_test_agreement": "descriptive (D2b): per person, Spearman rho between session-1 validation nMAE and session-2 nMAE over the cell winners; changes no choice"
 }

@@ -22,7 +22,7 @@ def test_final_seeds_fresh(tmp_path, monkeypatch):
     choice, cfg = _choice(tmp_path, monkeypatch)
     plan = FN.write(choice, cfg)
     assert plan and all(min(seeds) >= 10 for _, _, _, seeds in plan)
-    assert {d for i, _, d, _ in plan if i == 'FE_A0'} == {'S1toS2', 'S2toS1'}
+    assert {d for _, _, d, _ in plan} == {'S1toS2'}                 # D1: no session 2 -> 1 runs
 
 
 def test_passed_gated_cell_gets_final_seeds(tmp_path, monkeypatch):
@@ -63,5 +63,5 @@ def test_a0_reuses_cell_winner_seeds(tmp_path, monkeypatch):
     choice, cfg = _choice(tmp_path, monkeypatch)
     plan = FN.write(choice, cfg)
     a0 = {d: s for i, _, d, s in plan if i == 'FE_A0'}
-    assert a0['S1toS2'] == [15, 16, 17, 18, 19] and a0['S2toS1'] == list(range(10, 20))
+    assert a0 == {'S1toS2': [15, 16, 17, 18, 19]}
     assert SPEC.load('FE_A0', cfg).changes == SPEC.load('FE_cell_w100_o50', cfg).changes

@@ -15,7 +15,7 @@ CELLS = [c for c, v in P['cells'].items() if not v['gated']]
 def _arms():
     fs = P['final_seeds']
     arms = {f'FE_cell_{c}': (['S1toS2'], fs['cell']) for c in CELLS}
-    arms['FE_A0'] = (['S1toS2', 'S2toS1'], fs['A0'])
+    arms['FE_A0'] = (['S1toS2'], fs['A0'])
     arms['FE_A1'] = (['S1toS2'], [10])
     arms['FE_A2'] = (['S1toS2'], fs['A2'])
     arms['FE_A3'] = (['S1toS2'], fs['A3'])
@@ -131,10 +131,15 @@ def test_arms_scored_on_common_samples(study):
     """One arm with a 300-step window first predicts 2.99 s into each trial; every arm of that direction is then
     scored from 2.99 s, so all arms are scored on the same samples."""
     out = CF.run(study(window={'FE_cell_w50_full': 300}), P)
-    assert out['score_from_s'] == {p: {'S1toS2': 2.99, 'S2toS1': 1.0} for p in PEOPLE}
+    assert out['score_from_s'] == {p: {'S1toS2': 2.99} for p in PEOPLE}
 
 
 def test_same_angle_trials_kept_apart(study, monkeypatch):
     out = CF.run(study(), P)
     pp = out['families']['F3']['A0 vs A1']['per_position']['CH']
     assert len(pp) == 4 and all('angle' in v for v in pp.values())
+
+
+def test_no_session2_to_1_expected(study):
+    out = CF.run(study(), P)
+    assert all(not k.endswith('S2toS1') for k in out['descriptive'])
