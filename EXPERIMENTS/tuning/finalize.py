@@ -4,7 +4,8 @@
 
 Writes the FE_ specs and a run_queue jobs file ([exp, subject, direction, seed] per run):
   FE_cell_<cell>  each cell winner, seeds 10-14, S1->S2
-  FE_A0           the chosen setting, seeds 10-19, S1->S2 and S2->S1
+  FE_A0           the chosen setting, seeds 10-19, S1->S2 and S2->S1; S1->S2 seeds 10-14 are the same runs as its
+                  cell winner's (same changes, same seeds), so only 15-19 are run and confirm.py reads 10-14 there
   FE_A1           lagged ridge (alpha per person chosen on session-1 validation inside the run), 1 run
   FE_A2           last semester's network at 0.2 s, full overlap, v2 training, seeds 10-19
   FE_A3           A0 with total torque (passive 'none'), seeds 10-19
@@ -44,7 +45,10 @@ def write(choice: dict, configs_dir=None) -> list[tuple[str, str, str, list[int]
     for cell, wid in choice['cell_winners'].items():
         arms.append((_spec(f'FE_cell_{cell}', f'Study v2 final: winner of {cell}', load(wid), d), [s1], fs['cell']))
     a0 = load(choice['A0'])
-    arms.append((_spec('FE_A0', 'Study v2 final: A0 (chosen setting)', a0, d), [s1, s2], fs['A0']))
+    _spec('FE_A0', 'Study v2 final: A0 (chosen setting)', a0, d)
+    shared = fs['cell'] if choice['A0'] in choice['cell_winners'].values() else []
+    arms.append(('FE_A0', [s1], [s for s in fs['A0'] if s not in shared]))
+    arms.append(('FE_A0', [s2], fs['A0']))
     a1 = {**_P['fixed'], 'model': 'ridge_lagged', 'window': max(_P['ridge']['lags_steps']) + 1}
     arms.append((_spec('FE_A1', 'Study v2 final: A1 lagged ridge', a1, d), [s1], [fs['A0'][0]]))
     a2 = MS.changes('R3', 'w20_full', SPC.ANCHOR)

@@ -57,3 +57,11 @@ def test_lagged_features_shape_and_causal():
     X2 = X.copy()
     X2[:, :-51] = 99.0                     # samples older than the 50-step lag
     assert np.allclose(lagged_features(X2), F)
+
+
+def test_a0_reuses_cell_winner_seeds(tmp_path, monkeypatch):
+    choice, cfg = _choice(tmp_path, monkeypatch)
+    plan = FN.write(choice, cfg)
+    a0 = {d: s for i, _, d, s in plan if i == 'FE_A0'}
+    assert a0['S1toS2'] == [15, 16, 17, 18, 19] and a0['S2toS1'] == list(range(10, 20))
+    assert SPEC.load('FE_A0', cfg).changes == SPEC.load('FE_cell_w100_o50', cfg).changes

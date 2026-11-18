@@ -6,10 +6,12 @@ Refuses (``Refused``) when any final run is missing, was made with another proto
 config hash that differs from its spec's current config, or when two runs read different versions of the same
 recording. Opens session-2 predictions only through ``lock.load_test`` (so only after A0 was chosen).
 
-Score of a run: per trial (position), MAE from ``score_from_s`` after the trial's start, divided by the person's
-scale (99th percentile of |measured active target| of the tested session, from FE_A0, also used for A3: D6); the
-run's nMAE is the mean over positions. The trial start is the earliest prediction time of that trial over every
-final run of the person (carried-state and 0.2 s runs predict from the trial's first samples).
+Score of a run: per trial (position), MAE divided by the person's scale (99th percentile of |measured active
+target| of the tested session, from FE_A0, also used for A3: D6); the run's nMAE is the mean over positions.
+Every arm of one person and direction is scored on the same samples: from the protocol's ``score_from_s`` after the
+trial's start, or later if some final arm first predicts later (a w-step window first predicts (w - 1) x 10 ms in);
+the start used is reported as ``score_from_s``. The trial start is the first prediction time minus the run's
+window span. FE_A0's session 1 -> 2 seeds that its cell winner already ran (10-14) are read from FE_cell_<cell>.
 """
 from __future__ import annotations
 
@@ -24,6 +26,7 @@ from EXPERIMENTS.pipeline import provenance as PV
 from EXPERIMENTS.pipeline.run import RESULTS_V2, load_config
 from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
+from ML.research import config as MC
 
 OUT = Path(__file__).resolve().parents[1] / 'dashboard_react' / 'src' / 'data' / 'confirm.json'
 ARM = {'A0': 'FE_A0', 'A1': 'FE_A1', 'A2': 'FE_A2', 'A3': 'FE_A3'}
@@ -46,14 +49,23 @@ def _expected(rd: Path, protocol: dict) -> dict[str, tuple[list[str], list[int]]
     return out
 
 
+def a0_cell(choice: dict) -> str | None:
+    return next((c for c, i in choice.get('cell_winners', {}).items() if i == choice.get('A0')), None)
+
+
 def _load_runs(rd, protocol):
     """{(arm, person, direction, seed): (json, npz)}; refuses on a missing run."""
     runs, missing = {}, []
+    cell = a0_cell(json.loads((rd / 'choice.json').read_text()))
     for e, (dirs, seeds) in _expected(rd, protocol).items():
         for p in protocol['people']:
             for d in dirs:
                 for s in seeds:
                     stem = rd / e / p / d / f'seed{s}'
+                    shared = (e == 'FE_A0' and d == protocol['primary_direction'] and cell
+                              and s in protocol['final_seeds']['cell'])
+                    if shared and not stem.with_suffix('.json').exists():
+                        stem = rd / f'FE_cell_{cell}' / p / d / f'seed{s}'
                     if not stem.with_suffix('.json').exists() or not stem.with_suffix('.npz').exists():
                         missing.append(f'{e} {p} {d} seed {s}')
                         continue
@@ -86,29 +98,41 @@ def provenance_check(runs, protocol) -> dict:
     return {'n_runs': len(runs), 'commits': sorted(c for c in commits if c), 'protocol_hash': protocol['hash']}
 
 
+def _span_s(js):
+    c = js.get('config') or {}
+    return (int(c.get('window', 20)) - 1) * int(c.get('input_step', 1)) / MC.FS
+
+
 def _scores(runs, protocol):
-    """{(arm, person, direction): {seed: nmae}} and per-position nMAE {(arm, person, direction): {angle: median}}."""
-    sf = protocol['score_from_s']
-    t0, scale = {}, {}
-    for (e, p, d, s), (_, z) in runs.items():
-        for tr in np.unique(z['trial']):
-            k = (p, d, int(tr))
-            t0[k] = min(t0.get(k, np.inf), float(z['t'][z['trial'] == tr].min()))
+    """{(arm, person, direction): {seed: nmae}}, per-position nMAE {(arm, person, direction): {trial: {angle,
+    nmae}}} and the scoring start {person: {direction: s}}."""
+    start, first, scale = {}, {}, {}
+    for (e, p, d, s), (js, z) in runs.items():
+        t, tr = np.asarray(z['t'], float), np.asarray(z['trial'])
+        for i in np.unique(tr):
+            f = float(t[tr == i].min())
+            start[p, d, int(i)] = min(start.get((p, d, int(i)), np.inf), f - _span_s(js))
+            first.setdefault((p, d, int(i)), []).append(f)
         if e == 'FE_A0' and (p, d) not in scale:
             scale[p, d] = person_scale(z['y_own_target'])
+    sfrom = {}
+    for (p, d, i), fs in first.items():
+        sfrom.setdefault(p, {})[d] = max(sfrom.get(p, {}).get(d, protocol['score_from_s']),
+                                         round(max(fs) - start[p, d, i], 2))
     nm, pos = {}, {}
     for (e, p, d, s), (_, z) in runs.items():
         y, yp, t, tr = (np.asarray(z[k], float) for k in ('y_own_target', 'y_pred', 't', 'trial'))
         per = {}
         for i in np.unique(tr):
-            m = (tr == i) & (t - t0[p, d, int(i)] >= sf)
-            ang = float(np.asarray(z['angle'])[tr == i][0]) if 'angle' in z else float(i)
-            per[round(ang, 3)] = float(np.mean(np.abs(yp[m] - y[m])) / scale[p, d])
-        nm.setdefault((e, p, d), {})[s] = float(np.mean(list(per.values())))
-        for a, v in per.items():
-            pos.setdefault((e, p, d), {}).setdefault(a, []).append(v)
-    pos = {k: {a: float(np.median(v)) for a, v in d.items()} for k, d in pos.items()}
-    return nm, pos
+            m = (tr == i) & (t - start[p, d, int(i)] >= sfrom[p][d] - 1e-6)
+            ang = float(np.asarray(z['angle'])[tr == i][0]) if 'angle' in z else float('nan')
+            per[str(int(i))] = (ang, float(np.mean(np.abs(yp[m] - y[m])) / scale[p, d]))
+        nm.setdefault((e, p, d), {})[s] = float(np.mean([v for _, v in per.values()]))
+        for i, (a, v) in per.items():
+            pos.setdefault((e, p, d), {}).setdefault(i, (a, []))[1].append(v)
+    pos = {k: {i: {'angle': round(a, 3), 'nmae': float(np.median(v))} for i, (a, v) in dd.items()}
+           for k, dd in pos.items()}
+    return nm, pos, sfrom
 
 
 def _compare(nm, pos, arm, ref, people, d, protocol):
@@ -116,7 +140,8 @@ def _compare(nm, pos, arm, ref, people, d, protocol):
     r = {p: nm[ref, p, d] for p in people}
     eff = ST.person_effects(a, r)
     m, lo, hi = ST.t_interval(eff)
-    return {'arm': arm, 'comparator': ref, 'per_person': a, 'effects': eff, 'effect': float(np.median(list(eff.values()))),
+    return {'arm': arm, 'comparator': ref, 'per_person': a, 'comparator_seeds': {p: sorted(r[p]) for p in people},
+            'effects': eff, 'effect': float(np.median(list(eff.values()))),
             'ci': [m, lo, hi], 'decision': ST.decide(eff, protocol['min_agree'], protocol['min_effect']),
             'per_position': {p: pos[arm, p, d] for p in people}}
 
@@ -127,10 +152,10 @@ def run(results_dir=None, protocol=None) -> dict:
         raise LK.TestLocked(f'no {rd / "choice.json"}: A0 is not chosen yet')
     runs = _load_runs(rd, protocol)
     prov = provenance_check(runs, protocol)
-    nm, pos = _scores(runs, protocol)
+    nm, pos, sfrom = _scores(runs, protocol)
     people, d1, fam = protocol['people'], protocol['primary_direction'], protocol['families']
     have = {e for e, _, _ in nm}
-    out = {'families': {'F1': {}, 'F2': {}, 'F3': {}}}
+    out = {'families': {'F1': {}, 'F2': {}, 'F3': {}}, 'score_from_s': sfrom}
 
     f1 = fam['F1']
     for c in f1['arms']:

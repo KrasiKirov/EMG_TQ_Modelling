@@ -3,7 +3,8 @@
 # started again. Results go to EXPERIMENTS/results_v2/ (the TS2_/FE_ ids).
 #
 #   scripts/run_study_v2.sh round R1     # R1 of every active cell (9 configs, seed 0, 60 epochs)
-#   scripts/run_study_v2.sh screen 2s    # D23 gate: R1 of the 2 s window at full overlap, then the gate decision
+#   scripts/run_study_v2.sh screen 2s    # D23 gate: R1 of the 2 s window at full overlap, the gate decision, and
+#                                        # if it passes, R1 of its 3 other overlap cells
 #   scripts/run_study_v2.sh round R2     # the 3 configs R1 kept per cell, 400 epochs
 #   scripts/run_study_v2.sh round R3     # the 2 configs R2 kept per cell, seed 1 added
 #   scripts/run_study_v2.sh final        # final runs from results_v2/choice.json (EXPERIMENTS/tuning/finalize.py)
@@ -36,10 +37,17 @@ case "${1:-}" in
     ids=$($PY -m EXPERIMENTS.tuning.make_specs --round R1 --cell "$C")
     STEP="screen $C"; commit_specs $ids
     queue --exps $ids --seeds $(seeds R1)
-    $PY -m EXPERIMENTS.tuning.select --gate "$C" --json "EXPERIMENTS/results_v2/gate_$C.json" ;;
+    $PY -m EXPERIMENTS.tuning.select --gate "$C" --json "EXPERIMENTS/results_v2/gate_$C.json"
+    # a passed length gets its other 3 overlap cells, R1 first (then R2 and R3 with every other cell)
+    if [ "$($PY -c "import json; print(json.load(open('EXPERIMENTS/results_v2/gate_$C.json'))['continues'])")" = True ]; then
+      W=${C%_full}
+      ids=$($PY -m EXPERIMENTS.tuning.make_specs --round R1 --cell "${W}_o75" "${W}_o50" "${W}_o0")
+      STEP="R1 $W overlaps"; commit_specs $ids
+      queue --exps $ids --seeds $(seeds R1)
+    fi ;;
   final)
     $PY -m EXPERIMENTS.tuning.finalize --jobs EXPERIMENTS/results_v2/final_jobs.json
     STEP="final"; commit_specs $($PY -c "import json; print(' '.join(sorted({j[0] for j in json.load(open('EXPERIMENTS/results_v2/final_jobs.json'))})))")
     queue --jobs-file EXPERIMENTS/results_v2/final_jobs.json ;;
-  *) sed -n '2,12p' "$0"; exit 2 ;;
+  *) sed -n '2,13p' "$0"; exit 2 ;;
 esac

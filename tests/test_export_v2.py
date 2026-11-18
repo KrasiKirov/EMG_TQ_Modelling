@@ -65,3 +65,14 @@ def test_size_budget(tmp_path):
     size = out.stat().st_size
     # this is ~1/6 of the real run count; scaled up x6 it must stay within the 12 MB budget
     assert size * 6 <= EX.SIZE_BUDGET, size
+
+
+def test_export_during_tuning_skips_unfinished(tmp_path):
+    rd = tmp_path / 'results_v2'
+    _runs(rd, ['TS2_R1_w20_full_d0', 'TS2_R1_w20_full_d1'])
+    for f in (rd / 'TS2_R1_w20_full_d1' / 'YES').rglob('*'):
+        if f.is_file():
+            f.unlink()
+    out = EX.build(rd, tmp_path / 'v1')
+    assert out['tuning']['w20_full']['R1']['d1']['incomplete'] is True
+    assert out['tuning']['w20_full']['R1']['d0']['val_nmae']['YES'] > 0

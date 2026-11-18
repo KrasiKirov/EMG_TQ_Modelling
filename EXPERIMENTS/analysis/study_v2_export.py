@@ -21,7 +21,7 @@ import numpy as np
 
 from EXPERIMENTS.pipeline.run import RESULTS, RESULTS_V2
 from EXPERIMENTS.pipeline.scoring import person_scale
-from EXPERIMENTS.protocol import lock as LK
+from EXPERIMENTS.protocol import lock as LK, protocol as PT
 from EXPERIMENTS.tuning import select as SEL
 
 OUT = Path(__file__).resolve().parents[1] / 'dashboard_react' / 'src' / 'data' / 'study_v2.json'
@@ -50,11 +50,18 @@ def tuning(rd: Path) -> dict:
     for d in sorted(rd.glob('TS2_*')):
         _, rnd, rest = d.name.split('_', 2)
         cell, name = rest.rsplit('_', 1)
-        people = sorted(p.name for p in d.iterdir() if (p / SEL.DIRECTION).is_dir())
-        seeds = _seeds(d / people[0] / SEL.DIRECTION, val=True) if people else []
+        people = PT.load()['people']
+        if not any((d / p / SEL.DIRECTION).is_dir() for p in people):
+            continue
+        seeds = sorted({x for p in people if (d / p / SEL.DIRECTION).is_dir()
+                        for x in _seeds(d / p / SEL.DIRECTION, val=True)})
         if not seeds:
             continue
-        tables, cov = SEL.load_val([d.name], seeds, people, rd)
+        try:
+            tables, cov = SEL.load_val([d.name], seeds, people, rd)
+        except FileNotFoundError:                       # still running: shown as unfinished
+            out.setdefault(cell, {}).setdefault(rnd, {})[name] = {'id': d.name, 'seeds': seeds, 'incomplete': True}
+            continue
         out.setdefault(cell, {}).setdefault(rnd, {})[name] = {
             'id': d.name, 'seeds': seeds, 'val_nmae': tables['full'][d.name],
             'val_nmae_common': tables['common'][d.name], 'n_common': cov[d.name]}
