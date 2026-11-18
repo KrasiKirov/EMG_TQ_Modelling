@@ -13,7 +13,7 @@ after the trial's start, or later if one of the two arms first predicts later (a
 (w - 1) x 10 ms in); each comparison reports its start as ``score_from_s``. The descriptive scores and D2b put every
 final arm on one shared start, from max(score_from_s, the latest first prediction of any final arm), so they line up
 as one curve; the top-level ``score_from_s`` {person: {direction: s}} is that shared start. The trial start is the first prediction time minus the run's
-window span. FE_A0's session 1 -> 2 seeds that its cell winner already ran (10-14) are read from FE_cell_<cell>.
+window span. FE_A0's session 1 -> 2 seeds that its cell winner already ran (10-12) are read from FE_cell_<cell>.
 """
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ from EXPERIMENTS.pipeline import provenance as PV
 from EXPERIMENTS.pipeline.run import RESULTS_V2, load_config
 from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
+from EXPERIMENTS.tuning import budget as BG
 from ML.research import config as MC
 
 OUT = Path(__file__).resolve().parents[1] / 'dashboard_react' / 'src' / 'data' / 'confirm.json'
@@ -41,7 +42,10 @@ class Refused(RuntimeError):
 def _expected(rd: Path, protocol: dict) -> dict[str, tuple[list[str], list[int]]]:
     fs, s1 = protocol['final_seeds'], protocol['primary_direction']
     out = {}
+    dropped = 'drop_o75' in BG.applied(rd)
     for c, v in protocol['cells'].items():
+        if dropped and c.endswith('_o75'):
+            continue
         if not v['gated'] or (rd / f'FE_cell_{c}').exists():
             out[f'FE_cell_{c}'] = ([s1], fs['cell'])
     out['FE_A0'] = ([s1], fs['A0'])
@@ -164,6 +168,23 @@ def _compare(runs, timing, arm, ref, people, d, protocol):
             'per_position': {p: pos[arm, p, d] for p in people}}
 
 
+def _not_run(rd, cell, protocol, steps) -> dict:
+    """F1 entry of a history length with no final runs: stopped at its gate, passed but not tuned within the
+    budget, or not run (budget: not screened, or the 2 s check skipped)."""
+    g = rd / f'gate_{cell}.json'
+    if g.exists():
+        gate = json.loads(g.read_text())
+        return {'decision': 'not tuned (budget)' if gate['continues'] else 'stopped', 'gate': gate}
+    order = protocol['gates']['order']
+    if cell in order:
+        for s in order[:order.index(cell)]:
+            f = rd / f'gate_{s}.json'
+            if f.exists() and not json.loads(f.read_text())['continues']:
+                return {'decision': 'stopped', 'gate': f'{s} stopped'}
+    budget = 'skip_2s_check' in steps or cell not in protocol['budget']['screens']
+    return {'decision': 'not run (budget)' if budget else 'not run'}
+
+
 def run(results_dir=None, protocol=None) -> dict:
     rd, protocol = Path(results_dir or RESULTS_V2), protocol or PT.load()
     if not LK.test_open(rd):
@@ -176,20 +197,24 @@ def run(results_dir=None, protocol=None) -> dict:
     nm, _, sfrom = _scores(runs, protocol, have, timing)  # descriptive and D2b: every arm on one shared start
     out = {'families': {'F1': {}, 'F2': {}, 'F3': {}}, 'score_from_s': sfrom}
 
+    steps = BG.applied(rd)
+    out['budget'] = {'applied': steps}
     f1 = fam['F1']
     for c in f1['arms']:
         if f'FE_cell_{c}' in have:
             out['families']['F1'][c] = _compare(runs, timing, f'FE_cell_{c}', f'FE_cell_{f1["comparator"]}', people,
                                                  d1, protocol)
         else:
-            g = rd / f'gate_{c}.json'
-            out['families']['F1'][c] = {'decision': 'stopped',
-                                        'gate': json.loads(g.read_text()) if g.exists() else 'a shorter length stopped'}
+            out['families']['F1'][c] = _not_run(rd, c, protocol, steps)
 
+    overlaps = [o for o in fam['F2']['arms'] if not (o == 'o75' and 'drop_o75' in steps)]
     lengths = sorted({c.split('_')[0] for c, v in protocol['cells'].items() if 'state' not in v
-                      and all(f'FE_cell_{c.split("_")[0]}_{o}' in have for o in ('full', 'o75', 'o50', 'o0'))},
+                      and all(f'FE_cell_{c.split("_")[0]}_{o}' in have for o in ['full'] + overlaps)},
                      key=lambda w: int(w[1:]))
     for o in fam['F2']['arms']:
+        if o not in overlaps:
+            out['families']['F2'][o] = {'decision': 'dropped (budget)'}
+            continue
         per_len = {}
         for w in lengths:
             arm, ref = f'FE_cell_{w}_{o}', f'FE_cell_{w}_full'

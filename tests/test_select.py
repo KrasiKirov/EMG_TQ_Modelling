@@ -86,7 +86,7 @@ def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
     SEL.main(['--round', 'R1', '--cell', 'w20_full'])
     assert json.loads(capsys.readouterr().out)['best'] == 'TS2_R1_w20_full_anchor'   # fake error grows with position
     r2 = MS.for_round('R2', 'w20_full')
-    assert r2 == [f'TS2_R2_w20_full_f{i}' for i in range(8)]
+    assert r2 == [f'TS2_R2_w20_full_f{i}' for i in range(4)]
     for i in r2:
         ch = SPEC.load(i, cfg).changes
         assert ch['layers'] == SPC.ANCHOR['layers'] and ch['units'] in (8, 16) and ch['train_protocol'] == 'study400'

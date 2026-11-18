@@ -28,7 +28,7 @@ def test_final_seeds_fresh(tmp_path, monkeypatch):
 def test_passed_gated_cell_gets_final_seeds(tmp_path, monkeypatch):
     choice, cfg = _choice(tmp_path, monkeypatch)
     plan = FN.write(choice, cfg)
-    assert {tuple(s) for i, _, _, s in plan if i == 'FE_cell_w200_full'} == {(10, 11, 12, 13, 14)}
+    assert {tuple(s) for i, _, _, s in plan if i == 'FE_cell_w200_full'} == {(10, 11, 12)}
 
 
 def test_a3_differs_from_a0_only_in_passive(tmp_path, monkeypatch):
@@ -63,5 +63,5 @@ def test_a0_reuses_cell_winner_seeds(tmp_path, monkeypatch):
     choice, cfg = _choice(tmp_path, monkeypatch)
     plan = FN.write(choice, cfg)
     a0 = {d: s for i, _, d, s in plan if i == 'FE_A0'}
-    assert a0 == {'S1toS2': [15, 16, 17, 18, 19]}
+    assert a0 == {'S1toS2': [13, 14, 15, 16, 17, 18, 19]}
     assert SPEC.load('FE_A0', cfg).changes == SPEC.load('FE_cell_w100_o50', cfg).changes

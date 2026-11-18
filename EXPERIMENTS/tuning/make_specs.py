@@ -3,10 +3,11 @@
     python -m EXPERIMENTS.tuning.make_specs --round R1            # write R1 specs of every active cell, print the ids
     python -m EXPERIMENTS.tuning.make_specs --round R1 --cell w200_full   # one cell (a gate screen)
 
-Active cells: the 15 always-run cells, plus the 4 overlap cells of each gated length whose gate passed
-(results_v2/gate_<cell>.json, written by scripts/run_study_v2.sh screen). R1 = coarse (8 shared draws + anchor),
-R2 = fine (8 draws around the cell's best R1 config), R3 = the best 2 of R1 + R2 with seed 1 added (reuses their
-specs, so it writes nothing). Every round trains to early stopping under the 400-epoch cap.
+Active cells: the 15 always-run cells, minus the 75 % overlap cells if the budget check dropped them
+(results_v2/budget.json); the 75 % cells come last, so their R1 runs queue last. Under the 6-day budget a gated length
+that passes its check is not tuned (protocol budget.tune_gated). R1 = coarse (6 shared draws + anchor), R2 = fine
+(4 draws around the cell's best R1 config, 2 after the budget step fine_2), R3 = the best 2 of R1 + R2 with seed 1
+added (reuses their specs, so it writes nothing). Every round trains to early stopping under the 400-epoch cap.
 """
 from __future__ import annotations
 
@@ -16,7 +17,7 @@ from pathlib import Path
 
 from EXPERIMENTS.pipeline import spec as SPEC
 from EXPERIMENTS.protocol import protocol as PT
-from EXPERIMENTS.tuning import space as SPC
+from EXPERIMENTS.tuning import budget as BG, space as SPC
 
 _P = PT.load()
 
@@ -47,17 +48,21 @@ def write(rnd: str, cell: str, configs: dict[str, dict], configs_dir: Path | str
     return ids
 
 
-def active_cells(results_dir=None) -> list[str]:
+def active_cells(results_dir=None, steps=None) -> list[str]:
+    """Cells that run R1-R3, 75 % overlap cells last; ``steps`` = budget steps (default: results_v2/budget.json)."""
     from EXPERIMENTS.pipeline.run import RESULTS_V2
     rd = Path(results_dir or RESULTS_V2)
+    steps = BG.applied(rd) if steps is None else steps
     out = [c for c, v in _P['cells'].items() if not v['gated']]
-    for g in _P['gates']['order']:
+    for g in _P['gates']['order'] if _P['budget']['tune_gated'] else []:
         f = rd / f'gate_{g}.json'
         if not (f.exists() and json.loads(f.read_text())['continues']):
             break
         w = _P['cells'][g]['window']
         out += [c for c, v in _P['cells'].items() if v['gated'] and v['window'] == w]
-    return out
+    if 'drop_o75' in steps:
+        out = [c for c in out if not c.endswith('_o75')]
+    return sorted(out, key=lambda c: c.endswith('_o75'))
 
 
 def for_round(rnd: str, cell: str) -> list[str]:
@@ -67,7 +72,7 @@ def for_round(rnd: str, cell: str) -> list[str]:
     if rnd == 'R2':
         best = SEL.best_r1(cell, _P['people'])
         center = SPC.configs(cell)[best.rsplit('_', 1)[1]]
-        return write('R2', cell, SPC.fine_configs(cell, center))
+        return write('R2', cell, SPC.fine_configs(cell, center, n=BG.fine_n()))
     return SEL.r3_ids(cell, _P['people'])
 
 

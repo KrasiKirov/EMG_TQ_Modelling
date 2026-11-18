@@ -44,7 +44,7 @@ def study(tmp_path, monkeypatch):
             for p in PEOPLE:
                 for d in dirs:
                     for s in seeds:
-                        if skip == (e, p, d, s) or (e == 'FE_A0' and d == 'S1toS2' and s < 15):
+                        if skip == (e, p, d, s) or (e == 'FE_A0' and d == 'S1toS2' and s in P['final_seeds']['cell']):
                             continue
                         out = rd / e / p / d
                         w = changes['window']
@@ -112,7 +112,7 @@ def test_end_to_end_synthetic(study):
     assert out['provenance_check']['commits'] == ['c1']
     assert out['limitations'] == P['limitations'] and len(out['limitations']) == 4
     f1 = out['families']['F1']
-    assert f1['w200_full']['decision'] == 'stopped' and f1['w50_full']['decision'] == 'no clear difference'
+    assert f1['w200_full']['decision'] == 'not run' and f1['w50_full']['decision'] == 'no clear difference'
 
 
 def test_overlap_effect_averaged_over_lengths(study):
@@ -153,3 +153,29 @@ def test_same_angle_trials_kept_apart(study, monkeypatch):
 def test_no_session2_to_1_expected(study):
     out = CF.run(study(), P)
     assert all(not k.endswith('S2toS1') for k in out['descriptive'])
+
+
+def test_budget_steps_in_confirm(study):
+    """Dropped 75 % cells are not expected and their overlap arm reads 'dropped (budget)'; a long window that passed
+    its check is 'not tuned (budget)'; a skipped check is 'not run (budget)'."""
+    rd = study()
+    for c in CELLS:
+        if c.endswith('_o75'):
+            import shutil
+            shutil.rmtree(rd / f'FE_cell_{c}')
+    (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75']}))
+    (rd / 'gate_w200_full.json').write_text(json.dumps({'continues': True}))
+    out = CF.run(rd, P)
+    f1, f2 = out['families']['F1'], out['families']['F2']
+    assert f2['o75'] == {'decision': 'dropped (budget)'} and f2['o50']['lengths'] == ['w20', 'w50', 'w100']
+    assert f1['w200_full']['decision'] == 'not tuned (budget)' and f1['w500_full']['decision'] == 'not run (budget)'
+    (rd / 'gate_w200_full.json').unlink()
+    (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75', 'skip_2s_check']}))
+    assert CF.run(rd, P)['families']['F1']['w200_full']['decision'] == 'not run (budget)'
+
+
+def test_stopped_gate_stops_longer_lengths(study):
+    rd = study()
+    (rd / 'gate_w200_full.json').write_text(json.dumps({'continues': False}))
+    f1 = CF.run(rd, P)['families']['F1']
+    assert f1['w200_full']['decision'] == 'stopped' and f1['w500_full']['decision'] == 'stopped'

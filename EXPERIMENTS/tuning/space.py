@@ -1,7 +1,7 @@
 """Study v2 search space (decisions D3, D5): cells, coarse and fine random draws, the anchor; read from the protocol.
 
-Coarse (R1): every cell gets the same 8 draws plus the anchor, so cells differ only in the window setting.
-Fine (R2): 8 draws in a narrowed range around the cell's best coarse config (learning rate x/÷ 3, dropout ± 0.1,
+Coarse (R1): every cell gets the same 6 draws plus the anchor, so cells differ only in the window setting.
+Fine (R2): 4 draws (2 after the budget step fine_2) in a narrowed range around the cell's best coarse config (learning rate x/÷ 3, dropout ± 0.1,
 units and batch the same or one step either side, layers the same), inside the coarse space; the same random
 numbers in every cell. Carried-state cells train on whole trials and have no batch size, so batch is dropped.
 """
@@ -41,7 +41,7 @@ def draws(n: int, seed: int) -> list[dict]:
 
 
 def configs(cell: str) -> dict[str, dict]:
-    """{'anchor', 'd0'..'d7'} → network settings for this cell (batch dropped for carried state)."""
+    """{'anchor', 'd0'..'d5'} → network settings for this cell (batch dropped for carried state)."""
     out = {'anchor': dict(ANCHOR)}
     out.update({f'd{i}': d for i, d in enumerate(draws(_P['n_draws'], _P['draw_seed']))})
     if _P['cells'][cell].get('state') == 'carry':
@@ -73,9 +73,10 @@ def fine_draws(center: dict, n: int, seed: int) -> list[dict]:
     return out
 
 
-def fine_configs(cell: str, center: dict) -> dict[str, dict]:
-    """{'f0'..'f7'} for this cell around its best R1 config (batch dropped for carried state)."""
+def fine_configs(cell: str, center: dict, n: int | None = None) -> dict[str, dict]:
+    """{'f0'..} (n of them, default the protocol's) for this cell around its best R1 config (batch dropped for
+    carried state). The draws are sequential, so n = 2 gives the first 2 of n = 4."""
     carry = _P['cells'][cell].get('state') == 'carry'
     c = dict(center, batch=center.get('batch', 64))
-    out = {f'f{i}': d for i, d in enumerate(fine_draws(c, _P['fine']['n'], _P['fine']['seed']))}
+    out = {f'f{i}': d for i, d in enumerate(fine_draws(c, n or _P['fine']['n'], _P['fine']['seed']))}
     return {k: {kk: vv for kk, vv in v.items() if not (carry and kk == 'batch')} for k, v in out.items()}

@@ -14,5 +14,13 @@
   "why": "(1) parameter count does not depend on window length, so the fewest-parameters tie-break ignored the setting being chosen and, with 6 people, many cells fall within 1 SE; (2) comparing against every shorter length made stopping more likely by multiplicity; (3) the old rule made F3's scored samples depend on F1's gate results and dropped up to 10 s of every trial from comparisons not involving long windows, while the descriptive curve and D2b need one shared sample set to line up. Layers stay fixed in the fine round because drawing them afresh would move most fine draws off the centre whose learning-rate and dropout ranges were narrowed, and the seed check already pools coarse and fine configs, so the other layer count stays in contention.",
   "runs_affected": "all study v2 runs (none had run)",
   "results_seen": "none: no study v2 run had started"
+ },
+ {
+  "date": "2026-11-18",
+  "commit": "the commit that adds this entry",
+  "what": "6-day compute budget (user): coarse draws 8 -> 6 (+ anchor), fine draws 8 -> 4, final seeds per cell winner 5 -> 3 (A0, A2, A3 keep 10); 6 workers; only the 2 s window is screened and a pass is reported as 'not tuned (budget)' (5 s and 10 s are not screened); a run-time budget check after 24 h of R1 and when R1 ends adds, in order, drop the 75 % overlap cells (queued last in R1), skip the 2 s check, fine draws 4 -> 2, until the projection is within 6 days (EXPERIMENTS/tuning/budget.py, results_v2/budget.json).",
+  "why": "The full-budget design projected 8.2-8.7 days, and more if runs train past epoch 180; the user set a hard 6-day limit. The cuts keep every cell and every pre-registered comparison and were the shortening path listed in the plan. The fallback depends on run times only, never on scores. A lower epoch cap was considered as a fallback step and not adopted: applied mid-study it would give runs of the same round different training budgets. A 7th worker was not adopted (the M3 has 4 performance + 4 efficiency cores).",
+  "runs_affected": "all study v2 runs (none had run)",
+  "results_seen": "none: no study v2 run had started"
  }
 ]

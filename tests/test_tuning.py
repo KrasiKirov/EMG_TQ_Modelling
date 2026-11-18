@@ -24,7 +24,7 @@ def test_draws_within_space():
 def test_same_draws_every_cell():
     cfgs = {c: SPC.configs(c) for c in ('w20_full', 'w100_o0', 'carry_5s')}
     keys = [sorted(v) for v in cfgs.values()]
-    assert keys[0] == keys[1] == keys[2] and 'anchor' in keys[0] and len(keys[0]) == 9
+    assert keys[0] == keys[1] == keys[2] and 'anchor' in keys[0] and len(keys[0]) == 7
     for name in keys[0]:
         a, b, c = (cfgs[k][name] for k in cfgs)
         assert a == b
@@ -42,7 +42,7 @@ def test_overlap_cells_equal_updates():
 def test_specs_valid(tmp_path):
     from EXPERIMENTS.pipeline import spec as SPEC
     ids = MS.write('R1', 'w20_o75', SPC.configs('w20_o75'), configs_dir=tmp_path)
-    assert len(ids) == 9 and all(i.startswith('TS2_R1_w20_o75_') for i in ids)
+    assert len(ids) == 7 and all(i.startswith('TS2_R1_w20_o75_') for i in ids)
     for i in ids:
         s = SPEC.load(i, tmp_path)
         assert s.changes['train_protocol'] == 'study400' and s.changes['train_stride'] == 5
@@ -137,5 +137,5 @@ def test_fine_draws_reproducible_and_carry_has_no_batch():
     assert SPC.fine_draws(CENTER, 8, 3) == SPC.fine_draws(CENTER, 8, 3)
     c = SPC.fine_configs('carry_5s', {k: v for k, v in CENTER.items() if k != 'batch'})
     w = SPC.fine_configs('w20_full', CENTER)
-    assert sorted(c) == [f'f{i}' for i in range(8)] and all('batch' not in v for v in c.values())
+    assert sorted(c) == [f'f{i}' for i in range(4)] and all('batch' not in v for v in c.values())
     assert all({k: v for k, v in w[n].items() if k != 'batch'} == c[n] for n in c)

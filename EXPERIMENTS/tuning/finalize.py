@@ -3,9 +3,9 @@
     python -m EXPERIMENTS.tuning.finalize --jobs EXPERIMENTS/results_v2/final_jobs.json
 
 Writes the FE_ specs and a run_queue jobs file ([exp, subject, direction, seed] per run):
-  FE_cell_<cell>  each cell winner, seeds 10-14, S1->S2
-  FE_A0           the chosen setting, seeds 10-19, S1->S2 (the only direction, D1); seeds 10-14 are the same runs as
-                  its cell winner's (same changes, same seeds), so only 15-19 are run and confirm.py reads 10-14 there
+  FE_cell_<cell>  each cell winner, seeds 10-12, S1->S2
+  FE_A0           the chosen setting, seeds 10-19, S1->S2 (the only direction, D1); seeds 10-12 are the same runs as
+                  its cell winner's (same changes, same seeds), so only 13-19 are run and confirm.py reads 10-12 there
   FE_A1           lagged ridge (alpha per person chosen on session-1 validation inside the run), 1 run
   FE_A2           last semester's network at 0.2 s, full overlap, v2 training, seeds 10-19
   FE_A3           A0 with total torque (passive 'none'), seeds 10-19
