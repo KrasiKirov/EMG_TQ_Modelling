@@ -2,6 +2,7 @@
 
     python -m EXPERIMENTS.tuning.make_specs --round R1            # write R1 specs of every active cell, print the ids
     python -m EXPERIMENTS.tuning.make_specs --round R1 --cell w200_full   # one cell (a gate screen)
+    python -m EXPERIMENTS.tuning.make_specs --round R1 --part main        # all but 75 % overlap (then --part o75)
 
 Active cells: the 15 always-run cells, minus the 75 % overlap cells if the budget check dropped them
 (results_v2/budget.json); the 75 % cells come last, so their R1 runs queue last. Under the 6-day budget a gated length
@@ -65,6 +66,12 @@ def active_cells(results_dir=None, steps=None) -> list[str]:
     return sorted(out, key=lambda c: c.endswith('_o75'))
 
 
+def part_cells(part: str, results_dir=None) -> list[str]:
+    """Active cells of one R1 part: 'main' (all but 75 % overlap) or 'o75' (empty once the budget dropped them)."""
+    cells = active_cells(results_dir)
+    return [c for c in cells if c.endswith('_o75') == (part == 'o75')]
+
+
 def for_round(rnd: str, cell: str) -> list[str]:
     from EXPERIMENTS.tuning import select as SEL
     if rnd == 'R1':
@@ -80,8 +87,10 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--round', required=True, choices=list(_P['rounds']))
     ap.add_argument('--cell', nargs='*')
+    ap.add_argument('--part', choices=['main', 'o75'], help='R1 in two parts (the budget check runs between)')
     a = ap.parse_args(argv)
-    print(' '.join(i for c in (a.cell or active_cells()) for i in for_round(a.round, c)))
+    cells = a.cell or (part_cells(a.part) if a.part else active_cells())
+    print(' '.join(i for c in cells for i in for_round(a.round, c)))
 
 
 if __name__ == '__main__':

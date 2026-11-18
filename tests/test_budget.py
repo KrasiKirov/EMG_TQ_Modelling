@@ -93,3 +93,14 @@ def test_fine_round_size_follows_budget(tmp_path):
     assert BG.fine_n(rd) == 4
     (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75', 'skip_2s_check', 'fine_2']}))
     assert BG.fine_n(rd) == 2
+
+
+def test_r1_parts(tmp_path):
+    """auto runs R1 in two parts: every cell but 75 % overlap, then (unless dropped) the 75 % cells."""
+    rd = tmp_path / 'results_v2'
+    rd.mkdir()
+    main, o75 = MS.part_cells('main', rd), MS.part_cells('o75', rd)
+    assert len(main) == 12 and not any(c.endswith('_o75') for c in main) and len(o75) == 3
+    assert main + o75 == MS.active_cells(rd)
+    (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75']}))
+    assert MS.part_cells('o75', rd) == [] and len(MS.part_cells('main', rd)) == 12

@@ -483,7 +483,7 @@
    "w1000": 40,
    "carry": 3
   },
-  "checks": "after 24 h of R1, and again when R1 ends (before R2 specs are written)",
+  "checks": "when the R1 runs of every cell but 75 % overlap end (before any 75 % run), and when R1 ends (before R2 specs are written)",
   "fallback": [
    "drop_o75",
    "skip_2s_check",
@@ -491,7 +491,7 @@
   ],
   "fine_reduced_n": 2,
   "fallback_text": {
-   "drop_o75": "drop the 3 cells at 75 % overlap (their R1 runs are queued last, so few or none have run)",
+   "drop_o75": "drop the 3 cells at 75 % overlap (their R1 runs come after the first check, so none have run)",
    "skip_2s_check": "skip the 2 s check",
    "fine_2": "fine round 4 -> 2 draws per cell (the first 2 of the same 4)"
   },
