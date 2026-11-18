@@ -112,11 +112,14 @@ def fit_predict_carry(train, test, n_knots, chunk=20, seed=0, epochs=200, early=
             if wait >= early:
                 break
     model.set_weights(best_w)
+    pv = run_streams(model, X, chunk=max(chunk, 200)) * sd[k][:, None]
+    val_streams = [pv[i, :len(s['y'])].astype(np.float64) for i, s in enumerate(train)]
     preds = []
     for s in test:
         p = run_streams(model, np.asarray(s['X'], np.float32)[None], chunk=max(chunk, 200))[0]
         preds.append(p.astype(np.float64) * sd[s['k']])
     info = {'state': 'carry', 'chunk': chunk, 'clipnorm': clipnorm, 'epochs': len(hist), 'best_epoch': int(np.argmin(hist)) + 1,
             'best_val_loss': float(best), 'first_val_loss': float(hist[0]), 'sd_per_knot': sd.tolist(),
-            'n_params': int(model.count_params())}
+            'n_params': int(model.count_params()), 'max_epochs': epochs, 'shuffle': False,
+            'val_streams': val_streams}
     return preds, info

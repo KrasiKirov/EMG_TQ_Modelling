@@ -19,7 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 EXP = os.path.dirname(HERE)
 sys.path.insert(0, os.path.dirname(EXP))
 
-from EXPERIMENTS.pipeline.run import BASE, load_config   # noqa: E402
+from EXPERIMENTS.pipeline.run import BASE, load_config, results_root   # noqa: E402
 
 
 class ConfigMismatch(RuntimeError):
@@ -66,14 +66,14 @@ def main():
                 jobs.append((res, cmd, f'X00_baseline__{s}__S1toS2__s{seed}', None))
     if a.jobs_file:
         for e, s_, d, seed in json.load(open(a.jobs_file)):
-            res = os.path.join(EXP, 'results', e, s_, d, f'seed{seed}.json')
+            res = os.path.join(results_root(e), e, s_, d, f'seed{seed}.json')
             cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s_, '--direction', d, '--seed', str(seed)]
             jobs.append((res, cmd, f'{e}__{s_}__{d}__s{seed}', e))
     for e in a.exps:
         for seed in a.seeds:
             for d in a.directions:
                 for s in a.subjects:
-                    res = os.path.join(EXP, 'results', e, s, d, f'seed{seed}.json')
+                    res = os.path.join(results_root(e), e, s, d, f'seed{seed}.json')
                     cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s,
                            '--direction', d, '--seed', str(seed)]
                     jobs.append((res, cmd, f'{e}__{s}__{d}__s{seed}', e))

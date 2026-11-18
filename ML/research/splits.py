@@ -32,6 +32,34 @@ def windows(feat, pos, y, window=C.WINDOW, step=1):
     return F[idx], y[last].astype(np.float32), last
 
 
+COMMON_MAX_WINDOW = 1000   # steps: the longest window of study v2 (10 s at 10 ms)
+
+
+def common_start(T, max_window=COMMON_MAX_WINDOW, step=1):
+    """First target index every window length up to ``max_window`` validates on (D24): the first validation target
+    of the longest window, i.e. its training cut plus one window span (purged split)."""
+    span = (max_window - 1) * step
+    return 2 * span + int((T - span) * C.TRAIN_FRAC)
+
+
+def common_mask(meta, lengths, max_window=COMMON_MAX_WINDOW):
+    """Boolean mask over validation rows: True for targets shared by every window length (D24).
+    lengths: {trial idx: number of samples in the trial}."""
+    start = np.array([common_start(lengths[int(i)], max_window) for i in meta['trial']])
+    return np.asarray(meta['last']) >= start
+
+
+def check_common_targets(recs, min_s=5.0, max_window=COMMON_MAX_WINDOW, fs=C.FS):
+    """Raise ValueError naming the trial if any training trial has < min_s seconds of common validation targets
+    (the last validation window of each trial is dropped, so targets end at T - 2)."""
+    for r in recs:
+        T = len(r['t'])
+        avail = (T - 1 - common_start(T, max_window)) / fs
+        if avail < min_s:
+            raise ValueError(f"trial {r['idx']} ({r['session']}, angle {r['angle']:.3f} rad) has {avail:.1f} s of "
+                             f"common validation targets, fewer than {min_s} s")
+
+
 def _meta(rec, last, part, rest=None):
     return {'trial': np.full(len(last), rec['idx']), 'angle': np.full(len(last), rec['angle']),
             'session': np.array([rec['session']] * len(last)), 't': rec['t'][last].astype(np.float32),
@@ -79,6 +107,7 @@ def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, tr
     """
     spec = PROTOCOLS[protocol]
     parts = {'train': [], 'val': [], 'test': []}
+    n_train_full = 0
     for r in recs:
         X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window, step)
         rr = rest[r['idx']] if rest is not None else None
@@ -86,6 +115,7 @@ def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, tr
         if protocol != 'pooled':
             if r['session'] in spec['train']:
                 n_tr = int(n * C.TRAIN_FRAC)
+                n_train_full += n_tr
                 tr = slice(0, n_tr, train_stride)
                 parts['train'].append((X[tr], y[tr], _meta(r, last[tr], 'train', rr)))
                 v0 = n_tr + ((window - 1) * step if val_gap else 0)
@@ -104,5 +134,6 @@ def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, tr
         out[f'X_{p}'] = np.concatenate([x for x, _, _ in items])
         out[f'y_{p}'] = np.concatenate([y for _, y, _ in items])
         out[f'meta_{p}'] = {k: np.concatenate([m[k] for _, _, m in items]) for k in items[0][2]}
+    out['n_train_full'] = int(n_train_full)       # training windows at train_stride 1 (equal-updates target)
     out['train_angles'] = sorted({float(np.round(a, 3)) for a in out['meta_train']['angle']})
     return out

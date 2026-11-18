@@ -42,7 +42,7 @@ def prepare(subject, protocol, cfg):
     window = cfg.get('window', C.WINDOW)
 
     feats, emg_info = normalise(cfg['emg'], bundle, train_recs, recs, train_frac=tf_, val_end_frac=val_end,
-                                window=window)
+                                window=window, scale_part=cfg.get('scale_part', 'train_val'))
     base_env, _ = normalise('trainmax', bundle, train_recs, recs, train_frac=tf_, val_end_frac=val_end,
                             window=window)
     tr_segs, va_segs = rest_segments(train_recs, base_env, train_frac=tf_, val_end_frac=val_end, window=window)
@@ -60,7 +60,9 @@ def prepare(subject, protocol, cfg):
                         train_stride=cfg.get('train_stride', 1), val_gap=gap)
     if cfg.get('state', 'reset') == 'carry':
         data['streams'] = splits.streams(protocol, recs, feats, targets, window=window, step=step, val_gap=gap)
-    details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in ('kind', 'rmin_frac', 'transductive', 'auto_decision')},
+    data['trial_len'] = {r['idx']: len(r['t']) for r in recs}
+    data['train_recs'] = train_recs
+    details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in ('kind', 'rmin_frac', 'transductive', 'auto_decision', 'scale_part')},
                'push_directions': push_directions(bundle, train_recs, base_env, train_frac=tf_, window=window),
                'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
                'rest_frac_train': float(np.mean(data['meta_train']['rest']))}

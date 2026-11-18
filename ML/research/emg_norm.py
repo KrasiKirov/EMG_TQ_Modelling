@@ -44,19 +44,26 @@ def _agc(env, prior_lo, prior_hi, rmin_frac):
 
 
 def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_end_frac=1.0,
-              window=C.WINDOW):
+              window=C.WINDOW, scale_part='train_val'):
     """Normalised envelopes for every record in ``all_recs``; statistics from ``train_recs``.
 
     val_end_frac: the maximum is taken before this fraction of each trial (1.0 = whole-trial 1 kHz maximum).
+    scale_part  : 'train_val' (original) as above; 'train' = maximum of the 100 Hz envelope over the training part
+                  of each training trial only (before the validation block), so validation never shapes the scale.
     """
-    if val_end_frac >= 1.0:
+    if scale_part == 'train':
+        emg_max = np.max(np.stack([r['env_raw'][:_train_part(r, train_frac, window)].max(axis=0)
+                                   for r in train_recs]), axis=0)
+    elif scale_part != 'train_val':
+        raise ValueError(f'scale_part must be train or train_val, got {scale_part!r}')
+    elif val_end_frac >= 1.0:
         emg_max = np.max(np.stack([r['env_max1k'] for r in train_recs]), axis=0)
     else:
         emg_max = np.max(np.stack([r['env_raw'][:int(len(r['env_raw']) * val_end_frac)].max(axis=0)
                                    for r in train_recs]), axis=0)
     emg_max = np.where(emg_max > 0, emg_max, 1.0)
     base = {r['idx']: r['env_raw'] / emg_max for r in all_recs}
-    info = {'kind': kind, 'train_max': emg_max.tolist()}
+    info = {'kind': kind, 'train_max': emg_max.tolist(), 'scale_part': scale_part}
 
     if kind == 'trainmax':
         return base, info
@@ -64,7 +71,7 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
         dirs = push_directions(bundle, train_recs, base, train_frac, window)
         bidirectional = max(dirs) > AUTO_DIR_NM and min(dirs) < -AUTO_DIR_NM
         out, sub = normalise('trainmax' if bidirectional else 'agc', bundle, train_recs, all_recs,
-                             train_frac, val_end_frac, window)
+                             train_frac, val_end_frac, window, scale_part)
         sub.update(kind='agc_auto', auto_decision='AGC OFF (pushes in both directions)' if bidirectional
                    else 'AGC ON', push_directions=dirs)
         return out, sub

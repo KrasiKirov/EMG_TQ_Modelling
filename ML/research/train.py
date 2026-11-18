@@ -92,9 +92,15 @@ def fit_ridge(data, knots, w_tr=None, w_va=None):
                   'val_mse': err, 'n_features': int(len(coef)), 'epochs': 0}
 
 
+def epoch_indices(n, n_epoch):
+    """Indices of one epoch of exactly ``n_epoch`` windows taken in time order from ``n`` windows, wrapping to
+    the first window when the set runs out (every epoch starts at the first window)."""
+    return np.resize(np.arange(n), n_epoch)
+
+
 def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                 protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
-                save_weights=None, epoch_windows=None):
+                save_weights=None, epoch_windows=None, epoch_mode='passes', clipnorm=None, batch=None):
     """Train on data['X_train'] / ['X_val'] and predict X_test; returns (y_pred_test (Nm), info).
 
     init_weights  optional .weights.h5 to start from
@@ -104,6 +110,10 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     save_weights  path for the best-epoch weights
     epoch_windows one epoch = round(N / n_train) whole passes (at least 1), so settings with few windows get
                   about as many updates per epoch as one with N windows
+    epoch_mode    'passes' (above, v1) or 'exact': every epoch is exactly N windows, cycling in time order
+    clipnorm      gradient-norm clipping of Nadam (None = off)
+    batch         overrides the protocol's batch size
+    Also returns the validation predictions (Nm, best-epoch weights) as info['val_pred'] and their MAE.
     """
     import tensorflow as tf
     from tensorflow.keras.optimizers import Nadam
@@ -146,7 +156,7 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     model = build_model(model_name, data['X_train'].shape[1], data['X_train'].shape[2], knots)
     if init_weights is not None:
         model.load_weights(init_weights)
-    model.compile(optimizer=Nadam(learning_rate=lr or p['lr']), loss='mse')
+    model.compile(optimizer=Nadam(learning_rate=lr or p['lr'], clipnorm=clipnorm), loss='mse')
     cbs = [ReduceLROnPlateau(monitor='val_loss', factor=p['lr_factor'], patience=p['lr_patience'],
                              min_lr=1e-6, verbose=0),
            EarlyStopping(monitor='val_loss', patience=p['early'], restore_best_weights=True, verbose=0)]
@@ -154,21 +164,33 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     X_fit, t_fit = data['X_train'], t_tr.astype(np.float32)
     w_fit = None if w_tr is None else w_tr.astype(np.float32)
     passes = max(1, int(round(epoch_windows / len(X_fit)))) if epoch_windows else 1
-    if passes > 1:                            # whole passes, each in stored order
+    if epoch_windows and epoch_mode == 'exact':
+        sel = epoch_indices(len(X_fit), int(epoch_windows))
+        X_fit, t_fit = X_fit[sel], t_fit[sel]
+        w_fit = None if w_fit is None else w_fit[sel]
+        passes = len(sel) / len(data['X_train'])
+    elif epoch_mode != 'passes':
+        raise ValueError(f'epoch_mode must be passes or exact, got {epoch_mode!r}')
+    elif passes > 1:                            # whole passes, each in stored order
         X_fit, t_fit = np.concatenate([X_fit] * passes), np.concatenate([t_fit] * passes)
         w_fit = None if w_fit is None else np.concatenate([w_fit] * passes)
     hist = model.fit(X_fit, t_fit, sample_weight=w_fit,
-                     validation_data=val, epochs=p['epochs'], batch_size=p['batch'],
+                     validation_data=val, epochs=p['epochs'], batch_size=batch or p['batch'],
                      callbacks=cbs, shuffle=shuffle, verbose=verbose)
     if save_weights:
         model.save_weights(save_weights)
     pred = model.predict(data['X_test'], verbose=0, batch_size=4096).ravel().astype(np.float64)
+    pv = model.predict(data['X_val'], verbose=0, batch_size=4096).ravel().astype(np.float64)
     if balance == 'scale':
         pred = pred * sd[k_te]
+        pv = pv * sd[k_va]
     best = int(np.argmin(hist.history['val_loss']))
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
             'best_val_loss': float(hist.history['val_loss'][best]),
             'knots': knots.tolist(), 'sd_per_knot': sd.tolist(), 'n_params': int(model.count_params()),
             'init_weights': init_weights, 'lr': lr or p['lr'],
-            'passes_per_epoch': passes, 'updates': int(model.optimizer.iterations.numpy())}
+            'passes_per_epoch': passes, 'updates': int(model.optimizer.iterations.numpy()),
+            'clipnorm': clipnorm, 'optimizer_clipnorm': model.optimizer.clipnorm, 'max_epochs': p['epochs'],
+            'batch': batch or p['batch'], 'shuffle': bool(shuffle), 'epoch_windows': epoch_windows,
+            'epoch_mode': epoch_mode, 'val_pred': pv, 'val_mae': float(np.mean(np.abs(pv - y_va)))}
     return pred, info
