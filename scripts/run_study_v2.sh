@@ -2,11 +2,12 @@
 # Study v2 runs (EXPERIMENTS/protocol/study_v2.json). Finished runs are skipped, so every step can be stopped and
 # started again. Results go to EXPERIMENTS/results_v2/ (the TS2_/FE_ ids).
 #
-#   scripts/run_study_v2.sh round R1     # R1 of every active cell (9 configs, seed 0, 60 epochs)
+#   scripts/run_study_v2.sh round R1     # coarse: 8 shared random draws + the anchor per active cell, seed 0
 #   scripts/run_study_v2.sh screen 2s    # D23 gate: R1 of the 2 s window at full overlap, the gate decision, and
 #                                        # if it passes, R1 of its 3 other overlap cells
-#   scripts/run_study_v2.sh round R2     # the 3 configs R1 kept per cell, 400 epochs
-#   scripts/run_study_v2.sh round R3     # the 2 configs R2 kept per cell, seed 1 added
+#   scripts/run_study_v2.sh round R2     # fine: 8 draws around each cell's best R1 config, seed 0
+#   scripts/run_study_v2.sh round R3     # seed check: the best 2 of R1 + R2 per cell get seed 1, then the winner
+#   Every round trains to early stopping under the 400-epoch cap.
 #   scripts/run_study_v2.sh final        # final runs from results_v2/choice.json (EXPERIMENTS/tuning/finalize.py)
 #
 # Order (plan § Compute): R1 of every always-run cell, the 2 s screen, R2, R3; 5 s and 10 s screens only if the
@@ -49,5 +50,5 @@ case "${1:-}" in
     $PY -m EXPERIMENTS.tuning.finalize --jobs EXPERIMENTS/results_v2/final_jobs.json
     STEP="final"; commit_specs $($PY -c "import json; print(' '.join(sorted({j[0] for j in json.load(open('EXPERIMENTS/results_v2/final_jobs.json'))})))")
     queue --jobs-file EXPERIMENTS/results_v2/final_jobs.json ;;
-  *) sed -n '2,13p' "$0"; exit 2 ;;
+  *) sed -n '2,14p' "$0"; exit 2 ;;
 esac

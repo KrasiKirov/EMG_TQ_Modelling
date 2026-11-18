@@ -19,7 +19,6 @@ PROTOCOLS = {
     'orig': dict(batch=8, lr=0.003, lr_factor=0.7, lr_patience=10, early=25, epochs=200),
     'fast': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=150),
     'fast400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
-    # study v2: R1 screen (60 epochs) and the full protocol (400); batch and lr come from each config
-    'study60': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=60),
+    # study v2 (every round): early stopping under a 400-epoch cap; batch and lr come from each config
     'study400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
 }

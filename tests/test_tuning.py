@@ -45,7 +45,7 @@ def test_specs_valid(tmp_path):
     assert len(ids) == 9 and all(i.startswith('TS2_R1_w20_o75_') for i in ids)
     for i in ids:
         s = SPEC.load(i, tmp_path)
-        assert s.changes['train_protocol'] == 'study60' and s.changes['train_stride'] == 5
+        assert s.changes['train_protocol'] == 'study400' and s.changes['train_stride'] == 5
         assert s.changes['shuffle'] is False and s.changes['clipnorm'] == 1.0
 
 
@@ -111,3 +111,24 @@ def test_stopped_length_stops_longer():
     assert HV.gated_lengths_to_run({'w200_full': True, 'w500_full': False}) == ['w200_full']
     assert HV.gated_lengths_to_run({'w200_full': True}) == ['w200_full', 'w500_full']
     assert HV.gated_lengths_to_run({}) == ['w200_full']
+
+
+CENTER = dict(units=16, layers=2, dropout=0.05, lr=0.001, batch=64)
+
+
+def test_fine_draws_narrowed_around_center():
+    for d in SPC.fine_draws(CENTER, 200, 7):
+        assert 0.001 / 3 - 1e-12 <= d['lr'] <= 0.001 * 3 + 1e-12
+        assert 0.0 <= d['dropout'] <= 0.15 and d['units'] in (8, 16, 32) and d['layers'] == 2
+        assert d['batch'] in (32, 64, 128)
+    edge = SPC.fine_draws(dict(CENTER, lr=0.025, units=64, batch=128, dropout=0.3), 200, 7)
+    assert all(d['lr'] <= 0.03 and d['units'] in (32, 64) and d['batch'] in (64, 128) and d['dropout'] >= 0.2
+               for d in edge)                                      # stays inside the coarse space
+
+
+def test_fine_draws_reproducible_and_carry_has_no_batch():
+    assert SPC.fine_draws(CENTER, 8, 3) == SPC.fine_draws(CENTER, 8, 3)
+    c = SPC.fine_configs('carry_5s', {k: v for k, v in CENTER.items() if k != 'batch'})
+    w = SPC.fine_configs('w20_full', CENTER)
+    assert sorted(c) == [f'f{i}' for i in range(8)] and all('batch' not in v for v in c.values())
+    assert all({k: v for k, v in w[n].items() if k != 'batch'} == c[n] for n in c)

@@ -68,6 +68,7 @@ def test_a0_on_common_targets(tmp_path):
 
 
 def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
+    """coarse (R1) -> fine draws around the best coarse config (R2) -> best 2 of both with seed 1 (R3) -> gate."""
     from EXPERIMENTS.pipeline import spec as SPEC
     from EXPERIMENTS.tuning import make_specs as MS, space as SPC
     cfg = tmp_path / 'configs'
@@ -77,12 +78,19 @@ def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
     rd = _fake_results(tmp_path, r1)
     monkeypatch.setattr(SEL, 'RESULTS_V2', rd)
     SEL.main(['--round', 'R1', '--cell', 'w20_full'])
-    kept = json.loads(capsys.readouterr().out)['keep']
-    assert len(kept) == 3 and kept[0] == 'TS2_R1_w20_full_anchor'          # fake error grows with list position
-    r2 = MS.write('R2', 'w20_full', {k.rsplit('_', 1)[1]: SPC.configs('w20_full')[k.rsplit('_', 1)[1]] for k in kept}, cfg)
-    _fake_results(tmp_path, r2, seeds=(0, 1))
+    assert json.loads(capsys.readouterr().out)['best'] == 'TS2_R1_w20_full_anchor'   # fake error grows with position
+    r2 = MS.for_round('R2', 'w20_full')
+    assert r2 == [f'TS2_R2_w20_full_f{i}' for i in range(8)]
+    anchor = SPC.ANCHOR
+    for i in r2:
+        ch = SPEC.load(i, cfg).changes
+        assert ch['layers'] == anchor['layers'] and ch['units'] in (8, 16) and ch['train_protocol'] == 'study400'
+    _fake_results(tmp_path, r2, seeds=(0, 1), err={i: 0.05 for i in r2[:2]})
+    cands = SEL.r3_ids('w20_full', P6)
+    assert sorted(cands) == sorted(r2[:2])
+    assert MS.for_round('R3', 'w20_full') == cands
     SEL.main(['--round', 'R3', '--cell', 'w20_full'])
-    assert json.loads(capsys.readouterr().out)['winner'] in r2
+    assert json.loads(capsys.readouterr().out)['winner'] in cands
     SEL.main(['--gate', 'w200_full'])
     g = json.loads(capsys.readouterr().out)
     assert g['continues'] is False and list(g['ratios']) == ['w20_full', 'w50_full', 'w100_full']   # w200 last: worst

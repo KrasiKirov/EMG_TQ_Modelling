@@ -79,6 +79,16 @@
  },
  "draw_seed": 20261118,
  "n_draws": 8,
+ "fine": {
+  "n": 8,
+  "seed": 20261119,
+  "lr_factor": 3.0,
+  "dropout_pm": 0.1,
+  "units": "same or one step either side",
+  "layers": "same",
+  "batch": "same or one step either side (windows only)",
+  "bounds": "every value stays inside the coarse space"
+ },
  "cells": {
   "w20_full": {
    "window": 20,
@@ -306,21 +316,25 @@
  },
  "rounds": {
   "R1": {
-   "configs": "draws+anchor",
+   "name": "coarse",
+   "configs": "the 8 shared random draws + the anchor",
    "seeds": [
     0
    ],
-   "protocol": "study60",
-   "keep": 3
+   "protocol": "study400"
   },
   "R2": {
+   "name": "fine",
+   "configs": "fine draws around the best R1 config of the cell",
    "seeds": [
     0
    ],
-   "protocol": "study400",
-   "keep": 2
+   "protocol": "study400"
   },
   "R3": {
+   "name": "seed check",
+   "candidates": "R1 + R2",
+   "keep": 2,
    "seeds": [
     0,
     1
@@ -329,7 +343,6 @@
     1
    ],
    "protocol": "study400",
-   "spec_from": "R2",
    "winner": "one_se"
   }
  },

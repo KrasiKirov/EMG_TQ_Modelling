@@ -4,8 +4,9 @@
     python -m EXPERIMENTS.tuning.make_specs --round R1 --cell w200_full   # one cell (a gate screen)
 
 Active cells: the 15 always-run cells, plus the 4 overlap cells of each gated length whose gate passed
-(results_v2/gate_<cell>.json, written by scripts/run_study_v2.sh screen). R2 specs are the 3 configs R1 kept;
-R3 reuses the 2 R2 specs R2 kept (seed 1 added), so it writes nothing.
+(results_v2/gate_<cell>.json, written by scripts/run_study_v2.sh screen). R1 = coarse (8 shared draws + anchor),
+R2 = fine (8 draws around the cell's best R1 config), R3 = the best 2 of R1 + R2 with seed 1 added (reuses their
+specs, so it writes nothing). Every round trains to early stopping under the 400-epoch cap.
 """
 from __future__ import annotations
 
@@ -64,10 +65,9 @@ def for_round(rnd: str, cell: str) -> list[str]:
     if rnd == 'R1':
         return write('R1', cell, SPC.configs(cell))
     if rnd == 'R2':
-        r1 = _P['rounds']['R1']
-        kept = SEL.cut(SEL.load_val(SEL.round_ids('R1', cell), r1['seeds'], _P['people'])[0]['full'], r1['keep'])
-        cfgs = SPC.configs(cell)
-        return write('R2', cell, {k.rsplit('_', 1)[1]: cfgs[k.rsplit('_', 1)[1]] for k in kept})
+        best = SEL.best_r1(cell, _P['people'])
+        center = SPC.configs(cell)[best.rsplit('_', 1)[1]]
+        return write('R2', cell, SPC.fine_configs(cell, center))
     return SEL.r3_ids(cell, _P['people'])
 
 

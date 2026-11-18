@@ -23,3 +23,9 @@ def test_cells_and_gates():
 def test_primary_direction_only():
     p = PT.load()
     assert p['primary_direction'] == 'S1toS2' and 'supporting_direction' not in p
+
+
+def test_rounds_coarse_fine_full_budget():
+    r = PT.load()['rounds']
+    assert [r[k]['name'] for k in ('R1', 'R2', 'R3')] == ['coarse', 'fine', 'seed check']
+    assert all(r[k]['protocol'] == 'study400' for k in r) and r['R3']['keep'] == 2

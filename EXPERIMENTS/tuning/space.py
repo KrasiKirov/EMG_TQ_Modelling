@@ -1,7 +1,9 @@
-"""Study v2 search space (decisions D3, D5): the cells, the shared random draws and the anchor, read from the protocol.
+"""Study v2 search space (decisions D3, D5): cells, coarse and fine random draws, the anchor; read from the protocol.
 
-Every cell gets the same 8 draws plus the anchor, so cells differ only in the window setting. Carried-state cells
-train on whole trials and have no batch size, so the drawn batch is dropped for them.
+Coarse (R1): every cell gets the same 8 draws plus the anchor, so cells differ only in the window setting.
+Fine (R2): 8 draws in a narrowed range around the cell's best coarse config (learning rate x/÷ 3, dropout ± 0.1,
+units and batch the same or one step either side, layers the same), inside the coarse space; the same random
+numbers in every cell. Carried-state cells train on whole trials and have no batch size, so batch is dropped.
 """
 from __future__ import annotations
 
@@ -45,3 +47,35 @@ def configs(cell: str) -> dict[str, dict]:
     if _P['cells'][cell].get('state') == 'carry':
         out = {k: {kk: vv for kk, vv in v.items() if kk != 'batch'} for k, v in out.items()}
     return out
+
+
+def _near(choices, v, rng):
+    i = choices.index(v)
+    return int(rng.choice(choices[max(0, i - 1):i + 2]))
+
+
+def fine_draws(center: dict, n: int, seed: int) -> list[dict]:
+    """n configurations in the narrowed range around ``center`` (an R1 config), drawn with default_rng(seed)."""
+    rng, sp, f = np.random.default_rng(seed), _P['space'], _P['fine']
+    lo_s, hi_s = sp['lr']['log_uniform']
+    lo, hi = np.log(max(lo_s, center['lr'] / f['lr_factor'])), np.log(min(hi_s, center['lr'] * f['lr_factor']))
+    d_lo, d_hi = sp['dropout']['uniform']
+    out = []
+    for _ in range(n):
+        d = dict(units=_near(sp['units']['choice'], center['units'], rng), layers=int(center['layers']),
+                 dropout=round(float(rng.uniform(max(d_lo, center['dropout'] - f['dropout_pm']),
+                                                 min(d_hi, center['dropout'] + f['dropout_pm']))), 3),
+                 lr=float(f'{np.exp(rng.uniform(lo, hi)):.3g}'))
+        b = _near(sp['batch']['choice'], center.get('batch', 64), rng)    # drawn always, so cells share numbers
+        if 'batch' in center:
+            d['batch'] = b
+        out.append(d)
+    return out
+
+
+def fine_configs(cell: str, center: dict) -> dict[str, dict]:
+    """{'f0'..'f7'} for this cell around its best R1 config (batch dropped for carried state)."""
+    carry = _P['cells'][cell].get('state') == 'carry'
+    c = dict(center, batch=center.get('batch', 64))
+    out = {f'f{i}': d for i, d in enumerate(fine_draws(c, _P['fine']['n'], _P['fine']['seed']))}
+    return {k: {kk: vv for kk, vv in v.items() if not (carry and kk == 'batch')} for k, v in out.items()}

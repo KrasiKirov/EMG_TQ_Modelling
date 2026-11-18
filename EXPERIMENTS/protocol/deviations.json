@@ -1,1 +1,10 @@
-[]
+[
+ {
+  "date": "2026-11-18",
+  "commit": "the commit that adds this entry",
+  "what": "Search rounds changed from 60-epoch R1 (keep 3) -> R2 400 epochs (keep 2) -> R3 seed check, to coarse (8 shared draws + anchor) -> fine (8 draws around each cell's best coarse config) -> seed check (best 2 of coarse + fine get seed 1), every round trained to early stopping under the 400-epoch cap. Adds the \"fine\" block; removes the study60 protocol.",
+  "why": "v1 tuning runs (504 runs, 150-epoch cap) peaked at a median epoch of 145 and 92 % after epoch 60, so a 60-epoch cut ranks learning speed, not final quality; coarse-to-fine random search chosen by the user.",
+  "runs_affected": "all study v2 tuning runs (none had run)",
+  "results_seen": "none: no study v2 run had started"
+ }
+]

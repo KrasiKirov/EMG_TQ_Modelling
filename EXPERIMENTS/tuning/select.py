@@ -7,7 +7,8 @@ Tables: {config: {person: nMAE}}, the median over seeds. nMAE = MAE / scale, whe
 scale does not depend on the config). Two tables are built: 'full' (every validation target of the run) for the
 cuts inside a cell, and 'common' (D24 targets only) for comparisons across cells (gates, A0).
 
-    python -m EXPERIMENTS.tuning.select --round R1 --cell w20_full          # configs kept after R1
+    python -m EXPERIMENTS.tuning.select --round R1 --cell w20_full          # best coarse config (fine centre)
+    python -m EXPERIMENTS.tuning.select --round R2 --cell w20_full          # the 2 candidates of R1 + R2
     python -m EXPERIMENTS.tuning.select --round R3 --cell w20_full          # the cell's winner
     python -m EXPERIMENTS.tuning.select --gate w200_full                    # D23 gate of a long window
     python -m EXPERIMENTS.tuning.select --a0                                # A0 over every finished cell
@@ -122,10 +123,10 @@ def main(argv=None):
             ids = r3_ids(a.cell, people)
             tables, _ = load_val(ids, r['seeds'], people)
             res = {'winner': winner(tables['full'], n_params(ids, people))}
+        elif a.round == 'R2':
+            res = {'keep': r3_ids(a.cell, people)}
         else:
-            ids = round_ids(a.round, a.cell)
-            tables, _ = load_val(ids, r['seeds'], people)
-            res = {'keep': cut(tables['full'], r['keep'])}
+            res = {'best': best_r1(a.cell, people)}
     elif a.gate:
         order = P['gates']['order']
         shorter = [c for c, v in P['cells'].items() if v.get('overlap') == 'full'
@@ -150,11 +151,17 @@ def main(argv=None):
         Path(a.json).write_text(json.dumps(res, indent=1) + '\n')
 
 
-def r3_ids(cell, people):
-    """R3 reruns the configs R2 kept (same specs, seed 1 added)."""
+def best_r1(cell, people):
+    """The best coarse (R1) config of a cell: the centre of its fine draws."""
     r = PT.load()['rounds']
-    ids = round_ids(r['R3']['spec_from'], cell)
-    return cut(load_val(ids, r['R2']['seeds'], people)[0]['full'], r['R2']['keep'])
+    return cut(load_val(round_ids('R1', cell), r['R1']['seeds'], people)[0]['full'], 1)[0]
+
+
+def r3_ids(cell, people):
+    """R3 candidates: the best 2 of R1 + R2 on seed 0 (same specs, seed 1 added)."""
+    r = PT.load()['rounds']
+    ids = round_ids('R1', cell) + round_ids('R2', cell)
+    return cut(load_val(ids, r['R1']['seeds'], people)[0]['full'], r['R3']['keep'])
 
 
 def _r3_winner(cell, people):
