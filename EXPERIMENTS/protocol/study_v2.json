@@ -1,6 +1,6 @@
 {
  "id": "study_v2",
- "status": "draft: becomes the pre-registration once D1, D6 and D23 are confirmed and this file is committed with status 'pre-registered'",
+ "status": "pre-registered 18 Nov 2026: D1, D6, D23 and the scoring rule confirmed by the user; later changes go to deviations.json",
  "primary_direction": "S1toS2",
  "people": [
   "CH",
