@@ -1,0 +1,26 @@
+{
+ "applied": [],
+ "fits": true,
+ "projected_days": 4.27,
+ "budget_days": 6,
+ "rule": "EXPERIMENTS/tuning/budget.py projects the total wall time from measured run times only (seedN.json prep_s + train_s; never a score), with the plan's run multipliers for cells not yet measured, the worst measured cell for A0 and A3, and 6 workers; it adds the fallback steps in order until the projection is within 'days'; steps are only added, never removed; if every step is applied and it is still over, the study stops for the user's decision. The result is results_v2/budget.json, committed by scripts/run_study_v2.sh budget.",
+ "checks": [
+  {
+   "steps": [],
+   "elapsed_h": 30.8,
+   "remaining_h": {
+    "R1": 4.5,
+    "2s_check": 5.1,
+    "R2": 19.9,
+    "R3": 10.0,
+    "final": 32.1
+   },
+   "total_h": 102.4,
+   "projected_days": 4.27,
+   "fits": true,
+   "unit_s": 328.8971258997917,
+   "n_runs_measured": 504,
+   "checked_at": 1795095615.487822
+  }
+ ]
+}
