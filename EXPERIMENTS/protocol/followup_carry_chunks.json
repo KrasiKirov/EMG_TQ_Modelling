@@ -1,0 +1,50 @@
+{
+ "id": "followup_carry_chunks",
+ "status": "pre-registered 19 Nov 2026, while study_v2 was still in its coarse round (R1) and before any session-2 prediction of any study was opened; design choices confirmed by the user. Later changes go to a 'deviations' list in this file with what had been seen.",
+ "kind": "exploratory follow-up of study_v2; separate from study_v2's confirmatory families, which it does not change",
+ "parent": {"protocol": "study_v2", "protocol_hash": "3fbb2cea01ad691ce3693dc9573c8dfbbbc8d5a355d853a886d354ea1082e030", "commit_at_registration": "244c2cc"},
+ "motivation": "study_v2 R1 (coarse round, seed 0, session-1 validation nMAE on D24 common targets, best config per cell): carry_2s 0.0191, carry_5s 0.0213, carry_10s 0.0239; best reset-window cell w20_o50 0.0216, w20_full 0.0224. Carried state got worse as the chunk (truncated-BPTT length) got longer, and 2 s was the shortest chunk study_v2 tests.",
+ "seen_at_registration": "study_v2 R1 validation scores of every cell except the 50- and 100-sample 75 % overlap cells (not finished); no R2, R3 or final run; no session-2 prediction.",
+ "questions": {
+  "Q1": "Do carried-state chunks shorter than 2 s (1, 0.5, 0.2 s) predict session 2 better than 2 s?",
+  "Q2": "At equal gradient look-back (0.2 s), does carrying the state beat resetting it each window: carry_0.2s vs w20_full?"
+ },
+ "runs_after": "study_v2's final runs and its confirmatory analysis are complete; never at the same time as study_v2 runs",
+ "cells": {
+  "carry_1s": {"state": "carry", "chunk": 100, "window": 20, "gated": false, "length_s": 1.0},
+  "carry_0.5s": {"state": "carry", "chunk": 50, "window": 20, "gated": false, "length_s": 0.5},
+  "carry_0.2s": {"state": "carry", "chunk": 20, "window": 20, "gated": false, "length_s": 0.2}
+ },
+ "inherits_from_parent": ["fixed", "anchor", "space", "draw_seed", "n_draws", "fine", "rounds", "metric", "score_from_s", "score_from_rule", "selection", "one_se", "purge", "d24_min_s_per_trial", "d24_max_window_steps", "min_agree", "min_effect", "people", "primary_direction"],
+ "search": "the same as study_v2 for every follow-up cell: R1 = the 6 shared draws + the anchor (the same configs as study_v2's carried-state cells, since draw_seed is the same); R2 = 4 fine draws around the cell's best R1 config; R3 = best 2 of R1 + R2 get seed 1, winner by paired 1-SE; every round under study400",
+ "final_seeds": {"cell": [10, 11, 12]},
+ "references": {
+  "rule": "reused from study_v2, not re-run: the final runs (seeds 10-12) of study_v2's cell winners FE_cell_carry_2s and FE_cell_w20_full, scored by the same code",
+  "carry_2s": "FE_cell_carry_2s",
+  "w20_full": "FE_cell_w20_full"
+ },
+ "families": {
+  "FU1": {"comparator": "carry_2s", "arms": ["carry_1s", "carry_0.5s", "carry_0.2s"]},
+  "FU2": {"pairs": [["carry_0.2s", "w20_full"]]}
+ },
+ "decision_rule": "study_v2's: per comparison, an effect counts only if all 6 people agree in sign and the median effect is at least 5 %; otherwise 'no clear difference'. Each comparison is scored on the samples both of its arms predict, as in study_v2.",
+ "descriptive": [
+  "session-1 validation nMAE of the best config against chunk length over 0.2, 0.5, 1 s (this follow-up) and 2, 5, 10 s (study_v2)",
+  "weight updates per epoch and run time per cell",
+  "session-2 nMAE against time since trial start for carry_2s and w20_full (the warm-up question study_v2 validation cannot answer); changes no choice"
+ ],
+ "not_tested": "update frequency separately from gradient look-back (e.g. 2 s look-back with an update every 0.5 s): considered and left out to keep the follow-up small and the training code unchanged",
+ "budget": {
+  "days": 2,
+  "workers": 6,
+  "check": "after the follow-up's R1, from measured run times only (as study_v2's budget check)",
+  "fallback": ["fine_2", "drop_carry_0.5s"],
+  "rule": "add fallback steps in order until the projection fits; if it still does not fit, stop and ask the user"
+ },
+ "implementation": "not written at registration: study_v2's code paths (ML, EXPERIMENTS/pipeline|protocol|tuning) must not change while it runs. After study_v2 ends: load this file as a second protocol, write its specs with the TS3_ prefix and its results to EXPERIMENTS/results_followup, and score it with study_v2's confirm code. No other setting may differ from study_v2.",
+ "limitations": [
+  "Chosen after seeing study_v2 R1 validation results: an exploratory follow-up, reported as such, not as part of study_v2's pre-registered comparisons.",
+  "The follow-up runs after study_v2's session-2 results are known; every choice inside it uses session-1 validation only, and its comparisons and decision rule are fixed here, before any session-2 prediction was opened.",
+  "The references are reused runs from study_v2, made with the same code and protocol, at an earlier date than the follow-up's runs."
+ ]
+}
