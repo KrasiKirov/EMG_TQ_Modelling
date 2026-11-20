@@ -276,9 +276,11 @@ export interface WaveLine {
   color: string;
   width: number;
   data: Float32Array;
+  /** this line's own sample times (s); without it, the chart's shared time axis */
+  time?: ArrayLike<number>;
 }
 
-export function waveOption(time: number[], lines: WaveLine[], t: ChartTokens, demeaned = false): EOption {
+export function waveOption(time: number[], lines: WaveLine[], t: ChartTokens, demeaned = false, yName?: string): EOption {
   return {
     ...base(t),
     animation: false,
@@ -316,7 +318,7 @@ export function waveOption(time: number[], lines: WaveLine[], t: ChartTokens, de
       splitLine: { show: false },
       axisLabel: { color: t.textMuted, fontSize: 12, formatter: (v: number) => `${+v.toFixed(1)} s` },
     },
-    yAxis: valueAxis(t, { name: demeaned ? 'demeaned torque (Nm)' : 'voluntary torque (Nm)', nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' }, scale: true }),
+    yAxis: valueAxis(t, { name: yName ?? (demeaned ? 'demeaned torque (Nm)' : 'voluntary torque (Nm)'), nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' }, scale: true }),
     series: lines.map((l, i) => ({
       type: 'line',
       name: l.name,
@@ -327,7 +329,7 @@ export function waveOption(time: number[], lines: WaveLine[], t: ChartTokens, de
       lineStyle: { color: l.color, width: l.width, join: 'round', cap: 'round' },
       itemStyle: { color: l.color },
       emphasis: { focus: 'none', lineStyle: { width: l.width } },
-      data: time.map((x, j) => [x, Number.isFinite(l.data[j]) ? Math.round(l.data[j] * 100) / 100 : null]),
+      data: Array.from(l.data, (v, j) => [l.time ? l.time[j] : time[j], Number.isFinite(v) ? Math.round(v * 100) / 100 : null]),
     })),
   };
 }

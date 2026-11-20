@@ -32,7 +32,7 @@ export function machineFacts(m: Machine, versions: Versions[], opts: { sharing?:
     ['Software', sw],
   ];
   if (opts.sharing !== false) {
-    rows.push(['Sharing', `${m.parallel_runs} run${m.parallel_runs === 1 ? '' : 's'} trained at once, ${m.threads_per_run} TensorFlow thread${m.threads_per_run === 1 ? '' : 's'} each`]);
+    rows.push(['Sharing', `${m.parallel_runs} run${m.parallel_runs === 1 ? '' : 's'} at once, ${m.threads_per_run} TensorFlow thread${m.threads_per_run === 1 ? '' : 's'} each (the run script's settings when this page was built; the runs do not record it)`]);
   }
   return rows;
 }

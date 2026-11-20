@@ -15,7 +15,7 @@ function Shell() {
     <AppShell header={{ height: 56 }} padding={0}>
       <AppShell.Header className="topbar">
         <Group h="100%" px="lg" wrap="nowrap">
-          <Text fw={600} size="md" className="brand" data-testid="built">EMG → ankle torque</Text>
+          <Text fw={600} size="md" className="brand" data-testid="built">EMG to ankle torque</Text>
         </Group>
       </AppShell.Header>
       <AppShell.Main className="app-main" id="main-content" tabIndex={-1}>

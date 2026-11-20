@@ -11,3 +11,7 @@ declare module '*/presentation-catalog.json' { const value: unknown; export defa
 declare module '*/study.json' { const value: unknown; export default value; }
 
 declare module '*/pipeline.json' { const value: unknown; export default value; }
+
+declare module '*/study-waves.json' { const value: unknown; export default value; }
+
+declare module '*/tuning-val.json' { const value: unknown; export default value; }

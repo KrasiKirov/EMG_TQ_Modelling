@@ -1,6 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
 import { DS } from './dataset';
-import { hashFromState, stateFromHash, type TabKey, type ViewState } from './lib/hash';
+import { type TabKey, type ViewState } from './lib/hash';
 import { near, positionsOf } from './lib/data';
 import { DEFAULT_A_ID, DEFAULT_B_ID } from './lib/params';
 import { NEW_MODEL_ID } from './lib/presentation';
@@ -49,18 +49,8 @@ export function useView(): Ctx {
   return c;
 }
 
-function writeHash(h: string) {
-  if (window.location.hash === h) return;
-  try {
-    window.history.replaceState(null, '', h);
-  } catch {
-    window.location.replace(h);
-  }
-}
-
 export function ViewProvider({ children }: { children: ReactNode }) {
-  const [s, setS] = useState<ViewState>(() => stateFromHash(DS, window.location.hash, DEFAULT_STATE));
-  const lastWritten = useRef('');
+  const [s, setS] = useState<ViewState>(DEFAULT_STATE);
   const waveScroll = useRef(false);
   const takeWaveScroll = useCallback(() => {
     const v = waveScroll.current;
@@ -70,22 +60,7 @@ export function ViewProvider({ children }: { children: ReactNode }) {
 
   const set = useCallback((patch: Partial<ViewState>) => setS((prev) => ({ ...prev, ...patch })), []);
 
-  // state -> hash
-  useEffect(() => {
-    const h = hashFromState(DS, s);
-    lastWritten.current = h;
-    writeHash(h);
-  }, [s]);
-
-  // hash -> state (deep links, manual edits, back/forward)
-  useEffect(() => {
-    const onHash = () => {
-      if (window.location.hash === lastWritten.current) return;
-      setS((prev) => stateFromHash(DS, window.location.hash, prev));
-    };
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
-  }, []);
+  // The URL hash belongs to the Results page (#setting=<id>, StudyTab); this older view state is no longer written to it.
 
   const wpos = useMemo(() => {
     const ps = positionsOf(DS, s.wsubj, s.dir);

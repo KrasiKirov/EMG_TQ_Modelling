@@ -31,6 +31,12 @@ DEFAULT="W00_reference:0-9 W00_reference:0-9:S2toS1 WT1_total:0-9
  WT1_total_400:0-1
  WC2_carry_500ms:3-4 WC3_carry_1s:3-4 WL4_5s:3-4 WL2c_1s_10ms:3-4 WL5_10s:3-4"
 
+# SET=10ms runs the same window grid and lengths with every 10 ms sample fed to the network (configs *_10ms).
+# Cheapest first; the 5 s and 10 s full-overlap lengths need about 3-5 GB of memory per run, so use WORKERS=3 for them.
+grid10() { for L in 0500ms 1s 2s 5s 10s; do for o in 00 50 75 90; do both "WG_${L}_o${o}_10ms"; done; done; }
+TEN_MS="$(grid10) $(both WL1_0500ms_10ms) WL2c_1s_10ms_tot:0-4 $(both WL3_2s_10ms WL4_5s_10ms WL5_10s_10ms)"
+if [ "${SET:-}" = 10ms ] && [ $# -eq 0 ]; then set -- $TEN_MS; fi
+
 steps=("$@")
 if [ ${#steps[@]} -eq 0 ]; then
   for s in $DEFAULT; do steps+=("$s"); done

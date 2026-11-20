@@ -201,7 +201,7 @@ export function studySeedOption(sides: SeedSide[], positions: number[], m: SMetr
       formatter: (p: { seriesType?: string; dataIndex: number; value?: unknown }) => {
         const k = kOf(p);
         if (!(k >= 0)) return '';
-        return `<b>${subj} · position ${k + 1} (${posLabel(positions[k])} rad)${k < 2 ? ' · plantarflexed' : ''}</b>`
+        return `<b>${subj} · position ${k + 1} (${posLabel(positions[k])} rad)${k < 2 ? ' · one of the 2 most plantarflexed' : ''}</b>`
           + sides.map((s) => seedTooltip(s, k, 3, unit)).join('');
       },
     },

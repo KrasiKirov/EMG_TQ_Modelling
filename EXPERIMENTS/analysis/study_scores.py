@@ -55,8 +55,8 @@ def question(exp):
         return 'epochs', 'WT1_total'
     base = exp[:-4] if exp.endswith('_tot') else exp
     pair = base if base != exp else None
-    rules = [(r'WO\d_\d\d', 'overlap'), (r'WO\d_\d\d_eq', 'overlap_eq'), (r'WL2c_.*', 'step'), (r'WL\d_[0-9a-z]+', 'length'),
-             (r'WG_[0-9a-z]+_o\d\d', 'grid'), (r'WS1_shuffled', 'shuffle'), (r'WC[234]_carry_[0-9a-z]+', 'carry')]
+    rules = [(r'WO\d_\d\d', 'overlap'), (r'WO\d_\d\d_eq', 'overlap_eq'), (r'WL2c_.*', 'step'), (r'WL\d_[0-9a-z]+(_10ms)?', 'length'),
+             (r'WG_[0-9a-z]+_o\d\d(_10ms)?', 'grid'), (r'WS1_shuffled', 'shuffle'), (r'WC[234]_carry_[0-9a-z]+', 'carry')]
     for pattern, q in rules:
         if re.fullmatch(pattern, base):
             return q, pair
