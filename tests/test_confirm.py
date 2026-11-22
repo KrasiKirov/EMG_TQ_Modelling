@@ -179,3 +179,24 @@ def test_stopped_gate_stops_longer_lengths(study):
     (rd / 'gate_w200_full.json').write_text(json.dumps({'continues': False}))
     f1 = CF.run(rd, P)['families']['F1']
     assert f1['w200_full']['decision'] == 'stopped' and f1['w500_full']['decision'] == 'stopped'
+
+
+def test_scored_mask_matches_scores(study):
+    """The exports score on confirm's own samples: scored_mask picks exactly what _scores scores, and final_runs
+    gives the shared start that run() reports."""
+    rd = study(window={'FE_cell_w50_full': 300})                       # shared start moves to 2.99 s
+    runs = CF._load_runs(rd, P)
+    timing = CF._timing(runs)
+    nm, _, sfrom = CF._scores(runs, P, {e for e, _, _, _ in runs}, timing)
+    start, _, scale = timing
+    e, p, d, s = 'FE_A2', 'CH', 'S1toS2', 11
+    z = runs[e, p, d, s][1]
+    y, yp, t, tr = (np.asarray(z[k], float) for k in ('y_own_target', 'y_pred', 't', 'trial'))
+    per = []
+    for i in np.unique(tr):
+        m = CF.scored_mask(t, tr, start, p, d, sfrom[p][d]) & (tr == i)
+        assert m.sum() < (tr == i).sum()
+        per.append(np.mean(np.abs(yp[m] - y[m])) / scale[p, d])
+    assert abs(np.mean(per) - nm[e, p, d][s]) < 1e-12
+    _, _, fsfrom = CF.final_runs(rd, P)
+    assert fsfrom == sfrom == CF.run(rd, P)['score_from_s']

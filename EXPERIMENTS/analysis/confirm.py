@@ -125,6 +125,28 @@ def _timing(runs):
     return start, delay, scale
 
 
+def scored_mask(t, trial, start, person, direction, sfrom) -> np.ndarray:
+    """The samples a run is scored on: at least ``sfrom`` seconds after their trial's start
+    (``start`` is ``_timing``'s {(person, direction, trial): s})."""
+    t, trial = np.asarray(t, float), np.asarray(trial)
+    t0 = np.empty(len(t))
+    for i in np.unique(trial):
+        t0[trial == i] = start[person, direction, int(i)]
+    return t - t0 >= sfrom - 1e-6
+
+
+def final_runs(results_dir=None, protocol=None):
+    """Every final run with its timing and the shared scoring start: (runs, timing, {person: {direction: s}}).
+    Opens session 2 only once A0 is chosen."""
+    rd, protocol = Path(results_dir or RESULTS_V2), protocol or PT.load()
+    if not LK.test_open(rd):
+        raise LK.TestLocked(f'no {rd / "choice.json"}: A0 is not chosen yet')
+    runs = _load_runs(rd, protocol)
+    timing = _timing(runs)
+    sfrom = _scores(runs, protocol, {e for e, _, _, _ in runs}, timing)[2]
+    return runs, timing, sfrom
+
+
 def _scores(runs, protocol, arms, timing):
     """Score the runs of ``arms`` on the samples every one of them predicts: per person and direction, from
     max(score_from_s, the latest first prediction of these arms after the trial start). Returns
@@ -142,8 +164,9 @@ def _scores(runs, protocol, arms, timing):
             continue
         y, yp, t, tr = (np.asarray(z[k], float) for k in ('y_own_target', 'y_pred', 't', 'trial'))
         per = {}
+        scored = scored_mask(t, tr, start, p, d, sfrom[p][d])
         for i in np.unique(tr):
-            m = (tr == i) & (t - start[p, d, int(i)] >= sfrom[p][d] - 1e-6)
+            m = (tr == i) & scored
             ang = float(np.asarray(z['angle'])[tr == i][0]) if 'angle' in z else float('nan')
             per[str(int(i))] = (ang, float(np.mean(np.abs(yp[m] - y[m])) / scale[p, d]))
         nm.setdefault((e, p, d), {})[s] = float(np.mean([v for _, v in per.values()]))
@@ -187,11 +210,8 @@ def _not_run(rd, cell, protocol, steps) -> dict:
 
 def run(results_dir=None, protocol=None) -> dict:
     rd, protocol = Path(results_dir or RESULTS_V2), protocol or PT.load()
-    if not LK.test_open(rd):
-        raise LK.TestLocked(f'no {rd / "choice.json"}: A0 is not chosen yet')
-    runs = _load_runs(rd, protocol)
+    runs, timing, _ = final_runs(rd, protocol)
     prov = provenance_check(runs, protocol)
-    timing = _timing(runs)
     people, d1, fam = protocol['people'], protocol['primary_direction'], protocol['families']
     have = {e for e, _, _, _ in runs}
     nm, _, sfrom = _scores(runs, protocol, have, timing)  # descriptive and D2b: every arm on one shared start
