@@ -76,7 +76,8 @@ def runs(rd: Path) -> dict:
         s = int(SEED_RE.match(f.name).group(1))
         js = json.loads(f.read_text())
         r = {'spec': e, 'subject': p, 'direction': d, 'seed': s, 'config_hash': js.get('config_hash'),
-             'provenance': js.get('provenance'),
+             # the computer's network name stays out of the (public) export
+             'provenance': {k: v for k, v in (js.get('provenance') or {}).items() if k != 'host'},
              'command': f'python -m EXPERIMENTS.pipeline.run --exp {e} --subject {p} --direction {d} --seed {s}'}
         if open_ and f.with_suffix('.npz').exists():
             z = LK.load_test(f.with_suffix('.npz'), rd)

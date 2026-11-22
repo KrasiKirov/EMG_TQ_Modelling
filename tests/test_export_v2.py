@@ -21,7 +21,7 @@ def _runs(rd, ids, seeds=(0,), n=8000):
                 np.savez(d / f'seed{s}.npz', y_own_target=y, y_pred=y + 0.3, trial=trial, t=t, angle=trial / 10)
                 np.savez(d / f'seed{s}_val.npz', y=y[:400], y_pred=y[:400] + 0.1, common=np.ones(400, bool))
                 (d / f'seed{s}.json').write_text(json.dumps({'config': {'units': 8}, 'config_hash': 'a' * 16,
-                                                             'provenance': {'git_commit': 'c'},
+                                                             'provenance': {'git_commit': 'c', 'host': 'box.example.home'},
                                                              'train_info': {'n_params': 10}}))
 
 
@@ -42,6 +42,14 @@ def test_every_run_has_reproduce_fields(tmp_path):
     for r in out['runs'].values():
         assert {'spec', 'subject', 'direction', 'seed', 'config_hash', 'command'} <= set(r)
         assert r['command'].startswith('python -m EXPERIMENTS.pipeline.run --exp TS2_R1_w20_full_d0')
+
+
+def test_export_leaves_out_host(tmp_path):
+    rd = tmp_path / 'results_v2'
+    _runs(rd, ['TS2_R1_w20_full_d0'])
+    out = EX.build(rd, tmp_path / 'v1')
+    for r in out['runs'].values():
+        assert 'host' not in r['provenance'] and r['provenance']['git_commit'] == 'c'
 
 
 def test_legacy_seeds_0_4(tmp_path):
