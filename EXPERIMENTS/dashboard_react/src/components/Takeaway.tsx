@@ -1,7 +1,7 @@
 import { Stack, Text } from '@mantine/core';
 
-/** "What this shows": plain-language sentences under a section (lib/takeaways.ts builds them from the page's numbers) */
-export function Takeaway({ lines, title = 'What this shows', testId }: { lines: string[]; title?: string; testId?: string }) {
+/** a titled box of short sentences (the study's answer under the page title) */
+export function Takeaway({ lines, title, testId }: { lines: string[]; title: string; testId?: string }) {
   if (!lines.length) return null;
   return (
     <div className="takeaway" data-testid={testId}>

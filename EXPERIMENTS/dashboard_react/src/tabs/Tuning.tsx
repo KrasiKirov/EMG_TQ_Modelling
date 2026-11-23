@@ -2,10 +2,8 @@ import { useMemo, type ReactNode } from 'react';
 import { Accordion, List, SimpleGrid, Stack, Text } from '@mantine/core';
 import { EChart } from '../components/EChart';
 import { SectionCard } from '../components/common';
-import { Takeaway } from '../components/Takeaway';
 import { factorOption, overfitOption, sizeOption } from '../charts/tuning';
 import { cellOf, isWinner, kindOf, overfitPoints, personScore, runsOf, tuningRuns } from '../lib/results';
-import { overfitTakeaway, tuningTakeaway } from '../lib/takeaways';
 import { useView } from '../state';
 
 /** session-2 nMAE of a setting: exp of the mean over people of log (median over seeds) */
@@ -49,7 +47,6 @@ export function TuningSection({ id, details }: { id: string; details: ReactNode 
             ))}
           </SimpleGrid>
         </div>
-        <Takeaway lines={tuningTakeaway(id)} testId="takeaway-tuning" />
         <Accordion variant="contained">
           <Accordion.Item value="search">
             <Accordion.Control><Text fw={600} size="sm">{kindOf(id) === 'A0' ? 'How A0 was chosen and its cell\'s search (tables)' : kindOf(id) === 'cell' ? 'This setting\'s search (tables)' : 'How this setting was set'}</Text></Accordion.Control>
@@ -70,7 +67,6 @@ export function OverfitSection({ id }: { id: string }) {
       description="Guards in training: early stopping keeps the weights from the epoch with the lowest session-1 validation error (a held-out block after a gap), plus dropout and gradient clipping. The check below uses session 2, which no choice used: each point is a tuned cell winner or last semester's network, both axes combined over people.">
       <Stack gap="md">
         <EChart label="Validation nMAE against session-2 nMAE for each cell winner and last semester's network" height={400} option={overfitOption(pts, id, tokens)} />
-        <Takeaway lines={overfitTakeaway(id, pts)} testId="takeaway-overfit" />
       </Stack>
     </SectionCard>
   );

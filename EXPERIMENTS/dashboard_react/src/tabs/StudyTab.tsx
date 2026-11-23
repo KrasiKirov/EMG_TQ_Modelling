@@ -15,7 +15,7 @@ import { seedCount, WAVE_SPAN, worstPositions, worstWaves } from '../lib/studyWa
 import { fmt, posLabel } from '../lib/format';
 import { HELP_SECTIONS, pageLimitation } from '../content/help';
 import { Takeaway } from '../components/Takeaway';
-import { headline, peakTakeaway, positionsTakeaway, summaryTakeaway, wavesTakeaway } from '../lib/takeaways';
+import { headline } from '../lib/takeaways';
 import { OverfitSection, TuningSection } from './Tuning';
 
 const f1 = (v: number) => (Number.isFinite(v) ? v.toFixed(1) : '–');
@@ -101,15 +101,10 @@ export function StudyTab() {
         </Text>
       </Stack>
       <Summary people={people} />
-      <Takeaway lines={summaryTakeaway(pick, people, st.target === 'total')} testId="takeaway-summary" />
       <WorstPositions id={pick} people={people} />
-      <Takeaway lines={wavesTakeaway(pick, people)} testId="takeaway-waves" />
       <PerPosition people={people} m="mae" />
-      <Takeaway lines={positionsTakeaway(people, 'mae')} testId="takeaway-mae" />
       <PerPosition people={people} m="r2" />
-      <Takeaway lines={positionsTakeaway(people, 'r2')} testId="takeaway-r2" />
       <PeakTorque people={people} />
-      <Takeaway lines={peakTakeaway(people)} testId="takeaway-peaks" />
       <TuningSection id={pick} details={<HowChosen id={pick} />} />
       <OverfitSection id={pick} />
       <Details id={pick} people={people} />
