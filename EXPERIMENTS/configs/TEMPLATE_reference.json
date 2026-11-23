@@ -1,7 +1,7 @@
 {
  "id": "TEMPLATE_reference",
  "title": "Template: the reference setting of the window study",
- "description": "Copy this file to start a new experiment: save it as EXPERIMENTS/configs/<new id>.json, set \"id\" to the same name, change \"title\", \"description\" and the values under \"changes\". As it stands it trains the reference setting: active torque, EMG divided by the session-1 maximum, 200 ms windows with a new one every 10 ms (95 % overlap), LSTM 16 units x 2 layers, trained on session 1 and tested on session 2. Run one person and seed with: python -m EXPERIMENTS.pipeline.run --exp TEMPLATE_reference --subject EG --seed 0. Predictions are written to EXPERIMENTS/results/<id>/<person>/S1toS2/seed<k>.npz with the full settings in the matching .json. Settings not listed under \"changes\" take the defaults in BASE (EXPERIMENTS/pipeline/run.py). Add a \"dashboard\" block (see EXPERIMENTS/pipeline/spec.py) only to show the experiment on the dashboard.",
+ "description": "Copy this file to start a new experiment: save it as EXPERIMENTS/configs/<new id>.json, set \"id\" to the same name, change \"title\", \"description\" and the values under \"changes\". As it stands it trains the reference setting: active torque, EMG divided by the session-1 maximum, 200 ms windows with a new one every 10 ms (95 % overlap), LSTM 16 units x 2 layers, trained on session 1 and tested on session 2. Run one person and seed with: python -m EXPERIMENTS.pipeline.run --exp TEMPLATE_reference --subject EG --seed 0. Predictions are written to EXPERIMENTS/results/<id>/<person>/S1toS2/seed<k>.npz with the full settings in the matching .json. Settings not listed under \"changes\" take the defaults in BASE (EXPERIMENTS/pipeline/settings.py), which also lists the values each setting may take.",
  "tags": [
   "template"
  ],
@@ -26,9 +26,9 @@
   "train_protocol": "fast"
  },
  "settings_help": {
-  "passive": "target: 'static' = measured torque minus the passive torque of the same session's relaxed holds (active torque); 'none' = total measured torque; other models in ML/research/passive.py",
+  "passive": "target: 'static' = measured torque minus the passive torque of the same session's relaxed holds (active torque); 'none' = total measured torque; 'legacy' = the old automatic rule (ML/research/passive.py)",
   "metadata_passive": "true = IES's passive torque comes from its experiment-metadata table (IES has no relaxed holds)",
-  "emg": "EMG scaling: 'trainmax' = divide by the session-1 maximum; 'train_p99', 'session_p99', 'mvc_global', 'mvc_angle', 'agc', 'agc_soft', 'agc_auto' in ML/research/emg_norm.py",
+  "emg": "EMG scaling: 'trainmax' = divide by the session-1 maximum; 'train_p99', 'session_p99', 'mvc_global', 'agc_auto' in ML/research/emg_norm.py",
   "envelope": "'causal' = forward-only filters (only past EMG, as in a real-time device); 'zerophase' = forward-backward filters",
   "lp_order": "order of the envelope's low-pass filter",
   "trim_end_s": "seconds cut from the end of each trial (the first 1 s is always cut)",
@@ -38,7 +38,7 @@
   "val_gap": "true = validation starts one window span after the training part of each trial, so no validation window reuses training samples",
   "state": "'reset' = LSTM state reset at every window; 'carry' = state carried between windows within a trial",
   "shuffle": "false = training windows fed in time order",
-  "balance": "'none' = plain mean-squared error; 'scale' or 'weights' = per-angle loss scaling (ML/research/train.py)",
+  "balance": "'none' = plain mean-squared error; 'scale' = per-angle loss scaling (ML/research/train.py)",
   "units": "LSTM units per layer",
   "layers": "LSTM layers",
   "dropout": "dropout after each LSTM layer",
