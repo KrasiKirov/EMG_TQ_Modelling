@@ -132,7 +132,8 @@ def trial_order(z) -> list[tuple[float, int]]:
 
 
 def final_scores(rd: Path, loaded=None) -> tuple[dict, dict]:
-    """({page id: {person: positions, seeds, mae/nmae/r2 [position][seed], peak [position], train_s {seed}}},
+    """({page id: {person: positions, seeds, mae/nmae/r2 [position][seed], peak [position], train_s {seed},
+    train {seed: best_epoch, epochs, n_params}}},
     the shared scoring start) on confirm's own samples. ``loaded`` is ``confirm.final_runs``'s result."""
     rd = Path(rd)
     if not LK.test_open(rd):
@@ -158,7 +159,7 @@ def final_scores(rd: Path, loaded=None) -> tuple[dict, dict]:
         f = out.setdefault(e, {}).setdefault(p, {'positions': [r[0] for r in rows], '_trials': [r[1] for r in rows],
                                                  'seeds': [], 'mae': [[] for _ in rows], 'nmae': [[] for _ in rows],
                                                  'r2': [[] for _ in rows], 'peak': [r[5] for r in rows],
-                                                 'train_s': {}})
+                                                 'train_s': {}, 'train': {}})
         if f['_trials'] != [r[1] for r in rows]:
             raise ValueError(f'{e} {p} seed {s}: positions differ from the other seeds')
         f['seeds'].append(s)
@@ -167,6 +168,8 @@ def final_scores(rd: Path, loaded=None) -> tuple[dict, dict]:
             f['nmae'][k].append(r[3])
             f['r2'][k].append(r[4])
         f['train_s'][str(s)] = js.get('train_s')
+        ti = js.get('train_info') or {}
+        f['train'][str(s)] = {k: ti.get(k) for k in ('best_epoch', 'epochs', 'n_params')}
     for per in out.values():
         for f in per.values():
             del f['_trials']

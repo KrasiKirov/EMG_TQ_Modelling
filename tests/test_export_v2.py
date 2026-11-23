@@ -88,6 +88,7 @@ def _final(rd, cfg_dir, bad=None):
                 np.savez(d / f'seed{s}_val.npz', y=y[:400], y_pred=yp[:400], common=np.ones(400, bool))
                 (d / f'seed{s}.json').write_text(json.dumps({
                     'config_hash': 'a' * 16, 'train_s': 100.0 + s, 'versions': {'numpy': '2'},
+                    'train_info': {'best_epoch': 40 + s, 'epochs': 55 + s, 'n_params': 999},
                     'provenance': {'git_commit': 'c', 'host': 'box.example.home', 'versions': {'numpy': '2'}}}))
     (rd / 'choice.json').write_text(json.dumps({'A0': 'TS2_R1_carry_2s_d5',
                                                 'cell_winners': {'carry_2s': 'TS2_R1_carry_2s_d5'}}))
@@ -122,6 +123,12 @@ def test_final_scores_use_confirm_samples(final):
         assert abs(f['peak'][k] - np.max(np.abs(y[m]))) < 1e-12
     assert out['score_from_s'] == sfrom
     assert f['train_s'] == {'10': 110.0, '11': 111.0, '12': 112.0}
+
+
+def test_final_train_info(final):
+    _, out = final
+    assert out['final']['FE_cell_w100_full']['EG']['train'] == {
+        str(s): {'best_epoch': 40 + s, 'epochs': 55 + s, 'n_params': 999} for s in (10, 11, 12)}
 
 
 def test_a0_is_one_setting_with_cell_seeds(final):
