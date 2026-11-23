@@ -195,7 +195,7 @@ def runs(rd: Path) -> dict:
             'spec': e, 'subject': p, 'direction': d, 'seed': s, 'config_hash': js.get('config_hash'),
             # the computer's network name stays out of the (public) export
             'provenance': {k: v for k, v in (js.get('provenance') or {}).items() if k != 'host'},
-            'command': f'python -m EXPERIMENTS.pipeline.run --exp {e} --subject {p} --direction {d} --seed {s}'}
+            'command': f'python -m EXPERIMENTS.pipeline.run --exp {e} --subject {p} --seed {s}'}
     return out
 
 

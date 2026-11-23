@@ -5,7 +5,7 @@ if the spec changed since, the queue stops with ConfigMismatch instead of silent
 The queue can be stopped and relaunched safely. Each job's console output goes to EXPERIMENTS/logs/.
 
     python -m EXPERIMENTS.pipeline.run_queue --exps A0_active_trainmax N0_total_trainmax \
-        --subjects YES JM --directions S1toS2 S2toS1 --seeds 0 1 --workers 13
+        --subjects YES JM --seeds 0 1 --workers 13
     python -m EXPERIMENTS.pipeline.run_queue --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
 """
 import argparse
@@ -14,6 +14,8 @@ import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
+
+D = 'S1toS2'   # the only direction: train on session 1, test on session 2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXP = os.path.dirname(HERE)
@@ -48,11 +50,10 @@ def main():
     ap.add_argument('--exps', nargs='*', default=[])
     ap.add_argument('--original-baseline', action='store_true')
     ap.add_argument('--subjects', nargs='+', required=True)
-    ap.add_argument('--directions', nargs='+', default=['S1toS2'])
     ap.add_argument('--seeds', nargs='+', type=int, default=[0])
     ap.add_argument('--workers', type=int, default=13)
     ap.add_argument('--jobs-file', default=None,
-                    help='JSON list of [exp, subject, direction, seed] in priority order (added before --exps jobs)')
+                    help='JSON list of [exp, subject, direction, seed] in priority order (added before --exps jobs); direction must be S1toS2')
     ap.add_argument('--skip-file', default=None,
                     help='JSON list of [exp, subject, direction, seed] currently running elsewhere (not launched again)')
     a = ap.parse_args()
@@ -66,17 +67,17 @@ def main():
                 jobs.append((res, cmd, f'X00_baseline__{s}__S1toS2__s{seed}', None))
     if a.jobs_file:
         for e, s_, d, seed in json.load(open(a.jobs_file)):
+            if d != D:
+                raise SystemExit(f'{a.jobs_file}: {e} {s_} seed {seed} has direction {d}; every run is {D}')
             res = os.path.join(results_root(e), e, s_, d, f'seed{seed}.json')
-            cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s_, '--direction', d, '--seed', str(seed)]
+            cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s_, '--seed', str(seed)]
             jobs.append((res, cmd, f'{e}__{s_}__{d}__s{seed}', e))
     for e in a.exps:
         for seed in a.seeds:
-            for d in a.directions:
-                for s in a.subjects:
-                    res = os.path.join(results_root(e), e, s, d, f'seed{seed}.json')
-                    cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s,
-                           '--direction', d, '--seed', str(seed)]
-                    jobs.append((res, cmd, f'{e}__{s}__{d}__s{seed}', e))
+            for s in a.subjects:
+                res = os.path.join(results_root(e), e, s, D, f'seed{seed}.json')
+                cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s, '--seed', str(seed)]
+                jobs.append((res, cmd, f'{e}__{s}__{D}__s{seed}', e))
     skip = set()
     if a.skip_file:
         skip = {f'{e}__{s_}__{d}__s{seed}' for e, s_, d, seed in json.load(open(a.skip_file))}

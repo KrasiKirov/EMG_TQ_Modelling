@@ -60,13 +60,21 @@ def test_dirty_tree_refused_for_study_runs(unit_run, monkeypatch):
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(git_commit='abc', git_dirty=True, data_sha256={},
                                                          versions={}, threads=1, host='h', protocol_hash=None))
     with pytest.raises(SystemExit, match='uncommitted'):
-        PR.main(['--exp', 'TS2_R1_x', '--subject', 'SYN', '--direction', 'S1toS2', '--seed', '0'])
-    PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--direction', 'S1toS2', '--seed', '0'])   # v1 id runs
+        PR.main(['--exp', 'TS2_R1_x', '--subject', 'SYN', '--seed', '0'])
+    PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--seed', '0'])   # v1 id runs
+
+
+def test_direction_is_fixed_s1_to_s2(unit_run):
+    with pytest.raises(SystemExit):
+        PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--direction', 'S2toS1', '--seed', '0'])
+    PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--seed', '0'])
+    res = json.loads((unit_run / 'results' / 'W00_unit' / 'SYN' / 'S1toS2' / 'seed0.json').read_text())
+    assert res['direction'] == 'S1toS2'
 
 
 def test_study_runs_write_results_v2(unit_run):
-    PR.main(['--exp', 'TS2_R1_x', '--subject', 'SYN', '--direction', 'S1toS2', '--seed', '0'])
-    PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--direction', 'S1toS2', '--seed', '0'])
+    PR.main(['--exp', 'TS2_R1_x', '--subject', 'SYN', '--seed', '0'])
+    PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--seed', '0'])
     v2 = unit_run / 'results_v2' / 'TS2_R1_x' / 'SYN' / 'S1toS2' / 'seed0.json'
     v1 = unit_run / 'results' / 'W00_unit' / 'SYN' / 'S1toS2' / 'seed0.json'
     assert v2.exists() and v1.exists()

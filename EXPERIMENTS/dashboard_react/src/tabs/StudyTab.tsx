@@ -264,8 +264,8 @@ function Reproduce({ id, people }: { id: string; people: PersonRuns[] }) {
   const cell = settingOf(id).cell;
   const shared = id === DEFAULT && cell ? seeds.filter((s) => s <= 12) : [];
   const own = seeds.filter((s) => !shared.includes(s));
-  const queue = (exp: string, sd: number[]) => `.venv/bin/python -m EXPERIMENTS.pipeline.run_queue --exps ${exp} --subjects ${subjects.join(' ')} --directions S1toS2 --seeds ${sd.join(' ')} --workers 6`;
-  const one = `.venv/bin/python -m EXPERIMENTS.pipeline.run --exp ${id} --subject ${subjects[0] ?? 'JM'} --direction S1toS2 --seed ${own[0] ?? 10} --threads 1`;
+  const queue = (exp: string, sd: number[]) => `.venv/bin/python -m EXPERIMENTS.pipeline.run_queue --exps ${exp} --subjects ${subjects.join(' ')} --seeds ${sd.join(' ')} --workers 6`;
+  const one = `.venv/bin/python -m EXPERIMENTS.pipeline.run --exp ${id} --subject ${subjects[0] ?? 'JM'} --seed ${own[0] ?? 10} --threads 1`;
   const update = '.venv/bin/python -m EXPERIMENTS.analysis.study_v2_export && .venv/bin/python -m EXPERIMENTS.analysis.study_v2_waves && npm --prefix EXPERIMENTS/dashboard_react run build';
   const Cmd = ({ label, cmd }: { label: string; cmd: string }) => (
     <div>

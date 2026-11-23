@@ -201,12 +201,12 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--exp')
     ap.add_argument('--subject')
-    ap.add_argument('--direction', default='S1toS2', choices=['S1toS2', 'S2toS1'])
     ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--threads', type=int, default=1)
     ap.add_argument('--max-epochs', type=int, default=None, help='smoke test only: cap the number of epochs')
     ap.add_argument('--plot', action='store_true')
     a = ap.parse_args()
+    a.direction = 'S1toS2'   # the only direction
     if a.plot:
         plot()
     else:

@@ -1,8 +1,8 @@
 """
-Run ONE experiment configuration for one subject, one direction and one seed.
+Run ONE experiment configuration for one subject and one seed, trained on session 1 and tested on session 2.
 
     python -m EXPERIMENTS.pipeline.run --exp A0_active_trainmax --subject JM \
-        --direction S1toS2 --seed 0 --threads 1
+        --seed 0 --threads 1
 
 The configuration is read from EXPERIMENTS/configs/<exp>.json.  Every
 configuration starts from the LSTM-8 baseline and lists only what it changes
@@ -163,15 +163,19 @@ def fit_carry(data, cfg, seed):
     return pred, info, data
 
 
+# every run learns from session 1 and predicts session 2 (study v2 is S1→S2 only); there is no other direction
+DIRECTION = 'S1toS2'
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--exp', required=True)
     ap.add_argument('--subject', required=True)
-    ap.add_argument('--direction', required=True, choices=['S1toS2', 'S2toS1'])
     ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--threads', type=int, default=1)
     ap.add_argument('--save-weights', action='store_true', help='also save the trained weights next to the results')
     a = ap.parse_args(argv)
+    a.direction = DIRECTION          # always session 1 → session 2; not an option
 
     from EXPERIMENTS.pipeline import provenance as PV
     from EXPERIMENTS.pipeline.spec import CONFIGS

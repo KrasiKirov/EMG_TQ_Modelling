@@ -136,7 +136,7 @@ def run_unit(patch_subject, tmp_results, monkeypatch):
 
     def go(exp, **over):
         monkeypatch.setattr(PR, 'load_config', lambda e: ({'id': e}, _cfg(**over)))
-        PR.main(['--exp', exp, '--subject', 'SYN', '--direction', 'S1toS2', '--seed', '0'])
+        PR.main(['--exp', exp, '--subject', 'SYN', '--seed', '0'])
         stem = tmp_results / 'results_v2' / exp / 'SYN' / 'S1toS2' / 'seed0'
         return json.loads(stem.with_suffix('.json').read_text()), np.load(str(stem) + '_val.npz')
     return go

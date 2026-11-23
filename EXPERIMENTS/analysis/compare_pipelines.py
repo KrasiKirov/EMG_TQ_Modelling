@@ -1,6 +1,6 @@
 """Would the experiment pipeline still build the same data if `ML/` came from main?
 
-    python EXPERIMENTS/analysis/compare_pipelines.py --subject EG --direction S1toS2 [--ref origin/main]
+    python EXPERIMENTS/analysis/compare_pipelines.py --subject EG [--ref origin/main]
 
 The experiments (EXPERIMENTS/pipeline/run.py) build their arrays with ML.research.run.prepare, which
 imports ML.config, ML.models.lstm and ML.preprocessing.* . This script builds the default experiment's arrays
@@ -81,9 +81,9 @@ def build(ml_root, subject, direction, work, tag):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--subject', default='EG')
-    ap.add_argument('--direction', default='S1toS2')
     ap.add_argument('--ref', default='origin/main')
     a = ap.parse_args()
+    a.direction = 'S1toS2'   # the only direction
     with tempfile.TemporaryDirectory() as tmp:
         work = Path(tmp)
         other = work / 'other'
