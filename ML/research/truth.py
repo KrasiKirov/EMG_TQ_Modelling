@@ -10,7 +10,7 @@ import pickle
 
 import numpy as np
 
-from ML.preprocessing import active_torque as at
+from ML.preprocessing import rest as RS
 
 from . import config as C
 
@@ -27,13 +27,13 @@ def session_rest(bundle, session, max_frac=None):
     for r in recs:
         e = r['env_raw'] / emg_max
         env[r['idx']] = e[:int(len(e) * max_frac)] if max_frac else e
-    stats = at.emg_rest_stats(list(env.values()))
-    return {i: at.detect_rest(e, stats) for i, e in env.items()}
+    stats = RS.emg_rest_stats(list(env.values()))
+    return {i: RS.detect_rest(e, stats) for i, e in env.items()}
 
 
 def baseline(rec, segs, sigma_s=SIGMA_S):
     """In-trial passive baseline B(t) (Nm) through the rest segments."""
-    return at.rest_baseline(rec['tq'], segs, len(rec['tq']), sigma_s=sigma_s)
+    return RS.rest_baseline(rec['tq'], segs, len(rec['tq']), sigma_s=sigma_s)
 
 
 def rest_mask(T, segs):

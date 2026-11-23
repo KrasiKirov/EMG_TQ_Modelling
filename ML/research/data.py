@@ -9,7 +9,7 @@ mvc    : MVC trials (angle, env_peak (4,), tq_peak)
 holds  : every static hold found (idx, angle, session, mean, start, end, slope, dur, series)
 maps   : passive maps per session: 'legacy' (old rule), 'static' (static holds only), 'worksheet' (YES only)
 
-Active trials and their sessions follow ML.preprocessing.dataset_builder.build_dataset. Static holds are searched in
+Active trials and their sessions follow the original pipeline's build_dataset (ML.preprocessing.trials). Static holds are searched in
 every non-active, non-MVC trial (some YES trials are mislabelled) and attached to the next active trial when the
 angles match within 0.05 rad.
 """
@@ -23,8 +23,8 @@ from scipy.signal import decimate
 
 from ML.config import SUBJECTS, DATA_DIR, TRIAL_OVERRIDES, PASSIVE_TORQUE_OVERRIDES
 from ML.preprocessing.flb_reader import read_flb
-from ML.preprocessing import dataset_builder as db
-from ML.preprocessing import active_torque as at
+from ML.preprocessing import trials as TR
+from ML.preprocessing.passive_map import get_passive_torque_map, static_hold_passive_map
 from ML.preprocessing.emg_envelope import extract_envelope, extract_envelope_causal, detect_emg_columns
 
 from . import config as C
@@ -44,13 +44,13 @@ def _split_trials(trials, subject):
     """Active trials per session — same logic as build_dataset()."""
     ov = TRIAL_OVERRIDES.get(subject, {})
     test_idx, retest_idx = ov.get('test'), ov.get('retest')
-    mvc, passive, active = db.classify_trials(trials)
+    mvc, passive, active = TR.classify_trials(trials)
     if test_idx is not None or retest_idx is not None:
         forced = {i - 1 for i in (test_idx or []) + (retest_idx or [])}
         rescued = [df for df in passive if df.attrs.get('trial_index') in forced]
         passive = [df for df in passive if df.attrs.get('trial_index') not in forced]
         active = active + rescued
-    active = [df for df in active if df[db.TORQUE_COL].std() <= db._ACTIVE_STD_THRESHOLD]
+    active = [df for df in active if df[TR.TORQUE_COL].std() <= TR.ACTIVE_STD_THRESHOLD]
     if test_idx is not None and retest_idx is not None:
         s1 = {i - 1 for i in test_idx}
         s2 = {i - 1 for i in retest_idx}
@@ -87,8 +87,8 @@ def _process_active(df, emg_cols, session, envelope='zerophase', trim_end_s=0.0,
     With the defaults env_max1k is the whole-trial maximum (as the original pipeline), otherwise over kept samples.
     """
     env1k = np.column_stack([_envelope_fn(envelope, lp_order)(df[c].values) for c in emg_cols])
-    pos = df[db.POSITION_COL].values
-    tq = df[db.TORQUE_COL].values
+    pos = df[TR.POSITION_COL].values
+    tq = df[TR.TORQUE_COL].values
     s = C.TRIM_START
     e = len(tq) - int(round(trim_end_s * C.FS_RAW))
     if envelope == 'causal':
@@ -116,9 +116,9 @@ def _find_holds(trials, exclude_idx):
         i = int(df.attrs.get('trial_index'))
         if i in exclude_idx or df.attrs.get('comment', '').lower().strip().startswith('mvc'):
             continue
-        for seg in db._split_passive_segments(df):
-            p = seg[db.POSITION_COL].values
-            q = seg[db.TORQUE_COL].values
+        for seg in TR.split_passive_segments(df):
+            p = seg[TR.POSITION_COL].values
+            q = seg[TR.TORQUE_COL].values
             if len(q) < HOLD_MIN_DUR_S * C.FS_RAW or p.std() > HOLD_MAX_POS_STD or q.std() > HOLD_MAX_TQ_STD:
                 continue
             q100 = _decim(q)
@@ -142,10 +142,10 @@ def _passive_maps(subject, passive_trials):
     p2 = [df for df in passive_trials if df.attrs.get('session') == 'retest']
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        for name, fn in (('legacy', lambda tr: db.get_passive_torque_map(tr)),
-                         ('static', lambda tr: (lambda e: e if len(e) >= 2 else db.get_passive_torque_map(tr))(
-                             at.static_hold_passive_map(tr, db._split_passive_segments, db.POSITION_COL,
-                                                        db.TORQUE_COL, db._POSITION_TOLERANCE)))):
+        for name, fn in (('legacy', lambda tr: get_passive_torque_map(tr)),
+                         ('static', lambda tr: (lambda e: e if len(e) >= 2 else get_passive_torque_map(tr))(
+                             static_hold_passive_map(tr, TR.split_passive_segments, TR.POSITION_COL,
+                                                        TR.TORQUE_COL, TR.POSITION_TOLERANCE)))):
             m1 = fn(p1)
             m2 = fn(p2) if p2 else m1
             out[name] = {'S1': m1, 'S2': m2}
@@ -188,9 +188,9 @@ def load_subject(subject, use_cache=True, envelope='zerophase', trim_end_s=0.0, 
     mvc_recs = []
     for df in mvc:
         env1k = np.column_stack([_envelope_fn(envelope, lp_order)(df[c].values) for c in emg_cols])
-        q = df[db.TORQUE_COL].values
+        q = df[TR.TORQUE_COL].values
         base = float(np.median(q[:1000]))
-        mvc_recs.append({'idx': int(df.attrs.get('trial_index')), 'angle': float(df[db.POSITION_COL].mean()),
+        mvc_recs.append({'idx': int(df.attrs.get('trial_index')), 'angle': float(df[TR.POSITION_COL].mean()),
                          'env_peak': env1k.max(axis=0), 'tq_peak': float(abs(q.min() - base))})
     mvc_recs.sort(key=lambda m: m['angle'])
 

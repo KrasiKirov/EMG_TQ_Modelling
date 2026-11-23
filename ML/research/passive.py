@@ -17,8 +17,8 @@ Fits are Huber IRLS, one observation per rest segment (its median), weighted by 
 
 import numpy as np
 
-from ML.preprocessing import dataset_builder as db
-from ML.preprocessing import active_torque as at
+from ML.preprocessing import rest as RS
+from ML.preprocessing.passive_map import lookup_passive_torque
 
 from . import config as C
 
@@ -29,7 +29,7 @@ def map_lookup(entries, pos):
     """Pipeline-identical map interpolation/extrapolation at each sample."""
     if not entries:
         return np.zeros(len(pos))
-    return np.array([db.lookup_passive_torque(entries, float(p)) for p in pos])
+    return np.array([lookup_passive_torque(entries, float(p)) for p in pos])
 
 
 def robust_fit(A, y, w, huber=3.0, iters=10):
@@ -180,11 +180,11 @@ def rest_segments(recs, env_norm, train_frac=C.TRAIN_FRAC, val_end_frac=1.0, win
         T = len(r['t'])
         n_win = T - window + 1
         cuts[r['idx']] = int(n_win * train_frac) + window - 1
-    stats = at.emg_rest_stats([env_norm[r['idx']][:cuts[r['idx']]] for r in recs])
+    stats = RS.emg_rest_stats([env_norm[r['idx']][:cuts[r['idx']]] for r in recs])
     tr, va = {}, {}
     for r in recs:
         cut, env = cuts[r['idx']], env_norm[r['idx']]
-        tr[r['idx']] = at.detect_rest(env[:cut - 10], stats)
+        tr[r['idx']] = RS.detect_rest(env[:cut - 10], stats)
         end = int(len(r['t']) * val_end_frac)
-        va[r['idx']] = [(s + cut, e + cut) for s, e in at.detect_rest(env[cut:end], stats)] if end > cut + 100 else []
+        va[r['idx']] = [(s + cut, e + cut) for s, e in RS.detect_rest(env[cut:end], stats)] if end > cut + 100 else []
     return tr, va
