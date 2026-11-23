@@ -24,7 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
-from EXPERIMENTS.analysis import confirm as CF, study_scores as SS
+from EXPERIMENTS.analysis import common as CM, confirm as CF
 from EXPERIMENTS.pipeline import spec as SPEC
 from EXPERIMENTS.pipeline.run import RESULTS_V2
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
@@ -201,11 +201,11 @@ def runs(rd: Path) -> dict:
 
 
 def build(rd=None, with_confirm=True, machine_raw=None) -> dict:
-    """``machine_raw``: study_scores.read_machine() of the computer the runs trained on (main passes it)."""
+    """``machine_raw``: common.read_machine() of the computer the runs trained on (main passes it)."""
     rd = Path(rd or RESULTS_V2)
     out = {'tuning': tuning(rd) if rd.exists() else {}, 'confirm': None, 'settings': {}, 'final': {},
            'score_from_s': {}, 'runs': runs(rd) if rd.exists() else {}, 'versions': [],
-           'machine': SS.machine(machine_raw, PT.load()['budget']['workers'], THREADS) if machine_raw else None}
+           'machine': CM.machine(machine_raw, PT.load()['budget']['workers'], THREADS) if machine_raw else None}
     if not LK.test_open(rd):
         return out
     protocol = PT.load()
@@ -238,7 +238,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=str(OUT))
     a = ap.parse_args(argv)
-    n = write(build(machine_raw=SS.read_machine()), a.out)
+    n = write(build(machine_raw=CM.read_machine()), a.out)
     print(f'wrote {a.out} ({n / 1e6:.2f} MB)')
 
 

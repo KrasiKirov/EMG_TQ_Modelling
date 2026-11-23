@@ -2,7 +2,7 @@
 
     python -m EXPERIMENTS.analysis.study_v2_waves [--out EXPERIMENTS/dashboard_react/src/data/study-v2-waves.json]
 
-Same file format as study_waves.py (the v1 page's waveforms), for the page's 18 study v2 settings. The scores come
+Same file format as the retired v1 page's waveforms (helpers in common.py), for the page's 18 study v2 settings. The scores come
 from study_v2_export.final_scores, i.e. on confirm's own samples (from the shared scoring start), so the waveform
 headers agree with the page's R² boxes: the person's worst positions are the WORST positions with the lowest median R²
 over seeds; at each, the best and the worst seed have the highest and the lowest R² there (one seed: both are it).
@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 
 from EXPERIMENTS.analysis import confirm as CF, study_v2_export as EX
-from EXPERIMENTS.analysis.study_waves import MISSING, SLOTS, STEP, WORST, envelope, packed
+from EXPERIMENTS.analysis.common import MISSING, SLOTS, STEP, WORST, envelope, packed
 from EXPERIMENTS.pipeline.run import RESULTS_V2
 from EXPERIMENTS.protocol import protocol as PT
 
