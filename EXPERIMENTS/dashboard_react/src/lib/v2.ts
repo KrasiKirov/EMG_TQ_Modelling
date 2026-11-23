@@ -171,13 +171,18 @@ export function choiceOf(id: string): ChoiceInfo {
 }
 
 // ── the tuning experiment and the overfitting check (session-1 validation vs session 2) ──
-export interface TuningRun { cell: string; round: string; config: string; id: string; units: number; layers: number; dropout: number; lr: number; score: number }
+export interface TuningRun { cell: string; round: string; config: string; id: string; units: number; layers: number; dropout: number; lr: number; batch: number | null; score: number }
 /** every tuning run with a complete validation score: 172 configurations over the 16 tuned window cells */
 export function tuningRuns(): TuningRun[] {
   return Object.entries(D.tuning).flatMap(([cell, rounds]) => Object.entries(rounds).flatMap(([r, cfgs]) => Object.entries(cfgs)
     .filter(([, c]) => c.val_nmae && c.params && c.params.units !== null)
     .map(([config, c]) => ({ cell, round: ROUND[r] ?? r, config, id: c.id, units: c.params!.units as number, layers: c.params!.layers as number,
-      dropout: c.params!.dropout as number, lr: c.params!.lr as number, score: geo(c.val_nmae!) }))));
+      dropout: c.params!.dropout as number, lr: c.params!.lr as number, batch: c.params!.batch, score: geo(c.val_nmae!) }))));
+}
+/** the tuning config a setting uses: its cell's winner (A0 and A3 use A0's cell winner); null for A1 and A2, which were not tuned */
+export function chosenConfig(id: string): string | null {
+  const s = D.settings[id];
+  return s.kind === 'A1' || s.kind === 'A2' || !s.cell ? null : CONFIRM.choice.cell_winners[s.cell] ?? null;
 }
 export const isWinner = (configId: string) => Object.values(CONFIRM.choice.cell_winners).includes(configId);
 export const kindOf = (id: string) => D.settings[id].kind;

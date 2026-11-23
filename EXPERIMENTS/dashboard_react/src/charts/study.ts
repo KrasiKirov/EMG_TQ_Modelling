@@ -47,7 +47,7 @@ export function peakBarOption(positions: number[], peaks: number[], t: ChartToke
              axisLabel: { color: t.text, fontSize: 13 } },
     series: [{ type: 'bar', name: 'peak torque', barWidth: '55%', itemStyle: { color: '#9aa1aa' },
                data: peaks.map((v) => (Number.isFinite(v) ? Math.round(v * 10) / 10 : null)),
-               label: { show: true, position: 'top', color: t.text, fontSize: 13 } }],
+               label: { show: true, position: 'top', color: t.text, fontSize: 13, formatter: (p: { value: number }) => p.value.toFixed(1) } }],
   };
 }
 

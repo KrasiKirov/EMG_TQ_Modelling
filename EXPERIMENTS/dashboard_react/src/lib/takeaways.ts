@@ -23,7 +23,7 @@ export function headline(): string[] {
   const none = (xs: { decision: string }[]) => xs.length > 0 && xs.every((c) => c.decision === 'no clear difference');
   const same: string[] = [];
   if (none(f1.filter((c) => c.arm.includes('_w')))) same.push('a longer window (0.5 s or 1 s instead of 0.2 s)');
-  if (none(f1.filter((c) => c.arm.includes('carry')))) same.push('carrying the memory across windows (2, 5 or 10 s)');
+  if (none(f1.filter((c) => c.arm.includes('carry')))) same.push('carrying the memory through the trial in 2, 5 or 10 s chunks');
   if (none(f2)) same.push('less window overlap');
   if (same.length) out.push(`On session 2, ${list(same)} made no clear difference: the pre-registered rule needs all 6 people to agree and a difference of at least 5 %.`);
   const a3 = f3.find((c) => c.arm === 'FE_A3');

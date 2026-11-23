@@ -2,8 +2,9 @@ import { useMemo, type ReactNode } from 'react';
 import { Accordion, List, SimpleGrid, Stack, Text } from '@mantine/core';
 import { EChart } from '../components/EChart';
 import { SectionCard } from '../components/common';
-import { factorOption, overfitOption, sizeOption } from '../charts/tuning';
-import { cellOf, isWinner, kindOf, overfitPoints, personScore, runsOf, tuningRuns } from '../lib/results';
+import { factorOption, overfitOption, sizeOption, FACTOR_LEVELS, type Factor } from '../charts/tuning';
+import { DataTable, type Column } from '../components/common';
+import { cellOf, chosenConfig, isWinner, kindOf, overfitPoints, personScore, runsOf, settingOf, tuningRuns, type TuningRun } from '../lib/results';
 import { useView } from '../state';
 
 /** session-2 nMAE of a setting: exp of the mean over people of log (median over seeds) */
@@ -39,14 +40,7 @@ export function TuningSection({ id, details }: { id: string; details: ReactNode 
           <Text size="md" fw={600} mb={4}>Every tuning run by network size</Text>
           <EChart label="Validation nMAE of every tuning run by network size" height={380} option={sizeOption(runs, cell, isWinner, tokens)} />
         </div>
-        <div>
-          <Text size="md" fw={600} mb={4}>Every tuning run against dropout, learning rate and units</Text>
-          <SimpleGrid cols={{ base: 1, md: 3 }} spacing="md">
-            {(['dropout', 'lr', 'units'] as const).map((k) => (
-              <EChart key={k} label={`Validation nMAE of every tuning run against ${k}`} height={280} option={factorOption(runs, k, tokens)} />
-            ))}
-          </SimpleGrid>
-        </div>
+        <Hyperparameters id={id} runs={runs} />
         <Accordion variant="contained">
           <Accordion.Item value="search">
             <Accordion.Control><Text fw={600} size="sm">{kindOf(id) === 'A0' ? 'How A0 was chosen and its cell\'s search (tables)' : kindOf(id) === 'cell' ? 'This setting\'s search (tables)' : 'How this setting was set'}</Text></Accordion.Control>
@@ -69,5 +63,56 @@ export function OverfitSection({ id }: { id: string }) {
         <EChart label="Validation nMAE against session-2 nMAE for each cell winner and last semester's network" height={400} option={overfitOption(pts, id, tokens)} />
       </Stack>
     </SectionCard>
+  );
+}
+
+const FACTORS: { key: Factor; name: string; searched: string }[] = [
+  { key: 'units', name: 'Units', searched: '8 / 16 / 32 / 64' },
+  { key: 'layers', name: 'Layers', searched: '1 / 2' },
+  { key: 'dropout', name: 'Dropout', searched: '0 – 0.3' },
+  { key: 'lr', name: 'Learning rate', searched: '0.0003 – 0.03 (log scale)' },
+  { key: 'batch', name: 'Batch size', searched: '32 / 64 / 128 (reset windows only)' },
+];
+const show = (k: Factor, v: number | null | undefined) => (v === null || v === undefined ? '–' : k === 'lr' ? String(+v.toPrecision(3)) : k === 'dropout' ? String(+v.toFixed(3)) : String(v));
+
+/** each hyperparameter: what the search could pick, what this setting's cell tried, what it uses; one chart per hyperparameter */
+function Hyperparameters({ id, runs }: { id: string; runs: TuningRun[] }) {
+  const { tokens } = useView();
+  const kind = kindOf(id), cell = cellOf(id), chosen = chosenConfig(id), s = settingOf(id);
+  const mine = runs.filter((r) => r.cell === cell);
+  // A2 is the 'anchor' tried in every cell; a tuned setting is its cell's runs, with its winner ringed
+  const isMine = kind === 'A2' ? (r: TuningRun) => r.config === 'anchor' : (r: TuningRun) => r.cell === cell;
+  const isPick = kind === 'A2' ? isMine : (r: TuningRun) => r.cell === cell && r.id === chosen;
+  const tried = (k: Factor) => {
+    const v = [...new Set(mine.map((r) => r[k]).filter((x): x is number => x !== null && x !== undefined))].sort((a, b) => a - b);
+    if (!v.length) return kind === 'A1' || kind === 'A2' ? '–' : 'not used (whole chunks)';
+    return FACTOR_LEVELS[k] ? v.join(' / ') : `${v.length} values, ${show(k, v[0])} – ${show(k, v[v.length - 1])}`;
+  };
+  const uses = (k: Factor) => (kind === 'A1' ? '–' : k === 'batch' && s.state === 'carry' ? 'none (whole chunks)' : show(k, s[k]));
+  type Row = (typeof FACTORS)[number];
+  const cols: Column<Row>[] = [
+    { key: 'name', label: 'Hyperparameter', render: (r) => r.name },
+    { key: 'searched', label: 'Search range', render: (r) => r.searched },
+    ...(kind === 'A2' ? [] : [{ key: 'tried', label: kind === 'A3' ? 'Tried in A0\'s cell' : 'Tried in this setting\'s cell', render: (r: Row) => tried(r.key) }]),
+    { key: 'uses', label: kind === 'A2' ? 'This setting (fixed, not tuned)' : 'This setting uses', render: (r) => <b>{uses(r.key)}</b> },
+  ];
+  const note = kind === 'A1' ? 'The lagged ridge has no network: its only setting, the regularisation strength, was chosen on session-1 validation (tables below).'
+    : kind === 'A2' ? 'Last semester\'s network was not tuned: it keeps last semester\'s values. The same network is the "anchor" tried in every cell.'
+    : kind === 'A3' ? 'A3 reuses A0\'s network unchanged (only the torque target differs), so its search is A0\'s.' : null;
+  return (
+    <div>
+      <Text size="md" fw={600} mb={4}>Each hyperparameter: what was tried and what was chosen</Text>
+      {note && <Text size="sm" mb={6}>{note}</Text>}
+      {kind !== 'A1' && <DataTable columns={cols} rows={FACTORS} rowKey={(r) => r.key} dense minWidth={720} />}
+      <Text size="sm" c="dimmed" mt="sm" mb={4}>Each dot is one tuning run (validation nMAE, session 1; lower is better). {kind === 'A1' ? 'Grey: every LSTM tuning run, for comparison.' : kind === 'A2' ? 'Grey: every other run. Ringed: this network, run as the anchor in each cell.' : `Grey: every cell. Blue: ${kind === 'A3' ? 'A0\'s' : 'this setting\'s'} cell. Ring: the configuration this setting uses.`}</Text>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+        {FACTORS.map((f) => (
+          <div key={f.key}>
+            <Text size="sm" fw={600}>{f.name}{kind !== 'A1' ? <> · uses <b>{uses(f.key)}</b></> : null}</Text>
+            <EChart label={`Validation nMAE of every tuning run against ${f.name.toLowerCase()}`} height={240} option={factorOption(runs, f.key, isMine, isPick, tokens)} />
+          </div>
+        ))}
+      </SimpleGrid>
+    </div>
   );
 }
