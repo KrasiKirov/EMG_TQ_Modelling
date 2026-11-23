@@ -251,8 +251,8 @@
     {
       "path": "EXPERIMENTS/dashboard_react/dist/index.html",
       "normalization": "none",
-      "bytes": 4971880,
-      "sha256": "c7e8b9cd1800c7690eaa5e73bd4fdede32957428e411cc2ba8a312c38b77c6ed"
+      "bytes": 4975431,
+      "sha256": "b9e1ca07b8494e417ab60efd5c5a40aa79c155ccc99f94a020f7bdc9688fb72c"
     },
     {
       "path": "EXPERIMENTS/dashboard_react/src/data/study_v2.json",
@@ -43245,5 +43245,5 @@
       "sha256": "94627b176f105702a8fb9c1d898378f6d1284948b65c8889028f2960fa1cb7bb"
     }
   ],
-  "total_bytes": 949175049
+  "total_bytes": 949178600
 }

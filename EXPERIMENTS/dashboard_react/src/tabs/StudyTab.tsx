@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Accordion, Button, Code, CopyButton, Group, Select, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { EChart } from '../components/EChart';
 import { DataTable, Note, SectionCard, type Column } from '../components/common';
-import { peakBarOption, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
+import { allPeopleOption, peakBarOption, R2_FLOOR, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
 import { type SeedSide } from '../charts/seedbox';
 import { changedParams, choiceOf, CONFIRM, DEFAULT, entry, has, PARAMS, personScore, pickFor, runsOf, SCORE_FROM, scoreCI,
   settingOf, timesOf, optionsOf, worstR2, type PersonRuns } from '../lib/results';
@@ -100,7 +100,8 @@ export function StudyTab() {
           {e.target === 'total' ? 'Total torque: the measured torque.' : 'Active torque: measured torque minus the passive torque from the tested session\'s own relaxed holds (YES: lab worksheet; IES: experiment-sheet values, it has no relaxed holds).'}
         </Text>
       </Stack>
-      <Summary people={people} />
+      <AllPeople people={people} m="nmae" />
+      <AllPeople people={people} m="r2" />
       <WorstPositions id={pick} people={people} />
       <PerPosition people={people} m="mae" />
       <PerPosition people={people} m="r2" />
@@ -166,6 +167,27 @@ function Help() {
 
 interface Row { subj: string; nmae: number; mae: number; r2: number; worst: number; peak: number; nmaeCI: MedianCI | null; maeCI: MedianCI | null; r2CI: MedianCI | null }
 
+/** every person on one chart against ankle position (median over seeds); nMAE also carries the combined score and the table */
+function AllPeople({ people, m }: { people: PersonRuns[]; m: 'nmae' | 'r2' }) {
+  const { tokens } = useView();
+  // colours follow the person's place in the study, so a filter never repaints anyone
+  const order = useMemo(() => runsOf(DEFAULT).map((p) => p.subj), []);
+  const lines = people.map((p) => ({ subj: p.subj, positions: p.positions, values: m === 'nmae' ? p.nmae : p.r2, ...(m === 'nmae' ? { mae: p.mae } : {}) }));
+  const own = people.map((p) => personScore(p, 'nmae')).filter((v) => Number.isFinite(v) && v > 0);
+  const combined = own.length ? Math.exp(own.reduce((a, v) => a + Math.log(v), 0) / own.length) : NaN;
+  const nmae = m === 'nmae';
+  return (
+    <SectionCard testId={`study-all-${m}`} title={nmae ? 'nMAE by position, all people (session 2)' : 'R² by position, all people (session 2)'}
+      description={nmae
+        ? <>Lower is better. Each point: the median over seeds of the MAE at one position divided by the 99th percentile of the person's session-2 active torque. Hover a point for its interval and the MAE in Nm.{' '}
+            <b>Combined over people: {Number.isFinite(combined) ? combined.toFixed(3) : '–'}</b> (exp of the mean of log per-person nMAE, the pre-registered score).</>
+        : <>Higher is better; 1 is a perfect fit. R² within each position (one trial at one angle), median over seeds. Points below {R2_FLOOR} are drawn at {R2_FLOOR}; hover for the value.</>}>
+      <EChart label={`${nmae ? 'nMAE' : 'R²'} against ankle position for every person`} height={400} option={allPeopleOption(lines, order, m, tokens)} />
+      {nmae && <Summary people={people} />}
+    </SectionCard>
+  );
+}
+
 /** one row per person: nMAE (the pre-registered metric), MAE, R² over positions and at the worst one, peak torque */
 function Summary({ people }: { people: PersonRuns[] }) {
   const rows: Row[] = people.map((p) => ({
@@ -187,18 +209,21 @@ function Summary({ people }: { people: PersonRuns[] }) {
     { key: 'peak', label: 'Peak torque (Nm)', align: 'right', render: (r) => f1(r.peak) },
   ];
   return (
-    <SectionCard testId="study-summary" title="Summary (session 2)"
-      description={<>
-        Per person, the median over seeds. Every run is scored from {SCORE_FROM.join(', ')} s after each trial's start. nMAE (the pre-registered metric):
+    <Accordion variant="contained" mt="md">
+      <Accordion.Item value="table">
+        <Accordion.Control><Text fw={600} size="sm">The numbers per person (table)</Text></Accordion.Control>
+        <Accordion.Panel>
+          <Text size="sm" mb="sm">Per person, the median over seeds. Every run is scored from {SCORE_FROM.join(', ')} s after each trial's start. nMAE (the pre-registered metric):
         the MAE at each position divided by the 99th percentile of the person's measured active torque on session 2, then the mean over positions.
         MAE (Nm): the same without the division. R²: within each position (one trial at one angle); the median of the positions hides the bad ones, so
         the worst position is shown too (per seed the lowest R², then the median over seeds). Peak torque: the largest |measured torque| of the
         predicted target over the scored samples. [ ]: interval for the median over seeds (about 95 %; none with 1 seed); it shows training
         randomness only. Median: the plain median of the 6 people. Combined: exp of the mean over people of log nMAE, the study's own way of
-        combining people (nMAE only; other columns –).
-      </>}>
-      <DataTable columns={cols} rows={rows} rowKey={(r) => r.subj} dense minWidth={900} />
-    </SectionCard>
+        combining people (nMAE only; other columns –).</Text>
+          <DataTable columns={cols} rows={rows} rowKey={(r) => r.subj} dense minWidth={900} />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }
 
@@ -320,7 +345,7 @@ function WorstPositions({ id, people }: { id: string; people: PersonRuns[] }) {
   const shown = people.filter((p) => worstPositions(id, p.subj).length);
   return (
     <SectionCard testId="study-waves" title="Measured and predicted torque at the worst positions"
-      description={`Setting: ${entry(id).title}. For each person, the 2 positions where this setting's median R² over seeds is lowest, so they change with the setting (R² from the scored samples, as in the summary). Best and worst run: the seeds with the highest and the lowest R² at that position. The curves show the whole trial. Negative angles are plantarflexed.`}>
+      description={`Setting: ${entry(id).title}. For each person, the 2 positions where this setting's median R² over seeds is lowest, so they change with the setting (R² from the scored samples, as in the R² chart above). Best and worst run: the seeds with the highest and the lowest R² at that position. The curves show the whole trial. Negative angles are plantarflexed.`}>
       {shown.length ? (
         <SimpleGrid cols={1} spacing="lg">
           {shown.map((p) => (

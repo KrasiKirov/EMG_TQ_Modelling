@@ -132,3 +132,58 @@ export function runtimeOption(people: { subj: string; seeds: number[]; seconds: 
     series: seedSeries(side, t, { mode: 'box', boxWidth: [10, 40] }),
   };
 }
+
+// ── every person on one chart: median over seeds at each position ───────────
+/** one colour per person, fixed by the person's place in the study (never by rank); passes the colour-blind check; each person also has its own symbol */
+export const PERSON_COLOURS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300'];
+const PERSON_SYMBOLS = ['circle', 'rect', 'triangle', 'diamond', 'emptyCircle', 'emptyRect'];
+
+export interface PersonLine { subj: string; positions: number[]; values: number[][]; mae?: number[][] }
+
+/** median over seeds per position, one line per person, x = the actual ankle angle (rad); R² below R2_FLOOR is drawn at the floor */
+export function allPeopleOption(people: PersonLine[], order: string[], m: 'r2' | 'nmae', t: ChartTokens): EOption {
+  const r2 = m === 'r2';
+  const stats = (vs: number[]) => boxStats(vs.filter(Number.isFinite));
+  const xs = people.flatMap((p) => p.positions);
+  const xlo = Math.floor((Math.min(...xs) - 0.05) * 10) / 10, xhi = Math.ceil((Math.max(...xs) + 0.05) * 10) / 10;
+  const meds = people.flatMap((p) => p.values.map((v) => stats(v).median)).filter(Number.isFinite);
+  const ylo = r2 ? Math.max(R2_FLOOR, Math.floor(Math.min(...meds) * 4) / 4) : 0;
+  const d = r2 ? 2 : 3;
+  const series = people.map((p, i) => {
+    const k = Math.max(0, order.indexOf(p.subj));
+    const colour = PERSON_COLOURS[k % PERSON_COLOURS.length];
+    return {
+      type: 'line', name: p.subj, symbol: PERSON_SYMBOLS[k % PERSON_SYMBOLS.length], symbolSize: 10,
+      lineStyle: { width: 2, color: colour }, itemStyle: { color: colour },
+      emphasis: { focus: 'series' }, connectNulls: true,
+      data: p.positions.map((x, j) => {
+        const s = stats(p.values[j]);
+        if (!s.n) return { value: [x, null] };
+        const floored = r2 && s.median < R2_FLOOR;
+        const ci = s.n > 1 ? ` [${s.ci.lo.toFixed(d)}, ${s.ci.hi.toFixed(d)}]` : '';
+        const mae = p.mae ? stats(p.mae[j]) : null;
+        return {
+          value: [x, floored ? R2_FLOOR : s.median],
+          tip: `<b>${p.subj}</b> · position ${j + 1} (${posLabel(x)} rad)<br/>${r2 ? 'R²' : 'nMAE'} ${s.median.toFixed(d)}${ci}`
+            + (floored ? ` (below ${R2_FLOOR}, drawn at ${R2_FLOOR})` : '')
+            + (mae && mae.n ? `<br/>MAE ${mae.median.toFixed(2)} Nm` : '') + `<br/>${s.n} seed${s.n === 1 ? '' : 's'}`,
+        };
+      }),
+      ...(i === 0 && xlo < 0 ? { markArea: { silent: true, itemStyle: { color: t.shade },
+        label: { show: true, position: 'top', color: t.textMuted, fontSize: 13 },
+        data: [[{ name: 'plantarflexed', xAxis: xlo }, { xAxis: 0 }]] } } : {}),
+    };
+  });
+  return {
+    animation: false,
+    grid: { left: 8, right: 20, top: 64, bottom: 34, containLabel: true },
+    legend: { top: 0, right: 0, itemWidth: 22, textStyle: { color: t.text, fontSize: 13 } },
+    tooltip: { trigger: 'item', confine: true, backgroundColor: t.tooltipBg, borderColor: t.tooltipBorder, textStyle: { color: t.text, fontSize: 13 },
+               formatter: (p: { data: { tip?: string } }) => p.data.tip ?? '' },
+    xAxis: { type: 'value', min: xlo, max: xhi, ...axisCommon(t), splitLine: { show: false },
+             name: 'ankle position (rad)', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: t.textMuted, fontSize: 13 } },
+    yAxis: { type: 'value', min: ylo, ...(r2 ? { max: 1, interval: 0.25 } : {}), ...axisCommon(t), axisLine: { onZero: false, lineStyle: { color: t.axis } },
+             name: r2 ? 'R² (median over seeds)' : 'nMAE (median over seeds)', nameTextStyle: { color: t.textMuted, fontSize: 13, align: 'left' } },
+    series,
+  };
+}
