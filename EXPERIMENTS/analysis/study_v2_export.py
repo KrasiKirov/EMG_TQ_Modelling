@@ -86,7 +86,8 @@ def _title(kind: str, st: dict) -> str:
     if kind == 'A3':
         return 'A3: A0 trained on total torque'
     if st['state'] == 'carry':
-        what = f"{st['window_s']:g} s window, state carried in {st['chunk_s']:g} s chunks"
+        # trained on whole chunks: the spec's window only aligns the scored samples, so it is not part of the name
+        what = f"carried state, {st['chunk_s']:g} s chunks"
     elif st['overlap'] == 'full':
         what = f"{st['window_s']:g} s window, full overlap"
     else:

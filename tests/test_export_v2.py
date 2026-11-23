@@ -196,3 +196,10 @@ def test_export_during_tuning_skips_unfinished(tmp_path):
     out = EX.build(rd)
     assert out['tuning']['w20_full']['R1']['d1']['incomplete'] is True
     assert out['tuning']['w20_full']['R1']['d0']['val_nmae']['YES'] > 0
+
+
+def test_carried_title_has_no_window_length():
+    # a carried-state run trains on whole chunks; its 0.2 s 'window' only aligns the scored samples
+    st = {'state': 'carry', 'window_s': 0.2, 'chunk_s': 2.0, 'overlap': None, 'cell': 'carry_2s'}
+    assert EX._title('A0', st) == 'A0 (chosen): carried state, 2 s chunks'
+    assert EX._title('cell', dict(st, chunk_s=5.0)) == 'carried state, 5 s chunks'

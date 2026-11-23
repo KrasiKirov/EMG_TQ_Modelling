@@ -251,14 +251,14 @@
     {
       "path": "EXPERIMENTS/dashboard_react/dist/index.html",
       "normalization": "none",
-      "bytes": 4974234,
-      "sha256": "0fbc28ca77c4f07906478b6ac6907b7cdf57281d9d1d610d26054540fb92b98f"
+      "bytes": 4974343,
+      "sha256": "0a3dcf72e12fe14208107d0f63f311667c3d1650d0e52b4375037c007337bb71"
     },
     {
       "path": "EXPERIMENTS/dashboard_react/src/data/study_v2.json",
       "normalization": "lf",
-      "bytes": 1390746,
-      "sha256": "7a1d9599a07be78d53917a439c068ca133c1f0f49965ce541f8987496efdbc41"
+      "bytes": 1390698,
+      "sha256": "cb049f1c4da3f80ad4f70eac16a56561925c286484d3e14d0683c8cb8420ca19"
     },
     {
       "path": "EXPERIMENTS/results/A0_active_trainmax/CH/S1toS2/seed0.json",
@@ -43245,5 +43245,5 @@
       "sha256": "94627b176f105702a8fb9c1d898378f6d1284948b65c8889028f2960fa1cb7bb"
     }
   ],
-  "total_bytes": 949177403
+  "total_bytes": 949177464
 }
