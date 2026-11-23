@@ -71,9 +71,7 @@ def _envelope_fn(envelope, lp_order=4):
     if envelope not in ENVELOPES:
         raise ValueError(f'envelope must be one of {ENVELOPES}, got {envelope!r}')
     if envelope == 'zerophase':
-        if lp_order != 4:
-            raise ValueError('lp_order is only supported with the causal envelope')
-        return extract_envelope
+        return extract_envelope if lp_order == 4 else (lambda x: extract_envelope(x, lp_order=lp_order))
     return lambda x: extract_envelope_causal(x, lp_order=lp_order)
 
 
@@ -86,7 +84,7 @@ def _process_active(df, emg_cols, session, envelope='zerophase', trim_end_s=0.0,
                kept target value has real torque on both sides of its ~0.1 s zero-phase filter (deviation 2026-11-23).
                The legacy setting (zero-phase envelope, no end trim) keeps the original order, for reproducibility.
     trim_end_s seconds dropped at the end, besides the first TRIM_START samples
-    lp_order   order of the 2 Hz envelope low-pass (causal envelope only)
+    lp_order   order of the 2 Hz envelope low-pass (both envelopes; the band-pass stays 4th order)
     With the defaults env_max1k is the whole-trial maximum (as the original pipeline), otherwise over kept samples.
     """
     env1k = np.column_stack([_envelope_fn(envelope, lp_order)(df[c].values) for c in emg_cols])
