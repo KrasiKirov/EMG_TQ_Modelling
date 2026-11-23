@@ -251,26 +251,14 @@
     {
       "path": "EXPERIMENTS/dashboard_react/dist/index.html",
       "normalization": "none",
-      "bytes": 32929892,
-      "sha256": "e9df54c167b38e793b4b741866136f19540623ad30f8d426584d107abeff07fb"
+      "bytes": 4968212,
+      "sha256": "be73940bcf42be08d377d726a4ee6a41258ce37467e26744639699a5847d027a"
     },
     {
-      "path": "EXPERIMENTS/dashboard_react/src/data/catalog.json",
+      "path": "EXPERIMENTS/dashboard_react/src/data/study_v2.json",
       "normalization": "lf",
-      "bytes": 14422198,
-      "sha256": "b0097148567efbdec560078547f9d236bb715ac992b1e899c733e6224aa652c0"
-    },
-    {
-      "path": "EXPERIMENTS/dashboard_react/src/data/presentation-catalog.json",
-      "normalization": "lf",
-      "bytes": 20378054,
-      "sha256": "818d1c59884be3330b0efcbf6254a664fd2520f447c0ddf274bafc49ebcf9f49"
-    },
-    {
-      "path": "EXPERIMENTS/dashboard_react/src/data/results.json",
-      "normalization": "lf",
-      "bytes": 1825060,
-      "sha256": "e9ebb4129f44969cd5f56d574f7e74bcaf76d6c154adf3faa354defbed94be80"
+      "bytes": 1398110,
+      "sha256": "e6dbfad677567717abd99b381911641750862d1933e6b06c8b457cb1d3e61856"
     },
     {
       "path": "EXPERIMENTS/results/A0_active_trainmax/CH/S1toS2/seed0.json",
@@ -43257,5 +43245,5 @@
       "sha256": "94627b176f105702a8fb9c1d898378f6d1284948b65c8889028f2960fa1cb7bb"
     }
   ],
-  "total_bytes": 1012367627
+  "total_bytes": 949178745
 }

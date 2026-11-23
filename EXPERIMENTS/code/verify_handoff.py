@@ -25,9 +25,7 @@ ARTIFACT_ROOTS = (
     'EXPERIMENTS/baseline/retest_map_code',
 )
 SNAPSHOTS = (
-    'EXPERIMENTS/dashboard_react/src/data/results.json',
-    'EXPERIMENTS/dashboard_react/src/data/catalog.json',
-    'EXPERIMENTS/dashboard_react/src/data/presentation-catalog.json',
+    'EXPERIMENTS/dashboard_react/src/data/study_v2.json',
     'EXPERIMENTS/dashboard_react/dist/index.html',
 )
 TEXT_SUFFIXES = {'.json', '.py', '.md', '.log', '.diff', '.txt', '.csv'}
