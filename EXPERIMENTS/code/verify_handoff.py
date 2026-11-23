@@ -20,8 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / 'EXPERIMENTS/handoff_manifest.json'
 ARTIFACT_ROOTS = (
-    'ML/archive/experiments/results', 'ML/research/results',
-    'EXPERIMENTS/results', 'EXPERIMENTS/run_collections',
+    'EXPERIMENTS/results',
 )
 SNAPSHOTS = (
     'EXPERIMENTS/dashboard_react/src/data/study_v2.json',

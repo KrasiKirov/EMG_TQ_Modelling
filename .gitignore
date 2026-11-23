@@ -31,9 +31,13 @@ docs/superpowers/
 
 # Deliberately included saved models for the teammate handoff.
 !/EXPERIMENTS/results/V0_saved_weights/EG/S1toS2/seed0.weights.h5
-!/EXPERIMENTS/run_collections/**/*.keras
 ML/research/_cache/
-EXPERIMENTS/run_collections/local/
+
+# Run logs and the old screening outputs stay local (the old outputs are kept in tag pre-cleanup-2026-11)
+/EXPERIMENTS/logs/
+/EXPERIMENTS/run_collections/
+/ML/archive/
+/ML/research/results/
 
 # Markdown (docs, reports, notes) stays local; only the one-line README is in the repository
 *.md
