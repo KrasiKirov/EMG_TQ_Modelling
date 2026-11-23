@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from EXPERIMENTS.pipeline.run import RESULTS_V2
+from EXPERIMENTS.paths import RESULTS_V2
 from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import halving as HV

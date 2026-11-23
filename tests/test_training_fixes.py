@@ -130,7 +130,7 @@ def _cfg(**over):
 def run_unit(patch_subject, tmp_results, monkeypatch):
     from EXPERIMENTS.pipeline import provenance as PV
     monkeypatch.setitem(RC.PROTOCOLS, 'unit', UNIT)
-    monkeypatch.setattr(PR, 'protocol_hash', lambda: 'p' * 64)
+    monkeypatch.setattr(PR, 'protocol_hash', lambda *a: 'p' * 64)
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(git_commit='abc', git_dirty=False, data_sha256={},
                                                          versions={}, threads=1, host='h', protocol_hash=None))
 

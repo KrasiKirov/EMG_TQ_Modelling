@@ -12,9 +12,11 @@ import platform
 import subprocess
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from EXPERIMENTS.paths import ROOT as _ROOT
+
+ROOT = str(_ROOT)
 # Paths whose uncommitted edits make a run irreproducible (untracked files are ignored, except the run's own spec).
-CODE_PATHS = ('ML', 'EXPERIMENTS/pipeline', 'EXPERIMENTS/protocol', 'EXPERIMENTS/tuning')
+CODE_PATHS = ('ML', 'EXPERIMENTS/paths.py', 'EXPERIMENTS/pipeline', 'EXPERIMENTS/protocol', 'EXPERIMENTS/tuning')
 _SHA_CACHE: dict[str, str] = {}
 
 

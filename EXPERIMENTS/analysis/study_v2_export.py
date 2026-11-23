@@ -26,11 +26,11 @@ import numpy as np
 
 from EXPERIMENTS.analysis import common as CM, confirm as CF
 from EXPERIMENTS.pipeline import spec as SPEC
-from EXPERIMENTS.pipeline.run import RESULTS_V2
+from EXPERIMENTS.paths import DASH_DATA, RESULTS_V2
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
 from EXPERIMENTS.tuning import select as SEL
 
-OUT = Path(__file__).resolve().parents[1] / 'dashboard_react' / 'src' / 'data' / 'study_v2.json'
+OUT = DASH_DATA / 'study_v2.json'
 SIZE_BUDGET = 12_000_000
 SEED_RE = re.compile(r'^seed(\d+)\.json$')
 NET = ('units', 'layers', 'dropout', 'lr', 'batch')

@@ -14,7 +14,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-CONFIGS = Path(__file__).resolve().parents[1] / 'configs'
+from EXPERIMENTS.paths import CONFIGS
 ID_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.+-]*$')
 
 

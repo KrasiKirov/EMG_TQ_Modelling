@@ -19,7 +19,7 @@ import numpy as np
 
 from EXPERIMENTS.analysis import confirm as CF, study_v2_export as EX
 from EXPERIMENTS.analysis.common import MISSING, SLOTS, STEP, WORST, envelope, packed
-from EXPERIMENTS.pipeline.run import RESULTS_V2
+from EXPERIMENTS.paths import RESULTS_V2
 from EXPERIMENTS.protocol import protocol as PT
 
 OUT = EX.OUT.parent / 'study-v2-waves.json'

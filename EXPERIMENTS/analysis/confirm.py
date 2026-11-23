@@ -25,13 +25,14 @@ import numpy as np
 
 from EXPERIMENTS.analysis import stats as ST
 from EXPERIMENTS.pipeline import provenance as PV
-from EXPERIMENTS.pipeline.run import RESULTS_V2, load_config
+from EXPERIMENTS.paths import DASH_DATA, RESULTS_V2
+from EXPERIMENTS.pipeline.settings import load_config
 from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
 from EXPERIMENTS.tuning import budget as BG
 from ML.research import config as MC
 
-OUT = Path(__file__).resolve().parents[1] / 'dashboard_react' / 'src' / 'data' / 'confirm.json'
+OUT = DASH_DATA / 'confirm.json'
 ARM = {'A0': 'FE_A0', 'A1': 'FE_A1', 'A2': 'FE_A2', 'A3': 'FE_A3'}
 
 

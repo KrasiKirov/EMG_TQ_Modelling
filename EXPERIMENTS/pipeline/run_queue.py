@@ -17,11 +17,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 D = 'S1toS2'   # the only direction: train on session 1, test on session 2
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-EXP = os.path.dirname(HERE)
-sys.path.insert(0, os.path.dirname(EXP))
-
-from EXPERIMENTS.pipeline.run import BASE, load_config, results_root   # noqa: E402
+from EXPERIMENTS.paths import EXP, LOGS, ROOT
+from EXPERIMENTS.pipeline.run import results_root
+from EXPERIMENTS.pipeline.settings import BASE, load_config
 
 
 class ConfigMismatch(RuntimeError):
@@ -63,20 +61,20 @@ def main():
         for seed in a.seeds:
             for s in a.subjects:
                 res = os.path.join(EXP, 'results', 'X00_baseline', s, 'S1toS2', f'seed{seed}.json')
-                cmd = [py, os.path.join(EXP, 'code', 'run_original_baseline.py'), '--subject', s, '--seed', str(seed)]
+                cmd = [py, str(EXP / 'code' / 'run_original_baseline.py'), '--subject', s, '--seed', str(seed)]
                 jobs.append((res, cmd, f'X00_baseline__{s}__S1toS2__s{seed}', None))
     if a.jobs_file:
         for e, s_, d, seed in json.load(open(a.jobs_file)):
             if d != D:
                 raise SystemExit(f'{a.jobs_file}: {e} {s_} seed {seed} has direction {d}; every run is {D}')
             res = os.path.join(results_root(e), e, s_, d, f'seed{seed}.json')
-            cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s_, '--seed', str(seed)]
+            cmd = [py, '-m', 'EXPERIMENTS.pipeline.run', '--exp', e, '--subject', s_, '--seed', str(seed)]
             jobs.append((res, cmd, f'{e}__{s_}__{d}__s{seed}', e))
     for e in a.exps:
         for seed in a.seeds:
             for s in a.subjects:
                 res = os.path.join(results_root(e), e, s, D, f'seed{seed}.json')
-                cmd = [py, os.path.join(HERE, 'run.py'), '--exp', e, '--subject', s, '--seed', str(seed)]
+                cmd = [py, '-m', 'EXPERIMENTS.pipeline.run', '--exp', e, '--subject', s, '--seed', str(seed)]
                 jobs.append((res, cmd, f'{e}__{s}__{D}__s{seed}', e))
     skip = set()
     if a.skip_file:
@@ -92,7 +90,7 @@ def main():
             seen.add(j[2])
             todo.append(j)
     print(f'{len(jobs)} jobs, {len(todo)} to run, {a.workers} workers', flush=True)
-    os.makedirs(os.path.join(EXP, 'logs'), exist_ok=True)
+    os.makedirs(LOGS, exist_ok=True)
     env = dict(os.environ)
     if a.original_baseline:
         if not a.exps:
@@ -101,10 +99,10 @@ def main():
     def run(job):
         res, cmd, name, _ = job
         e2 = dict(env)
-        if 'run_original_baseline.py' in cmd[1]:
+        if cmd[1].endswith('run_original_baseline.py'):
             e2.pop('PYTHONPATH', None)                 # the frozen original code must not see the worktree package
-        with open(os.path.join(EXP, 'logs', name + '.log'), 'w') as f:
-            r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, env=e2)
+        with open(LOGS / f'{name}.log', 'w') as f:
+            r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, env=e2, cwd=ROOT)
         print(('done ' if r.returncode == 0 else f'FAILED({r.returncode}) ') + name, flush=True)
 
     with ThreadPoolExecutor(a.workers) as ex:

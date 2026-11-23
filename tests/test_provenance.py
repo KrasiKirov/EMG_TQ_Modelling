@@ -49,7 +49,7 @@ def unit_run(patch_subject, tmp_results, monkeypatch):
     from ML.research import config as RC
     monkeypatch.setitem(RC.PROTOCOLS, 'unit', FAST)
     monkeypatch.setattr(PR, 'load_config', lambda exp: ({'id': exp}, _cfg()))
-    monkeypatch.setattr(PR, 'protocol_hash', lambda: 'p' * 64)
+    monkeypatch.setattr(PR, 'protocol_hash', lambda *a: 'p' * 64)
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(
         git_commit='abc', git_dirty=False, data_sha256={}, versions={}, threads=1, host='h',
         protocol_hash=kw.get('protocol_hash')))
@@ -89,3 +89,26 @@ def test_results_root():
     assert PR.results_root('TS2_R1_a') == PR.RESULTS_V2
     assert PR.results_root('FE_A0') == PR.RESULTS_V2
     assert PR.results_root('W00_reference') == PR.RESULTS
+
+
+def test_study_of():
+    from EXPERIMENTS.protocol.protocol import study_of
+    assert study_of('FE_A0').name == 'study_v2'
+    assert study_of('TS2_R1_a').name == 'study_v2'
+    assert study_of('W00_reference') is None
+
+
+def test_out_root_redirects_study_runs(unit_run, tmp_path):
+    out = tmp_path / 'check'
+    PR.main(['--exp', 'FE_unit', '--subject', 'SYN', '--seed', '0', '--out-root', str(out)])
+    assert (out / 'FE_unit' / 'SYN' / 'S1toS2' / 'seed0.json').exists()
+    assert (out / 'FE_unit' / 'SYN' / 'S1toS2' / 'seed0_val.npz').exists()
+    assert not (unit_run / 'results_v2').exists()
+    res = json.loads((out / 'FE_unit' / 'SYN' / 'S1toS2' / 'seed0.json').read_text())
+    assert res['provenance']['protocol_hash'] == 'p' * 64          # still a study run
+
+
+def test_no_temporary_files_left(unit_run):
+    PR.main(['--exp', 'W00_unit', '--subject', 'SYN', '--seed', '0'])
+    d = unit_run / 'results' / 'W00_unit' / 'SYN' / 'S1toS2'
+    assert sorted(p.name for p in d.iterdir()) == ['seed0.json', 'seed0.npz', 'seed0_val.npz']

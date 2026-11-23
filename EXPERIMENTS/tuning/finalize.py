@@ -17,7 +17,7 @@ import json
 from pathlib import Path
 
 from EXPERIMENTS.pipeline import spec as SPEC
-from EXPERIMENTS.pipeline.run import RESULTS_V2
+from EXPERIMENTS.paths import RESULTS_V2
 from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import make_specs as MS, space as SPC
 

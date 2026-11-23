@@ -51,7 +51,7 @@ def write(rnd: str, cell: str, configs: dict[str, dict], configs_dir: Path | str
 
 def active_cells(results_dir=None, steps=None) -> list[str]:
     """Cells that run R1-R3, 75 % overlap cells last; ``steps`` = budget steps (default: results_v2/budget.json)."""
-    from EXPERIMENTS.pipeline.run import RESULTS_V2
+    from EXPERIMENTS.paths import RESULTS_V2
     rd = Path(results_dir or RESULTS_V2)
     steps = BG.applied(rd) if steps is None else steps
     out = [c for c, v in _P['cells'].items() if not v['gated']]

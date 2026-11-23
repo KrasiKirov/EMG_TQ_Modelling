@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-from EXPERIMENTS.pipeline.run import RESULTS_V2
+from EXPERIMENTS.paths import RESULTS_V2
 
 
 class TestLocked(RuntimeError):

@@ -31,7 +31,7 @@ _SEED = re.compile(r'^seed(\d+)\.json$')
 
 def _rd(results_dir=None) -> Path:
     if results_dir is None:
-        from EXPERIMENTS.pipeline.run import RESULTS_V2
+        from EXPERIMENTS.paths import RESULTS_V2
         results_dir = RESULTS_V2
     return Path(results_dir)
 
