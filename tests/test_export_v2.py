@@ -54,9 +54,10 @@ def test_export_leaves_out_host(tmp_path):
         assert 'host' not in r['provenance'] and r['provenance']['git_commit'] == 'c'
 
 
-def _final(rd, cfg_dir):
+def _final(rd, cfg_dir, bad=None):
     """A complete synthetic set of study v2 final runs (what confirm needs), A0 = the carry_2s winner, whose seeds
-    10-12 live in FE_cell_carry_2s. Trials start at 1.0 s; a w-step window first predicts (w - 1) x 10 ms later."""
+    10-12 live in FE_cell_carry_2s. Trials start at 1.0 s; a w-step window first predicts (w - 1) x 10 ms later.
+    ``bad``: a trial whose predictions are 5x noisier, for every run."""
     P = PT.load()
     fs, cells = P['final_seeds'], {c: v for c, v in P['cells'].items() if not v['gated']}
     net = {'units': 64, 'layers': 1, 'dropout': 0.02, 'lr': 0.005}
@@ -81,7 +82,7 @@ def _final(rd, cfg_dir):
             for s in seeds:
                 d = rd / e / p / 'S1toS2'
                 d.mkdir(parents=True, exist_ok=True)
-                yp = y + rng.normal(0, 1, len(y))
+                yp = y + rng.normal(0, 1, len(y)) * np.where(trial == bad, 5.0, 1.0)
                 np.savez(d / f'seed{s}.npz', y_own_target=y[keep], y_pred=yp[keep], trial=trial[keep], t=t[keep],
                          angle=angle[keep])
                 np.savez(d / f'seed{s}_val.npz', y=y[:400], y_pred=yp[:400], common=np.ones(400, bool))

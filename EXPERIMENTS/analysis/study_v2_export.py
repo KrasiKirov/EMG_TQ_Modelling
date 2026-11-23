@@ -123,6 +123,14 @@ def settings(rd: Path, protocol: dict, choice: dict) -> dict:
     return out
 
 
+def trial_order(z) -> list[tuple[float, int]]:
+    """A run's positions as (angle rounded to 3 decimals, trial), in the page's order: ascending angle, then trial
+    (two trials at one angle stay apart)."""
+    tr = np.asarray(z['trial'])
+    ang = np.asarray(z['angle'], float) if 'angle' in z else tr.astype(float)
+    return sorted((round(float(ang[tr == i][0]), 3), int(i)) for i in np.unique(tr))
+
+
 def final_scores(rd: Path, loaded=None) -> tuple[dict, dict]:
     """({page id: {person: positions, seeds, mae/nmae/r2 [position][seed], peak [position], train_s {seed}}},
     the shared scoring start) on confirm's own samples. ``loaded`` is ``confirm.final_runs``'s result."""
@@ -138,17 +146,15 @@ def final_scores(rd: Path, loaded=None) -> tuple[dict, dict]:
             continue
         js, z = runs[e, p, d, s]
         y, yp, t, tr = (np.asarray(z[k], float) for k in ('y_own_target', 'y_pred', 't', 'trial'))
-        ang = np.asarray(z['angle'], float) if 'angle' in z else tr
         scored = CF.scored_mask(t, tr, start, p, d, sfrom[p][d])
         rows = []
-        for i in np.unique(tr):
+        for a, i in trial_order(z):
             m = scored & (tr == i)
             err, ym = yp[m] - y[m], y[m]
             sst = float(np.sum((ym - ym.mean()) ** 2))
             mae = float(np.mean(np.abs(err)))
-            rows.append((round(float(ang[tr == i][0]), 3), int(i), mae, mae / scale[p, d],
+            rows.append((a, i, mae, mae / scale[p, d],
                          1 - float(np.sum(err ** 2)) / sst if sst > 0 else None, float(np.max(np.abs(ym)))))
-        rows.sort(key=lambda r: (r[0], r[1]))
         f = out.setdefault(e, {}).setdefault(p, {'positions': [r[0] for r in rows], '_trials': [r[1] for r in rows],
                                                  'seeds': [], 'mae': [[] for _ in rows], 'nmae': [[] for _ in rows],
                                                  'r2': [[] for _ in rows], 'peak': [r[5] for r in rows],
