@@ -377,7 +377,7 @@ function WorstPositions({ id, people }: { id: string; people: PersonRuns[] }) {
 function PeakTorque({ people }: { people: PersonRuns[] }) {
   const { tokens } = useView();
   return (
-    <SectionCard testId="study-peaks" title="Peak torque per position (Nm)" description="Largest absolute measured torque of the predicted target in each trial.">
+    <SectionCard testId="study-peaks" title="Peak torque per position (Nm)" description={`Largest absolute measured torque of the predicted target at each position, over the scored samples (from ${SCORE_FROM.join(', ')} s after the trial's start), the same samples the errors are scored on.`}>
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="lg">
         {people.map((p) => (
           <div key={p.subj} className="subject-plot">
