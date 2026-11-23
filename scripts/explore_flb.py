@@ -1,23 +1,19 @@
 """
 Exploratory CLI: read a REKLAB .flb file, export every trial to CSV and plot the signals.
 
-    python -m ML.explore <file.flb> [--output_dir DIR] [--subject_id IES01] [--downsample N] [--no_csv] [--no_plots]
+    python -m scripts.explore_flb <file.flb> [--output_dir DIR] [--subject_id IES01] [--trial N] [--no_csv] [--no_plots]
 
-Writes <output_dir>/csv/<flb_name>_trialNNN.csv and plots/ (trial01_all_channels.png, all_trials_overlay.png).
+Writes <output_dir>/csv/<flb_name>_trialNNN.csv and plots/trialNN_all_channels.png.
 """
 
 import os
-import sys
 import argparse
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # non-interactive backend; works without a display
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
 from ML.preprocessing.flb_reader import read_flb
-from ML.preprocessing.dataset_builder import build_dataset, classify_trials
 
 
 # Per-channel display names and units (two separate strings for two-line y-label)
@@ -114,52 +110,6 @@ def plot_trial(df, trial_num: int, output_path: str) -> None:
     plt.close(fig)
 
 
-def plot_emg_envelopes(df, output_path: str, title: str = '') -> None:
-    """Plot raw EMG (blue) with its ``*_env`` envelope (red), one subplot per channel."""
-    # Identify channel names by finding *_env columns
-    env_cols  = [c for c in df.columns if c.endswith('_env') and not c.endswith('_env_norm')]
-    base_cols = [c[:-4] for c in env_cols]   # strip '_env'
-    # Keep only channels that also have the rectified intermediate
-    triples = [(b, f'{b}_rect', f'{b}_env')
-               for b in base_cols if f'{b}_rect' in df.columns]
-
-    if not triples:
-        print("No rectified+envelope column pairs found — run process_trials first.")
-        return
-
-    n_ch = len(triples)
-    fig, axes = plt.subplots(n_ch, 1, figsize=(12, 2.8 * n_ch),
-                             sharex=True, facecolor='white')
-    if n_ch == 1:
-        axes = [axes]
-
-    if title:
-        fig.suptitle(title, fontsize=10, fontweight='bold')
-
-    for ax, (base_col, rect_col, env_col) in zip(axes, triples):
-        t = df['time'].values
-        rect = df[rect_col].values   # bandpass-filtered + rectified
-        env  = df[env_col].values
-
-        ax.plot(t, rect, color='#4c9be8', linewidth=0.4, alpha=0.55, label='|Bandpass filtered|')
-        ax.plot(t, env,  color='#d62728', linewidth=1.8,  label='Envelope')
-
-        name, unit = _ch_label(base_col)
-        ax.set_ylabel(f'{name.upper()}\n({unit})', fontsize=8, labelpad=6,
-                      rotation=90, va='center')
-        ax.set_facecolor('white')
-        ax.grid(True, linewidth=0.35, color='#cccccc')
-        ax.tick_params(labelsize=7.5)
-        ax.spines[['top', 'right']].set_visible(False)
-
-    axes[-1].set_xlabel('Time (s)', fontsize=9)
-    axes[0].legend(fontsize=7, loc='upper right', framealpha=0.7)
-    fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
-    plt.close(fig)
-    print(f"Saved envelope plot → '{output_path}'")
-
-
 def main():
     parser = argparse.ArgumentParser(
         description='Read a REKLAB .flb file, export CSVs, and generate plots.')
@@ -170,18 +120,12 @@ def main():
                              '(default: <flb_name>_output/ next to the .flb file).')
     parser.add_argument('--subject_id', default='default',
                         help="Subject ID. Use 'IES01' for that subject's channel order.")
-    parser.add_argument('--downsample', type=int, default=10,
-                        help='Downsample factor for the overlay plot (default: 10).')
     parser.add_argument('--trial', type=int, default=1,
                         help='Trial number to plot (1-based, default: 1).')
     parser.add_argument('--no_csv', action='store_true',
                         help='Skip CSV export.')
     parser.add_argument('--no_plots', action='store_true',
                         help='Skip plot generation.')
-    parser.add_argument('--test-trials', nargs='+', type=int, default=None,
-                        help='1-indexed test trial numbers (default: auto-detect)')
-    parser.add_argument('--retest-trials', nargs='+', type=int, default=None,
-                        help='1-indexed retest trial numbers (default: auto-detect)')
     args = parser.parse_args()
 
     flb_path = os.path.abspath(args.flb_file)
@@ -222,7 +166,7 @@ def main():
         print("\nTrial 1 preview (first 5 rows):")
         print(pd.read_csv(csv_paths[0]).head().to_string(index=False))
 
-    # Raw signal plots (before build_dataset adds envelope columns)
+    # Raw signal plot
     if not args.no_plots:
         os.makedirs(plots_dir, exist_ok=True)
 
@@ -235,29 +179,6 @@ def main():
         trial_path = os.path.join(plots_dir, f'trial{t_idx+1:02d}_all_channels.png')
         plot_trial(trials[t_idx], trial_num=t_idx + 1, output_path=trial_path)
         print(f"Saved trial-{t_idx+1} plot     → '{trial_path}'")
-
-    # Build the dataset
-    (X_train, y_train, X_val, y_val, X_test, y_test,
-     emg_max, passive_entries, _operating_pos, _pos_range,
-     _mvc_tq_test) = \
-        build_dataset(trials,
-                      test_trial_indices=args.test_trials,
-                      retest_trial_indices=args.retest_trials)
-
-    print("\n── Dataset quality checks ──────────────────────────────────────")
-    print(f"  NaN in inputs : {np.isnan(X_train).any()}")
-    print(f"  EMG range     : [{X_train[:, :, :4].min():.4f},  {X_train[:, :, :4].max():.4f}]  (expect ≈ [0, 1])")
-    print(f"  Torque range  : [{y_train.min():.2f},  {y_train.max():.2f}] Nm")
-
-    # Envelope check plot
-    if not args.no_plots:
-        _, _, active_trials = classify_trials(trials)
-        if active_trials:
-            first_active = active_trials[0]
-            comment = first_active.attrs.get('comment', '')
-            env_path = os.path.join(plots_dir, 'envelope_check.png')
-            plot_emg_envelopes(first_active, env_path,
-                               title=f'EMG Envelope Check — {comment}')
 
     print("\nDone.")
 
