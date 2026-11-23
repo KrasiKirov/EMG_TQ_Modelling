@@ -11,7 +11,7 @@ export const HELP_SECTIONS: HelpSection[] = [
       ['Settings', 'A0: the chosen setting. Cell winners: the tuned network of each window length and overlap, or of each carried-state chunk length. A1: lagged ridge regression. A2: last semester\'s network (8 units × 2 layers) trained with study v2\'s pipeline. A3: A0 trained on total torque.'],
       ['Filters', 'Each filter value jumps to a setting that was run. If none has exactly that combination, the nearest one is shown and a line under the filters says what else changed.'],
       ['Link', 'The address bar keeps the selected setting (#setting=<id>). Copy it to send someone the same view; the id is also shown after the title.'],
-      ['Sections', 'Summary (one row per person) → worst positions (measured vs predicted torque) → MAE and R² at every position (a box over seeds) → how the setting was chosen (session-1 validation) → peak torque → training time → how to re-run the setting → the computer the runs used.'],
+      ['Sections', 'Summary (one row per person) → worst positions (measured vs predicted torque) → MAE and R² at every position (a box over seeds) → how the setting was chosen (session-1 validation) → peak torque → reproduce and run details (collapsed: training time, how to re-run the setting, the computer the runs used).'],
     ],
   },
   {

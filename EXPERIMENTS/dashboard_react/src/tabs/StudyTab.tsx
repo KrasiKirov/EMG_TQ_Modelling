@@ -102,12 +102,31 @@ export function StudyTab() {
       <PerPosition people={people} m="r2" />
       <HowChosen id={pick} />
       <PeakTorque people={people} />
-      <RunTime id={pick} />
-      <Reproduce id={pick} people={people} />
-      <SectionCard testId="study-machine" title="Processing capabilities">
-        <MachineInfo />
-      </SectionCard>
+      <Details id={pick} people={people} />
     </Stack>
+  );
+}
+
+/** setup details, collapsed: mounted only when open, so the charts inside get their real width */
+function Details({ id, people }: { id: string; people: PersonRuns[] }) {
+  const [open, setOpen] = useState<string | null>(null);
+  return (
+    <Accordion variant="contained" value={open} onChange={setOpen} data-testid="study-details">
+      <Accordion.Item value="details">
+        <Accordion.Control><Text fw={600}>Reproduce and run details</Text></Accordion.Control>
+        <Accordion.Panel>
+          {open === 'details' && (
+            <Stack gap="lg">
+              <RunTime id={id} />
+              <Reproduce id={id} people={people} />
+              <SectionCard testId="study-machine" title="Processing capabilities">
+                <MachineInfo />
+              </SectionCard>
+            </Stack>
+          )}
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }
 

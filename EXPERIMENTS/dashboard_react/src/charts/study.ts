@@ -22,8 +22,8 @@ function ciLabels(cells: { v: number }[][], d: number): string[] {
   });
 }
 const ciRich = (t: ChartTokens) => ({
-  m: { fontSize: 12, fontWeight: 600, color: t.text, lineHeight: 18 },
-  ci: { fontSize: 10, color: t.textMuted, lineHeight: 14 },
+  m: { fontSize: 13, fontWeight: 600, color: t.text, lineHeight: 18 },
+  ci: { fontSize: 13, color: t.textMuted, lineHeight: 16 },
 });
 
 /** lowest R² drawn on a per-position axis; runs below it are marked with an arrow at the floor */
@@ -31,7 +31,7 @@ export const R2_FLOOR = -1;
 
 const axisCommon = (t: ChartTokens) => ({
   axisLine: { lineStyle: { color: t.axis } }, axisTick: { lineStyle: { color: t.axis } },
-  axisLabel: { color: t.textMuted, fontSize: 11 }, splitLine: { lineStyle: { color: t.grid } },
+  axisLabel: { color: t.text, fontSize: 13 }, splitLine: { lineStyle: { color: t.grid } },
 });
 
 /** one bar per position: the peak measured torque there (Nm) */
@@ -42,12 +42,12 @@ export function peakBarOption(positions: number[], peaks: number[], t: ChartToke
     tooltip: { trigger: 'axis', backgroundColor: t.tooltipBg, borderColor: t.tooltipBorder, textStyle: { color: t.text, fontSize: 13 },
                valueFormatter: (v: number) => (Number.isFinite(v) ? `${v.toFixed(1)} Nm` : '–') },
     xAxis: { type: 'category', data: positions.map((p, i) => `p${i + 1}\n${posLabel(p)}`), ...axisCommon(t),
-             axisLabel: { color: t.text, fontSize: 12, interval: 0, lineHeight: 16 }, name: 'ankle position (rad)', nameLocation: 'middle', nameGap: 40, nameTextStyle: { color: t.textMuted, fontSize: 12 } },
-    yAxis: { type: 'value', min: 0, ...axisCommon(t), name: 'peak torque (Nm)', nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' },
-             axisLabel: { color: t.text, fontSize: 12 } },
+             axisLabel: { color: t.text, fontSize: 13, interval: 0, lineHeight: 16 }, name: 'ankle position (rad)', nameLocation: 'middle', nameGap: 40, nameTextStyle: { color: t.textMuted, fontSize: 13 } },
+    yAxis: { type: 'value', min: 0, ...axisCommon(t), name: 'peak torque (Nm)', nameTextStyle: { color: t.textMuted, fontSize: 13, align: 'left' },
+             axisLabel: { color: t.text, fontSize: 13 } },
     series: [{ type: 'bar', name: 'peak torque', barWidth: '55%', itemStyle: { color: '#9aa1aa' },
                data: peaks.map((v) => (Number.isFinite(v) ? Math.round(v * 10) / 10 : null)),
-               label: { show: true, position: 'top', color: t.text, fontSize: 12 } }],
+               label: { show: true, position: 'top', color: t.text, fontSize: 13 } }],
   };
 }
 
@@ -84,15 +84,15 @@ export function studySeedOption(sides: SeedSide[], positions: number[], m: SMetr
     },
     xAxis: [
       { type: 'category', data: positions.map((p, i) => `p${i + 1}\n${posLabel(p)}`), ...axisCommon(t),
-        axisLabel: compact ? { color: t.textMuted, fontSize: 9, interval: 0, lineHeight: 12 }
-          : { color: t.text, fontSize: 12, interval: 0, lineHeight: 16, rich: ciRich(t), formatter: (v: string, k: number) => `${v}\n${labels[k] ?? ''}` },
-        ...(compact ? {} : { name: 'ankle position (rad) · median [interval]', nameLocation: 'middle', nameGap: 60, nameTextStyle: { color: t.textMuted, fontSize: 12 } }) },
+        axisLabel: compact ? { color: t.text, fontSize: 13, interval: 0, lineHeight: 14 }
+          : { color: t.text, fontSize: 13, interval: 0, lineHeight: 16, rich: ciRich(t), formatter: (v: string, k: number) => `${v}\n${labels[k] ?? ''}` },
+        ...(compact ? {} : { name: 'ankle position (rad) · median [interval]', nameLocation: 'middle', nameGap: 60, nameTextStyle: { color: t.textMuted, fontSize: 13 } }) },
       { type: 'value', min: -0.5, max: positions.length - 0.5, show: false },
     ],
     yAxis: [{
       type: 'value', min: lo, max: hi, ...axisCommon(t), axisLine: { onZero: false, lineStyle: { color: t.axis } }, name: compact ? undefined : `${SMETRICS[m].short}${unit}`,
-      nameTextStyle: { color: t.textMuted, fontSize: compact ? 10 : 12, align: 'left' },
-      axisLabel: { color: compact ? t.textMuted : t.text, fontSize: compact ? 10 : 12, formatter: (v: number) => String(+v.toFixed(err ? 2 : 3)) },
+      nameTextStyle: { color: t.textMuted, fontSize: compact ? 12 : 13, align: 'left' },
+      axisLabel: { color: t.text, fontSize: compact ? 12 : 13, formatter: (v: number) => String(+v.toFixed(err ? 2 : 3)) },
     }],
     series: [
       { type: 'scatter', xAxisIndex: 1, data: [], silent: true,
@@ -100,7 +100,7 @@ export function studySeedOption(sides: SeedSide[], positions: number[], m: SMetr
       ...sides.flatMap((s) => seedSeries(s, t, { mode, compact, boxWidth: compact ? [4, 14] : [10, 34],
         clamp: (v) => (off(v) ? lo : v), hidden: off })),
       ...(below.length ? [{ type: 'scatter', name: 'below the axis', xAxisIndex: 1, z: 8, symbol: 'triangle', symbolRotate: 180, symbolSize: 12,
-        data: below, label: { show: true, position: 'top', color: t.text, fontSize: 12, fontWeight: 600 } }] : []),
+        data: below, label: { show: true, position: 'top', color: t.text, fontSize: 13, fontWeight: 600 } }] : []),
     ],
   };
 }
@@ -124,11 +124,11 @@ export function runtimeOption(people: { subj: string; seeds: number[]; seconds: 
     xAxis: [
       { type: 'category', data: people.map((p) => p.subj), ...axisCommon(t),
         axisLabel: { color: t.text, fontSize: 13, lineHeight: 18, rich: ciRich(t), formatter: (v: string, k: number) => `${v}\n${labels[k] ?? ''}` },
-        name: 'median [interval]', nameLocation: 'middle', nameGap: 44, nameTextStyle: { color: t.textMuted, fontSize: 12 } },
+        name: 'median [interval]', nameLocation: 'middle', nameGap: 44, nameTextStyle: { color: t.textMuted, fontSize: 13 } },
       { type: 'value', min: -0.5, max: people.length - 0.5, show: false },
     ],
-    yAxis: { type: 'value', min: 0, ...axisCommon(t), axisLine: { onZero: false, lineStyle: { color: t.axis } }, name: 'minutes per run', nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' },
-             axisLabel: { color: t.text, fontSize: 12 } },
+    yAxis: { type: 'value', min: 0, ...axisCommon(t), axisLine: { onZero: false, lineStyle: { color: t.axis } }, name: 'minutes per run', nameTextStyle: { color: t.textMuted, fontSize: 13, align: 'left' },
+             axisLabel: { color: t.text, fontSize: 13 } },
     series: seedSeries(side, t, { mode: 'box', boxWidth: [10, 40] }),
   };
 }

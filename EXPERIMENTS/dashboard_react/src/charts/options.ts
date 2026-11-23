@@ -42,9 +42,9 @@ function valueAxis(t: ChartTokens, extra: Record<string, unknown> = {}) {
     type: 'value',
     axisLine: { show: false },
     axisTick: { show: false },
-    axisLabel: { color: t.textMuted, fontSize: 12 },
+    axisLabel: { color: t.textMuted, fontSize: 13 },
     splitLine: { lineStyle: { color: t.grid, width: 1 } },
-    nameTextStyle: { color: t.textMuted, fontSize: 12 },
+    nameTextStyle: { color: t.textMuted, fontSize: 13 },
     ...extra,
   };
 }
@@ -316,9 +316,9 @@ export function waveOption(time: number[], lines: WaveLine[], t: ChartTokens, de
       axisLine: { lineStyle: { color: t.axis } },
       axisTick: { show: false },
       splitLine: { show: false },
-      axisLabel: { color: t.textMuted, fontSize: 12, formatter: (v: number) => `${+v.toFixed(1)} s` },
+      axisLabel: { color: t.text, fontSize: 13, formatter: (v: number) => `${+v.toFixed(1)} s` },
     },
-    yAxis: valueAxis(t, { name: yName ?? (demeaned ? 'demeaned torque (Nm)' : 'voluntary torque (Nm)'), nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 12, align: 'left' }, scale: true }),
+    yAxis: valueAxis(t, { name: yName ?? (demeaned ? 'demeaned torque (Nm)' : 'voluntary torque (Nm)'), nameLocation: 'end', nameGap: 12, nameTextStyle: { color: t.textMuted, fontSize: 13, align: 'left' }, scale: true }),
     series: lines.map((l, i) => ({
       type: 'line',
       name: l.name,
