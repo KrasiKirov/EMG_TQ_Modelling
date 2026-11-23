@@ -13,7 +13,7 @@ from ML.research import splits
 from ML.research import truth
 from ML.research.data import load_subject
 from ML.research.emg_norm import normalise, push_directions
-from ML.research.passive import PassiveModel, rest_segments
+from ML.research.passive import PassiveModel
 
 
 def apply_metadata_passive(bundle, subject):
@@ -37,21 +37,15 @@ def prepare(subject, protocol, cfg):
     recs = bundle['active']
     spec = splits.PROTOCOLS[protocol]
     train_recs = [r for r in recs if r['session'] in spec['train']]
-    tf_ = 0.6 if protocol == 'pooled' else C.TRAIN_FRAC
-    val_end = 0.8 if protocol == 'pooled' else 1.0
     window = cfg.get('window', C.WINDOW)
 
-    feats, emg_info = normalise(cfg['emg'], bundle, train_recs, recs, train_frac=tf_, val_end_frac=val_end,
-                                window=window, scale_part=cfg.get('scale_part', 'train_val'))
-    base_env, _ = normalise('trainmax', bundle, train_recs, recs, train_frac=tf_, val_end_frac=val_end,
-                            window=window)
-    tr_segs, va_segs = rest_segments(train_recs, base_env, train_frac=tf_, val_end_frac=val_end, window=window)
+    feats, emg_info = normalise(cfg['emg'], bundle, train_recs, recs, window=window,
+                                scale_part=cfg.get('scale_part', 'train_val'))
+    base_env, _ = normalise('trainmax', bundle, train_recs, recs, window=window)
     if cfg['passive'] == 'none':              # total torque: nothing subtracted
         targets, pinfo = {r['idx']: r['tq'].copy() for r in recs}, {'kind': 'none'}
-    elif cfg['passive'] == 'restanchor':
-        targets, pinfo = restanchor_targets(bundle, protocol)
     else:
-        pm = PassiveModel(cfg['passive'], bundle).fit(train_recs, tr_segs, va_segs)
+        pm = PassiveModel(cfg['passive'], bundle)
         targets, pinfo = {r['idx']: r['tq'] - pm.predict(r) for r in recs}, pm.describe()
     rest = rest_flags(bundle, protocol)
     step = cfg.get('input_step', 1)
@@ -63,34 +57,17 @@ def prepare(subject, protocol, cfg):
     data['trial_len'] = {r['idx']: len(r['t']) for r in recs}
     data['train_recs'] = train_recs
     details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in ('kind', 'rmin_frac', 'transductive', 'auto_decision', 'scale_part')},
-               'push_directions': push_directions(bundle, train_recs, base_env, train_frac=tf_, window=window),
+               'push_directions': push_directions(bundle, train_recs, base_env, window=window),
                'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
                'rest_frac_train': float(np.mean(data['meta_train']['rest']))}
     return data, details
 
 
-def restanchor_targets(bundle, protocol):
-    """Target = measured torque minus the in-trial passive baseline through the EMG rest segments (truth.py).
-    Training sessions only search the training part of each trial, so no test torque enters a label."""
-    spec = splits.PROTOCOLS[protocol]
-    targets, n_segs = {}, {}
-    for sess in ('S1', 'S2'):
-        limit = 0.8 if (protocol == 'pooled') else None
-        segs = truth.session_rest(bundle, sess, max_frac=limit if sess in spec['train'] else None)
-        for r in bundle['active']:
-            if r['session'] == sess:
-                targets[r['idx']] = r['tq'] - truth.baseline(r, segs[r['idx']])
-                n_segs[r['idx']] = len(segs[r['idx']])
-    return targets, {'kind': 'restanchor', 'sigma_s': truth.SIGMA_S, 'n_rest_segments_per_trial': n_segs}
-
-
 def rest_flags(bundle, protocol):
-    """{trial idx: (T,) bool} EMG-detected rest per sample, for the rest_weight option and rest-window metrics."""
-    spec = splits.PROTOCOLS[protocol]
+    """{trial idx: (T,) bool} EMG-detected rest per sample (window metadata 'rest', rest-window metrics)."""
     out = {}
     for sess in ('S1', 'S2'):
-        limit = 0.8 if (protocol == 'pooled' and sess in spec['train']) else None
-        segs = truth.session_rest(bundle, sess, max_frac=limit)
+        segs = truth.session_rest(bundle, sess)
         for r in bundle['active']:
             if r['session'] == sess:
                 out[r['idx']] = truth.rest_mask(len(r['tq']), segs[r['idx']])

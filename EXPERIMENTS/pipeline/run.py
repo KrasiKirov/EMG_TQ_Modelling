@@ -31,11 +31,7 @@ sys.path.insert(0, ROOT)
 
 import numpy as np                                     # noqa: E402
 
-BASE = dict(passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm',
-            balance='none', pf_extra=None, window=20, lr=None, train_protocol='orig', rest_weight=None,
-            extra_input=None, shuffle=True, envelope='zerophase', trim_end_s=0.0, input_step=1, train_stride=1,
-            state='reset', lp_order=4, val_gap=False, metadata_passive=False, chunk=None, clipnorm=None, epoch_windows=None,
-            scale_part='train_val', batch=None)
+from EXPERIMENTS.pipeline.settings import BASE, DIRECTION, load_config  # noqa: E402,F401  (re-exported)
 
 RESULTS = os.path.join(EXP, 'results')
 RESULTS_V2 = os.path.join(EXP, 'results_v2')
@@ -60,21 +56,13 @@ def protocol_hash():
     return h
 
 
-def load_config(exp):
-    from EXPERIMENTS.pipeline.spec import load
-    s = load(exp)
-    cfg = dict(BASE)
-    cfg.update(s.changes)
-    return s.raw, cfg
-
-
 def make_builder(cfg):
     """Model builder plugged into ML.research.train (same call signature)."""
-    from ML.research import models as RM
 
     def build(name, n_steps, n_features, knots):
-        if name != 'lstm':
-            return RM.build(name, n_steps, n_features, knots)
+        if name != 'lstm':                              # 'lstm8': the original model
+            from ML.research.train import build_original
+            return build_original(name, n_steps, n_features, knots)
         from tensorflow.keras.models import Sequential
         from tensorflow.keras.layers import Input, LSTM, Dropout, Dense
         lay = [Input(shape=(n_steps, n_features))]
@@ -163,10 +151,6 @@ def fit_carry(data, cfg, seed):
     return pred, info, data
 
 
-# every run learns from session 1 and predicts session 2 (study v2 is S1→S2 only); there is no other direction
-DIRECTION = 'S1toS2'
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--exp', required=True)
@@ -201,12 +185,6 @@ def main(argv=None):
     t0 = time.time()
     rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step', 'train_stride',
                                 'state', 'lp_order', 'val_gap', 'metadata_passive', 'scale_part')}
-    if cfg['state'] not in ('reset', 'carry'):
-        raise ValueError(f"state must be 'reset' or 'carry', got {cfg['state']!r}")
-    if cfg['state'] == 'carry' and (cfg['model'] != 'lstm' or cfg['extra_input'] or cfg['train_stride'] != 1):
-        raise ValueError("state='carry' supports the plain LSTM with no extra input and train_stride 1")
-    if cfg['epoch_windows'] is not None and cfg['state'] == 'carry':
-        raise ValueError("epoch_windows is not implemented for state='carry'")
     data, details = prepare(a.subject, a.direction, rcfg)
     if study:
         from ML.research.splits import check_common_targets

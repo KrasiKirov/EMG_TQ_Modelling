@@ -1,20 +1,12 @@
-"""In-trial passive baseline through the EMG-detected rest periods.
+"""EMG-detected rest periods of every active trial (rest is found from the EMG only, never from torque).
 
-Torque while the EMG says "relaxed" is passive, so B(t) is a smooth curve (Gaussian, sigma 8 s) through the median
-torque of each rest segment; measured torque minus B(t) is the voluntary torque. Rest is found from the EMG only.
-Used for the 'restanchor' target and for the rest flags of every window.
+Used for the rest flags of every window. (The 'restanchor' target, a baseline through these periods, was removed in
+2026-11; see tag pre-cleanup-2026-11.)
 """
-
-import os
-import pickle
 
 import numpy as np
 
 from ML.preprocessing import rest as RS
-
-from . import config as C
-
-SIGMA_S = 8.0     # s, smoothing of the in-trial passive baseline
 
 
 def session_rest(bundle, session, max_frac=None):
@@ -31,43 +23,9 @@ def session_rest(bundle, session, max_frac=None):
     return {i: RS.detect_rest(e, stats) for i, e in env.items()}
 
 
-def baseline(rec, segs, sigma_s=SIGMA_S):
-    """In-trial passive baseline B(t) (Nm) through the rest segments."""
-    return RS.rest_baseline(rec['tq'], segs, len(rec['tq']), sigma_s=sigma_s)
-
-
 def rest_mask(T, segs):
     m = np.zeros(T, bool)
     for s, e in segs:
         m[s:e] = True
     return m
 
-
-_CACHE = {}
-
-
-def subject_truth(subject):
-    """{trial idx: {'truth', 'B', 'rest', ...}} for every active trial (cached; used by the presentation figures)."""
-    if subject in _CACHE:
-        return _CACHE[subject]
-    path = os.path.join(C.CACHE_DIR, f'{subject}_truth_v1.pkl')
-    if os.path.exists(path):
-        with open(path, 'rb') as f:
-            _CACHE[subject] = pickle.load(f)
-        return _CACHE[subject]
-    from .data import load_subject
-    bundle = load_subject(subject)
-    out = {}
-    for sess in ('S1', 'S2'):
-        segs = session_rest(bundle, sess)
-        for r in bundle['active']:
-            if r['session'] != sess:
-                continue
-            B = baseline(r, segs[r['idx']])
-            out[r['idx']] = {'truth': (r['tq'] - B).astype(np.float32), 'B': B.astype(np.float32),
-                             'rest': rest_mask(len(r['tq']), segs[r['idx']]), 't0': float(r['t'][0]),
-                             'angle': r['angle'], 'session': sess, 'n_rest_segs': len(segs[r['idx']])}
-    with open(path, 'wb') as f:
-        pickle.dump(out, f)
-    _CACHE[subject] = out
-    return out

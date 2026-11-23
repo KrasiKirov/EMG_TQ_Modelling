@@ -1,19 +1,19 @@
 """
 EMG normalisation options; each returns {trial idx: (T, 4) features}.
 
-Statistics come from the training session only (MVC options: the MVC trials). The per-channel maximum uses the
-training and validation parts of the training trials, as the original pipeline (pooled: only the first
-``val_end_frac``); the auto-gain priors use the training part only.
+Statistics come from the training session only (mvc_global: the MVC trials). The per-channel maximum uses the
+training and validation parts of the training trials, as the original pipeline; the auto-gain priors use the
+training part only.
 
 trainmax     ÷ largest 1 kHz envelope value per channel in the training-session trials (original pipeline)
 mvc_global   ÷ largest MVC envelope (any angle)
-mvc_angle    ÷ MVC envelope peak interpolated at this trial's angle
-agc          trainmax, then causal adaptive gain control (ML.preprocessing.emg_agc), rmin = 0.35 x prior range
-agc_auto     'agc', unless the training session pushes both ways (> +2 Nm and < -2 Nm, see push_directions): 'trainmax'
-agc_soft     'agc' with rmin = 0.7 x prior range (less noise blow-up on near-silent channels)
+agc_auto     trainmax, then causal adaptive gain control (ML.preprocessing.emg_agc, rmin = 0.35 x prior range),
+             unless the training session pushes both ways (> +2 Nm and < -2 Nm, see push_directions): 'trainmax'
 train_p99    ÷ 99th percentile over the training part of the training-session trials
 session_p99  each session ÷ its own 99th percentile (test session: all its EMG, no torque). Transductive, after
              AdaBN (Du et al. 2017, Sensors 17:458)
+
+(mvc_angle and agc_soft were removed in 2026-11; see tag pre-cleanup-2026-11.)
 """
 
 import numpy as np
@@ -43,24 +43,24 @@ def _agc(env, prior_lo, prior_hi, rmin_frac):
     return np.clip((clean - lo) / np.maximum(hi - lo, rmin[None, :]), 0.0, emg_agc.CLIP_HI)
 
 
-def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_end_frac=1.0,
-              window=C.WINDOW, scale_part='train_val'):
+KINDS = ('trainmax', 'agc_auto', 'train_p99', 'session_p99', 'mvc_global')
+
+
+def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, window=C.WINDOW, scale_part='train_val'):
     """Normalised envelopes for every record in ``all_recs``; statistics from ``train_recs``.
 
-    val_end_frac: the maximum is taken before this fraction of each trial (1.0 = whole-trial 1 kHz maximum).
-    scale_part  : 'train_val' (original) as above; 'train' = maximum of the 100 Hz envelope over the training part
-                  of each training trial only (before the validation block), so validation never shapes the scale.
+    scale_part  : 'train_val' (original) = whole-trial 1 kHz maximum of each training trial; 'train' = maximum of the
+                  100 Hz envelope over the training part of each training trial only (before the validation block),
+                  so validation never shapes the scale.
+    ``kind`` 'agc' (adaptive gain control, always on) is the branch agc_auto takes; it is not a run setting.
     """
     if scale_part == 'train':
         emg_max = np.max(np.stack([r['env_raw'][:_train_part(r, train_frac, window)].max(axis=0)
                                    for r in train_recs]), axis=0)
     elif scale_part != 'train_val':
         raise ValueError(f'scale_part must be train or train_val, got {scale_part!r}')
-    elif val_end_frac >= 1.0:
-        emg_max = np.max(np.stack([r['env_max1k'] for r in train_recs]), axis=0)
     else:
-        emg_max = np.max(np.stack([r['env_raw'][:int(len(r['env_raw']) * val_end_frac)].max(axis=0)
-                                   for r in train_recs]), axis=0)
+        emg_max = np.max(np.stack([r['env_max1k'] for r in train_recs]), axis=0)
     emg_max = np.where(emg_max > 0, emg_max, 1.0)
     base = {r['idx']: r['env_raw'] / emg_max for r in all_recs}
     info = {'kind': kind, 'train_max': emg_max.tolist(), 'scale_part': scale_part}
@@ -71,12 +71,12 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
         dirs = push_directions(bundle, train_recs, base, train_frac, window)
         bidirectional = max(dirs) > AUTO_DIR_NM and min(dirs) < -AUTO_DIR_NM
         out, sub = normalise('trainmax' if bidirectional else 'agc', bundle, train_recs, all_recs,
-                             train_frac, val_end_frac, window, scale_part)
+                             train_frac, window, scale_part)
         sub.update(kind='agc_auto', auto_decision='AGC OFF (pushes in both directions)' if bidirectional
                    else 'AGC ON', push_directions=dirs)
         return out, sub
-    if kind in ('agc', 'agc_soft'):
-        rmin_frac = 0.35 if kind == 'agc' else 0.7
+    if kind == 'agc':
+        rmin_frac = 0.35
         priors = emg_agc.agc_priors([base[r['idx']][:_train_part(r, train_frac, window)] for r in train_recs])
         info.update(rmin_frac=rmin_frac, prior_lo=priors[0].tolist(), prior_hi=priors[1].tolist())
         return {i: _agc(e, priors[0], priors[1], rmin_frac) for i, e in base.items()}, info
@@ -104,16 +104,6 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, val_e
         peak = np.max(np.stack([m['env_peak'] for m in bundle['mvc']]), axis=0)
         info['mvc_peak'] = peak.tolist()
         return {r['idx']: r['env_raw'] / peak for r in all_recs}, info
-    if kind == 'mvc_angle':
-        ang = np.array([m['angle'] for m in bundle['mvc']])
-        pk = np.stack([m['env_peak'] for m in bundle['mvc']])
-        order = np.argsort(ang)
-        ang, pk = ang[order], pk[order]
-        out = {}
-        for r in all_recs:
-            p = np.array([np.interp(r['angle'], ang, pk[:, k]) for k in range(pk.shape[1])])
-            out[r['idx']] = r['env_raw'] / np.maximum(p, 1e-9)
-        return out, info
     raise ValueError(kind)
 
 

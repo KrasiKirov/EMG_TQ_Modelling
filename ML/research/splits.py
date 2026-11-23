@@ -2,8 +2,7 @@
 Evaluation protocols and sliding windows.
 
 S1toS2   train on session 1 (first 80 % of each trial train, last 20 % validation), test on all of session 2
-S2toS1   the same with the sessions swapped
-pooled   every trial of both sessions: 60 % train, 20 % validation, 20 % test, one window span between parts
+         (the only protocol; S2toS1 and pooled were removed in 2026-11, see tag pre-cleanup-2026-11)
 
 A window is WINDOW steps x [GM, GL, SOL, TA, angle]; the target is the active torque at its last step. Each window
 carries metadata (trial, session, angle, time, rest).
@@ -15,8 +14,6 @@ from . import config as C
 
 PROTOCOLS = {
     'S1toS2': {'train': ['S1'], 'test': ['S2']},
-    'S2toS1': {'train': ['S2'], 'test': ['S1']},
-    'pooled': {'train': ['S1', 'S2'], 'test': ['S1', 'S2']},
 }
 
 
@@ -77,8 +74,6 @@ def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=Fal
     test  : one stream per test-session trial; ``first`` = index of the first sample the windowed model scores,
             so the carried-state predictions are scored on the same samples.
     """
-    if protocol == 'pooled':
-        raise ValueError("state='carry' supports the cross-session protocols only")
     spec = PROTOCOLS[protocol]
     span = (window - 1) * step
     out = {'train': [], 'test': []}
@@ -112,22 +107,15 @@ def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, tr
         X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window, step)
         rr = rest[r['idx']] if rest is not None else None
         n = len(X)
-        if protocol != 'pooled':
-            if r['session'] in spec['train']:
-                n_tr = int(n * C.TRAIN_FRAC)
-                n_train_full += n_tr
-                tr = slice(0, n_tr, train_stride)
-                parts['train'].append((X[tr], y[tr], _meta(r, last[tr], 'train', rr)))
-                v0 = n_tr + ((window - 1) * step if val_gap else 0)
-                parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:], 'val', rr)))
-            elif r['session'] in spec['test']:
-                parts['test'].append((X, y, _meta(r, last, 'test', rr)))
-        else:
-            a, b = int(n * 0.6), int(n * 0.8)
-            gap = (window - 1) * step + 1           # one window span between parts
-            sl = {'train': slice(0, a, train_stride), 'val': slice(a + gap, b), 'test': slice(b + gap, n)}
-            for p, s in sl.items():
-                parts[p].append((X[s], y[s], _meta(r, last[s], p, rr)))
+        if r['session'] in spec['train']:
+            n_tr = int(n * C.TRAIN_FRAC)
+            n_train_full += n_tr
+            tr = slice(0, n_tr, train_stride)
+            parts['train'].append((X[tr], y[tr], _meta(r, last[tr], 'train', rr)))
+            v0 = n_tr + ((window - 1) * step if val_gap else 0)
+            parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:], 'val', rr)))
+        elif r['session'] in spec['test']:
+            parts['test'].append((X, y, _meta(r, last, 'test', rr)))
 
     out = {}
     for p, items in parts.items():
