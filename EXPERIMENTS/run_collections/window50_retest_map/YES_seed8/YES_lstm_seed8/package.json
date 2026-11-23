@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "kind": "lstm",
+  "seed": 8,
+  "target_offset": -8.00766372680664,
+  "target_scale": 10.763802528381348,
+  "omit_muscle": null,
+  "preprocessing": {
+    "schema_version": 1,
+    "config": {
+      "sample_rate": 1000,
+      "downsample": 10,
+      "window": 50,
+      "train_stride": 5,
+      "train_fraction": 0.8,
+      "gap_s": 1.0,
+      "edge_trim_s": 1.0,
+      "lp_cutoff": 2.0,
+      "target_mode": "active_torque",
+      "session_passive_calibration": true
+    },
+    "channels": [
+      "gm",
+      "gl",
+      "sol",
+      "ta"
+    ],
+    "emg_scales": [
+      0.038034725934267044,
+      0.022751251235604286,
+      0.014785229228436947,
+      0.005870761815458536
+    ],
+    "passive": {
+      "positions": [
+        -0.5,
+        -0.392857142857,
+        -0.285714285714,
+        -0.178571428571,
+        -0.071428571429,
+        0.035714285714,
+        0.142857142857,
+        0.25
+      ],
+      "torques": [
+        7.9,
+        4.3,
+        2.6,
+        1.8,
+        0.35,
+        -2.6,
+        -3.5,
+        -10.1
+      ],
+      "evidence": [
+        {
+          "source": "reklab_trial_worksheet_YES_20241128.pdf",
+          "sha256": "9c905c91c83d69e5eb4994fb2975edcd59fb7e1ef60fe94137165e66e54ec851",
+          "session": "test",
+          "table": "Test rows P1-P8, Passive TQ column; page 1 visually reviewed",
+          "angle_mapping": "Eight equally spaced positions from +0.25 to -0.5 rad, worksheet sequence [6,1,7,4,5,8,3,2]",
+          "precision": "Handwritten recorded measurements, no within-plateau variance available"
+        }
+      ],
+      "support_margin_rad": 0.015
+    },
+    "passive_by_session": {
+      "test": {
+        "positions": [
+          -0.5,
+          -0.392857142857,
+          -0.285714285714,
+          -0.178571428571,
+          -0.071428571429,
+          0.035714285714,
+          0.142857142857,
+          0.25
+        ],
+        "torques": [
+          7.9,
+          4.3,
+          2.6,
+          1.8,
+          0.35,
+          -2.6,
+          -3.5,
+          -10.1
+        ],
+        "evidence": [
+          {
+            "source": "reklab_trial_worksheet_YES_20241128.pdf",
+            "sha256": "9c905c91c83d69e5eb4994fb2975edcd59fb7e1ef60fe94137165e66e54ec851",
+            "session": "test",
+            "table": "Test rows P1-P8, Passive TQ column; page 1 visually reviewed",
+            "angle_mapping": "Eight equally spaced positions from +0.25 to -0.5 rad, worksheet sequence [6,1,7,4,5,8,3,2]",
+            "precision": "Handwritten recorded measurements, no within-plateau variance available"
+          }
+        ],
+        "support_margin_rad": 0.015
+      },
+      "retest": {
+        "positions": [
+          -0.48467111587524414,
+          -0.1683025360107422,
+          -0.06255924701690674,
+          0.03407788276672363,
+          0.14030396938323975,
+          0.24742257595062256
+        ],
+        "torques": [
+          10.574007034301758,
+          2.454090118408203,
+          0.7327795028686523,
+          -0.3753542900085449,
+          -2.4469375610351562,
+          -5.005359649658203
+        ],
+        "evidence": [
+          {
+            "trial": 28,
+            "session": "retest",
+            "interval": [
+              500,
+              29500
+            ],
+            "position": 0.24742257595062256,
+            "torque": -5.005359649658203,
+            "torque_sd_nm": 0.07614483929022517,
+            "emg_rms": {
+              "gm": 0.001716149922422829,
+              "gl": 0.0017144250380121645,
+              "sol": 0.002004356617664584,
+              "ta": 0.003333174792696975
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 32,
+            "session": "retest",
+            "interval": [
+              500,
+              29500
+            ],
+            "position": -0.06255924701690674,
+            "torque": 0.7327795028686523,
+            "torque_sd_nm": 0.03253264009213748,
+            "emg_rms": {
+              "gm": 0.0017112141347799216,
+              "gl": 0.00168389774003406,
+              "sol": 0.001999901293327918,
+              "ta": 0.001885289866345788
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 34,
+            "session": "retest",
+            "interval": [
+              500,
+              29500
+            ],
+            "position": -0.1683025360107422,
+            "torque": 2.454090118408203,
+            "torque_sd_nm": 0.03109330863020433,
+            "emg_rms": {
+              "gm": 0.0016691003352616426,
+              "gl": 0.0016923955848316607,
+              "sol": 0.001986576305548369,
+              "ta": 0.0018777527162798474
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 36,
+            "session": "retest",
+            "interval": [
+              500,
+              29500
+            ],
+            "position": -0.48467111587524414,
+            "torque": 10.574007034301758,
+            "torque_sd_nm": 0.3200355241910933,
+            "emg_rms": {
+              "gm": 0.001725957930849386,
+              "gl": 0.001827597830756682,
+              "sol": 0.0021319474548447954,
+              "ta": 0.0018594598205888587
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 38,
+            "session": "retest",
+            "interval": [
+              500,
+              29500
+            ],
+            "position": 0.03407788276672363,
+            "torque": -0.3753542900085449,
+            "torque_sd_nm": 0.07360145546218566,
+            "emg_rms": {
+              "gm": 0.0018031494083738735,
+              "gl": 0.001614253399916509,
+              "sol": 0.001982036363119955,
+              "ta": 0.0018904110980459046
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 40,
+            "session": "retest",
+            "interval": [
+              500,
+              29500
+            ],
+            "position": 0.14030396938323975,
+            "torque": -2.4469375610351562,
+            "torque_sd_nm": 0.061614801841784965,
+            "emg_rms": {
+              "gm": 0.0016081995187173647,
+              "gl": 0.0015793453869640036,
+              "sol": 0.001925439984887268,
+              "ta": 0.0018401300230208586
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          }
+        ],
+        "support_margin_rad": 0.015
+      }
+    },
+    "passive_calibration_mode": "session_specific",
+    "position_units": "rad",
+    "target_units": "Nm",
+    "normalization": "training-block max",
+    "mode": "offline",
+    "edge_policy": "independently filtered raw blocks; trimmed both ends",
+    "source_sha256": "21c48d08cd902ff649091f0a4679b6ac18e702b0ce6df27c8685ee19700ca4a7",
+    "manifest_sha256": "e1fd48ea92bea69a91e8d7beb4dd87483f46566197586d28acd25bb028b6d1af"
+  },
+  "observed_training_feature_ranges": {
+    "minimum": [
+      0.0,
+      0.0,
+      0.019382230937480927,
+      0.14396202564239502,
+      -0.4871131181716919
+    ],
+    "maximum": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.24742190539836884
+    ],
+    "interpretation": "Observed range, not a guarantee of physiological validity"
+  },
+  "input_shape": [
+    50,
+    5
+  ]
+}

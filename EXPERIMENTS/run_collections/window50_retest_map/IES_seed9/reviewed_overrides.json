@@ -1,0 +1,33 @@
+{
+  "YES": {
+    "27": {
+      "kind": "active", "session": "retest", "position_id": "p1", "status": "included",
+      "evidence": "Held still at -0.278 rad (5-95 % span 0.005 rad) like every push; matches session-1 push p1 (trial 11, -0.277 rad, torque SD 4.56 vs 4.55 Nm). The file's passive trials all move (span 0.02-0.47 rad), so the 'passive retest' comment is mislabelled."
+    },
+    "29": {
+      "kind": "active", "session": "retest", "position_id": "p2", "status": "included",
+      "evidence": "Held still at +0.245 rad (span 0.006 rad); matches session-1 push p2 (trial 13, +0.245 rad, torque SD 13.17 vs 12.94 Nm). Comment 'passive retest' is mislabelled."
+    },
+    "31": {
+      "kind": "active", "session": "retest", "position_id": "p3", "status": "included",
+      "evidence": "Held still at -0.381 rad (span 0.002 rad); matches session-1 push p3 (trial 15, -0.382 rad, torque SD 2.67 vs 2.22 Nm). Comment 'passive retest' is mislabelled."
+    },
+    "33": {
+      "kind": "active", "session": "retest", "position_id": "p4", "status": "included",
+      "evidence": "Held still at -0.071 rad (span 0.005 rad); matches session-1 push p4 (trial 17, -0.069 rad, torque SD 8.56 vs 8.53 Nm). Comment 'passive retest' is mislabelled."
+    },
+    "passive_calibration": {
+      "positions": [-0.5, -0.392857142857, -0.285714285714, -0.178571428571, -0.071428571429, 0.035714285714, 0.142857142857, 0.25],
+      "torques": [7.9, 4.3, 2.6, 1.8, 0.35, -2.6, -3.5, -10.1],
+      "support_margin_rad": 0.015,
+      "evidence": [{
+        "source": "reklab_trial_worksheet_YES_20241128.pdf",
+        "sha256": "9c905c91c83d69e5eb4994fb2975edcd59fb7e1ef60fe94137165e66e54ec851",
+        "session": "test",
+        "table": "Test rows P1-P8, Passive TQ column; page 1 visually reviewed",
+        "angle_mapping": "Eight equally spaced positions from +0.25 to -0.5 rad, worksheet sequence [6,1,7,4,5,8,3,2]",
+        "precision": "Handwritten recorded measurements, no within-plateau variance available"
+      }]
+    }
+  }
+}

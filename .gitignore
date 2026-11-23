@@ -35,7 +35,6 @@ ML/research/_cache/
 
 # Run logs and the old screening outputs stay local (the old outputs are kept in tag pre-cleanup-2026-11)
 /EXPERIMENTS/logs/
-/EXPERIMENTS/run_collections/
 /ML/archive/
 /ML/research/results/
 

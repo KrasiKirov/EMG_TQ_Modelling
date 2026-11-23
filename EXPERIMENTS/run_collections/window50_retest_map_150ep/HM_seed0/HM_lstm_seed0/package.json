@@ -1,0 +1,573 @@
+{
+  "schema_version": 1,
+  "kind": "lstm",
+  "seed": 0,
+  "target_offset": -3.43631649017334,
+  "target_scale": 3.9913992881774902,
+  "omit_muscle": null,
+  "preprocessing": {
+    "schema_version": 1,
+    "config": {
+      "sample_rate": 1000,
+      "downsample": 10,
+      "window": 50,
+      "train_stride": 5,
+      "train_fraction": 0.8,
+      "gap_s": 1.0,
+      "edge_trim_s": 1.0,
+      "lp_cutoff": 2.0,
+      "target_mode": "active_torque",
+      "session_passive_calibration": true
+    },
+    "channels": [
+      "gm",
+      "gl",
+      "sol",
+      "ta"
+    ],
+    "emg_scales": [
+      0.011772259138524532,
+      0.006229131016880274,
+      0.010312801226973534,
+      0.01740250363945961
+    ],
+    "passive": {
+      "positions": [
+        -0.7865246534347534,
+        -0.6445668935775757,
+        -0.5023893117904663,
+        -0.3606680631637573,
+        -0.21798157691955566,
+        -0.07652318477630615,
+        0.05616438388824463,
+        0.19945299625396729
+      ],
+      "torques": [
+        3.5547256469726562,
+        1.8047332763671875,
+        1.1864662170410156,
+        -0.2149343490600586,
+        -0.6203889846801758,
+        -1.718294620513916,
+        -3.4128904342651367,
+        -6.459259986877441
+      ],
+      "evidence": [
+        {
+          "trial": 9,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": -0.5023893117904663,
+          "torque": 1.1864662170410156,
+          "torque_sd_nm": 0.024422749609814734,
+          "emg_rms": {
+            "gm": 0.0017405770878815535,
+            "gl": 0.001575957191117051,
+            "sol": 0.002409322457851946,
+            "ta": 0.0016657066465188154
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 11,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": 0.19945299625396729,
+          "torque": -6.459259986877441,
+          "torque_sd_nm": 0.051345993045186535,
+          "emg_rms": {
+            "gm": 0.0017798547614609034,
+            "gl": 0.0016514912727680637,
+            "sol": 0.0025046893931148615,
+            "ta": 0.008895773188458802
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 13,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": -0.6445668935775757,
+          "torque": 1.8047332763671875,
+          "torque_sd_nm": 0.04574552866385386,
+          "emg_rms": {
+            "gm": 0.0017441421468106964,
+            "gl": 0.0016612035474418132,
+            "sol": 0.0023277613882451394,
+            "ta": 0.0023215534237535167
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 15,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": -0.21798157691955566,
+          "torque": -0.6203889846801758,
+          "torque_sd_nm": 0.018939373955443053,
+          "emg_rms": {
+            "gm": 0.0017177066333024108,
+            "gl": 0.001568743529204189,
+            "sol": 0.0023347402330582295,
+            "ta": 0.0016697499066446752
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 17,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": -0.3606680631637573,
+          "torque": -0.2149343490600586,
+          "torque_sd_nm": 0.11064436071441125,
+          "emg_rms": {
+            "gm": 0.001903320718092159,
+            "gl": 0.0018732509652685397,
+            "sol": 0.003308143220039542,
+            "ta": 0.0016671348121568644
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 19,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": -0.7865246534347534,
+          "torque": 3.5547256469726562,
+          "torque_sd_nm": 0.025684791856635275,
+          "emg_rms": {
+            "gm": 0.0016890967671731644,
+            "gl": 0.001858455257909695,
+            "sol": 0.0025921926964156167,
+            "ta": 0.0028076818277658405
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 21,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": -0.07652318477630615,
+          "torque": -1.718294620513916,
+          "torque_sd_nm": 0.02832174181020597,
+          "emg_rms": {
+            "gm": 0.0016734682590515441,
+            "gl": 0.0015929632595451124,
+            "sol": 0.002468717607283518,
+            "ta": 0.001642199719222271
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        },
+        {
+          "trial": 23,
+          "session": "test",
+          "interval": [
+            500,
+            19500
+          ],
+          "position": 0.05616438388824463,
+          "torque": -3.4128904342651367,
+          "torque_sd_nm": 0.1310528688470674,
+          "emg_rms": {
+            "gm": 0.001687140469988975,
+            "gl": 0.0016012731674628544,
+            "sol": 0.0023957935848407455,
+            "ta": 0.001867861352048574
+          },
+          "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+        }
+      ],
+      "support_margin_rad": 0.015
+    },
+    "passive_by_session": {
+      "test": {
+        "positions": [
+          -0.7865246534347534,
+          -0.6445668935775757,
+          -0.5023893117904663,
+          -0.3606680631637573,
+          -0.21798157691955566,
+          -0.07652318477630615,
+          0.05616438388824463,
+          0.19945299625396729
+        ],
+        "torques": [
+          3.5547256469726562,
+          1.8047332763671875,
+          1.1864662170410156,
+          -0.2149343490600586,
+          -0.6203889846801758,
+          -1.718294620513916,
+          -3.4128904342651367,
+          -6.459259986877441
+        ],
+        "evidence": [
+          {
+            "trial": 9,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.5023893117904663,
+            "torque": 1.1864662170410156,
+            "torque_sd_nm": 0.024422749609814734,
+            "emg_rms": {
+              "gm": 0.0017405770878815535,
+              "gl": 0.001575957191117051,
+              "sol": 0.002409322457851946,
+              "ta": 0.0016657066465188154
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 11,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": 0.19945299625396729,
+            "torque": -6.459259986877441,
+            "torque_sd_nm": 0.051345993045186535,
+            "emg_rms": {
+              "gm": 0.0017798547614609034,
+              "gl": 0.0016514912727680637,
+              "sol": 0.0025046893931148615,
+              "ta": 0.008895773188458802
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 13,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.6445668935775757,
+            "torque": 1.8047332763671875,
+            "torque_sd_nm": 0.04574552866385386,
+            "emg_rms": {
+              "gm": 0.0017441421468106964,
+              "gl": 0.0016612035474418132,
+              "sol": 0.0023277613882451394,
+              "ta": 0.0023215534237535167
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 15,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.21798157691955566,
+            "torque": -0.6203889846801758,
+            "torque_sd_nm": 0.018939373955443053,
+            "emg_rms": {
+              "gm": 0.0017177066333024108,
+              "gl": 0.001568743529204189,
+              "sol": 0.0023347402330582295,
+              "ta": 0.0016697499066446752
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 17,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.3606680631637573,
+            "torque": -0.2149343490600586,
+            "torque_sd_nm": 0.11064436071441125,
+            "emg_rms": {
+              "gm": 0.001903320718092159,
+              "gl": 0.0018732509652685397,
+              "sol": 0.003308143220039542,
+              "ta": 0.0016671348121568644
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 19,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.7865246534347534,
+            "torque": 3.5547256469726562,
+            "torque_sd_nm": 0.025684791856635275,
+            "emg_rms": {
+              "gm": 0.0016890967671731644,
+              "gl": 0.001858455257909695,
+              "sol": 0.0025921926964156167,
+              "ta": 0.0028076818277658405
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 21,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.07652318477630615,
+            "torque": -1.718294620513916,
+            "torque_sd_nm": 0.02832174181020597,
+            "emg_rms": {
+              "gm": 0.0016734682590515441,
+              "gl": 0.0015929632595451124,
+              "sol": 0.002468717607283518,
+              "ta": 0.001642199719222271
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 23,
+            "session": "test",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": 0.05616438388824463,
+            "torque": -3.4128904342651367,
+            "torque_sd_nm": 0.1310528688470674,
+            "emg_rms": {
+              "gm": 0.001687140469988975,
+              "gl": 0.0016012731674628544,
+              "sol": 0.0023957935848407455,
+              "ta": 0.001867861352048574
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          }
+        ],
+        "support_margin_rad": 0.015
+      },
+      "retest": {
+        "positions": [
+          -0.7882635593414307,
+          -0.6450948715209961,
+          -0.5024560689926147,
+          -0.3607809543609619,
+          -0.21889054775238037,
+          -0.07786214351654053,
+          0.05434000492095947,
+          0.19640600681304932
+        ],
+        "torques": [
+          3.0217885971069336,
+          2.7091145515441895,
+          1.3160467147827148,
+          0.6745338439941406,
+          0.04248619079589844,
+          -1.6592741012573242,
+          -3.5151124000549316,
+          -7.306110858917236
+        ],
+        "evidence": [
+          {
+            "trial": 25,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.5024560689926147,
+            "torque": 1.3160467147827148,
+            "torque_sd_nm": 0.026921007123285254,
+            "emg_rms": {
+              "gm": 0.001652953098996731,
+              "gl": 0.0020098066318852722,
+              "sol": 0.002279768741946848,
+              "ta": 0.0016432361144236745
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 27,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": 0.19640600681304932,
+            "torque": -7.306110858917236,
+            "torque_sd_nm": 0.11631426411130337,
+            "emg_rms": {
+              "gm": 0.0016496258993025557,
+              "gl": 0.0019799514935761988,
+              "sol": 0.002205992617226539,
+              "ta": 0.0017456020526127871
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 29,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.6450948715209961,
+            "torque": 2.7091145515441895,
+            "torque_sd_nm": 0.032962480564190315,
+            "emg_rms": {
+              "gm": 0.0016336104134271013,
+              "gl": 0.0019705328416647913,
+              "sol": 0.002278159442403756,
+              "ta": 0.0015977963805194233
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 31,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.21889054775238037,
+            "torque": 0.04248619079589844,
+            "torque_sd_nm": 0.025739037701075128,
+            "emg_rms": {
+              "gm": 0.0016295569346079315,
+              "gl": 0.0018705506973340624,
+              "sol": 0.0022948951169271163,
+              "ta": 0.0016168675894216505
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 33,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.3607809543609619,
+            "torque": 0.6745338439941406,
+            "torque_sd_nm": 0.023548931843626938,
+            "emg_rms": {
+              "gm": 0.0016230767403600578,
+              "gl": 0.0017788508234478403,
+              "sol": 0.002285145847960533,
+              "ta": 0.0016119891023113958
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 35,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.7882635593414307,
+            "torque": 3.0217885971069336,
+            "torque_sd_nm": 0.025422465718917507,
+            "emg_rms": {
+              "gm": 0.0016427705860258524,
+              "gl": 0.0017861245368549442,
+              "sol": 0.0023238924288259835,
+              "ta": 0.0015886311751188236
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 37,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": -0.07786214351654053,
+            "torque": -1.6592741012573242,
+            "torque_sd_nm": 0.037810541423344786,
+            "emg_rms": {
+              "gm": 0.0016204478355254157,
+              "gl": 0.001764359945154951,
+              "sol": 0.0024342636866047647,
+              "ta": 0.001588731626528403
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          },
+          {
+            "trial": 39,
+            "session": "retest",
+            "interval": [
+              500,
+              19500
+            ],
+            "position": 0.05434000492095947,
+            "torque": -3.5151124000549316,
+            "torque_sd_nm": 0.037272687356700564,
+            "emg_rms": {
+              "gm": 0.0016074275216715502,
+              "gl": 0.0017016510129890254,
+              "sol": 0.002410904512958884,
+              "ta": 0.001585528184082789
+            },
+            "relaxation_evidence": "passive acquisition label; EMG RMS retained for review"
+          }
+        ],
+        "support_margin_rad": 0.015
+      }
+    },
+    "passive_calibration_mode": "session_specific",
+    "position_units": "rad",
+    "target_units": "Nm",
+    "normalization": "training-block max",
+    "mode": "offline",
+    "edge_policy": "independently filtered raw blocks; trimmed both ends",
+    "source_sha256": "53871d4ac397c00b8768b7a21a9328ce93d81c95237a670a76648b5256afa898",
+    "manifest_sha256": "bc775cf7cac747b25bc3187dc7a1a97f9a6cabc84f6afb08ec49d8f777388c29"
+  },
+  "observed_training_feature_ranges": {
+    "minimum": [
+      0.023012647405266762,
+      0.0960974469780922,
+      0.07073066383600235,
+      0.006692592054605484,
+      -0.7881723046302795
+    ],
+    "maximum": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.1997838318347931
+    ],
+    "interpretation": "Observed range, not a guarantee of physiological validity"
+  },
+  "input_shape": [
+    50,
+    5
+  ]
+}
