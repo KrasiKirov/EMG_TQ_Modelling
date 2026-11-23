@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import ReactEChartsCore from 'echarts-for-react/esm/core';
 import * as echarts from 'echarts/core';
 import { BarChart, BoxplotChart, CustomChart, HeatmapChart, LineChart, ScatterChart } from 'echarts/charts';
@@ -42,9 +42,20 @@ export function EChart({
     }),
     [],
   );
+  // a chart created in a container that had no width yet (a panel still opening, a hidden tab) keeps ECharts' 100 px
+  // default; watch the wrapper and resize the chart whenever its width changes
+  const box = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<ReactEChartsCore>(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => chartRef.current?.getEchartsInstance()?.resize());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   return (
-    <div role="img" aria-label={label} style={{ width: '100%', height, position: 'relative' }}>
-      <ReactEChartsCore echarts={echarts} option={option} notMerge lazyUpdate opts={OPTS} onEvents={events} style={{ width: '100%', height }} />
+    <div ref={box} role="img" aria-label={label} style={{ width: '100%', height, position: 'relative' }}>
+      <ReactEChartsCore ref={chartRef} echarts={echarts} option={option} notMerge lazyUpdate opts={OPTS} onEvents={events} style={{ width: '100%', height }} />
     </div>
   );
 }

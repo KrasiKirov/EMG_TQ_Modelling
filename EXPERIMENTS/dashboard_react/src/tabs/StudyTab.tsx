@@ -80,13 +80,13 @@ export function StudyTab() {
           Showing: <b>{e.title}</b>{st.units ? ` · ${st.units} units × ${plural(st.layers ?? 0, 'layer')}` : ''} · {people.length} people · {seedRange(seeds)} per person
           {' '}· <Text span c="dimmed" size="sm">{e.id}</Text>
         </Text>
+      </div>
+      <Stack gap={4} mt={-8}>
         {moved.length > 0 && (
-          <Text size="sm" c="dimmed" mt={4} data-testid="setting-moved">
+          <Text size="sm" data-testid="setting-moved">
             No setting has exactly that combination, so the nearest one is shown. Also changed: {moved.join('; ')}.
           </Text>
         )}
-      </div>
-      <Stack gap={4} mt={-8}>
         {notes.length > 0 && (
           <Stack gap={4} data-testid="setting-notes">
             {notes.map((n) => <Note key={n}>{n}</Note>)}
