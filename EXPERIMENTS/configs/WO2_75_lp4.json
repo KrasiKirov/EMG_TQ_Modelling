@@ -17,16 +17,5 @@
   "train_stride": 5,
   "train_protocol": "fast",
   "lp_order": 4
- },
- "dashboard": {
-  "group": "Window study · earlier rounds",
-  "label": "Overlap 75 % (4th)",
-  "name": "Overlap 75 % (a new 200 ms window every 50 ms) · 4th-order envelope",
-  "order": 21,
-  "blurb": "Training uses every 5th window: consecutive training windows share 75 % (a fifth of the training windows).",
-  "text": {
-   "purpose": "First round, 4th-order envelope low-pass (about 230 ms lag); kept for comparison with the 2nd-order round. Training uses every 5th window: consecutive training windows share 75 % (a fifth of the training windows). Everything else as the reference: Active torque (each session's own relaxed-hold passive torque subtracted), EMG ÷ session-1 maximum, per-angle loss scaling, LSTM 8×2 trained with batch 64 (fast protocol: learning rate × 0.5 after 6 flat epochs, early stop 15, at most 150 epochs), trained on session 1 and tested on session 2, 6 people × 10 seeds. The EMG envelope is causal (forward-only filters: no input uses later EMG, as in a real-time device) and the first and last 1 s of every trial are cut. Caveat: fewer training windows also means proportionally fewer weight updates per epoch, under the same epoch limit and early stopping, so this setting changes the amount of training as well as the overlap.",
-   "target": "Active torque = measured torque − passive torque from the same session's 30 s relaxed holds (IES recorded no relaxed holds and no passive table was used, so nothing is subtracted: IES is total torque here). No calibration."
-  }
  }
 }

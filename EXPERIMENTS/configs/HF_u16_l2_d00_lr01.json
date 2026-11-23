@@ -22,12 +22,5 @@
   "dropout": 0.0,
   "lr": 0.01,
   "shuffle": false
- },
- "dashboard": {
-  "group": "Hyperparameter search",
-  "label": "16×2 · dropout 0 · lr 0.01 (chosen)",
-  "name": "Chosen network: 16 units × 2 layers, dropout 0, learning rate 0.01",
-  "order": 1,
-  "blurb": "Best finalist on validation loss (−42 % vs the previous network, 6/6 people); used by the whole window study, which stops at 150 epochs."
  }
 }

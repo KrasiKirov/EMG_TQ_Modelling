@@ -6,10 +6,6 @@ Fields
   tags                      optional list of strings
   changes                   required; overrides of the training baseline (read by pipeline/run.py)
   results_from              optional; reuse another experiment's saved predictions (scoring-only variants)
-  dashboard                 optional; present = shown in the dashboard
-                            {"group", "label", "id"?, "name"?, "order"?, "blurb"?, "text"?}
-                            text may hold purpose/target/protocol/overview/params and report (a
-                            repo-relative Markdown file shown on the experiment page)
 """
 from __future__ import annotations
 
@@ -27,17 +23,6 @@ class SpecError(ValueError):
 
 
 @dataclass
-class DashboardEntry:
-    id: str
-    group: str
-    label: str
-    name: str
-    order: int = 100
-    blurb: str = ''
-    text: dict = field(default_factory=dict)   # optional verbatim purpose/target/protocol/overview/params
-
-
-@dataclass
 class Spec:
     id: str
     title: str
@@ -45,7 +30,6 @@ class Spec:
     tags: list
     changes: dict
     results_from: str
-    dashboard: DashboardEntry | None
     raw: dict = field(repr=False)
 
 
@@ -55,6 +39,8 @@ def parse(raw: dict, stem: str | None = None) -> Spec:
             raise SpecError(f'missing field {key!r}')
     if 'calibration' in raw:
         raise SpecError('calibration was removed: predictions are always scored as saved, on the whole trial')
+    if 'dashboard' in raw:
+        raise SpecError('the dashboard block was removed with the v1 dashboard')
     if not ID_RE.match(raw['id']):
         raise SpecError(f'invalid id {raw["id"]!r}')
     if stem is not None and stem != raw['id']:
@@ -64,18 +50,9 @@ def parse(raw: dict, stem: str | None = None) -> Spec:
     tags = raw.get('tags', [])
     if not (isinstance(tags, list) and all(isinstance(t, str) for t in tags)):
         raise SpecError('tags must be a list of strings')
-    entry = None
-    dash = raw.get('dashboard')
-    if dash is not None:
-        for key in ('group', 'label'):
-            if not dash.get(key):
-                raise SpecError(f'dashboard.{key} is required')
-        entry = DashboardEntry(id=dash.get('id', raw['id']), group=dash['group'], label=dash['label'],
-                               name=dash.get('name', dash['label']), order=int(dash.get('order', 100)),
-                               blurb=dash.get('blurb', ''), text=dict(dash.get('text', {})))
     return Spec(id=raw['id'], title=raw['title'], description=raw.get('description') or raw.get('hypothesis') or '',
                 tags=list(tags), changes=dict(raw['changes']),
-                results_from=raw.get('results_from', raw['id']), dashboard=entry, raw=raw)
+                results_from=raw.get('results_from', raw['id']), raw=raw)
 
 
 def load(exp_id: str, configs: Path = None) -> Spec:
@@ -89,25 +66,3 @@ def load_all(configs: Path = None) -> list:
     configs = Path(configs or CONFIGS)
     return [load(p.stem, configs) for p in sorted(configs.glob('*.json'))]
 
-
-def tag(exp_id, *, label, group, name=None, description=None, tags=None, order=None, blurb=None,
-        configs: Path = None, dry_run=False) -> Spec:
-    """Add or update a spec's dashboard entry (and optionally description/tags); validate before writing.
-    Tags given here replace the spec's tags. dry_run=True validates and returns the result without writing."""
-    path = Path(configs or CONFIGS) / f'{exp_id}.json'
-    raw = json.loads(path.read_text(encoding='utf-8'))
-    dash = dict(raw.get('dashboard') or {})
-    dash.update(group=group, label=label)
-    for key, value in (('name', name), ('order', order), ('blurb', blurb)):
-        if value is not None:
-            dash[key] = value
-    raw['dashboard'] = dash
-    if description is not None:
-        raw['description'] = description
-    if tags is not None:
-        raw['tags'] = sorted(set(tags))
-    spec = parse(raw, path.stem)
-    if dry_run:
-        return spec
-    path.write_text(json.dumps(raw, indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
-    return spec

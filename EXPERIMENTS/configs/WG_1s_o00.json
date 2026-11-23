@@ -26,16 +26,5 @@
   "layers": 2,
   "dropout": 0.0,
   "lr": 0.01
- },
- "dashboard": {
-  "group": "Window study · overlap × length",
-  "label": "1 s · 0 %",
-  "name": "1 s window, 0 % overlap",
-  "order": 113,
-  "blurb": "1 s window, a new training window every 1000 ms (0 % overlap).",
-  "text": {
-   "purpose": "1 s window (20 steps of 50 ms) with 0 % overlap between consecutive training windows: a new training window every 1000 ms (1/100 of the windows of the \"Length 1 s\" setting, which starts a window every 10 ms). Validation and test keep every window. Caveat: fewer windows also means proportionally fewer weight updates per epoch under the same epoch limit, so this changes the amount of training as well as the overlap. Everything else as the reference: Active torque (each session's own relaxed-hold passive torque subtracted), EMG ÷ session-1 maximum, no per-angle loss scaling (plain mean-squared error, every angle weighted by its own torque), LSTM 16 units × 2 layers, dropout 0.0, learning rate 0.01 (chosen by a validation-loss search), trained with batch 64 for at most 150 epochs (fast protocol: learning rate × 0.5 after 6 flat epochs, early stop 15, at most 150 epochs), trained on session 1 and tested on session 2, 6 people × 10 seeds. The EMG envelope is causal (forward-only filters: no input uses later EMG, as in a real-time device; 2nd-order 2 Hz low-pass, about 125 ms lag) and the first and last 1 s of every trial are cut. Validation windows start one window span after the training part of each trial, so no validation window reuses training inputs (purged split). Training windows are fed in time order (no shuffling).",
-   "target": "Active torque = measured torque − passive torque from the same session's 30 s relaxed holds (IES recorded no relaxed holds: its passive torque comes from the MVC-trial table in its experiment metadata, one table for both sessions). No calibration."
-  }
  }
 }

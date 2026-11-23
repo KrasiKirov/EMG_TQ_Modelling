@@ -22,12 +22,5 @@
   "dropout": 0.0,
   "lr": 0.01,
   "shuffle": false
- },
- "dashboard": {
-  "group": "Hyperparameter search",
-  "label": "8×2 · dropout 0 · lr 0.01",
-  "name": "Finalist: 8 units × 2 layers, dropout 0, learning rate 0.01",
-  "order": 4,
-  "blurb": "Smallest network within one standard error in the screen (−36 % in the finalist round); added so the final rule could still prefer it."
  }
 }

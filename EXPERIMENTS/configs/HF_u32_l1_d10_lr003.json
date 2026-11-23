@@ -22,12 +22,5 @@
   "dropout": 0.1,
   "lr": 0.003,
   "shuffle": false
- },
- "dashboard": {
-  "group": "Hyperparameter search",
-  "label": "32×1 · dropout 0.1 · lr 0.003",
-  "name": "Finalist: 32 units × 1 layer, dropout 0.1, learning rate 0.003",
-  "order": 2,
-  "blurb": "Second on validation loss (−39 %); tied with the chosen network person by person (3 better, 3 worse)."
  }
 }

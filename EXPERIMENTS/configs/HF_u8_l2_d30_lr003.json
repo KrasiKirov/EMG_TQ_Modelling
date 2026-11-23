@@ -22,12 +22,5 @@
   "dropout": 0.3,
   "lr": 0.003,
   "shuffle": false
- },
- "dashboard": {
-  "group": "Hyperparameter search",
-  "label": "8×2 · dropout 0.3 · lr 0.003 (previous)",
-  "name": "Previous network: 8 units × 2 layers, dropout 0.3, learning rate 0.003",
-  "order": 6,
-  "blurb": "The original A0 hyperparameters, trained the same way (batch 64, no shuffling, up to 400 epochs): the reference for the search."
  }
 }

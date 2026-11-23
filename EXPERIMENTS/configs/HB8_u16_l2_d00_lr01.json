@@ -22,12 +22,5 @@
   "dropout": 0.0,
   "lr": 0.01,
   "shuffle": false
- },
- "dashboard": {
-  "group": "Hyperparameter search",
-  "label": "Chosen network, batch 8",
-  "name": "Batch-size check: the chosen network with batch 8",
-  "order": 7,
-  "blurb": "Original A0 training (batch 8, up to 200 epochs) at the learning rate tuned for batch 64 (0.01), which is too high for batch 8: not a fair test of batch 8 in general."
  }
 }

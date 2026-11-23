@@ -25,16 +25,5 @@
   "layers": 2,
   "dropout": 0.0,
   "lr": 0.01
- },
- "dashboard": {
-  "group": "Window study · total torque",
-  "label": "Length 5 s (total)",
-  "name": "Window 5 s (100 steps of 50 ms) · total torque",
-  "order": 1013,
-  "blurb": "100 steps spaced 50 ms apart cover 5 s of history.",
-  "text": {
-   "purpose": "Total-torque version (nothing subtracted): 100 steps spaced 50 ms apart cover 5 s of history. Predictions start 5 s into each trial. Everything else as the reference: EMG ÷ session-1 maximum, no per-angle loss scaling (plain mean-squared error, every angle weighted by its own torque), LSTM 16 units × 2 layers, dropout 0.0, learning rate 0.01 (chosen by a validation-loss search), trained with batch 64 for at most 150 epochs (fast protocol: learning rate × 0.5 after 6 flat epochs, early stop 15, at most 150 epochs), trained on session 1 and tested on session 2, 6 people × 10 seeds. The EMG envelope is causal (forward-only filters: no input uses later EMG, as in a real-time device; 2nd-order 2 Hz low-pass, about 125 ms lag) and the first and last 1 s of every trial are cut. Validation windows start one window span after the training part of each trial, so no validation window reuses training inputs (purged split). Training windows are fed in time order (no shuffling).",
-   "target": "Total measured torque: nothing subtracted (as the net joint torque of Zhang 2022 and Truong 2023). No calibration."
-  }
  }
 }
