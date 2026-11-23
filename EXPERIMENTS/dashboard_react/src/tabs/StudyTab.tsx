@@ -72,11 +72,11 @@ export function StudyTab() {
       <div className="filters" data-testid="filters">
         <Group gap="md" wrap="wrap" align="end">
           {PARAMS.map((x) => (
-            <Select key={x.key} label={x.label} aria-label={x.label} w={x.key === 'model' ? 260 : 190} value={e.params[x.key]} allowDeselect={false}
+            <Select key={x.key} label={x.label} aria-label={x.label} w={x.key === 'model' ? 240 : 170} value={e.params[x.key]} allowDeselect={false}
               data={valuesOf(x.key)} onChange={(v) => v && choose(x.key, v)} />
           ))}
         </Group>
-        <Text size="sm" mt="sm" data-testid="setting-name">
+        <Text size="sm" mt={6} data-testid="setting-name">
           Showing: <b>{e.title}</b>{st.units ? ` · ${st.units} units × ${plural(st.layers ?? 0, 'layer')}` : ''} · {people.length} people · {seedRange(seeds)} per person
           {' '}· <Text span c="dimmed" size="sm">{e.id}</Text>
         </Text>
@@ -85,15 +85,17 @@ export function StudyTab() {
             No setting has exactly that combination, so the nearest one is shown. Also changed: {moved.join('; ')}.
           </Text>
         )}
+      </div>
+      <Stack gap={4} mt={-8}>
         {notes.length > 0 && (
-          <Stack gap={4} mt="sm" data-testid="setting-notes">
+          <Stack gap={4} data-testid="setting-notes">
             {notes.map((n) => <Note key={n}>{n}</Note>)}
           </Stack>
         )}
-        <Text size="xs" c="dimmed" mt="sm">
+        <Text size="xs" c="dimmed">
           {e.target === 'total' ? 'Total torque: the measured torque.' : 'Active torque: measured torque minus the passive torque from the tested session\'s own relaxed holds (YES: lab worksheet; IES: experiment-sheet values, it has no relaxed holds).'}
         </Text>
-      </div>
+      </Stack>
       <Summary people={people} />
       <WorstPositions id={pick} people={people} />
       <PerPosition people={people} m="mae" />

@@ -39,15 +39,15 @@ export interface Entry { id: string; group: 'v2'; title: string; params: Record<
 
 export const DEFAULT = 'FE_A0';
 export const PARAMS: Param[] = [
-  { key: 'model', label: 'Model' }, { key: 'window', label: 'Window' }, { key: 'overlap', label: 'Overlap' },
-  { key: 'state', label: 'LSTM state' }, { key: 'torque', label: 'Torque' },
+  { key: 'model', label: 'Model' }, { key: 'window', label: 'Window length' }, { key: 'overlap', label: 'Overlap' },
+  { key: 'state', label: 'Memory across windows' }, { key: 'torque', label: 'Torque target' },
 ];
 /** each filter's values in display order */
 const ORDER: Record<string, string[]> = {
   model: ['tuned LSTM', "last semester's network (8×2)", 'lagged ridge'],
   window: ['0.2 s', '0.5 s', '1 s'],
   overlap: ['full', '75 %', '50 %', '0 %', 'n/a'],
-  state: ['reset each window', 'carried, 2 s chunks', 'carried, 5 s chunks', 'carried, 10 s chunks', 'n/a'],
+  state: ['reset each window', 'carried, 2 s', 'carried, 5 s', 'carried, 10 s', 'n/a'],
   torque: ['active', 'total'],
 };
 
@@ -58,7 +58,7 @@ function paramsOf(s: Setting): Record<string, string> {
     window: `${Math.round(s.window_s * 10) / 10} s`,
     // stride 13 of 50 samples is 74 %: shown as the grid's 75 %
     overlap: s.overlap === null ? 'n/a' : s.overlap === 'full' ? 'full' : `${Math.round((s.overlap * 100) / 25) * 25} %`,
-    state: s.state === null ? 'n/a' : s.state === 'carry' ? `carried, ${s.chunk_s} s chunks` : 'reset each window',
+    state: s.state === null ? 'n/a' : s.state === 'carry' ? `carried, ${s.chunk_s} s` : 'reset each window',
     torque: s.target,
   };
 }
