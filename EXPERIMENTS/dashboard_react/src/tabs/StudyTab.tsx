@@ -190,12 +190,8 @@ function Summary({ people }: { people: PersonRuns[] }) {
   }));
   rows.push({ subj: 'Median', nmae: median(rows.map((r) => r.nmae)), mae: median(rows.map((r) => r.mae)), r2: median(rows.map((r) => r.r2)),
     worst: median(rows.map((r) => r.worst)), peak: median(rows.map((r) => r.peak)), nmaeCI: null, maeCI: null, r2CI: null });
-  // the study's own way of combining people: exp of the mean of log nMAE (nMAE only)
-  const own = rows.filter((r) => r.subj !== 'Median' && Number.isFinite(r.nmae) && r.nmae > 0);
-  rows.push({ subj: 'Combined', nmae: own.length ? Math.exp(own.reduce((s, r) => s + Math.log(r.nmae), 0) / own.length) : NaN,
-    mae: NaN, r2: NaN, worst: NaN, peak: NaN, nmaeCI: null, maeCI: null, r2CI: null });
   const cols: Column<Row>[] = [
-    { key: 'subj', label: 'Person', render: (r) => (r.subj === 'Median' || r.subj === 'Combined' ? <b>{r.subj}</b> : r.subj) },
+    { key: 'subj', label: 'Person', render: (r) => (r.subj === 'Median' ? <b>{r.subj}</b> : r.subj) },
     { key: 'nmae', label: 'nMAE', align: 'right', render: (r) => withCI(r.nmae, r.nmaeCI, 3) },
     { key: 'mae', label: 'MAE (Nm)', align: 'right', render: (r) => withCI(r.mae, r.maeCI, 2) },
     { key: 'r2', label: 'R², median of positions', align: 'right', render: (r) => withCI(r.r2, r.r2CI, 2) },
@@ -212,8 +208,7 @@ function Summary({ people }: { people: PersonRuns[] }) {
         MAE (Nm): the same without the division. R²: within each position (one trial at one angle); the median of the positions hides the bad ones, so
         the worst position is shown too (per seed the lowest R², then the median over seeds). Peak torque: the largest |measured torque| of the
         predicted target over the scored samples. [ ]: interval for the median over seeds (about 95 %; none with 1 seed); it shows training
-        randomness only. Median: the plain median of the 6 people. Combined: exp of the mean over people of log nMAE, the study's own way of
-        combining people (nMAE only; other columns –).</Text>
+        randomness only. Median: the plain median of the 6 people.</Text>
           <DataTable columns={cols} rows={rows} rowKey={(r) => r.subj} dense minWidth={900} />
         </Accordion.Panel>
       </Accordion.Item>

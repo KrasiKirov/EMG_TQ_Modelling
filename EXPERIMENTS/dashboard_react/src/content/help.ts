@@ -32,7 +32,6 @@ export const HELP_SECTIONS: HelpSection[] = [
       ['R² per position', 'Within one trial (one angle): how well the torque changes are followed. 1 = perfect, 0 = no better than the trial\'s mean, below 0 = worse than that.'],
       ['Seeds', 'A seed sets the network\'s random starting weights. Cell winners have seeds 10–12; A0, A2 and A3 seeds 10–19; A1 has one run (seed 10). Each person\'s value is the median over seeds.'],
       ['[lo, hi]', 'An interval for that median over seeds (about 95 %; none with 1 seed). It shows training randomness only, not how much results would change with other trials or other people.'],
-      ['Combined', 'Under the per-person rows: exp of the mean over people of log nMAE, the study\'s own way of combining people (the same as its selection scores). The Median row is the plain median of the 6 people.'],
     ],
   },
 ];
