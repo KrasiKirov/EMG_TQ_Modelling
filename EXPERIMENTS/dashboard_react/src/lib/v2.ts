@@ -11,7 +11,8 @@ interface Setting extends Net {
   window_s: number; overlap: number | 'full' | null; state: 'reset' | 'carry' | null; chunk_s: number | null;
   target: 'active' | 'total';
 }
-interface FinalPerson { positions: number[]; seeds: number[]; mae: Num[][]; nmae: Num[][]; r2: Num[][]; peak: number[]; train_s: Record<string, Num> }
+interface TrainInfo { best_epoch: Num; epochs: Num; n_params: Num }
+interface FinalPerson { positions: number[]; seeds: number[]; mae: Num[][]; nmae: Num[][]; r2: Num[][]; peak: number[]; train_s: Record<string, Num>; train?: Record<string, TrainInfo> }
 interface TuningConfig { id: string; seeds: number[]; val_nmae?: Record<string, number>; incomplete?: boolean; params: Net | null }
 interface Compared { arm: string; comparator: string; effects: Record<string, number>; effect: number; decision: string }
 interface Pooled { lengths?: string[]; per_length?: Record<string, Record<string, number>>; effects?: Record<string, number>; effect?: number; decision: string }
@@ -165,4 +166,46 @@ export function choiceOf(id: string): ChoiceInfo {
     }).sort((a, b) => a.score - b.score);
   }
   return info;
+}
+
+// ── the tuning experiment and the overfitting check (session-1 validation vs session 2) ──
+export interface TuningRun { cell: string; round: string; config: string; id: string; units: number; layers: number; dropout: number; lr: number; score: number }
+/** every tuning run with a complete validation score: 172 configurations over the 16 tuned window cells */
+export function tuningRuns(): TuningRun[] {
+  return Object.entries(D.tuning).flatMap(([cell, rounds]) => Object.entries(rounds).flatMap(([r, cfgs]) => Object.entries(cfgs)
+    .filter(([, c]) => c.val_nmae && c.params && c.params.units !== null)
+    .map(([config, c]) => ({ cell, round: ROUND[r] ?? r, config, id: c.id, units: c.params!.units as number, layers: c.params!.layers as number,
+      dropout: c.params!.dropout as number, lr: c.params!.lr as number, score: geo(c.val_nmae!) }))));
+}
+export const isWinner = (configId: string) => Object.values(CONFIRM.choice.cell_winners).includes(configId);
+export const kindOf = (id: string) => D.settings[id].kind;
+export const cellOf = (id: string) => D.settings[id].cell;
+/** the network of a setting, as "64×1" (null for ridge) */
+export const sizeOf = (id: string) => { const s = D.settings[id]; return s.units ? `${s.units}×${s.layers}` : null; };
+
+/** this setting's training, median over every final run: the epoch whose weights were kept, epochs run, weights */
+export function trainOf(id: string): { bestEpoch: number; epochs: number; nParams: number; runs: number } | null {
+  const xs = Object.values(D.final[id] ?? {}).flatMap((f) => Object.values(f.train ?? {}));
+  const ok = xs.filter((x) => typeof x.best_epoch === 'number' && typeof x.epochs === 'number' && (x.epochs as number) > 0);
+  if (!ok.length) return null;
+  const med = (v: number[]) => { const a = [...v].sort((x, y) => x - y); const m = a.length >> 1; return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; };
+  return { bestEpoch: med(ok.map((x) => x.best_epoch as number)), epochs: med(ok.map((x) => x.epochs as number)),
+    nParams: med(ok.map((x) => x.n_params as number)), runs: ok.length };
+}
+
+export interface OverfitPoint { id: string; title: string; size: string; val: number; test: number }
+/** each tuned cell winner and last semester's network: its selection score on session-1 validation against its
+ * session-2 nMAE (both exp of the mean over people of log nMAE; session 2 per person the median over seeds) */
+export function overfitPoints(test: (id: string) => number): OverfitPoint[] {
+  const cfg = new Map(tuningRuns().map((r) => [r.id, r]));
+  const out: OverfitPoint[] = [];
+  for (const [cell, w] of Object.entries(CONFIRM.choice.cell_winners)) {
+    const pid = pageId(`FE_cell_${cell}`), r = cfg.get(w);
+    if (!r || !has(pid)) continue;
+    out.push({ id: pid, title: entry(pid).title, size: `${r.units}×${r.layers}`, val: r.score, test: test(pid) });
+  }
+  const anchor = Object.values(D.tuning.w20_full?.R1 ?? {}).find((c) => c.id.endsWith('_anchor'));
+  const a2 = Object.keys(D.settings).find((k) => D.settings[k].kind === 'A2');
+  if (anchor?.val_nmae && a2) out.push({ id: a2, title: entry(a2).title, size: '8×2', val: geo(anchor.val_nmae), test: test(a2) });
+  return out.filter((p) => Number.isFinite(p.test));
 }

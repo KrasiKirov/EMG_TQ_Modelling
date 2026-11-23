@@ -92,3 +92,6 @@ body { color: var(--c-ink); }
 
 /* parameter filters: stay under the top bar while the results scroll */
 .filters { position: sticky; top: 56px; z-index: 20; background: #ffffff; border: 1px solid var(--line); border-radius: 4px; padding: 8px 12px; }
+
+/* plain-language takeaway under a section */
+.takeaway { border-left: 4px solid var(--accent, #2b6cb0); background: #f4f8fc; border-radius: 4px; padding: 10px 14px; }

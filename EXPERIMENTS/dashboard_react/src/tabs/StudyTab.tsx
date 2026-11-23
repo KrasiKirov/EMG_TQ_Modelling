@@ -14,6 +14,9 @@ import { waveOption, type WaveLine } from '../charts/options';
 import { seedCount, WAVE_SPAN, worstPositions, worstWaves } from '../lib/studyWaves';
 import { fmt, posLabel } from '../lib/format';
 import { HELP_SECTIONS, pageLimitation } from '../content/help';
+import { Takeaway } from '../components/Takeaway';
+import { headline, peakTakeaway, positionsTakeaway, summaryTakeaway, wavesTakeaway } from '../lib/takeaways';
+import { OverfitSection, TuningSection } from './Tuning';
 
 const f1 = (v: number) => (Number.isFinite(v) ? v.toFixed(1) : '–');
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
@@ -68,6 +71,7 @@ export function StudyTab() {
           Open “How to use this page” for what each number means.
         </Text>
       </div>
+      <Takeaway title="The study's answer (session 2, pre-registered decisions)" lines={headline()} testId="headline" />
       <Help />
       <div className="filters" data-testid="filters">
         <Group gap="md" wrap="wrap" align="end">
@@ -97,11 +101,17 @@ export function StudyTab() {
         </Text>
       </Stack>
       <Summary people={people} />
+      <Takeaway lines={summaryTakeaway(pick, people, st.target === 'total')} testId="takeaway-summary" />
       <WorstPositions id={pick} people={people} />
+      <Takeaway lines={wavesTakeaway(pick, people)} testId="takeaway-waves" />
       <PerPosition people={people} m="mae" />
+      <Takeaway lines={positionsTakeaway(people, 'mae')} testId="takeaway-mae" />
       <PerPosition people={people} m="r2" />
-      <HowChosen id={pick} />
+      <Takeaway lines={positionsTakeaway(people, 'r2')} testId="takeaway-r2" />
       <PeakTorque people={people} />
+      <Takeaway lines={peakTakeaway(people)} testId="takeaway-peaks" />
+      <TuningSection id={pick} details={<HowChosen id={pick} />} />
+      <OverfitSection id={pick} />
       <Details id={pick} people={people} />
     </Stack>
   );
@@ -222,8 +232,7 @@ function HowChosen({ id }: { id: string }) {
     { key: 'chosen', label: '', render: (r) => (r.chosen ? 'A0' : '') },
   ];
   return (
-    <SectionCard testId="study-choice" title="How it was chosen: validation (session 1)"
-      description="Validation: the last 20 % of each session-1 trial, after a gap. Session 2 was not used. Scores: the mean over people of log nMAE, shown back on the nMAE scale (exp of that mean); lower is better.">
+    <div data-testid="study-choice">
       <Stack gap="md">
         {c.fixed && <Text size="sm">{c.fixed}</Text>}
         {c.cellWinners && (
@@ -244,7 +253,7 @@ function HowChosen({ id }: { id: string }) {
           </div>
         )}
       </Stack>
-    </SectionCard>
+    </div>
   );
 }
 
