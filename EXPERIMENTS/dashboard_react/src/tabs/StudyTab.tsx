@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Accordion, Button, Code, CopyButton, Group, Select, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { EChart } from '../components/EChart';
 import { DataTable, Note, SectionCard, type Column } from '../components/common';
-import { allPeopleOption, peakBarOption, R2_FLOOR, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
+import { allPeopleOption, peakBarOption, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
 import { type SeedSide } from '../charts/seedbox';
 import { changedParams, choiceOf, CONFIRM, DEFAULT, entry, has, PARAMS, personScore, pickFor, runsOf, SCORE_FROM, scoreCI,
   settingOf, timesOf, optionsOf, worstR2, type PersonRuns } from '../lib/results';
@@ -167,21 +167,15 @@ function Help() {
 
 interface Row { subj: string; nmae: number; mae: number; r2: number; worst: number; peak: number; nmaeCI: MedianCI | null; maeCI: MedianCI | null; r2CI: MedianCI | null }
 
-/** every person on one chart against ankle position (median over seeds); nMAE also carries the combined score and the table */
+/** every person on one chart against ankle position (median over seeds); the nMAE card also holds the table */
 function AllPeople({ people, m }: { people: PersonRuns[]; m: 'nmae' | 'r2' }) {
   const { tokens } = useView();
   // colours follow the person's place in the study, so a filter never repaints anyone
   const order = useMemo(() => runsOf(DEFAULT).map((p) => p.subj), []);
   const lines = people.map((p) => ({ subj: p.subj, positions: p.positions, values: m === 'nmae' ? p.nmae : p.r2, ...(m === 'nmae' ? { mae: p.mae } : {}) }));
-  const own = people.map((p) => personScore(p, 'nmae')).filter((v) => Number.isFinite(v) && v > 0);
-  const combined = own.length ? Math.exp(own.reduce((a, v) => a + Math.log(v), 0) / own.length) : NaN;
   const nmae = m === 'nmae';
   return (
-    <SectionCard testId={`study-all-${m}`} title={nmae ? 'nMAE by position, all people (session 2)' : 'R² by position, all people (session 2)'}
-      description={nmae
-        ? <>Lower is better. Each point: the median over seeds of the MAE at one position divided by the 99th percentile of the person's session-2 active torque. Hover a point for its interval and the MAE in Nm.{' '}
-            <b>Combined over people: {Number.isFinite(combined) ? combined.toFixed(3) : '–'}</b> (exp of the mean of log per-person nMAE, the pre-registered score).</>
-        : <>Higher is better; 1 is a perfect fit. R² within each position (one trial at one angle), median over seeds. Points below {R2_FLOOR} are drawn at {R2_FLOOR}; hover for the value.</>}>
+    <SectionCard testId={`study-all-${m}`} title={nmae ? 'nMAE by position, all people (session 2)' : 'R² by position, all people (session 2)'}>
       <EChart label={`${nmae ? 'nMAE' : 'R²'} against ankle position for every person`} height={400} option={allPeopleOption(lines, order, m, tokens)} />
       {nmae && <Summary people={people} />}
     </SectionCard>
