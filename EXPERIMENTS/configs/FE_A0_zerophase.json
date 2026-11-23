@@ -28,5 +28,5 @@
   "lr": 0.00754,
   "train_protocol": "study400"
  },
- "description": "A0 (the chosen setting) with one change: the EMG envelope is zero-phase (forward-backward band-pass and 2nd-order 2 Hz low-pass, envelope down-sampled with zero-phase decimation) instead of causal. It uses about 0.12 s of later EMG at every sample, so it is not possible in real time: an offline upper bound that measures what the causal envelope costs. Descriptive only; not one of the pre-registered comparisons (deviation 2026-11-23). Seeds 10-19, as A0."
+ "description": "A0 (the chosen setting) with one change: the EMG envelope is zero-phase (forward-backward band-pass and 2nd-order 2 Hz low-pass, envelope down-sampled with zero-phase decimation) instead of causal. It uses about 0.12 s of later EMG at every sample, so it is not possible in real time: an offline upper bound that measures what the causal envelope costs. Descriptive only; not one of the pre-registered comparisons (deviation 2026-11-23). Seeds 10-12 (A0's first 3 of 10, to keep the run under an hour)."
 }

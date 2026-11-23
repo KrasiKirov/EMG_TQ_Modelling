@@ -34,9 +34,9 @@
  {
   "date": "2026-11-23",
   "commit": "the commit that adds this entry",
-  "what": "Adds FE_A0_zerophase: A0 with a zero-phase envelope (forward-backward filters, 2nd-order 2 Hz low-pass as in A0), seeds 10-19, S1->S2. For this, the zero-phase envelope accepts lp_order (ML/preprocessing/emg_envelope.py extract_envelope, ML/research/data.py _envelope_fn); with lp_order 4 it is unchanged.",
+  "what": "Adds FE_A0_zerophase: A0 with a zero-phase envelope (forward-backward filters, 2nd-order 2 Hz low-pass as in A0), seeds 10-12, S1->S2 (A0's first 3 of its 10 seeds, user's choice to keep it under an hour). For this, the zero-phase envelope accepts lp_order (ML/preprocessing/emg_envelope.py extract_envelope, ML/research/data.py _envelope_fn); with lp_order 4 it is unchanged.",
   "why": "To measure what the causal (real-time) envelope costs against the offline zero-phase one, asked by the user. Descriptive only: not a pre-registered comparison, and it changes no choice or rule. The zero-phase envelope leads the causal one by 120-130 ms (CH, every active trial); sample times and torque targets are identical.",
-  "runs_affected": "none of the existing runs; adds 60 runs",
+  "runs_affected": "none of the existing runs; adds 18 runs",
   "results_seen": "all study v2 results, including session 2"
  }
 ]
