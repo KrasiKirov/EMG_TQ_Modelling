@@ -1,8 +1,8 @@
-// Measured torque against the best and the worst run at each person's worst positions (written by
-// EXPERIMENTS/analysis/study_waves.py). Each curve keeps real 10 ms samples only: per 0.2 s slot, the lowest and the
+// Measured torque against the best and the worst seed at each person's worst positions (written by
+// EXPERIMENTS/analysis/study_v2_waves.py). Each curve keeps real 10 ms samples only: per 0.2 s slot, the lowest and the
 // highest sample at their own times. Values: int16 in 0.01 Nm (`missing` = empty slot); times: uint8 offsets in
 // 10 ms steps from the slot's start. Two points per slot, one block of 2 × slots points per worst position.
-import raw from '../data/study-waves.json';
+import raw from '../data/study-v2-waves.json';
 
 export interface RunScore { seed: number; mae: number; r2: number }
 export interface WorstPosition { k: number; pos: number; median_r2: number; best: RunScore; worst: RunScore }

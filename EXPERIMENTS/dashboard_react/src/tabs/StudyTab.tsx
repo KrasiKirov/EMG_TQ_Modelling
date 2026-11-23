@@ -2,34 +2,34 @@ import { useEffect, useMemo, useState } from 'react';
 import { Accordion, Button, Code, CopyButton, Group, Select, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import { EChart } from '../components/EChart';
 import { DataTable, Note, SectionCard, type Column } from '../components/common';
-import { peakBarOption, runtimeOption, studySeedOption } from '../charts/study';
+import { peakBarOption, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
 import { type SeedSide } from '../charts/seedbox';
-import { activePeak, changedParams, entry, ENTRIES, GROUPS, groupOf, maeRatio, notesOf, personScore, pickFor, referenceOf, runsOf, scoreCI, timesOf,
-  valuesOf, worstR2, type PersonRuns } from '../lib/results';
+import { changedParams, choiceOf, comparisonsOf, CONFIRM, DEFAULT, entry, FAMILY, has, PARAMS, personScore, pickFor, runsOf, SCORE_FROM, scoreCI,
+  settingOf, timesOf, valuesOf, worstR2, type ComparisonRow, type PersonRuns } from '../lib/results';
 import { type MedianCI } from '../lib/boxstats';
-import { ExperimentMachine } from '../components/MachineInfo';
-import { SMETRICS } from '../lib/study';
+import { MachineInfo } from '../components/MachineInfo';
 import { median } from '../lib/stats';
 import { useView } from '../state';
 import { waveOption, type WaveLine } from '../charts/options';
 import { seedCount, WAVE_SPAN, worstPositions, worstWaves } from '../lib/studyWaves';
 import { fmt, posLabel } from '../lib/format';
-import { TUNING_VAL } from '../lib/tuningVal';
 import { HELP_SECTIONS } from '../content/help';
 
 const f1 = (v: number) => (Number.isFinite(v) ? v.toFixed(1) : '–');
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 /** "median [lo, hi]"; no interval for a single seed */
 const withCI = (v: number, c: MedianCI | null, d: number) => (Number.isFinite(v) ? v.toFixed(d) : '–') + (c && Number.isFinite(c.lo) ? ` [${c.lo.toFixed(d)}, ${c.hi.toFixed(d)}]` : '');
+/** a change as a signed percentage */
+const pc = (v: number) => (Number.isFinite(v) ? `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(100 * v).toFixed(1)} %` : '–');
+const seedRange = (s: number[]) => (s.length === 1 ? `seed ${s[0]}` : `seeds ${Math.min(...s)}–${Math.max(...s)}`);
 
-const DEFAULT = 'W00_reference';
-/** the setting in the address bar (#setting=<id>), if it is one the page shows */
+/** the setting in the address bar (#setting=<id>); anything else (an old link, a typo) opens A0 */
 function settingFromHash(): string {
   const id = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('setting');
-  return id && ENTRIES.some((e) => e.id === id) ? id : DEFAULT;
+  return id && has(id) ? id : DEFAULT;
 }
 
-/** One template: choose the study and its parameters at the top; every section below shows that experiment's runs. */
+/** One template: the filters choose a study v2 setting; every section below shows that setting. */
 export function StudyTab() {
   const [pick, setPickRaw] = useState<string>(settingFromHash);
   const [moved, setMoved] = useState<string[]>([]);
@@ -38,7 +38,13 @@ export function StudyTab() {
     if (window.location.hash !== h) window.history.replaceState(null, '', h);
   }, [pick]);
   useEffect(() => {
-    const onHash = () => { setPickRaw(settingFromHash()); setMoved([]); };
+    const onHash = () => {
+      const id = settingFromHash();
+      const h = `#setting=${encodeURIComponent(id)}`;
+      if (window.location.hash !== h) window.history.replaceState(null, '', h);   // an old link shows what it opened
+      setPickRaw(id);
+      setMoved([]);
+    };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
@@ -48,34 +54,37 @@ export function StudyTab() {
     setPickRaw(next);
   };
   const e = entry(pick);
-  const g = groupOf(pick);
+  const st = settingOf(pick);
   const people = useMemo(() => runsOf(pick), [pick]);
-  const seeds = [...new Set(people.map((p) => p.seeds.length))];
-  const notes = notesOf(pick);
+  const seeds = [...new Set(people.flatMap((p) => p.seeds))].sort((a, b) => a - b);
+  const notes: string[] = [];
+  if (seeds.length === 1) notes.push(`One run per person (${seedRange(seeds)}): no interval can be given, and the run shown is the only run.`);
+  if (pick === DEFAULT) notes.push('Seeds 10–12 are the runs of its cell winner (the same configuration), so that cell is not listed separately.');
+  if (st.target === 'total') notes.push("Predicts total torque. Its nMAE still divides by the person's active-torque scale (as pre-registered), so it is on the same scale as A0's.");
   return (
     <Stack gap="lg" data-testid="study-page">
       <div className="page-heading">
-        <Title order={2}>Results</Title>
-        <Text size="sm" c="dimmed">Every model here learns from session 1 and predicts session 2, which it never saw. Open “How to use this page” for what each number means.</Text>
+        <Title order={2}>Results: study v2</Title>
+        <Text size="sm" c="dimmed">
+          Pre-registered on 18 Nov 2026. Every model learns from session 1 and predicts session 2, which it never saw and which was not used to choose it.
+          Open “How to use this page” for what each number means.
+        </Text>
       </div>
       <Help />
       <div className="filters" data-testid="filters">
         <Group gap="md" wrap="wrap" align="end">
-          <Select label="Study" aria-label="Study" w={260} value={g.key} allowDeselect={false}
-            data={GROUPS.map((x) => ({ value: x.key, label: x.label }))}
-            onChange={(v) => { if (v) { setMoved([]); setPickRaw(GROUPS.find((x) => x.key === v)!.first); } }} />
-          {g.params.map((x) => (
-            <Select key={x.key} label={x.label} aria-label={x.label} w={x.key === 'network' ? 520 : 170} value={e.params[x.key]} allowDeselect={false}
-              data={valuesOf(g.key, x.key)} onChange={(v) => v && choose(x.key, v)} />
+          {PARAMS.map((x) => (
+            <Select key={x.key} label={x.label} aria-label={x.label} w={x.key === 'model' ? 260 : 190} value={e.params[x.key]} allowDeselect={false}
+              data={valuesOf(x.key)} onChange={(v) => v && choose(x.key, v)} />
           ))}
         </Group>
         <Text size="sm" mt="sm" data-testid="setting-name">
-          Showing: <b>{e.title}</b> · {people.length} people · {seeds.length === 1 ? plural(seeds[0], 'seed') : `${Math.min(...seeds)}–${Math.max(...seeds)} seeds`} per person
+          Showing: <b>{e.title}</b>{st.units ? ` · ${st.units} units × ${plural(st.layers ?? 0, 'layer')}` : ''} · {people.length} people · {seedRange(seeds)} per person
           {' '}· <Text span c="dimmed" size="sm">{e.id}</Text>
         </Text>
         {moved.length > 0 && (
           <Text size="sm" c="dimmed" mt={4} data-testid="setting-moved">
-            No run has exactly that combination, so the nearest one is shown. Also changed: {moved.join('; ')}.
+            No setting has exactly that combination, so the nearest one is shown. Also changed: {moved.join('; ')}.
           </Text>
         )}
         {notes.length > 0 && (
@@ -87,16 +96,17 @@ export function StudyTab() {
           {e.target === 'total' ? 'Total torque: the measured torque.' : 'Active torque: measured torque minus the passive torque from the tested session\'s own relaxed holds (YES: lab worksheet; IES: experiment-sheet values, it has no relaxed holds).'}
         </Text>
       </div>
-      {g.key === 'tuning' && <ValidationLoss pick={pick} />}
-      <Summary id={pick} people={people} title={g.key === 'tuning' ? 'Test on session 2 (not used to choose the network)' : 'Summary'} />
-      {g.key !== 'tuning' && <WorstPositions id={pick} people={people} />}
+      <Comparisons id={pick} />
+      <Summary people={people} />
+      <WorstPositions id={pick} people={people} />
       <PerPosition people={people} m="mae" />
       <PerPosition people={people} m="r2" />
+      <HowChosen id={pick} />
       <PeakTorque people={people} />
       <RunTime id={pick} />
       <Reproduce id={pick} people={people} />
       <SectionCard testId="study-machine" title="Processing capabilities">
-        <ExperimentMachine id={pick} />
+        <MachineInfo />
       </SectionCard>
     </Stack>
   );
@@ -120,6 +130,10 @@ function Help() {
                 </Stack>
               </div>
             ))}
+            <div>
+              <Text fw={600} size="sm" mb={4}>Limitations (pre-registered)</Text>
+              <Stack gap={4}>{CONFIRM.limitations.map((l) => <Text key={l} size="sm">· {l}</Text>)}</Stack>
+            </div>
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>
@@ -127,15 +141,132 @@ function Help() {
   );
 }
 
+const PEOPLE_ORDER = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES'];
+
+/** every pre-registered comparison this setting is part of, as confirm.json decided it */
+function Comparisons({ id }: { id: string }) {
+  const rows = comparisonsOf(id);
+  const cols: Column<ComparisonRow>[] = [
+    { key: 'family', label: 'Family', render: (r) => FAMILY[r.family] },
+    { key: 'label', label: 'Comparison (first vs second)', render: (r) => r.label + (r.family === 'F1' && id === DEFAULT ? ' (A0 on seeds 10–12, as pre-registered)' : '') },
+    { key: 'role', label: 'This setting', render: (r) => (r.role === 'arm' ? 'first' : 'second') },
+    { key: 'effect', label: 'Median effect', align: 'right', render: (r) => pc(r.effect) + (r.length ? ' (over 0.2, 0.5, 1 s)' : '') },
+    { key: 'effects', label: 'Per person', render: (r) => (
+      <Text size="xs" className="num">
+        {r.length ? `at ${r.length.replace('w', '').replace(/^(\d+)$/, (m) => `${Number(m) / 100} s`)}: ` : ''}
+        {PEOPLE_ORDER.filter((p) => p in r.effects).map((p) => `${p} ${pc(r.effects[p])}`).join(' · ')}
+      </Text>) },
+    { key: 'decision', label: 'Decision', render: (r) => <b>{r.decision}</b> },
+  ];
+  return (
+    <SectionCard testId="study-comparisons" title="Pre-registered comparisons (session 2)"
+      description={<>
+        Effect: per person, the first setting's nMAE ÷ the second's − 1 (each the median over seeds); negative = the first has the lower error. The median
+        over people is shown with the decision. Decision rule (pre-registered): <b>all 6 people agree in sign and the median effect is at least 5 %</b>;
+        “better” / “worse” describe the first setting; otherwise “no clear difference”. Overlap (F2) is decided once, pooled over the 0.2, 0.5 and 1 s
+        windows; its per-person values are shown for this setting's window.
+      </>}>
+      {rows.length
+        ? <DataTable columns={cols} rows={rows} rowKey={(r) => `${r.family}|${r.label}`} dense minWidth={1040} />
+        : <Text size="sm" c="dimmed">This setting is not part of a pre-registered comparison.</Text>}
+    </SectionCard>
+  );
+}
+
+interface Row { subj: string; nmae: number; mae: number; r2: number; worst: number; peak: number; nmaeCI: MedianCI | null; maeCI: MedianCI | null; r2CI: MedianCI | null }
+
+/** one row per person: nMAE (the pre-registered metric), MAE, R² over positions and at the worst one, peak torque */
+function Summary({ people }: { people: PersonRuns[] }) {
+  const rows: Row[] = people.map((p) => ({
+    subj: p.subj, nmae: personScore(p, 'nmae'), mae: personScore(p, 'mae'), r2: personScore(p, 'r2'), worst: worstR2(p),
+    peak: Math.max(...p.peaks.filter(Number.isFinite)), nmaeCI: scoreCI(p, 'nmae'), maeCI: scoreCI(p, 'mae'), r2CI: scoreCI(p, 'r2'),
+  }));
+  rows.push({ subj: 'Median', nmae: median(rows.map((r) => r.nmae)), mae: median(rows.map((r) => r.mae)), r2: median(rows.map((r) => r.r2)),
+    worst: median(rows.map((r) => r.worst)), peak: median(rows.map((r) => r.peak)), nmaeCI: null, maeCI: null, r2CI: null });
+  const cols: Column<Row>[] = [
+    { key: 'subj', label: 'Person', render: (r) => (r.subj === 'Median' ? <b>Median</b> : r.subj) },
+    { key: 'nmae', label: 'nMAE', align: 'right', render: (r) => withCI(r.nmae, r.nmaeCI, 3) },
+    { key: 'mae', label: 'MAE (Nm)', align: 'right', render: (r) => withCI(r.mae, r.maeCI, 2) },
+    { key: 'r2', label: 'R², median of positions', align: 'right', render: (r) => withCI(r.r2, r.r2CI, 2) },
+    { key: 'worst', label: 'R², worst position', align: 'right', render: (r) => fmt(r.worst) },
+    { key: 'peak', label: 'Peak torque (Nm)', align: 'right', render: (r) => f1(r.peak) },
+  ];
+  return (
+    <SectionCard testId="study-summary" title="Summary (session 2)"
+      description={<>
+        Per person, the median over seeds. Every run is scored from {SCORE_FROM.join(', ')} s after each trial's start. nMAE (the pre-registered metric):
+        the MAE at each position divided by the 99th percentile of the person's measured active torque on session 2, then the mean over positions.
+        MAE (Nm): the same without the division. R²: within each position (one trial at one angle); the median of the positions hides the bad ones, so
+        the worst position is shown too (per seed the lowest R², then the median over seeds). Peak torque: the largest |measured torque| of the
+        predicted target over the scored samples. [ ]: interval for the median over seeds (about 95 %; none with 1 seed); it shows training
+        randomness only.
+      </>}>
+      <DataTable columns={cols} rows={rows} rowKey={(r) => r.subj} dense minWidth={900} />
+    </SectionCard>
+  );
+}
+
+/** session-1 validation: how this setting was chosen */
+function HowChosen({ id }: { id: string }) {
+  const c = useMemo(() => choiceOf(id), [id]);
+  type R = NonNullable<typeof c.rounds>[number];
+  type W = NonNullable<typeof c.cellWinners>[number];
+  const n = (v: number | null | undefined, d?: number) => (v === null || v === undefined ? '–' : d === undefined ? String(v) : v.toFixed(d));
+  const rcols: Column<R>[] = [
+    { key: 'round', label: 'Round', render: (r) => r.round },
+    { key: 'config', label: 'Config', render: (r) => (r.winner ? <b>{r.config}</b> : r.config) },
+    { key: 'units', label: 'Units', align: 'right', render: (r) => n(r.params?.units) },
+    { key: 'layers', label: 'Layers', align: 'right', render: (r) => n(r.params?.layers) },
+    { key: 'dropout', label: 'Dropout', align: 'right', render: (r) => n(r.params?.dropout) },
+    { key: 'lr', label: 'Learning rate', align: 'right', render: (r) => n(r.params?.lr) },
+    { key: 'batch', label: 'Batch', align: 'right', render: (r) => n(r.params?.batch) },
+    { key: 'score', label: 'Validation nMAE (session 1)', align: 'right', render: (r) => fmt(r.score, 4) },
+    { key: 'seeds', label: 'Seeds', align: 'right', render: (r) => r.seeds.join(', ') },
+    { key: 'mark', label: '', render: (r) => [r.kept ? 'seed check' : '', r.winner ? 'chosen' : ''].filter(Boolean).join(', ') },
+  ];
+  const wcols: Column<W>[] = [
+    { key: 'title', label: 'Cell winner', render: (r) => (r.chosen ? <b>{r.title}</b> : r.title) },
+    { key: 'id', label: 'Config', render: (r) => r.id },
+    { key: 'score', label: 'Validation nMAE, common targets (session 1)', align: 'right', render: (r) => fmt(r.score, 4) },
+    { key: 'chosen', label: '', render: (r) => (r.chosen ? 'A0' : '') },
+  ];
+  return (
+    <SectionCard testId="study-choice" title="How it was chosen: validation (session 1)"
+      description="Validation: the last 20 % of each session-1 trial, after a gap. Session 2 was not used. Scores: the mean over people of log nMAE, shown back on the nMAE scale (exp of that mean); lower is better.">
+      <Stack gap="md">
+        {c.fixed && <Text size="sm">{c.fixed}</Text>}
+        {c.cellWinners && (
+          <div>
+            <Text size="sm" fw={600} mb={4}>A0: the cell winner with the lowest validation nMAE on the targets every cell predicts (no 1-SE rule)</Text>
+            <DataTable columns={wcols} rows={c.cellWinners} rowKey={(r) => r.cell} rowClass={(r) => (r.chosen ? 'selected-row' : undefined)} dense minWidth={720} />
+          </div>
+        )}
+        {c.rounds && c.rounds.length > 0 && (
+          <div>
+            <Text size="sm" fw={600} mb={4}>Its cell's search</Text>
+            <Text size="xs" c="dimmed" mb={4}>
+              Coarse: 6 random draws shared by every cell plus the anchor (last semester's network). Fine: 4 draws around the cell's best coarse config.
+              Seed check: the best 2 of coarse + fine get a second seed; the winner is the config with the fewest weights within one standard error of the
+              better one (paired over people).
+            </Text>
+            <DataTable columns={rcols} rows={c.rounds} rowKey={(r) => r.id} rowClass={(r) => (r.winner ? 'selected-row' : undefined)} dense minWidth={960} />
+          </div>
+        )}
+      </Stack>
+    </SectionCard>
+  );
+}
+
 /** the commands that re-run this setting, with what they need */
 function Reproduce({ id, people }: { id: string; people: PersonRuns[] }) {
   const seeds = [...new Set(people.flatMap((p) => p.seeds))].sort((a, b) => a - b);
   const subjects = people.map((p) => p.subj);
-  const all = `.venv/bin/python -m EXPERIMENTS.pipeline.run_queue --exps ${id} --subjects ${subjects.join(' ')} --directions S1toS2 --seeds ${seeds.join(' ')} --workers 6`;
-  const one = `.venv/bin/python -m EXPERIMENTS.pipeline.run --exp ${id} --subject ${subjects[0] ?? 'JM'} --direction S1toS2 --seed ${seeds[0] ?? 0} --threads 1`;
-  const update = entry(id).group === 'tuning'
-    ? `.venv/bin/python -m EXPERIMENTS.pipeline.dashboard build ${id}`
-    : '.venv/bin/python -m EXPERIMENTS.analysis.study_scores && .venv/bin/python -m EXPERIMENTS.analysis.study_waves && npm --prefix EXPERIMENTS/dashboard_react run build';
+  const cell = settingOf(id).cell;
+  const shared = id === DEFAULT && cell ? seeds.filter((s) => s <= 12) : [];
+  const own = seeds.filter((s) => !shared.includes(s));
+  const queue = (exp: string, sd: number[]) => `.venv/bin/python -m EXPERIMENTS.pipeline.run_queue --exps ${exp} --subjects ${subjects.join(' ')} --directions S1toS2 --seeds ${sd.join(' ')} --workers 6`;
+  const one = `.venv/bin/python -m EXPERIMENTS.pipeline.run --exp ${id} --subject ${subjects[0] ?? 'JM'} --direction S1toS2 --seed ${own[0] ?? 10} --threads 1`;
+  const update = '.venv/bin/python -m EXPERIMENTS.analysis.study_v2_export && .venv/bin/python -m EXPERIMENTS.analysis.study_v2_waves && npm --prefix EXPERIMENTS/dashboard_react run build';
   const Cmd = ({ label, cmd }: { label: string; cmd: string }) => (
     <div>
       <Group justify="space-between" mb={4}>
@@ -145,123 +276,21 @@ function Reproduce({ id, people }: { id: string; people: PersonRuns[] }) {
       <Code block>{cmd}</Code>
     </div>
   );
+  const prov = CONFIRM.provenance_check;
   return (
     <SectionCard testId="study-reproduce" title="Re-run this setting"
-      description={`The setting is the spec file EXPERIMENTS/configs/${id}.json. Run the commands from the repository root.`}>
+      description={`The setting is the spec file EXPERIMENTS/configs/${id}.json. Run the commands from the repository root. Every final run was made on commit ${prov.commits.map((c) => c.slice(0, 8)).join(', ')} with protocol ${prov.protocol_hash.slice(0, 8)} (EXPERIMENTS/protocol/study_v2.json).`}>
       <Stack gap="md">
         <Stack gap={4}>
-          <Text size="sm"><b>1. Code and software</b> · the repository (fork KrasiKirov/EMG_TQ_Modelling) and a .venv with the versions these runs used (shown under Processing capabilities).</Text>
+          <Text size="sm"><b>1. Code and software</b> · the repository (fork KrasiKirov/EMG_TQ_Modelling) at that commit and a .venv with the versions these runs used (shown under Processing capabilities).</Text>
           <Text size="sm"><b>2. Recordings</b> · the 6 .flb files are participant data and are not in git. Get them from the lab, put them in ML/subjects/, or point EMG_DATA_DIR at their folder: <Code>export EMG_DATA_DIR=/path/to/recordings</Code></Text>
-          <Text size="sm"><b>3. Run</b> · the queue skips runs whose results already exist with the same config; move EXPERIMENTS/results/{id} away first to train them again. A single run overwrites its saved files. With the same software and 1 thread, the same seed gives the same predictions.</Text>
+          <Text size="sm"><b>3. Run</b> · study v2 runs write to EXPERIMENTS/results_v2/{id} and refuse to start on uncommitted code. The queue skips runs whose results already exist with the same config; move that folder away first to train them again. With the same software and 1 thread, the same seed gives the same predictions.</Text>
         </Stack>
-        <Cmd label="Every run of this setting" cmd={all} />
+        {shared.length > 0 && cell && <Cmd label={`Seeds ${shared.join(', ')} (the runs of FE_cell_${cell}, the same configuration)`} cmd={queue(`FE_cell_${cell}`, shared)} />}
+        <Cmd label={shared.length ? `Seeds ${own.join(', ')}` : 'Every run of this setting'} cmd={queue(id, own)} />
         <Cmd label="One run (one person, one seed)" cmd={one} />
         <Cmd label="Then update this page" cmd={update} />
       </Stack>
-    </SectionCard>
-  );
-}
-
-interface NetRow { id: string; title: string; params: number; change: number; lo: number; hi: number; better: number; n: number; loss: number; mae: number; r2: number }
-interface PersonValRow { subj: string; loss: number; lo: number; hi: number; base: number }
-
-/** hyperparameter tuning: the session-1 validation loss that chose the network, every finalist and every person */
-function ValidationLoss({ pick }: { pick: string }) {
-  const V = TUNING_VAL;
-  const nets: NetRow[] = useMemo(() => Object.entries(V.networks).map(([id, n]) => {
-    const ppl = runsOf(id);
-    return { id, title: entry(id)?.title ?? id, params: n.n_params, change: Math.exp(n.mean_log_ratio) - 1,
-      lo: Math.exp(n.mean_log_ratio - n.se) - 1, hi: Math.exp(n.mean_log_ratio + n.se) - 1, better: n.better_people, n: n.n_people,
-      loss: median(Object.values(n.median)),
-      mae: median(ppl.map((p) => personScore(p, 'mae'))), r2: median(ppl.map((p) => personScore(p, 'r2'))) };
-  }).sort((a, b) => a.change - b.change || a.params - b.params), [V]);
-  const cur = V.networks[pick], base = V.networks[V.baseline];
-  const people: PersonValRow[] = cur ? Object.keys(cur.median).map((subj) => {
-    const s = Object.values(cur.seeds[subj] ?? {});
-    return { subj, loss: cur.median[subj], lo: Math.min(...s), hi: Math.max(...s), base: base.median[subj] };
-  }) : [];
-  const pc = (v: number) => `${v > 0 ? '+' : ''}${(100 * v).toFixed(1)} %`;
-  const mark = (r: NetRow) => [r.id === V.best ? 'best' : '', r.id === V.chosen ? 'chosen' : ''].filter(Boolean).join(', ');
-  const netCols: Column<NetRow>[] = [
-    { key: 'title', label: 'Network', render: (r) => (r.id === V.chosen ? <b>{r.title}</b> : r.title) },
-    { key: 'params', label: 'Weights', align: 'right', render: (r) => r.params.toLocaleString('en-US') },
-    { key: 'change', label: "Validation loss vs last semester's network", align: 'right',
-      render: (r) => (r.id === V.baseline ? 'reference' : `${pc(r.change)} [${pc(r.lo)}, ${pc(r.hi)}]`) },
-    { key: 'better', label: 'People lower', align: 'right', render: (r) => (r.id === V.baseline ? '–' : `${r.better}/${r.n}`) },
-    { key: 'mark', label: 'Rule', render: (r) => mark(r) },
-    { key: 'loss', label: `Median loss (${V.units})`, align: 'right', render: (r) => fmt(r.loss, 3) },
-    { key: 'mae', label: 'Test MAE (Nm)', align: 'right', render: (r) => fmt(r.mae) },
-    { key: 'r2', label: 'Test R²', align: 'right', render: (r) => fmt(r.r2, 3) },
-  ];
-  const personCols: Column<PersonValRow>[] = [
-    { key: 'subj', label: 'Person', render: (r) => r.subj },
-    { key: 'loss', label: `This network (${V.units})`, align: 'right', render: (r) => `${fmt(r.loss, 3)} [${fmt(r.lo, 3)}, ${fmt(r.hi, 3)}]` },
-    { key: 'base', label: `Last semester's network size (${V.units})`, align: 'right', render: (r) => fmt(r.base, 3) },
-  ];
-  const seeds = V.seeds_per_person.join('–');
-  const ch = nets.find((r) => r.id === V.chosen), bs = nets.find((r) => r.id === V.baseline);
-  return (
-    <SectionCard testId="study-validation" title="Validation loss (session 1), used to choose the network"
-      description={`Mean-squared error on the session-1 validation split (the last 20 % of each session-1 trial, after a gap), at each run's best epoch, ${seeds} seeds per person. Rule: per person, the log of (this network's median loss ÷ last semester's network's); the mean over people ranks the networks (table order; shown as a % change, [mean ± one standard error]). Best = lowest; chosen = the network with the fewest weights within one standard error of the best. Session 2 was not used.`}>
-      <Stack gap="md">
-        <DataTable columns={netCols} rows={nets} rowKey={(r) => r.id} rowClass={(r) => (r.id === pick ? 'selected-row' : undefined)} dense minWidth={1040} />
-        {ch && bs && (
-          <Note>
-            Validation loss of the chosen network: {pc(ch.change)} against last semester's network size. On session 2 (not used to choose), median test MAE
-            {' '}{fmt(ch.mae)} vs {fmt(bs.mae)} Nm ({pc(ch.mae / bs.mae - 1)}) and test R² {fmt(ch.r2, 3)} vs {fmt(bs.r2, 3)}. Validation here is the end of each
-            session-1 trial, so it does not measure the change between sessions.
-          </Note>
-        )}
-        {cur && (
-          <div>
-            <Text size="sm" fw={600} mb={4}>Per person: {entry(pick)?.title}</Text>
-            <DataTable columns={personCols} rows={people} rowKey={(r) => r.subj} dense minWidth={560} />
-            <Text size="xs" c="dimmed" mt={4}>This network: median over seeds [lowest, highest seed].</Text>
-          </div>
-        )}
-      </Stack>
-    </SectionCard>
-  );
-}
-
-interface Row { subj: string; mae: number; nmae: number; ratio: number; better?: string; r2: number; worst: number; peak: number; maeCI: MedianCI | null; r2CI: MedianCI | null }
-
-/** one row per person: MAE (raw and ÷ peak), against the reference, R² over positions and at the worst one, peak torque */
-function Summary({ id, people, title }: { id: string; people: PersonRuns[]; title: string }) {
-  const ref = referenceOf(id);
-  const refRuns = useMemo(() => (ref ? runsOf(ref) : []), [ref]);
-  const rows: Row[] = people.map((p) => {
-    const r = refRuns.find((x) => x.subj === p.subj);
-    const mae = personScore(p, 'mae');
-    return { subj: p.subj, mae, nmae: mae / activePeak(p.subj), ratio: r ? maeRatio(p, r).ratio : NaN, r2: personScore(p, 'r2'), worst: worstR2(p),
-      peak: Math.max(...p.peaks.filter(Number.isFinite)), maeCI: scoreCI(p, 'mae'), r2CI: scoreCI(p, 'r2') };
-  });
-  const ratios = rows.map((r) => r.ratio).filter(Number.isFinite);
-  rows.push({ subj: 'Median', mae: median(rows.map((r) => r.mae)), nmae: median(rows.map((r) => r.nmae)), ratio: median(ratios),
-    better: ratios.length ? `${ratios.filter((v) => v < 1).length}/${ratios.length} lower` : undefined,
-    r2: median(rows.map((r) => r.r2)), worst: median(rows.map((r) => r.worst)), peak: median(rows.map((r) => r.peak)), maeCI: null, r2CI: null });
-  const refName = ref ? entry(ref).title : '';
-  const cols: Column<Row>[] = [
-    { key: 'subj', label: 'Person', render: (r) => (r.subj === 'Median' ? <b>Median</b> : r.subj) },
-    { key: 'mae', label: 'MAE (Nm)', align: 'right', render: (r) => withCI(r.mae, r.maeCI, 2) },
-    { key: 'nmae', label: 'MAE ÷ peak', align: 'right', render: (r) => (Number.isFinite(r.nmae) ? `${(100 * r.nmae).toFixed(1)} %` : '–') },
-    { key: 'ratio', label: 'MAE vs reference', align: 'right',
-      render: (r) => (!ref ? (r.subj === 'Median' ? '' : 'reference') : Number.isFinite(r.ratio) ? `${r.ratio.toFixed(2)}×${r.better ? ` (${r.better})` : ''}` : '–') },
-    { key: 'r2', label: 'R², median of positions', align: 'right', render: (r) => withCI(r.r2, r.r2CI, 2) },
-    { key: 'worst', label: 'R², worst position', align: 'right', render: (r) => fmt(r.worst) },
-    { key: 'peak', label: 'Peak torque (Nm)', align: 'right', render: (r) => f1(r.peak) },
-  ];
-  return (
-    <SectionCard testId="study-summary" title={title}
-      description={<>
-        Per person, the median over seeds. MAE: mean over the 8 positions. MAE ÷ peak: divided by the person's largest measured active torque
-        (for every setting, also total torque), so people with small and large torques can be compared.
-        {ref ? <> MAE vs reference: this setting's MAE ÷ that of <b>{refName}</b>, on the seeds both have; below 1 = lower error.</> : ' This is the reference the other settings are compared with.'}
-        {' '}R²: within each position (one trial at one angle); the median of the 8 positions hides the bad ones, so the worst position is shown too
-        (per seed the lowest R², then the median over seeds). [ ]: interval for the median over seeds (about 95 %; 94 % with 5 seeds; none with 1 seed);
-        it shows training randomness only.
-      </>}>
-      <DataTable columns={cols} rows={rows} rowKey={(r) => r.subj} dense minWidth={900} />
     </SectionCard>
   );
 }
@@ -296,7 +325,7 @@ function WorstPositions({ id, people }: { id: string; people: PersonRuns[] }) {
   const shown = people.filter((p) => worstPositions(id, p.subj).length);
   return (
     <SectionCard testId="study-waves" title="Measured and predicted torque at the worst positions"
-      description={`Setting: ${entry(id).title}. For each person, the 2 positions where this setting's median R² over seeds is lowest, so they change with the setting. Best and worst run: the seeds with the highest and the lowest R² at that position. Negative angles are plantarflexed.`}>
+      description={`Setting: ${entry(id).title}. For each person, the 2 positions where this setting's median R² over seeds is lowest, so they change with the setting (R² from the scored samples, as in the summary). Best and worst run: the seeds with the highest and the lowest R² at that position. The curves show the whole trial. Negative angles are plantarflexed.`}>
       {shown.length ? (
         <SimpleGrid cols={1} spacing="lg">
           {shown.map((p) => (
