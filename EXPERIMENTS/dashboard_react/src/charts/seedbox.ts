@@ -5,7 +5,7 @@ import { boxStats, type BoxStats } from '../lib/boxstats';
 import { alpha, type ChartTokens } from '../theme';
 
 export type SpreadMode = 'box' | 'ci';
-export interface SeedPoint { seed: number; v: number }
+interface SeedPoint { seed: number; v: number }
 
 export interface SeedSide {
   name: string;
@@ -15,7 +15,7 @@ export interface SeedSide {
   offset: number;
 }
 
-export interface SeedSeriesOpts {
+interface SeedSeriesOpts {
   mode: SpreadMode;
   compact?: boolean;
   /** maps a value onto the visible axis (clipped charts); identity by default */
@@ -25,7 +25,7 @@ export interface SeedSeriesOpts {
   boxWidth?: [number, number];
 }
 
-export const statsOf = (cells: SeedPoint[][]): BoxStats[] => cells.map((c) => boxStats(c.map((p) => p.v)));
+const statsOf = (cells: SeedPoint[][]): BoxStats[] => cells.map((c) => boxStats(c.map((p) => p.v)));
 
 export function seedSeries(side: SeedSide, t: ChartTokens, o: SeedSeriesOpts): Record<string, unknown>[] {
   const clamp = o.clamp ?? ((v: number) => v);
@@ -88,10 +88,4 @@ export function seedTooltip(side: SeedSide, k: number, digits: number, unit: str
     `whiskers ${f(s.lo)} to ${f(s.hi)} · ${Math.round(s.ci.level * 1000) / 10} % CI of the median ${f(s.ci.lo)} to ${f(s.ci.hi)}` +
     (s.outliers.length ? `<br/>outlier${s.outliers.length > 1 ? 's' : ''}: ${s.outliers.map((v) => `${f(v)} (${seedOf(v)})`).join('; ')}` : '') + '</div>';
 }
-
-/** the legend line under a seed chart */
-export const SEED_KEY = {
-  box: 'Box: middle half of seeds · whiskers: 1.5 × box · small dots: seeds.',
-  ci: 'Bar: 95 % CI of the median over seeds · small dots: seeds.',
-} as const;
 

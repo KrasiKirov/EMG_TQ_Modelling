@@ -1,7 +1,7 @@
 // Text of the "How to use this page" panel on the results page (study v2). The pre-registered limitations are added
 // below it from confirm.json.
 
-export interface HelpSection { title: string; items: [string, string][] }
+interface HelpSection { title: string; items: [string, string][] }
 
 export const HELP_SECTIONS: HelpSection[] = [
   {

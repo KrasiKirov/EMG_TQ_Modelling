@@ -26,69 +26,25 @@ body { color: var(--c-ink); }
 /* top bar: page title and plain text tabs, the selected one underlined */
 .mantine-AppShell-header.topbar { background: #ffffff; backdrop-filter: none; border-top: 0; border-bottom: 1px solid var(--line); }
 .brand { white-space: nowrap; color: var(--c-ink); }
-.topnav { display: flex; gap: 4px; height: 100%; padding: 0; background: none; border-radius: 0; overflow: visible; }
-.topnav-item { display: flex; align-items: center; height: 100%; padding: 0 14px; border-radius: 0; font-size: 14px; font-weight: 500;
-  color: var(--text-3); border-bottom: 2px solid transparent; transition: none; }
-.topnav-item:hover { color: var(--c-ink); background: var(--surface-2); }
-.topnav-item[data-active] { color: var(--c-ink); font-weight: 600; background: none; box-shadow: none; border-bottom-color: var(--accent); }
 
 /* page width and headings */
 .tab-body { max-width: 1400px; padding: 28px 32px 64px; }
 .page-heading { margin-bottom: 16px; }
-.page-heading h2, .model-title, .home-title, .catalog-section-head h3, .home-section-head h2, .home-panel h3, .panel-head h3 {
+.page-heading h2{
   font-family: inherit !important; font-size: 22px !important; font-weight: 600; letter-spacing: 0; line-height: 1.3 !important; color: var(--c-ink); }
-.catalog-section-head h3 { font-size: 18px !important; }
-.section-heading h3 { font-size: 17px; letter-spacing: 0; }
-
-/* small labels: sentence case, no tracking, no colour */
-.eyebrow, .crumb, .kpi-label, .final-label, .glance-label, .catalog-header, .focus-badge, .pill, .chip i, .collection-label > span {
-  text-transform: none !important; letter-spacing: 0 !important; color: var(--text-3) !important; }
-.eyebrow { font-weight: 500; }
-.focus-badge, .pill { background: var(--surface-2); color: var(--text-2) !important; border: 1px solid var(--line); font-weight: 500; }
 
 /* cards and panels: white, thin border, no shadow, no gradient, square-ish corners */
-.mantine-Card-root, .kpi, .final-card, .home-panel, .home-hero, .step, .catalog-table, .timing-panel, .detail-panel,
-.single-stat, .study-context, .metric-guide, .gru-architecture, .teaching-demo, .glance-cell, .study-kpi, .model-bar {
+.mantine-Card-root, .step{
   background: #ffffff; box-shadow: none !important; border-radius: 4px; }
-.home-hero { background: #ffffff; }
-.kpi[data-toes], .final-row[data-toes], .catalog-row[data-final], .glance-cell[data-toes] { background: #ffffff; box-shadow: none; }
-.single-stat { border-top: 1px solid var(--line); }
-.single-stat strong { color: var(--c-ink); }
-.kpi-big, .final-big { font-family: inherit; font-size: 32px; font-weight: 600; color: var(--c-ink); }
-.kpi-value { font-size: 30px; letter-spacing: 0; }
-.subject-plot, .torque-mini { background: #ffffff; border: 1px solid var(--line); border-radius: 4px; }
-.torque-mini[data-active] { border-color: var(--accent); }
-.wave-score-strip, .coverage-note, .data-table th, .catalog-header { background: var(--surface-2); }
-:root .coverage-note { border-left: 3px solid var(--line); }
-.availability-note, .target-example > div { border-left-color: var(--line); }
+.subject-plot{ background: #ffffff; border: 1px solid var(--line); border-radius: 4px; }
+ .data-table th{ background: var(--surface-2); }
 
-/* the model picker bar on the Models page: a plain row, not a floating pill bar */
-.model-bar { position: static; padding: 6px; margin-bottom: 20px; border: 1px solid var(--line); }
-.model-pill { border-radius: 3px; }
-.model-pill[data-active] { background: var(--surface-2); color: var(--c-ink); box-shadow: inset 0 -2px var(--accent); }
-.model-pill[data-active] .focus-badge { background: #ffffff; color: var(--text-2) !important; }
-
-/* in-page tabs and switches */
-.view-tabs button[data-active]::after { height: 2px; border-radius: 0; background: var(--accent); }
-.mantine-SegmentedControl-root, .workspace-switch { background: var(--surface-2); }
-.workspace-switch .mantine-SegmentedControl-indicator { box-shadow: none; }
-.comparison-subnav button[data-active], .focus-choice[data-active], .experiment-choice[data-active] {
-  background: var(--surface-2); color: var(--c-ink); box-shadow: inset 2px 0 var(--accent); }
-.catalog-row[data-final] { box-shadow: inset 2px 0 var(--accent); }
-.catalog-open { opacity: 1; }
+.mantine-SegmentedControl-root{ background: var(--surface-2); }
 .step:hover { transform: none; box-shadow: none; }
 .step[data-final] { background: #ffffff; color: inherit; border-color: var(--accent); }
 
 /* tooltips: a plain bordered box */
 .app-tooltip { box-shadow: none; border-color: var(--line); }
-
-/* views inside the Experiments page: text tabs, the selected one underlined */
-.subnav { display: flex; gap: 4px; margin: -8px 0 24px; border-bottom: 1px solid var(--line); }
-.subnav button { appearance: none; border: 0; background: none; font: inherit; font-size: 14px; padding: 8px 12px; color: var(--text-3);
-  border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
-.subnav button:hover { color: var(--c-ink); }
-.subnav button[data-active] { color: var(--c-ink); font-weight: 600; border-bottom-color: var(--accent); }
-
 
 /* parameter filters: stay under the top bar while the results scroll */
 .filters { position: sticky; top: 56px; z-index: 20; background: #ffffff; border: 1px solid var(--line); border-radius: 4px; padding: 8px 12px; }

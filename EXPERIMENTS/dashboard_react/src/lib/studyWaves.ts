@@ -4,8 +4,8 @@
 // 10 ms steps from the slot's start. Two points per slot, one block of 2 × slots points per worst position.
 import raw from '../data/study-v2-waves.json';
 
-export interface RunScore { seed: number; mae: number; r2: number }
-export interface WorstPosition { k: number; pos: number; median_r2: number; best: RunScore; worst: RunScore }
+interface RunScore { seed: number; mae: number; r2: number }
+interface WorstPosition { k: number; pos: number; median_r2: number; best: RunScore; worst: RunScore }
 type Curve = 'measured' | 'best' | 'worst';
 type PersonWaves = Record<Curve | `${Curve}_t`, string> & { seeds: number; positions: WorstPosition[] };
 interface WaveData { slots: [number, number, number]; step: number; scale: number; missing: number; runs: Record<string, Record<string, PersonWaves>> }

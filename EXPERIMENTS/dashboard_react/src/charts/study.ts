@@ -5,7 +5,7 @@ import { posLabel } from '../lib/format';
 import { seedSeries, seedTooltip, type SeedSide, type SpreadMode } from './seedbox';
 import { boxStats } from '../lib/boxstats';
 
-export type SMetric = 'mae' | 'nmae' | 'r2';
+type SMetric = 'mae' | 'nmae' | 'r2';
 export const SMETRICS: Record<SMetric, { short: string; unit: string; error: boolean }> = {
   mae: { short: 'MAE', unit: 'Nm', error: true },
   nmae: { short: 'nMAE', unit: '', error: true },
@@ -27,7 +27,7 @@ const ciRich = (t: ChartTokens) => ({
 });
 
 /** lowest R² drawn on a per-position axis; runs below it are marked with an arrow at the floor */
-export const R2_FLOOR = -1;
+const R2_FLOOR = -1;
 
 const axisCommon = (t: ChartTokens) => ({
   axisLine: { lineStyle: { color: t.axis } }, axisTick: { lineStyle: { color: t.axis } },
@@ -135,10 +135,10 @@ export function runtimeOption(people: { subj: string; seeds: number[]; seconds: 
 
 // ── every person on one chart: median over seeds at each position ───────────
 /** one colour per person, fixed by the person's place in the study (never by rank); passes the colour-blind check; each person also has its own symbol */
-export const PERSON_COLOURS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300'];
+const PERSON_COLOURS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300'];
 const PERSON_SYMBOLS = ['circle', 'rect', 'triangle', 'diamond', 'emptyCircle', 'emptyRect'];
 
-export interface PersonLine { subj: string; positions: number[]; values: number[][]; mae?: number[][] }
+interface PersonLine { subj: string; positions: number[]; values: number[][]; mae?: number[][] }
 
 /** median over seeds per position, one line per person, x = the actual ankle angle (rad); R² below R2_FLOOR is drawn at the floor */
 export function allPeopleOption(people: PersonLine[], order: string[], m: 'r2' | 'nmae', t: ChartTokens): EOption {

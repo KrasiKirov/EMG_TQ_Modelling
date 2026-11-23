@@ -31,12 +31,12 @@ const D = raw as unknown as V2Data;
 export const CONFIRM = D.confirm;
 export const MACHINE = D.machine;
 export const VERSIONS = D.versions;
-export const PEOPLE = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES'].filter((p) => Object.values(D.final).some((f) => f[p]));
+const PEOPLE = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES'].filter((p) => Object.values(D.final).some((f) => f[p]));
 /** where scoring starts after each trial's start (s): the same for every setting */
 export const SCORE_FROM = [...new Set(Object.values(D.score_from_s).flatMap((d) => Object.values(d)))];
 
-export interface Param { key: string; label: string }
-export interface Entry { id: string; group: 'v2'; title: string; params: Record<string, string>; target: 'active' | 'total' }
+interface Param { key: string; label: string }
+interface Entry { id: string; group: 'v2'; title: string; params: Record<string, string>; target: 'active' | 'total' }
 
 export const DEFAULT = 'FE_A0';
 export const PARAMS: Param[] = [
@@ -67,7 +67,7 @@ function paramsOf(s: Setting): Record<string, string> {
   };
 }
 
-export const SETTINGS: Entry[] = Object.entries(D.settings).map(([id, s]) => ({ id, group: 'v2', title: s.title, params: paramsOf(s), target: s.target }));
+const SETTINGS: Entry[] = Object.entries(D.settings).map(([id, s]) => ({ id, group: 'v2', title: s.title, params: paramsOf(s), target: s.target }));
 const BY_ID = new Map(SETTINGS.map((e) => [e.id, e]));
 export const has = (id: string) => BY_ID.has(id);
 export const entry = (id: string): Entry => BY_ID.get(id) ?? BY_ID.get(DEFAULT)!;
@@ -123,7 +123,7 @@ export function runsOf(id: string): PersonRuns[] {
 }
 
 /** one person's training times, seconds per seed */
-export interface PersonTimes { subj: string; seeds: number[]; seconds: number[] }
+interface PersonTimes { subj: string; seeds: number[]; seconds: number[] }
 export function timesOf(id: string): { people: PersonTimes[]; definition: string } {
   const people = runsOf(id).map((p) => {
     const t = Object.entries(D.final[id][p.subj].train_s).filter((x): x is [string, number] => typeof x[1] === 'number')
@@ -139,9 +139,9 @@ const A0_CELL = Object.entries(CONFIRM.choice.cell_winners).find(([, v]) => v ==
 const pageId = (id: string) => (A0_CELL && id === `FE_cell_${A0_CELL}` ? DEFAULT : id);
 
 // ── how the setting was chosen (session-1 validation only) ──────────────────
-export interface RoundRow { round: string; config: string; id: string; params: Net | null; score: number; seeds: number[]; kept: boolean; winner: boolean }
-export interface CellWinnerRow { cell: string; id: string; title: string; score: number; chosen: boolean }
-export interface ChoiceInfo { rounds?: RoundRow[]; cellWinners?: CellWinnerRow[]; fixed?: string }
+interface RoundRow { round: string; config: string; id: string; params: Net | null; score: number; seeds: number[]; kept: boolean; winner: boolean }
+interface CellWinnerRow { cell: string; id: string; title: string; score: number; chosen: boolean }
+interface ChoiceInfo { rounds?: RoundRow[]; cellWinners?: CellWinnerRow[]; fixed?: string }
 /** exp(mean over people of log nMAE): the selection's score, shown on the nMAE scale */
 const geo = (v: Record<string, number>) => { const xs = Object.values(v); return Math.exp(xs.reduce((a, x) => a + Math.log(x), 0) / xs.length); };
 const ROUND: Record<string, string> = { R1: 'coarse', R2: 'fine' };
@@ -187,18 +187,6 @@ export function chosenConfig(id: string): string | null {
 export const isWinner = (configId: string) => Object.values(CONFIRM.choice.cell_winners).includes(configId);
 export const kindOf = (id: string) => D.settings[id].kind;
 export const cellOf = (id: string) => D.settings[id].cell;
-/** the network of a setting, as "64×1" (null for ridge) */
-export const sizeOf = (id: string) => { const s = D.settings[id]; return s.units ? `${s.units}×${s.layers}` : null; };
-
-/** this setting's training, median over every final run: the epoch whose weights were kept, epochs run, weights */
-export function trainOf(id: string): { bestEpoch: number; epochs: number; nParams: number; runs: number } | null {
-  const xs = Object.values(D.final[id] ?? {}).flatMap((f) => Object.values(f.train ?? {}));
-  const ok = xs.filter((x) => typeof x.best_epoch === 'number' && typeof x.epochs === 'number' && (x.epochs as number) > 0);
-  if (!ok.length) return null;
-  const med = (v: number[]) => { const a = [...v].sort((x, y) => x - y); const m = a.length >> 1; return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; };
-  return { bestEpoch: med(ok.map((x) => x.best_epoch as number)), epochs: med(ok.map((x) => x.epochs as number)),
-    nParams: med(ok.map((x) => x.n_params as number)), runs: ok.length };
-}
 
 export interface OverfitPoint { id: string; title: string; size: string; val: number; test: number }
 /** each tuned cell winner and last semester's network: its selection score on session-1 validation against its

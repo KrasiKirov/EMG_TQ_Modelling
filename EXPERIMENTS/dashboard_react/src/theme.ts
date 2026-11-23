@@ -91,17 +91,3 @@ export function alpha(hex: string, a: number): string {
   const b = parseInt(h.slice(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
-
-/** mix two '#rrggbb' colours: t = 0 -> c1, 1 -> c2 */
-export function mix(c1: string, c2: string, t: number): string {
-  const p = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
-  const a = p(c1);
-  const b = p(c2);
-  const m = a.map((v, i) => Math.round(v + (b[i] - v) * t));
-  return '#' + m.map((v) => v.toString(16).padStart(2, '0')).join('');
-}
-
-export function luminance(hex: string): number {
-  const ch = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
-}

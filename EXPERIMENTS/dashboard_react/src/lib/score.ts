@@ -3,13 +3,13 @@ import { medianCI, type MedianCI } from './boxstats.ts';
 import { mean, median } from './stats.ts';
 
 /** a person's runs: values[position][seed index] */
-export interface SeedGrid { seeds: number[]; mae: number[][]; nmae?: number[][]; r2: number[][] }
-export type ScoreMetric = 'mae' | 'nmae' | 'r2';
+interface SeedGrid { seeds: number[]; mae: number[][]; nmae?: number[][]; r2: number[][] }
+type ScoreMetric = 'mae' | 'nmae' | 'r2';
 const gridOf = (p: SeedGrid, m: ScoreMetric): number[][] => (m === 'nmae' ? p.nmae ?? [] : m === 'mae' ? p.mae : p.r2);
 
 /** one score per seed: MAE and nMAE the mean over positions (the pre-registered nMAE), R² the median over positions
  * (R² can be hugely negative at one position) */
-export function seedScores(p: SeedGrid, m: ScoreMetric): number[] {
+function seedScores(p: SeedGrid, m: ScoreMetric): number[] {
   const v = gridOf(p, m);
   return p.seeds.map((_, k) => {
     const xs = v.map((row) => row[k]).filter(Number.isFinite);
@@ -30,10 +30,4 @@ export const scoreCI = (p: SeedGrid, m: ScoreMetric): MedianCI | null => {
 export function worstR2(p: SeedGrid): number {
   const v = p.seeds.map((_, k) => Math.min(...p.r2.map((row) => row[k]).filter(Number.isFinite))).filter(Number.isFinite);
   return median(v);
-}
-
-/** what to call an interval over n runs: "95 % CI", or its real coverage when n is too small to reach 95 % */
-export function ciName(ci: MedianCI, n: number): string {
-  if (!Number.isFinite(ci.level)) return 'CI';
-  return ci.level >= 0.95 ? '95 % CI' : `${Math.round(ci.level * 100)} % range (${n} runs)`;
 }
