@@ -36,3 +36,11 @@ export const HELP_SECTIONS: HelpSection[] = [
     ],
   },
 ];
+
+/** confirm.json's limitations as the page shows them: the comparison families and the decision rule are not on this
+ * page, so the lines that name them are reworded (same meaning); any other line is shown as written */
+const LIMITATION_TEXT: [string, string][] = [
+  ['No shuffling (D27)', 'No shuffling (D27): with stride-1 windows in time order a batch of 64 is 0.64 s of one trial, while at 0 % overlap a batch spans 64 distinct windows. Comparing overlaps therefore also compares batch diversity: a difference between overlaps may partly be a shuffling effect.'],
+  ['The decision rule', 'The pre-registered comparisons (reported in the slides and in confirm.json, not on this page) call a difference only when all 6 people agree in sign and the median effect is at least 5 %. The rule is conservative: small differences come out as "no clear difference", which does not mean the settings are equal.'],
+];
+export const pageLimitation = (l: string): string => LIMITATION_TEXT.find(([start]) => l.startsWith(start))?.[1] ?? l;
