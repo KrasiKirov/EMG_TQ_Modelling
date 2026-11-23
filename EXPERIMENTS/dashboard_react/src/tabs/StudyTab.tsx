@@ -345,7 +345,7 @@ function WorstPositions({ id, people }: { id: string; people: PersonRuns[] }) {
   const shown = people.filter((p) => worstPositions(id, p.subj).length);
   return (
     <SectionCard testId="study-waves" title="Measured and predicted torque at the worst positions"
-      description={`Setting: ${entry(id).title}. For each person, the 2 positions where this setting's median R² over seeds is lowest, so they change with the setting (R² from the scored samples, as in the R² chart above). Best and worst run: the seeds with the highest and the lowest R² at that position. The curves show the whole trial. Negative angles are plantarflexed.`}>
+      description={`Setting: ${entry(id).title}. For each person, the 2 positions where this setting's median R² over seeds is lowest, so they change with the setting (R² from the scored samples, as in the R² chart above). Best and worst run: the seeds with the highest and the lowest R² at that position. The curves show the whole trial.`}>
       {shown.length ? (
         <SimpleGrid cols={1} spacing="lg">
           {shown.map((p) => (
