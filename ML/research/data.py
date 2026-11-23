@@ -29,7 +29,7 @@ from ML.preprocessing.emg_envelope import extract_envelope, extract_envelope_cau
 
 from . import config as C
 
-CACHE_VERSION = 1
+CACHE_VERSION = 2          # 2: the torque target is down-sampled before trimming (non-legacy bundles)
 HOLD_MAX_POS_STD = 0.005   # rad
 HOLD_MAX_TQ_STD = 1.0      # Nm
 HOLD_MIN_DUR_S = 5.0       # s
@@ -82,6 +82,9 @@ def _process_active(df, emg_cols, session, envelope='zerophase', trim_end_s=0.0,
 
     envelope   'zerophase' (forward-backward filters) or 'causal' (forward-only; inputs are plain 1-in-10 samples,
                so no input uses later data; the torque target keeps the zero-phase decimation)
+               Outside the legacy setting the target is down-sampled over the whole trial and then trimmed, so every
+               kept target value has real torque on both sides of its ~0.1 s zero-phase filter (deviation 2026-11-23).
+               The legacy setting (zero-phase envelope, no end trim) keeps the original order, for reproducibility.
     trim_end_s seconds dropped at the end, besides the first TRIM_START samples
     lp_order   order of the 2 Hz envelope low-pass (causal envelope only)
     With the defaults env_max1k is the whole-trial maximum (as the original pipeline), otherwise over kept samples.
@@ -96,10 +99,14 @@ def _process_active(df, emg_cols, session, envelope='zerophase', trim_end_s=0.0,
     else:
         env = np.column_stack([_decim(env1k[s:e, k]) for k in range(env1k.shape[1])])
         p = _decim(pos[s:e])
-    q = _decim(tq[s:e])
+    legacy = envelope == 'zerophase' and not trim_end_s
+    if legacy:
+        q = _decim(tq[s:e])                      # the original pipeline: trim, then down-sample
+    else:
+        assert s % C.DOWNSAMPLE == 0
+        q = _decim(tq)[s // C.DOWNSAMPLE:]        # down-sample, then trim: no target sits at a filter edge
     n = min(len(env), len(p), len(q))
     t = (s + np.arange(n) * C.DOWNSAMPLE) / C.FS_RAW
-    legacy = envelope == 'zerophase' and not trim_end_s
     return {
         'idx': int(df.attrs.get('trial_index')), 'comment': df.attrs.get('comment', ''),
         'session': session, 'angle': float(np.mean(p[:n])), 't': t,
