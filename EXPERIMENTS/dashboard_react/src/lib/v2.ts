@@ -117,48 +117,10 @@ export function timesOf(id: string): { people: PersonTimes[]; definition: string
   return { people, definition: 'model training only, for one person and one seed' };
 }
 
-// ── the pre-registered comparisons ──────────────────────────────────────────
-export interface ComparisonRow {
-  family: 'F1' | 'F2' | 'F3'; label: string; role: 'arm' | 'comparator'; other: string;
-  /** median over people of exp(log effect) − 1; F2: pooled over window lengths */
-  effect: number; effects: Record<string, number>; decision: string;
-  /** F2 only: the window length whose per-person effects are shown */
-  length?: string;
-}
+// ── A0's cell winner is shown as A0 ──────────────────────────────────────────
 const A0_CELL = Object.entries(CONFIRM.choice.cell_winners).find(([, v]) => v === CONFIRM.choice.A0)?.[0] ?? null;
 /** confirm's run ids → the page's: A0's cell winner is A0 */
 const pageId = (id: string) => (A0_CELL && id === `FE_cell_${A0_CELL}` ? DEFAULT : id);
-const pct = (x: number) => Math.exp(x) - 1;
-const pcts = (o: Record<string, number>) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, pct(v)]));
-const nameOf = (id: string) => entry(id).title;
-
-export const FAMILY: Record<ComparisonRow['family'], string> = {
-  F1: 'F1 · history length (against 0.2 s, full overlap)',
-  F2: 'F2 · window overlap (against full overlap)',
-  F3: 'F3 · baselines and torque',
-};
-
-export function comparisonsOf(id: string): ComparisonRow[] {
-  const out: ComparisonRow[] = [];
-  const pair = (family: 'F1' | 'F3', c: Compared) => {
-    const arm = pageId(c.arm), cmp = pageId(c.comparator);
-    if (id !== arm && id !== cmp) return;
-    out.push({ family, label: `${nameOf(arm)} vs ${nameOf(cmp)}`, role: id === arm ? 'arm' : 'comparator', other: id === arm ? cmp : arm,
-      effect: pct(c.effect), effects: pcts(c.effects), decision: c.decision });
-  };
-  for (const c of Object.values(CONFIRM.families.F1)) if ('arm' in c) pair('F1', c);
-  for (const [o, f] of Object.entries(CONFIRM.families.F2)) {
-    if (!f.lengths || !f.per_length || f.effect === undefined) continue;
-    for (const w of f.lengths) {
-      const arm = `FE_cell_${w}_${o}`, cmp = `FE_cell_${w}_full`;
-      if (id !== arm && id !== cmp) continue;
-      out.push({ family: 'F2', label: `${nameOf(arm)} vs ${nameOf(cmp)}`, role: id === arm ? 'arm' : 'comparator', other: id === arm ? cmp : arm,
-        effect: pct(f.effect), effects: pcts(f.per_length[w]), decision: f.decision, length: w });
-    }
-  }
-  for (const c of Object.values(CONFIRM.families.F3)) pair('F3', c);
-  return out;
-}
 
 // ── how the setting was chosen (session-1 validation only) ──────────────────
 export interface RoundRow { round: string; config: string; id: string; params: Net | null; score: number; seeds: number[]; kept: boolean; winner: boolean }

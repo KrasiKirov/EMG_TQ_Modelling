@@ -4,8 +4,8 @@ import { EChart } from '../components/EChart';
 import { DataTable, Note, SectionCard, type Column } from '../components/common';
 import { peakBarOption, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
 import { type SeedSide } from '../charts/seedbox';
-import { changedParams, choiceOf, comparisonsOf, CONFIRM, DEFAULT, entry, FAMILY, has, PARAMS, personScore, pickFor, runsOf, SCORE_FROM, scoreCI,
-  settingOf, timesOf, valuesOf, worstR2, type ComparisonRow, type PersonRuns } from '../lib/results';
+import { changedParams, choiceOf, CONFIRM, DEFAULT, entry, has, PARAMS, personScore, pickFor, runsOf, SCORE_FROM, scoreCI,
+  settingOf, timesOf, valuesOf, worstR2, type PersonRuns } from '../lib/results';
 import { type MedianCI } from '../lib/boxstats';
 import { MachineInfo } from '../components/MachineInfo';
 import { median } from '../lib/stats';
@@ -19,8 +19,6 @@ const f1 = (v: number) => (Number.isFinite(v) ? v.toFixed(1) : '–');
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 /** "median [lo, hi]"; no interval for a single seed */
 const withCI = (v: number, c: MedianCI | null, d: number) => (Number.isFinite(v) ? v.toFixed(d) : '–') + (c && Number.isFinite(c.lo) ? ` [${c.lo.toFixed(d)}, ${c.hi.toFixed(d)}]` : '');
-/** a change as a signed percentage */
-const pc = (v: number) => (Number.isFinite(v) ? `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(100 * v).toFixed(1)} %` : '–');
 const seedRange = (s: number[]) => (s.length === 1 ? `seed ${s[0]}` : `seeds ${Math.min(...s)}–${Math.max(...s)}`);
 
 /** the setting in the address bar (#setting=<id>); anything else (an old link, a typo) opens A0 */
@@ -96,7 +94,6 @@ export function StudyTab() {
           {e.target === 'total' ? 'Total torque: the measured torque.' : 'Active torque: measured torque minus the passive torque from the tested session\'s own relaxed holds (YES: lab worksheet; IES: experiment-sheet values, it has no relaxed holds).'}
         </Text>
       </div>
-      <Comparisons id={pick} />
       <Summary people={people} />
       <WorstPositions id={pick} people={people} />
       <PerPosition people={people} m="mae" />
@@ -141,38 +138,6 @@ function Help() {
   );
 }
 
-const PEOPLE_ORDER = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES'];
-
-/** every pre-registered comparison this setting is part of, as confirm.json decided it */
-function Comparisons({ id }: { id: string }) {
-  const rows = comparisonsOf(id);
-  const cols: Column<ComparisonRow>[] = [
-    { key: 'family', label: 'Family', render: (r) => FAMILY[r.family] },
-    { key: 'label', label: 'Comparison (first vs second)', render: (r) => r.label + (r.family === 'F1' && id === DEFAULT ? ' (A0 on seeds 10–12, as pre-registered)' : '') },
-    { key: 'role', label: 'This setting', render: (r) => (r.role === 'arm' ? 'first' : 'second') },
-    { key: 'effect', label: 'Median effect', align: 'right', render: (r) => pc(r.effect) + (r.length ? ' (over 0.2, 0.5, 1 s)' : '') },
-    { key: 'effects', label: 'Per person', render: (r) => (
-      <Text size="xs" className="num">
-        {r.length ? `at ${r.length.replace('w', '').replace(/^(\d+)$/, (m) => `${Number(m) / 100} s`)}: ` : ''}
-        {PEOPLE_ORDER.filter((p) => p in r.effects).map((p) => `${p} ${pc(r.effects[p])}`).join(' · ')}
-      </Text>) },
-    { key: 'decision', label: 'Decision', render: (r) => <b>{r.decision}</b> },
-  ];
-  return (
-    <SectionCard testId="study-comparisons" title="Pre-registered comparisons (session 2)"
-      description={<>
-        Effect: per person, the first setting's nMAE ÷ the second's − 1 (each the median over seeds); negative = the first has the lower error. The median
-        over people is shown with the decision. Decision rule (pre-registered): <b>all 6 people agree in sign and the median effect is at least 5 %</b>;
-        “better” / “worse” describe the first setting; otherwise “no clear difference”. Overlap (F2) is decided once, pooled over the 0.2, 0.5 and 1 s
-        windows; its per-person values are shown for this setting's window.
-      </>}>
-      {rows.length
-        ? <DataTable columns={cols} rows={rows} rowKey={(r) => `${r.family}|${r.label}`} dense minWidth={1040} />
-        : <Text size="sm" c="dimmed">This setting is not part of a pre-registered comparison.</Text>}
-    </SectionCard>
-  );
-}
-
 interface Row { subj: string; nmae: number; mae: number; r2: number; worst: number; peak: number; nmaeCI: MedianCI | null; maeCI: MedianCI | null; r2CI: MedianCI | null }
 
 /** one row per person: nMAE (the pre-registered metric), MAE, R² over positions and at the worst one, peak torque */
@@ -183,8 +148,12 @@ function Summary({ people }: { people: PersonRuns[] }) {
   }));
   rows.push({ subj: 'Median', nmae: median(rows.map((r) => r.nmae)), mae: median(rows.map((r) => r.mae)), r2: median(rows.map((r) => r.r2)),
     worst: median(rows.map((r) => r.worst)), peak: median(rows.map((r) => r.peak)), nmaeCI: null, maeCI: null, r2CI: null });
+  // the study's own way of combining people: exp of the mean of log nMAE (nMAE only)
+  const own = rows.filter((r) => r.subj !== 'Median' && Number.isFinite(r.nmae) && r.nmae > 0);
+  rows.push({ subj: 'Combined', nmae: own.length ? Math.exp(own.reduce((s, r) => s + Math.log(r.nmae), 0) / own.length) : NaN,
+    mae: NaN, r2: NaN, worst: NaN, peak: NaN, nmaeCI: null, maeCI: null, r2CI: null });
   const cols: Column<Row>[] = [
-    { key: 'subj', label: 'Person', render: (r) => (r.subj === 'Median' ? <b>Median</b> : r.subj) },
+    { key: 'subj', label: 'Person', render: (r) => (r.subj === 'Median' || r.subj === 'Combined' ? <b>{r.subj}</b> : r.subj) },
     { key: 'nmae', label: 'nMAE', align: 'right', render: (r) => withCI(r.nmae, r.nmaeCI, 3) },
     { key: 'mae', label: 'MAE (Nm)', align: 'right', render: (r) => withCI(r.mae, r.maeCI, 2) },
     { key: 'r2', label: 'R², median of positions', align: 'right', render: (r) => withCI(r.r2, r.r2CI, 2) },
@@ -199,7 +168,8 @@ function Summary({ people }: { people: PersonRuns[] }) {
         MAE (Nm): the same without the division. R²: within each position (one trial at one angle); the median of the positions hides the bad ones, so
         the worst position is shown too (per seed the lowest R², then the median over seeds). Peak torque: the largest |measured torque| of the
         predicted target over the scored samples. [ ]: interval for the median over seeds (about 95 %; none with 1 seed); it shows training
-        randomness only.
+        randomness only. Median: the plain median of the 6 people. Combined: exp of the mean over people of log nMAE, the study's own way of
+        combining people (nMAE only; other columns –).
       </>}>
       <DataTable columns={cols} rows={rows} rowKey={(r) => r.subj} dense minWidth={900} />
     </SectionCard>
