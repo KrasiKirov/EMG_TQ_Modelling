@@ -5,7 +5,7 @@ import { DataTable, Note, SectionCard, type Column } from '../components/common'
 import { peakBarOption, runtimeOption, SMETRICS, studySeedOption } from '../charts/study';
 import { type SeedSide } from '../charts/seedbox';
 import { changedParams, choiceOf, CONFIRM, DEFAULT, entry, has, PARAMS, personScore, pickFor, runsOf, SCORE_FROM, scoreCI,
-  settingOf, timesOf, valuesOf, worstR2, type PersonRuns } from '../lib/results';
+  settingOf, timesOf, optionsOf, worstR2, type PersonRuns } from '../lib/results';
 import { type MedianCI } from '../lib/boxstats';
 import { MachineInfo } from '../components/MachineInfo';
 import { median } from '../lib/stats';
@@ -73,7 +73,7 @@ export function StudyTab() {
         <Group gap="md" wrap="wrap" align="end">
           {PARAMS.map((x) => (
             <Select key={x.key} label={x.label} aria-label={x.label} w={x.key === 'model' ? 240 : 170} value={e.params[x.key]} allowDeselect={false}
-              data={valuesOf(x.key)} onChange={(v) => v && choose(x.key, v)} />
+              data={optionsOf(pick, x.key)} onChange={(v) => v && choose(x.key, v)} />
           ))}
         </Group>
         <Text size="sm" mt={6} data-testid="setting-name">
@@ -84,7 +84,7 @@ export function StudyTab() {
       <Stack gap={4} mt={-8}>
         {moved.length > 0 && (
           <Text size="sm" data-testid="setting-moved">
-            No setting has exactly that combination, so the nearest one is shown. Also changed: {moved.join('; ')}.
+            Only the run combinations can be chosen, so the filters below it changed: {moved.join('; ')}.
           </Text>
         )}
         {notes.length > 0 && (

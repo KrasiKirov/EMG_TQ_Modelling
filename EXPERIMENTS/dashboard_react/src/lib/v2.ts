@@ -39,8 +39,9 @@ export interface Entry { id: string; group: 'v2'; title: string; params: Record<
 
 export const DEFAULT = 'FE_A0';
 export const PARAMS: Param[] = [
-  { key: 'model', label: 'Model' }, { key: 'window', label: 'Window length' }, { key: 'overlap', label: 'Overlap' },
-  { key: 'state', label: 'Memory across windows' }, { key: 'torque', label: 'Torque target' },
+  // in this order the filters narrow each other: a filter offers only the values that were run with the choices above it
+  { key: 'model', label: 'Model' }, { key: 'window', label: 'Window length' }, { key: 'state', label: 'Memory across windows' },
+  { key: 'overlap', label: 'Overlap' }, { key: 'torque', label: 'Torque target' },
 ];
 /** each filter's values in display order */
 const ORDER: Record<string, string[]> = {
@@ -69,22 +70,34 @@ export const has = (id: string) => BY_ID.has(id);
 export const entry = (id: string): Entry => BY_ID.get(id) ?? BY_ID.get(DEFAULT)!;
 export const settingOf = (id: string): Setting => D.settings[id];
 
-/** every value a filter takes, in display order */
-export function valuesOf(key: string): string[] {
-  const vs = new Set(SETTINGS.map((e) => e.params[key]));
-  return ORDER[key].filter((v) => vs.has(v));
+/** settings that match every given filter value */
+const matching = (fixed: Record<string, string>) => SETTINGS.filter((e) => Object.entries(fixed).every(([k, v]) => e.params[k] === v));
+/** the current setting's values of the filters above `key` */
+function above(current: string, key: string): Record<string, string> {
+  const now = entry(current).params, out: Record<string, string> = {};
+  for (const p of PARAMS) { if (p.key === key) break; out[p.key] = now[p.key]; }
+  return out;
 }
 
-/** the setting with key = value that keeps as many of the current choices as possible */
+/** a filter's values in display order; a value is disabled when no run has it together with the filters above */
+export function optionsOf(current: string, key: string): { value: string; label: string; disabled: boolean }[] {
+  const all = new Set(SETTINGS.map((e) => e.params[key]));
+  const fixed = above(current, key);
+  return ORDER[key].filter((v) => all.has(v)).map((v) => ({ value: v, label: v, disabled: !matching({ ...fixed, [key]: v }).length }));
+}
+
+/** the setting after choosing key = value: the filters above stay, each filter below keeps its value if that was run
+ * with the choices so far, otherwise takes its first value that was */
 export function pickFor(current: string, key: string, value: string): string {
-  const now = entry(current);
-  let best = current, score = -1;
-  for (const e of SETTINGS) {
-    if (e.params[key] !== value) continue;
-    const sc = Object.keys(e.params).filter((k) => e.params[k] === now.params[k]).length;
-    if (sc > score) { best = e.id; score = sc; }
+  const now = entry(current).params;
+  const fixed = { ...above(current, key), [key]: value };
+  if (!matching(fixed).length) return current;
+  const below = PARAMS.slice(PARAMS.findIndex((p) => p.key === key) + 1);
+  for (const p of below) {
+    const ok = (v: string) => matching({ ...fixed, [p.key]: v }).length > 0;
+    fixed[p.key] = ok(now[p.key]) ? now[p.key] : ORDER[p.key].find(ok)!;
   }
-  return best;
+  return matching(fixed)[0].id;
 }
 
 /** the filters that differ between two settings, as "label: old → new" */
