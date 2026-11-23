@@ -61,7 +61,7 @@ def main():
         for seed in a.seeds:
             for s in a.subjects:
                 res = os.path.join(EXP, 'results', 'X00_baseline', s, 'S1toS2', f'seed{seed}.json')
-                cmd = [py, str(EXP / 'code' / 'run_original_baseline.py'), '--subject', s, '--seed', str(seed)]
+                cmd = [py, str(EXP / 'baseline' / 'run_original_baseline.py'), '--subject', s, '--seed', str(seed)]
                 jobs.append((res, cmd, f'X00_baseline__{s}__S1toS2__s{seed}', None))
     if a.jobs_file:
         for e, s_, d, seed in json.load(open(a.jobs_file)):

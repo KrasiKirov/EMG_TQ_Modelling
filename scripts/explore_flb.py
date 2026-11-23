@@ -8,7 +8,6 @@ Writes <output_dir>/csv/<flb_name>_trialNNN.csv and plots/trialNN_all_channels.p
 
 import os
 import argparse
-import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # non-interactive backend; works without a display
 import matplotlib.pyplot as plt

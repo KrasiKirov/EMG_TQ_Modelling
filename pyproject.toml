@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = '-q -p no:cacheprovider -m "not data"'
+markers = [
+    "data: needs the participant recordings in ML/subjects (run with -m data)",
+]
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["EXPERIMENTS/baseline", "presentations", "notes", "exp_gui", "exp_model", "functions", "ES_sandbox"]
+
+[tool.ruff.lint]
+select = ["F"]

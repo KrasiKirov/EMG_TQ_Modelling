@@ -4,13 +4,10 @@
 a passive torque that depends on the angle only. No participant data is used.
 """
 import os
-import sys
 
 import numpy as np
 import pytest
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, ROOT)
 os.environ.setdefault('TF_CPP_MIN_LOG_LEVEL', '3')
 
 FS = 100

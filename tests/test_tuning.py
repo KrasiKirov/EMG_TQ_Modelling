@@ -1,9 +1,7 @@
 import json
 
 import numpy as np
-import pytest
 
-from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import halving as HV, make_specs as MS, space as SPC
 
 P6 = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']

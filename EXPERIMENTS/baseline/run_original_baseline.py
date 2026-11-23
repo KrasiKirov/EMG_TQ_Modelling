@@ -15,7 +15,7 @@ Nadam lr 0.003, batch 8, max 200 epochs, ReduceLROnPlateau(0.7, patience 10),
 EarlyStopping(patience 25, restore best weights).
 
 Usage:
-    python EXPERIMENTS/code/run_original_baseline.py --subject YES --seed 0 --threads 1
+    python EXPERIMENTS/baseline/run_original_baseline.py --subject YES --seed 0 --threads 1
 """
 
 import os
@@ -24,9 +24,9 @@ import json
 import time
 import argparse
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = os.path.dirname(os.path.abspath(__file__))     # EXPERIMENTS/baseline
 EXP = os.path.dirname(HERE)
-SNAP = os.path.join(EXP, 'baseline', 'original_code')
+SNAP = os.path.join(HERE, 'original_code')
 MAIN_DATA = os.environ.get('EMG_DATA_DIR')            # set to the recordings folder, e.g. ML/subjects
 
 sys.path.insert(0, SNAP)                              # frozen original code first

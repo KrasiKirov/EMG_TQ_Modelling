@@ -1,7 +1,7 @@
 """Check the transferred handoff artifacts using only the Python standard library.
 
-    python EXPERIMENTS/code/verify_handoff.py
-    python EXPERIMENTS/code/verify_handoff.py --quick
+    python scripts/verify_handoff.py
+    python scripts/verify_handoff.py --quick
 
 After deliberately updating the included artifacts, create a new inventory with
 --write-manifest and review its diff before committing. This inventories the files
@@ -17,7 +17,7 @@ import subprocess
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'EXPERIMENTS/handoff_manifest.json'
 ARTIFACT_ROOTS = (
     'EXPERIMENTS/results',
