@@ -22,5 +22,21 @@
   "why": "The full-budget design projected 8.2-8.7 days, and more if runs train past epoch 180; the user set a hard 6-day limit. The cuts keep every cell and every pre-registered comparison and were the shortening path listed in the plan. The fallback depends on run times only, never on scores. A lower epoch cap was considered as a fallback step and not adopted: applied mid-study it would give runs of the same round different training budgets. A 7th worker was not adopted (the M3 has 4 performance + 4 efficiency cores).",
   "runs_affected": "all study v2 runs (none had run)",
   "results_seen": "none: no study v2 run had started"
+ },
+ {
+  "date": "2026-11-23",
+  "commit": "the commit that adds this entry",
+  "what": "The torque target is now down-sampled (zero-phase FIR, scipy.signal.decimate) over the whole trial and then trimmed, instead of trimmed and then down-sampled (ML/research/data.py _process_active, CACHE_VERSION 1 -> 2). Applies to every non-legacy setting, including all study v2 settings (causal envelope, 1 s end trim); the legacy setting (zero-phase envelope, no end trim) keeps the original order and is unchanged. Inputs, angles, sample times and trial lengths are unchanged.",
+  "why": "Found while checking why the last 1 s is trimmed: down-sampling after the trims put the filter's ~0.1 s edge effect at the new edges, so the first and last ~50 ms of every target were wrong (172 active trials: median 1.6 Nm, 95th percentile 9-49 Nm, in the edge 50 ms; zero from 100 ms on). Down-sampling first gives every kept target real torque on both sides, which is the reason the end trim is kept.",
+  "runs_affected": "No study v2 run is re-run: all were trained and scored on the old targets. Re-scoring the saved session-2 predictions of every FE_* experiment against the corrected target (EXPERIMENTS/analysis/target_edge_rescore.py) changes 72 of ~70,000 scored samples per person and MAE by -0.022 % to +0.005 % (median -0.006 %), R2 by at most 0.00004, for every experiment and person. Training targets changed on the same ~0.1 % of session-1 samples; that effect was not measured. Runs from this commit on use the corrected target.",
+  "results_seen": "all study v2 results, including session 2 (the fix concerns the target's construction, not any score or choice)"
+ },
+ {
+  "date": "2026-11-23",
+  "commit": "the commit that adds this entry",
+  "what": "Adds FE_A0_zerophase: A0 with a zero-phase envelope (forward-backward filters, 2nd-order 2 Hz low-pass as in A0), seeds 10-12, S1->S2 (A0's first 3 of its 10 seeds, user's choice to keep it under an hour). For this, the zero-phase envelope accepts lp_order (ML/preprocessing/emg_envelope.py extract_envelope, ML/research/data.py _envelope_fn); with lp_order 4 it is unchanged.",
+  "why": "To measure what the causal (real-time) envelope costs against the offline zero-phase one, asked by the user. Descriptive only: not a pre-registered comparison, and it changes no choice or rule. The zero-phase envelope leads the causal one by 120-130 ms (CH, every active trial); sample times and torque targets are identical.",
+  "runs_affected": "none of the existing runs; adds 18 runs",
+  "results_seen": "all study v2 results, including session 2"
  }
 ]

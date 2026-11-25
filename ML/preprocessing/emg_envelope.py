@@ -68,10 +68,10 @@ def extract_envelope(signal, fs=DEFAULT_FS,
                      bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
                      lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
                      demean=True,
-                     return_intermediates=False):
+                     return_intermediates=False, lp_order=None):
     """
     Linear envelope of one raw EMG signal: demean (as MATLAB ``demean.m``), zero-phase Butterworth band-pass,
-    full-wave rectify, zero-phase Butterworth low-pass.
+    full-wave rectify, zero-phase Butterworth low-pass (order ``lp_order``, default ``order``).
 
     Returns the un-normalised envelope (same length), plus a dict of the stages ``demeaned``, ``filtered``,
     ``rectified`` if ``return_intermediates``.
@@ -94,7 +94,7 @@ def extract_envelope(signal, fs=DEFAULT_FS,
     rectified = np.abs(filtered)
 
     # Step 3: Lowpass filter → linear envelope
-    sos_lp = butter(order, lp_cutoff / nyq, btype='low', output='sos')
+    sos_lp = butter(lp_order or order, lp_cutoff / nyq, btype='low', output='sos')
     envelope = sosfiltfilt(sos_lp, rectified)
 
     # Clip: sosfiltfilt can produce tiny negative values at edges after rectification
