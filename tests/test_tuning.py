@@ -44,6 +44,32 @@ def test_make_specs_refuses_retired_cell(tmp_path):
         MS.write('R1', 'w20_o50', SPC.configs('w20_o50'), configs_dir=tmp_path)
 
 
+def test_rewriting_a_committed_full_overlap_spec_keeps_it(tmp_path):
+    """Committed specs written before 2026-11-25 hold train_stride 1 / epoch_windows 'full'; re-running a round
+    must accept them unchanged (same settings) instead of raising 'exists with different changes'."""
+    cfg = {'d0': SPC.configs('w20_full')['d0']}
+    (i,) = MS.write('R1', 'w20_full', cfg, configs_dir=tmp_path)
+    path = tmp_path / f'{i}.json'
+    raw = json.loads(path.read_text())
+    raw['changes'].update(train_stride=1, epoch_windows='full')
+    path.write_text(json.dumps(raw, indent=1) + '\n')
+    before = path.read_text()
+    assert MS.write('R1', 'w20_full', cfg, configs_dir=tmp_path) == [i]
+    assert path.read_text() == before                       # the committed file is left as it is
+
+
+def test_rewriting_a_spec_with_other_changes_still_raises(tmp_path):
+    from EXPERIMENTS.pipeline import spec as SPEC
+    cfg = {'d0': SPC.configs('w20_full')['d0']}
+    (i,) = MS.write('R1', 'w20_full', cfg, configs_dir=tmp_path)
+    path = tmp_path / f'{i}.json'
+    raw = json.loads(path.read_text())
+    raw['changes']['units'] = 999
+    path.write_text(json.dumps(raw, indent=1) + '\n')
+    with pytest.raises(SPEC.SpecError, match='different changes'):
+        MS.write('R1', 'w20_full', cfg, configs_dir=tmp_path)
+
+
 def test_specs_valid(tmp_path):
     from EXPERIMENTS.pipeline import spec as SPEC
     ids = MS.write('R1', 'w20_full', SPC.configs('w20_full'), configs_dir=tmp_path)

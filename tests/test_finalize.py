@@ -16,6 +16,15 @@ def _choice(tmp_path, monkeypatch):
     return {'A0': winners['w100_full'], 'cell_winners': winners}, cfg
 
 
+def test_retired_cell_winner_is_skipped(tmp_path, monkeypatch):
+    """choice.json still names the winners of the retired overlap cells, whose specs were deleted from main."""
+    choice, cfg = _choice(tmp_path, monkeypatch)
+    choice['cell_winners']['w20_o75'] = 'TS2_R2_w20_o75_f3'           # no spec file
+    plan = FN.write(choice, cfg)
+    assert not any(i == 'FE_cell_w20_o75' for i, *_ in plan)
+    assert not (cfg / 'FE_cell_w20_o75.json').exists()
+
+
 def test_final_seeds_fresh(tmp_path, monkeypatch):
     choice, cfg = _choice(tmp_path, monkeypatch)
     plan = FN.write(choice, cfg)
