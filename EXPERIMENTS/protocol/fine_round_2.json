@@ -1,0 +1,27 @@
+{
+ "id": "fine_round_2",
+ "status": "pre-registered 25 Nov 2026, before any of its runs started. Written AFTER every study_v2 result had been seen, session 2 included (study_v2 final runs and confirmatory analysis finished). Logged in deviations.json. Later changes go to a 'deviations' list in this file with what had been seen.",
+ "kind": "precision check of study_v2's tuning (sensitivity analysis); does not change study_v2's choice.json, its A0 or its confirmatory families F1-F3",
+ "parent": {"protocol": "study_v2", "protocol_hash": "3fbb2cea01ad691ce3693dc9573c8dfbbbc8d5a355d853a886d354ea1082e030"},
+ "motivation": "study_v2 ranked each cell's configs on one or two seeds and 11 configs per cell. Seed noise per person: median 6.5 %, 90th percentile 16.3 %; best vs second config mostly 1-5 %. The three live cells closest to A0 on session-1 validation (D24 common targets, geometric mean vs A0): carry_2s (A0 itself), w100_full +5.5 %, w50_full +6.4 %. A second fine round with three seeds per config asks whether those winners hold up.",
+ "seen_at_registration": "all study_v2 results: R1-R3 validation, the final runs on session 2, confirm.json (F1 no clear difference, F2 no clear difference, F3 A0 beats A1 and A2, A3 no clear difference).",
+ "cells": ["carry_2s", "w50_full", "w100_full"],
+ "centre": "each cell's winner in results_v2/choice.json cell_winners (carry_2s TS2_R1_carry_2s_d5, w50_full TS2_R2_w50_full_f3, w100_full TS2_R2_w100_full_f3)",
+ "draws": {"n": 4, "seed": 20261125, "rule": "study_v2's fine draws (EXPERIMENTS/tuning/space.fine_draws) around the centre with this seed: lr x/÷ 3, dropout ± 0.1, units same or one step down (the centres have 64 units and nothing above 64 is searched), batch same or one step either side (windows only), layers the same, inside the coarse space"},
+ "spec_ids": {"draws": "TS2_R4_<cell>_g0..g3", "winner_seed2": "TS2_R4_<cell>_w: the cell winner's changes unchanged, run for seed 2 only (seeds 0 and 1 are read from the winner's own id, so its R3 numbers on the dashboard stay two-seed)"},
+ "seeds": {"draws": [0, 1, 2], "winner": [2]},
+ "train_protocol": "study400",
+ "people": "study_v2's 6 people",
+ "runs": "3 cells x (4 configs x 3 seeds + 1) x 6 people = 234",
+ "selection": {
+  "cell": "per cell, among the winner and g0-g3: study_v2's paired 1-SE rule (select.winner) on session-1 validation nMAE, full targets, median over seeds 0-2 per person; fewest parameters within 1 SE, ties to the lower score",
+  "a0": "only if a cell winner changes: study_v2's A0 rule (best D24-common validation nMAE, no 1-SE) among the 6 live cells' winners, each on seeds 0 and 1 (the seeds every winner has)",
+  "output": "results_v2/fine_round_2.json (cell winners, A0, tables); results_v2/choice.json is never rewritten"
+ },
+ "session_2": "no session-2 run is part of this round. If a cell winner or A0 changes, session-2 final runs of the new winner are a separate, descriptive step that needs the user's go-ahead; study_v2's reported results stay as they are",
+ "budget": {"workers": 6, "estimate": "about 17-22 h from study_v2's measured run times (tuning-run medians 18.6, 23.8, 35.9 min for carry_2s, w50_full, w100_full)"},
+ "limitations": [
+  "Chosen after seeing every study_v2 result, session 2 included: a sensitivity analysis, never reported as part of study_v2's pre-registered comparisons.",
+  "Every choice inside this round uses session-1 validation only."
+ ]
+}
