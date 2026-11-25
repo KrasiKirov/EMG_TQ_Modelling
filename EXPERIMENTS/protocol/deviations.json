@@ -38,5 +38,13 @@
   "why": "To measure what the causal (real-time) envelope costs against the offline zero-phase one, asked by the user. Descriptive only: not a pre-registered comparison, and it changes no choice or rule. The zero-phase envelope leads the causal one by 120-130 ms (CH, every active trial); sample times and torque targets are identical.",
   "runs_affected": "none of the existing runs; adds 18 runs",
   "results_seen": "all study v2 results, including session 2"
+ },
+ {
+  "date": "2026-11-25",
+  "commit": "the commit that adds this entry",
+  "what": "Overlap settings retired: train_stride and epoch_windows are removed from the training path and from the run settings, and the o75 / o50 / o0 cells are no longer tuned or run (scripts/run_study_v2.sh, EXPERIMENTS/tuning). F2 is still reported, from the finished runs. Their specs (FE_cell_*_o* and TS2_*_o*) are deleted from main and kept at tag study-v2-final; confirm.py checks those runs against the configs stored with them.",
+  "why": "The team's decision after the 2026-11-24 presentation: only full overlap is explored from now on. F2 found no clear difference for any of o75, o50 and o0.",
+  "runs_affected": "none re-run; the 9 FE_cell_*_o* runs and their TS2 tuning runs stay on disk",
+  "results_seen": "all study v2 results, including session 2"
  }
 ]
