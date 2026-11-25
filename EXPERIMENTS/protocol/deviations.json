@@ -54,5 +54,13 @@
   "why": "The user asked for a precision pass: study_v2 ranked configs on one or two seeds with 11 configs per cell, and seed noise (median 6.5 % per person) is about as large as the gaps between the best configs.",
   "runs_affected": "none re-run; adds TS2_R4_* runs only. No session-2 run is part of it.",
   "results_seen": "all study v2 results, including session 2: a sensitivity analysis, not part of the pre-registered comparisons"
+ },
+ {
+  "date": "2026-11-25",
+  "commit": "the commit that adds this entry",
+  "what": "Window sweep added: pre-registered in EXPERIMENTS/protocol/window_sweep.json and written by EXPERIMENTS/tuning/window_sweep.py. Reset windows of 0.5, 1, 2, 5, 10 s with the 0.5 s winner's config, and carried-state chunks of 0.5, 1, 2, 5, 10 s with A0's config; only the length changes; seeds 10-14 on session 2; 252 new runs (FE_win_*). Families WS1-WS3 with study_v2's decision rule. The second fine round (fine_round_2) is paused while it runs (5 of 234 runs finished) and resumes after.",
+  "why": "The user asked how far history length helps: study_v2 ran no reset window longer than 1 s through tuning (2 s screened only, 5 s and 10 s never run). Fixed configs instead of per-length tuning, so it fits by 29 Nov.",
+  "runs_affected": "none re-run; reuses FE_cell_w50_full seeds 10-12, FE_cell_carry_2s seeds 10-12 and FE_A0 seeds 13-14",
+  "results_seen": "all study v2 results, including session 2: exploratory, not part of the pre-registered comparisons"
  }
 ]
