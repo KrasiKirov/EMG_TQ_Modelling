@@ -19,7 +19,8 @@ D = 'S1toS2'   # the only direction: train on session 1, test on session 2
 
 from EXPERIMENTS.paths import EXP, LOGS, ROOT
 from EXPERIMENTS.pipeline.run import results_root
-from EXPERIMENTS.pipeline.settings import BASE, load_config
+from EXPERIMENTS.pipeline.settings import BASE, load_config, strip_retired
+from EXPERIMENTS.pipeline.spec import SpecError
 
 
 class ConfigMismatch(RuntimeError):
@@ -28,12 +29,17 @@ class ConfigMismatch(RuntimeError):
 
 def is_done(json_path, cfg):
     """True if json_path exists and was produced with `cfg`; raise ConfigMismatch if it exists with another config.
-    Keys missing from the stored config are taken from BASE (results saved before a default was added)."""
+    Keys missing from the stored config are taken from BASE (results saved before a default was added); retired
+    overlap settings at their full-overlap values are ignored, other values raise ConfigMismatch."""
     json_path = str(json_path)
     if not os.path.exists(json_path):
         return False
     with open(json_path, encoding='utf-8') as f:
         stored = dict(BASE, **(json.load(f).get('config') or {}))
+    try:
+        stored = strip_retired(stored)
+    except SpecError as e:
+        raise ConfigMismatch(f'{json_path}: {e}') from e
     want = json.loads(json.dumps(cfg))
     stored = json.loads(json.dumps(stored))
     if stored != want:

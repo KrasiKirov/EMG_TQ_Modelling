@@ -1,20 +1,25 @@
 """Run settings: the defaults every spec starts from, the values each setting may take, and loading a spec.
 
-BASE is frozen: confirm.py recomputes config_hash(BASE + changes) for every final run and refuses one whose stored
-hash differs, so a key or default changed here would invalidate the study's results. Options no spec uses any more
-(pf_extra, rest_weight) stay in BASE for that reason, and must stay None.
+Changing BASE changes config_hash for every spec. Final runs are checked against the config stored with them
+(analysis/confirm.py), not a hash recomputed from BASE, so a change here does not invalidate saved results. Options
+no spec uses any more (pf_extra, rest_weight) stay in BASE and must stay None.
+
+Retired (2026-11-24, full overlap only): train_stride and epoch_windows. A config may still carry them only with
+their full-overlap values (RETIRED); strip_retired drops them, and refuses any other value. Tag study-v2-final keeps
+the overlap code.
 """
 from __future__ import annotations
-
-from numbers import Integral
 
 from EXPERIMENTS.pipeline.spec import SpecError, load
 
 BASE = dict(passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm',
             balance='none', pf_extra=None, window=20, lr=None, train_protocol='orig', rest_weight=None,
-            extra_input=None, shuffle=True, envelope='zerophase', trim_end_s=0.0, input_step=1, train_stride=1,
-            state='reset', lp_order=4, val_gap=False, metadata_passive=False, chunk=None, clipnorm=None, epoch_windows=None,
+            extra_input=None, shuffle=True, envelope='zerophase', trim_end_s=0.0, input_step=1,
+            state='reset', lp_order=4, val_gap=False, metadata_passive=False, chunk=None, clipnorm=None,
             scale_part='train_val', batch=None)
+
+# retired overlap settings and the values that mean full overlap (one window per sample, every window each epoch)
+RETIRED = {'train_stride': (1,), 'epoch_windows': (None, 'full')}
 
 # every run learns from session 1 and predicts session 2 (study v2 is S1→S2 only); there is no other direction
 DIRECTION = 'S1toS2'
@@ -50,20 +55,22 @@ def validate(cfg: dict) -> None:
             raise SpecError(f'{key}={cfg[key]!r} is not supported (removed 2026-11; see tag pre-cleanup-2026-11)'
                             if key in ('passive', 'emg', 'balance', 'model', 'pf_extra', 'rest_weight', 'train_protocol')
                             else f'{key} must be one of {values}, got {cfg[key]!r}')
-    ew = cfg['epoch_windows']
-    if not (ew is None or ew == 'full' or (isinstance(ew, Integral) and not isinstance(ew, bool) and ew > 0)):
-        raise SpecError(f"epoch_windows must be None, 'full' or a positive integer, got {ew!r}")
-    if cfg['state'] == 'carry':
-        if cfg['model'] != 'lstm' or cfg['extra_input'] or cfg['train_stride'] != 1:
-            raise SpecError("state='carry' supports the plain LSTM with no extra input and train_stride 1")
-        if ew is not None:
-            raise SpecError("epoch_windows is not implemented for state='carry'")
+    if cfg['state'] == 'carry' and (cfg['model'] != 'lstm' or cfg['extra_input']):
+        raise SpecError("state='carry' supports the plain LSTM with no extra input")
+
+
+def strip_retired(cfg: dict) -> dict:
+    """``cfg`` without the retired overlap settings; SpecError if one holds anything but its full-overlap value."""
+    for key, ok in RETIRED.items():
+        if key in cfg and cfg[key] not in ok:
+            raise SpecError(f'{key}={cfg[key]!r}: overlap settings were retired on 2026-11-24 '
+                            '(full overlap only; tag study-v2-final keeps them)')
+    return {k: v for k, v in cfg.items() if k not in RETIRED}
 
 
 def load_config(exp, configs=None):
     """(raw spec dict, run settings = BASE updated with the spec's changes), validated."""
     s = load(exp, configs)
-    cfg = dict(BASE)
-    cfg.update(s.changes)
+    cfg = strip_retired(dict(BASE, **s.changes))
     validate(cfg)
     return s.raw, cfg
