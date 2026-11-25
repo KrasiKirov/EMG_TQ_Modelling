@@ -44,7 +44,7 @@ def _r1_runs(rd, seconds, cells=None, start=1_000_000.0):
 
 def test_fast_runs_need_no_fallback(tmp_path):
     rd = tmp_path / 'results_v2'
-    now = _r1_runs(rd, 60.0, cells=['w20_full', 'w20_o50'])
+    now = _r1_runs(rd, 60.0, cells=['w20_full', 'w50_full'])
     out = BG.check(rd, now=now)
     assert out['applied'] == [] and out['fits'] is True
     assert json.loads((rd / 'budget.json').read_text())['applied'] == []
@@ -52,7 +52,7 @@ def test_fast_runs_need_no_fallback(tmp_path):
 
 def test_slow_runs_add_steps_in_order(tmp_path):
     rd = tmp_path / 'results_v2'
-    now = _r1_runs(rd, 1100.0, cells=['w20_full', 'w20_o50'])
+    now = _r1_runs(rd, 1500.0, cells=['w20_full', 'w50_full'])
     out = BG.check(rd, now=now)
     assert out['applied'] and out['applied'] == B['fallback'][:len(out['applied'])]
     slow = BG.check(rd, now=now + 400 * H)      # far behind: every step, still over
@@ -76,15 +76,15 @@ def test_check_reads_run_times_only(tmp_path, monkeypatch):
     BG.check(rd, now=now)
 
 
-def test_active_cells_budget(tmp_path):
+def test_active_cells_full_overlap_only(tmp_path):
     rd = tmp_path / 'results_v2'
     rd.mkdir()
-    cells = MS.active_cells(rd)
-    assert len(cells) == 15 and all(c.endswith('_o75') for c in cells[-3:])     # o75 R1 runs queue last
+    want = ['carry_10s', 'carry_2s', 'carry_5s', 'w100_full', 'w20_full', 'w50_full']
+    assert sorted(MS.active_cells(rd)) == want
     (rd / 'gate_w200_full.json').write_text(json.dumps({'continues': True}))
-    assert len(MS.active_cells(rd)) == 15                                          # passed, but not tuned (budget)
+    assert sorted(MS.active_cells(rd)) == want                                     # passed, but not tuned (budget)
     (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75']}))
-    assert not any(c.endswith('_o75') for c in MS.active_cells(rd)) and len(MS.active_cells(rd)) == 12
+    assert sorted(MS.active_cells(rd)) == want
 
 
 def test_fine_round_size_follows_budget(tmp_path):
@@ -93,14 +93,3 @@ def test_fine_round_size_follows_budget(tmp_path):
     assert BG.fine_n(rd) == 4
     (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75', 'skip_2s_check', 'fine_2']}))
     assert BG.fine_n(rd) == 2
-
-
-def test_r1_parts(tmp_path):
-    """auto runs R1 in two parts: every cell but 75 % overlap, then (unless dropped) the 75 % cells."""
-    rd = tmp_path / 'results_v2'
-    rd.mkdir()
-    main, o75 = MS.part_cells('main', rd), MS.part_cells('o75', rd)
-    assert len(main) == 12 and not any(c.endswith('_o75') for c in main) and len(o75) == 3
-    assert main + o75 == MS.active_cells(rd)
-    (rd / 'budget.json').write_text(json.dumps({'applied': ['drop_o75']}))
-    assert MS.part_cells('o75', rd) == [] and len(MS.part_cells('main', rd)) == 12

@@ -2,11 +2,11 @@
 
     python -m EXPERIMENTS.tuning.budget --check
 
-When the R1 runs of every cell but 75 % overlap end, and again when R1 ends, ``check`` projects the total wall time from measured run times only
+When R1 ends, ``check`` projects the total wall time from measured run times only
 (seedN.json prep_s + train_s, never a score or a prediction) and adds the protocol's fallback steps, in order, until
 the projection fits. Steps are only added, never removed. Writes results_v2/budget.json, which make_specs, confirm and
 scripts/run_study_v2.sh read:
-  drop_o75       the 75 % overlap cells are dropped (their R1 runs come after the first check)
+  drop_o75       the 75 % overlap cells are dropped (moot since 2026-11-24: every overlap cell is retired)
   skip_2s_check  the 2 s check is not run
   fine_2         the fine round has 2 draws per cell (the first 2 of the same 4)
 Cells not measured yet are estimated with the plan's run multipliers; A0 and A3 with the slowest measured cell.
@@ -85,7 +85,7 @@ def project(steps: list[str], results_dir=None, now=None) -> dict:
     def done(rnd, cell, kind='first'):
         return len(runs.get((rnd, cell, kind), []))
 
-    cells = MS.active_cells(rd, steps=steps)
+    cells = MS.active_cells(rd)
     n1 = _P['n_draws'] + 1
     nf = _B['fine_reduced_n'] if 'fine_2' in steps else _P['fine']['n']
     r3 = _P['rounds']['R3']['keep'] * len(_P['rounds']['R3']['new_seeds'])

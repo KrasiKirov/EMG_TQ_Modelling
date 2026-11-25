@@ -2,10 +2,9 @@
 
     python -m EXPERIMENTS.tuning.make_specs --round R1            # write R1 specs of every active cell, print the ids
     python -m EXPERIMENTS.tuning.make_specs --round R1 --cell w200_full   # one cell (a gate screen)
-    python -m EXPERIMENTS.tuning.make_specs --round R1 --part main        # all but 75 % overlap (then --part o75)
 
-Active cells: the 15 always-run cells, minus the 75 % overlap cells if the budget check dropped them
-(results_v2/budget.json); the 75 % cells come last, so their R1 runs queue last. Under the 6-day budget a gated length
+Active cells: the 6 always-run live cells (full overlap or carried state; the overlap cells were retired on 2026-11-24,
+protocol.live_cells). Under the 6-day budget a gated length
 that passes its check is not tuned (protocol budget.tune_gated). R1 = coarse (6 shared draws + anchor), R2 = fine
 (4 draws around the cell's best R1 config, 2 after the budget step fine_2), R3 = the best 2 of R1 + R2 with seed 1
 added (reuses their specs, so it writes nothing). Every round trains to early stopping under the 400-epoch cap.
@@ -49,27 +48,19 @@ def write(rnd: str, cell: str, configs: dict[str, dict], configs_dir: Path | str
     return ids
 
 
-def active_cells(results_dir=None, steps=None) -> list[str]:
-    """Cells that run R1-R3, 75 % overlap cells last; ``steps`` = budget steps (default: results_v2/budget.json)."""
+def active_cells(results_dir=None) -> list[str]:
+    """Live cells that run R1-R3: the always-run ones, plus a gated length whose gate passed when the budget tunes
+    gated lengths (protocol budget.tune_gated)."""
     from EXPERIMENTS.paths import RESULTS_V2
     rd = Path(results_dir or RESULTS_V2)
-    steps = BG.applied(rd) if steps is None else steps
-    out = [c for c, v in _P['cells'].items() if not v['gated']]
+    live = PT.live_cells(_P)
+    out = [c for c, v in live.items() if not v['gated']]
     for g in _P['gates']['order'] if _P['budget']['tune_gated'] else []:
         f = rd / f'gate_{g}.json'
         if not (f.exists() and json.loads(f.read_text())['continues']):
             break
-        w = _P['cells'][g]['window']
-        out += [c for c, v in _P['cells'].items() if v['gated'] and v['window'] == w]
-    if 'drop_o75' in steps:
-        out = [c for c in out if not c.endswith('_o75')]
-    return sorted(out, key=lambda c: c.endswith('_o75'))
-
-
-def part_cells(part: str, results_dir=None) -> list[str]:
-    """Active cells of one R1 part: 'main' (all but 75 % overlap) or 'o75' (empty once the budget dropped them)."""
-    cells = active_cells(results_dir)
-    return [c for c in cells if c.endswith('_o75') == (part == 'o75')]
+        out += [c for c, v in live.items() if v['gated'] and v['window'] == live[g]['window']]
+    return out
 
 
 def for_round(rnd: str, cell: str) -> list[str]:
@@ -87,9 +78,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--round', required=True, choices=list(_P['rounds']))
     ap.add_argument('--cell', nargs='*')
-    ap.add_argument('--part', choices=['main', 'o75'], help='R1 in two parts (the budget check runs between)')
     a = ap.parse_args(argv)
-    cells = a.cell or (part_cells(a.part) if a.part else active_cells())
+    cells = a.cell or active_cells()
     print(' '.join(i for c in cells for i in for_round(a.round, c)))
 
 

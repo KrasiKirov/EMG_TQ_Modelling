@@ -10,10 +10,10 @@ def _choice(tmp_path, monkeypatch):
     cfg.mkdir()
     monkeypatch.setattr(SPEC, 'CONFIGS', cfg)
     winners = {}
-    for c in ('w20_full', 'w100_o50', 'w200_full', 'carry_5s'):
+    for c in ('w20_full', 'w100_full', 'w200_full', 'carry_5s'):
         ids = MS.write('R2', c, {'d3': SPC.configs(c)['d3']}, cfg)
         winners[c] = ids[0]
-    return {'A0': winners['w100_o50'], 'cell_winners': winners}, cfg
+    return {'A0': winners['w100_full'], 'cell_winners': winners}, cfg
 
 
 def test_final_seeds_fresh(tmp_path, monkeypatch):
@@ -62,4 +62,4 @@ def test_a0_reuses_cell_winner_seeds(tmp_path, monkeypatch):
     plan = FN.write(choice, cfg)
     a0 = {d: s for i, _, d, s in plan if i == 'FE_A0'}
     assert a0 == {'S1toS2': [13, 14, 15, 16, 17, 18, 19]}
-    assert SPEC.load('FE_A0', cfg).changes == SPEC.load('FE_cell_w100_o50', cfg).changes
+    assert SPEC.load('FE_A0', cfg).changes == SPEC.load('FE_cell_w100_full', cfg).changes

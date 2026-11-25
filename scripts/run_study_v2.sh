@@ -2,11 +2,11 @@
 # Study v2 runs (EXPERIMENTS/protocol/study_v2.json). Finished runs are skipped, so every step can be stopped and
 # started again. Results go to EXPERIMENTS/results_v2/ (the TS2_/FE_ ids).
 #
-#   scripts/run_study_v2.sh auto         # the whole study unattended, in order: R1 (all but 75 % overlap), budget
-#                                        # check, R1 of the 75 % cells unless dropped, budget check, 2 s check, R2, R3,
+#   scripts/run_study_v2.sh auto         # the whole study unattended, in order: R1, budget check, 2 s check, R2, R3,
 #                                        # A0 (choice.json), final runs; stops if a check is over budget or a step fails
+#                                        # (full overlap only since 2026-11-24: the overlap cells are retired)
 #   scripts/run_study_v2.sh round R1     # coarse: 6 shared random draws + the anchor per active cell, seed 0
-#   scripts/run_study_v2.sh budget       # before the 75 % R1 runs and when R1 ends: run-time projection, fallback steps
+#   scripts/run_study_v2.sh budget       # when R1 ends: run-time projection, fallback steps
 #                                        # (results_v2/budget.json, committed); exits 1 if still over 6 days
 #   scripts/run_study_v2.sh screen 2s    # D23 gate: R1 of the 2 s window at full overlap and the gate decision
 #                                        # (6-day budget: only 2 s is screened, a pass is not tuned)
@@ -45,14 +45,7 @@ case "${1:-}" in
     STEP="screen $C"; commit_specs $ids
     queue --exps $ids --seeds $(seeds R1)
     $PY -m EXPERIMENTS.tuning.select --gate "$C" --json "EXPERIMENTS/results_v2/gate_$C.json"
-    # a passed length gets its other 3 overlap cells, R1 first (then R2 and R3 with every other cell)
-    tune=$($PY -c "from EXPERIMENTS.protocol.protocol import load; print(load()['budget']['tune_gated'])")
-    if [ "$tune" = True ] && [ "$($PY -c "import json; print(json.load(open('EXPERIMENTS/results_v2/gate_$C.json'))['continues'])")" = True ]; then
-      W=${C%_full}
-      ids=$($PY -m EXPERIMENTS.tuning.make_specs --round R1 --cell "${W}_o75" "${W}_o50" "${W}_o0")
-      STEP="R1 $W overlaps"; commit_specs $ids
-      queue --exps $ids --seeds $(seeds R1)
-    fi ;;
+    ;;
   budget)
     rc=0; $PY -m EXPERIMENTS.tuning.budget --check || rc=$?
     STEP="budget check"; git add -- EXPERIMENTS/results_v2/budget.json
@@ -64,17 +57,9 @@ case "${1:-}" in
     queue --jobs-file EXPERIMENTS/results_v2/final_jobs.json ;;
   auto)
     log() { echo "[$(date '+%F %T')] $*"; }
-    r1part() {
-      local ids; ids=$($PY -m EXPERIMENTS.tuning.make_specs --round R1 --part "$1")
-      [ -z "$ids" ] && { log "R1 $1: nothing to run"; return; }
-      STEP="round R1 ($1)"; commit_specs $ids
-      queue --exps $ids --seeds $(seeds R1)
-    }
     over() { log "over the 6-day budget with every fallback step: stopped for the user's decision"; exit 1; }
-    log "R1, every cell but 75 % overlap"; r1part main
-    log "budget check 1"; bash "$0" budget || over
-    log "R1, 75 % overlap cells (unless dropped)"; r1part o75
-    log "budget check 2 (R1 done)"; bash "$0" budget || over
+    log "R1 coarse"; bash "$0" round R1
+    log "budget check (R1 done)"; bash "$0" budget || over
     log "2 s check"; rc=0; bash "$0" screen 2s || rc=$?
     [ $rc -eq 0 ] || [ $rc -eq 2 ] || exit $rc
     log "R2 fine"; bash "$0" round R2

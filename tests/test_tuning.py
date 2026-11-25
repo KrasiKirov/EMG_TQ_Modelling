@@ -2,6 +2,9 @@ import json
 
 import numpy as np
 
+import pytest
+
+from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import halving as HV, make_specs as MS, space as SPC
 
 P6 = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']
@@ -20,7 +23,7 @@ def test_draws_within_space():
 
 
 def test_same_draws_every_cell():
-    cfgs = {c: SPC.configs(c) for c in ('w20_full', 'w100_o0', 'carry_5s')}
+    cfgs = {c: SPC.configs(c) for c in ('w20_full', 'w100_full', 'carry_5s')}
     keys = [sorted(v) for v in cfgs.values()]
     assert keys[0] == keys[1] == keys[2] and 'anchor' in keys[0] and len(keys[0]) == 7
     for name in keys[0]:
@@ -29,21 +32,26 @@ def test_same_draws_every_cell():
         assert {k: v for k, v in a.items() if k != 'batch'} == c          # carried state: batch ignored
 
 
-def test_overlap_cells_equal_updates():
-    cells = SPC.cells()
-    for w in (20, 50, 100, 200, 500, 1000):
-        group = [cells[f'w{w}_{o}'] for o in ('full', 'o75', 'o50', 'o0')]
-        assert all(g['epoch_windows'] == 'full' for g in group)
-        assert [g['train_stride'] for g in group][0] == 1 and group[-1]['train_stride'] == w
+def test_live_cells_drop_overlap():
+    live = PT.live_cells(PT.load())
+    assert not any(c.endswith(('_o75', '_o50', '_o0')) for c in live)
+    assert {'w20_full', 'w50_full', 'w100_full', 'carry_2s', 'carry_5s', 'carry_10s'} <= set(live)
+    assert SPC.cells() == live and len(live) == 9
+
+
+def test_make_specs_refuses_retired_cell(tmp_path):
+    with pytest.raises(KeyError):
+        MS.write('R1', 'w20_o50', SPC.configs('w20_o50'), configs_dir=tmp_path)
 
 
 def test_specs_valid(tmp_path):
     from EXPERIMENTS.pipeline import spec as SPEC
-    ids = MS.write('R1', 'w20_o75', SPC.configs('w20_o75'), configs_dir=tmp_path)
-    assert len(ids) == 7 and all(i.startswith('TS2_R1_w20_o75_') for i in ids)
+    ids = MS.write('R1', 'w20_full', SPC.configs('w20_full'), configs_dir=tmp_path)
+    assert len(ids) == 7 and all(i.startswith('TS2_R1_w20_full_') for i in ids)
     for i in ids:
         s = SPEC.load(i, tmp_path)
-        assert s.changes['train_protocol'] == 'study400' and s.changes['train_stride'] == 5
+        assert s.changes['train_protocol'] == 'study400' and s.changes['window'] == 20
+        assert 'train_stride' not in s.changes and 'epoch_windows' not in s.changes
         assert s.changes['shuffle'] is False and s.changes['clipnorm'] == 1.0
 
 

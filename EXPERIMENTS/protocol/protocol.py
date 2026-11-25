@@ -32,6 +32,17 @@ STUDIES = {
 }
 
 
+def retired_cell(entry: dict) -> bool:
+    """True for a protocol cell with a window overlap other than full (o75, o50, o0): retired 2026-11-24, when the
+    team kept full overlap only. Their finished runs are still reported (F2); they are never tuned or run again."""
+    return entry.get('overlap', 'full') != 'full'
+
+
+def live_cells(protocol: dict) -> dict[str, dict]:
+    """The protocol's cells without the retired overlap cells (the protocol file itself is never edited)."""
+    return {c: v for c, v in protocol['cells'].items() if not retired_cell(v)}
+
+
 def study_of(exp_id: str) -> Study | None:
     """The study a spec id belongs to (by its prefix), or None for a v1 experiment."""
     for st in STUDIES.values():

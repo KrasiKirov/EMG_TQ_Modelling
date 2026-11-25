@@ -3,7 +3,8 @@
 Coarse (R1): every cell gets the same 6 draws plus the anchor, so cells differ only in the window setting.
 Fine (R2): 4 draws (2 after the budget step fine_2) in a narrowed range around the cell's best coarse config (learning rate x/÷ 3, dropout ± 0.1,
 units and batch the same or one step either side, layers the same), inside the coarse space; the same random
-numbers in every cell. Carried-state cells train on whole trials and have no batch size, so batch is dropped.
+numbers in every cell. Carried-state cells train on whole trials and have no batch size, so batch is dropped. The overlap cells were retired
+on 2026-11-24 (protocol.live_cells): only full-overlap and carried-state cells are served.
 """
 from __future__ import annotations
 
@@ -11,19 +12,19 @@ import numpy as np
 
 from EXPERIMENTS.protocol import protocol as PT
 
-RUN_KEYS = ('window', 'train_stride', 'epoch_windows', 'state', 'chunk')   # cell keys that are run settings
+RUN_KEYS = ('window', 'state', 'chunk')   # cell keys that are run settings
 _P = PT.load()
 ANCHOR = dict(_P['anchor'])
 
 
 def cells() -> dict[str, dict]:
-    """{cell: protocol entry} for the 15 always-run and 12 gated cells."""
-    return {k: dict(v) for k, v in _P['cells'].items()}
+    """{cell: protocol entry} for the live cells: 6 always-run and 3 gated (full overlap or carried state)."""
+    return {k: dict(v) for k, v in PT.live_cells(_P).items()}
 
 
 def changes(cell: str) -> dict:
-    """The run settings of one cell (the keys run.py reads)."""
-    return {k: v for k, v in _P['cells'][cell].items() if k in RUN_KEYS}
+    """The run settings of one cell (the keys run.py reads); KeyError for a retired overlap cell."""
+    return {k: v for k, v in PT.live_cells(_P)[cell].items() if k in RUN_KEYS}
 
 
 def draws(n: int, seed: int) -> list[dict]:
