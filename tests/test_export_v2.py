@@ -203,3 +203,29 @@ def test_carried_title_has_no_window_length():
     st = {'state': 'carry', 'window_s': 0.2, 'chunk_s': 2.0, 'overlap': None, 'cell': 'carry_2s'}
     assert EX._title('A0', st) == 'A0 (chosen): carried state, 2 s chunks'
     assert EX._title('cell', dict(st, chunk_s=5.0)) == 'carried state, 5 s chunks'
+
+
+def test_settings_from_stored_config_when_spec_missing(tmp_path, monkeypatch):
+    """A retired overlap cell has no spec on main: its settings come from the config stored with its runs."""
+    cfg_dir = tmp_path / 'configs'
+    cfg_dir.mkdir()
+    monkeypatch.setattr(SPEC, 'CONFIGS', cfg_dir)
+    rd = _final(tmp_path / 'results_v2', cfg_dir)
+    spec = cfg_dir / 'FE_cell_w50_o75.json'
+    changes = json.loads(spec.read_text())['changes']
+    spec.unlink()
+    for f in (rd / 'FE_cell_w50_o75').glob('*/S1toS2/seed*.json'):
+        f.write_text(json.dumps(dict(json.loads(f.read_text()), config=dict(changes, epoch_windows='full'))))
+    st = EX.settings(rd, PT.load(), json.loads((rd / 'choice.json').read_text()))
+    assert st['FE_cell_w50_o75']['overlap'] == 0.74 and st['FE_cell_w50_o75']['window_s'] == 0.5
+    assert st['FE_cell_w50_o75']['title'] == '0.5 s window, 75 % overlap'
+
+
+def test_tuning_params_from_stored_config_when_spec_missing(tmp_path):
+    """TS2 runs of a retired overlap cell keep their network settings in the tuning table (no spec on main)."""
+    rd = tmp_path / 'results_v2'
+    _runs(rd, ['TS2_R1_w20_o50_d0'])
+    for f in rd.glob('TS2_R1_w20_o50_d0/*/S1toS2/seed0.json'):
+        f.write_text(json.dumps(dict(json.loads(f.read_text()), config={'units': 999})))
+    assert not (SPEC.CONFIGS / 'TS2_R1_w20_o50_d0.json').exists()
+    assert EX.build(rd)['tuning']['w20_o50']['R1']['d0']['params']['units'] == 999

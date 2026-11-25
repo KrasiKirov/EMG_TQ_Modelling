@@ -10,6 +10,7 @@ from EXPERIMENTS.protocol import lock as LK, protocol as PT
 P = PT.load()
 PEOPLE = P['people']
 CELLS = [c for c, v in P['cells'].items() if not v['gated']]
+RETIRED = [c for c in CELLS if PT.retired_cell(P['cells'][c])]
 
 
 def _arms():
@@ -24,7 +25,9 @@ def _arms():
 
 @pytest.fixture
 def study(tmp_path, monkeypatch):
-    """Synthetic final runs: error 0.1 everywhere; overrides set an arm's error factor."""
+    """Synthetic final runs: error 0.1 everywhere; overrides set an arm's error factor. As on main since 2026-11-24:
+    windowed cells store their overlap settings (train_stride, epoch_windows 'full') with the run, and the retired
+    overlap cells have no spec."""
     cfg_dir, rd = tmp_path / 'configs', tmp_path / 'results_v2'
     cfg_dir.mkdir()
     monkeypatch.setattr(SPEC, 'CONFIGS', cfg_dir)
@@ -39,8 +42,14 @@ def study(tmp_path, monkeypatch):
             changes = {'units': 8, 'passive': 'none' if e == 'FE_A3' else 'static', 'window': window.get(e, 20)}
             if e == 'FE_A0':
                 changes['window'] = 20
-            (cfg_dir / f'{e}.json').write_text(json.dumps({'id': e, 'title': e, 'changes': changes}))
+            cell = P['cells'].get(e[len('FE_cell_'):], {})
+            if e[len('FE_cell_'):] in RETIRED:
+                changes['window'] = cell['window']      # no spec: the run's own window is the protocol cell's
+            else:
+                (cfg_dir / f'{e}.json').write_text(json.dumps({'id': e, 'title': e, 'changes': changes}))
             cfg = dict(PR.BASE, **changes)
+            if 'train_stride' in cell:                  # the overlap settings the run was made with
+                cfg.update(train_stride=cell['train_stride'], epoch_windows='full')
             for p in PEOPLE:
                 for d in dirs:
                     for s in seeds:
@@ -200,3 +209,47 @@ def test_scored_mask_matches_scores(study):
     assert abs(np.mean(per) - nm[e, p, d][s]) < 1e-12
     _, _, fsfrom = CF.final_runs(rd, P)
     assert fsfrom == sfrom == CF.run(rd, P)['score_from_s']
+
+
+def _rewrite(rd, e, **over):
+    """Change the stored config of one run of ``e`` (CH, seed 10) and re-hash it unless 'config_hash' is given."""
+    js = rd / e / PEOPLE[0] / 'S1toS2' / 'seed10.json'
+    d = json.loads(js.read_text())
+    h = over.pop('config_hash', None)
+    d['config'] = dict(d['config'], **over)
+    d['config_hash'] = h or PV.config_hash(d['config'])
+    js.write_text(json.dumps(d))
+
+
+def test_full_overlap_run_verifies_after_retirement(study):
+    rd = study()
+    assert json.loads((rd / 'FE_cell_w20_full' / 'CH' / 'S1toS2' / 'seed10.json').read_text())['config']['train_stride'] == 1
+    assert CF.run(rd, P)['provenance_check']['config_checks']['FE_cell_w20_full'] == 'spec'
+
+
+def test_retired_cell_without_spec_still_reported(study):
+    rd = study()
+    out = CF.run(rd, P)
+    assert out['provenance_check']['config_checks']['FE_cell_w50_o50'] == 'retired cell'
+    assert out['families']['F2']['o50']['lengths'] == ['w20', 'w50', 'w100']
+
+
+def test_tampered_stored_config_refused(study):
+    rd = study()
+    _rewrite(rd, 'FE_cell_w20_full', units=999, config_hash='0' * 16)
+    with pytest.raises(CF.Refused, match='does not match its hash'):
+        CF.run(rd, P)
+
+
+def test_stored_config_differing_from_spec_refused(study):
+    rd = study()
+    _rewrite(rd, 'FE_cell_w20_full', units=999)
+    with pytest.raises(CF.Refused, match='FE_cell_w20_full.*differs from spec'):
+        CF.run(rd, P)
+
+
+def test_retired_cell_with_wrong_overlap_refused(study):
+    rd = study()
+    _rewrite(rd, 'FE_cell_w50_o50', train_stride=1)
+    with pytest.raises(CF.Refused, match='FE_cell_w50_o50'):
+        CF.run(rd, P)

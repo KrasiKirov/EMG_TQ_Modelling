@@ -42,15 +42,22 @@ def _seeds(d: Path, val=False):
     return sorted(int(m.group(1)) for f in d.iterdir() if (m := pat.match(f.name)))
 
 
-def _changes(exp: str) -> dict | None:
+def _changes(exp: str, rd: Path) -> dict | None:
+    """The spec's changes; for a retired overlap cell with no spec on main (2026-11-24, tag study-v2-final), the config
+    stored with its first run. None when neither exists."""
     try:
         return SPEC.load(exp).changes
     except SPEC.SpecError:
-        return None
+        pass
+    for f in sorted(Path(rd).glob(f'{exp}/*/*/seed*.json')):
+        cfg = json.loads(f.read_text()).get('config')
+        if cfg:
+            return cfg
+    return None
 
 
-def _params(exp: str) -> dict | None:
-    ch = _changes(exp)
+def _params(exp: str, rd: Path) -> dict | None:
+    ch = _changes(exp, rd)
     return {k: ch.get(k) for k in NET} if ch is not None else None
 
 
@@ -70,11 +77,11 @@ def tuning(rd: Path) -> dict:
             tables, cov = SEL.load_val([d.name], seeds, people, rd)
         except FileNotFoundError:                       # still running: shown as unfinished
             out.setdefault(cell, {}).setdefault(rnd, {})[name] = {'id': d.name, 'seeds': seeds, 'incomplete': True,
-                                                                  'params': _params(d.name)}
+                                                                  'params': _params(d.name, rd)}
             continue
         out.setdefault(cell, {}).setdefault(rnd, {})[name] = {
             'id': d.name, 'seeds': seeds, 'val_nmae': tables['full'][d.name],
-            'val_nmae_common': tables['common'][d.name], 'n_common': cov[d.name], 'params': _params(d.name)}
+            'val_nmae_common': tables['common'][d.name], 'n_common': cov[d.name], 'params': _params(d.name, rd)}
     return out
 
 
@@ -104,7 +111,7 @@ def settings(rd: Path, protocol: dict, choice: dict) -> dict:
           [e for e in ('FE_A1', 'FE_A2', 'FE_A3') if e in exps]
     out = {}
     for e in ids:
-        ch = _changes(e)
+        ch = _changes(e, rd)
         if ch is None:
             continue
         kind = 'cell' if e.startswith('FE_cell_') else e[3:]

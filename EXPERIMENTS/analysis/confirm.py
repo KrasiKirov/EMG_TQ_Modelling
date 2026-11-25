@@ -3,8 +3,10 @@
     python -m EXPERIMENTS.analysis.confirm      # writes EXPERIMENTS/dashboard_react/src/data/confirm.json
 
 Refuses (``Refused``) when any final run is missing, was made with another protocol or on uncommitted code, has a
-config hash that differs from its spec's current config, or when two runs read different versions of the same
-recording. Opens session-2 predictions only through ``lock.load_test`` (so only after A0 was chosen).
+stored config that does not match its own hash or differs from its spec's current config (``config_check``), or when
+two runs read different versions of the same recording. The retired overlap cells (2026-11-24, full overlap only)
+have no spec on main (tag study-v2-final keeps them): their runs are checked against their own hash and the protocol
+cell's overlap, and F2 is still reported from them. Opens session-2 predictions only through ``lock.load_test`` (so only after A0 was chosen).
 
 Score of a run: per trial (position), MAE divided by the person's scale (99th percentile of |measured active
 target| of the tested session, from FE_A0, also used for A3: D6); the run's nMAE is the mean over positions.
@@ -26,7 +28,8 @@ import numpy as np
 from EXPERIMENTS.analysis import stats as ST
 from EXPERIMENTS.pipeline import provenance as PV
 from EXPERIMENTS.paths import DASH_DATA, RESULTS_V2
-from EXPERIMENTS.pipeline.settings import load_config
+from EXPERIMENTS.pipeline.settings import load_config, strip_retired
+from EXPERIMENTS.pipeline.spec import SpecError
 from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
 from EXPERIMENTS.tuning import budget as BG
@@ -83,18 +86,45 @@ def _load_runs(rd, protocol):
     return runs
 
 
+def config_check(exp: str, js: dict, protocol: dict, name: str | None = None) -> str:
+    """How one run's stored config was verified: 'spec' (it equals its spec's current config, retired overlap
+    settings at their full-overlap values aside) or 'retired cell' (an overlap cell with no spec: its stored window and
+    train_stride equal the protocol cell's). The stored config must match the run's own config_hash first."""
+    name = name or exp
+    cfg = js.get('config') or {}
+    if PV.config_hash(cfg) != js.get('config_hash'):
+        raise Refused(f'{name}: stored config does not match its hash {js.get("config_hash")}')
+    cell = protocol['cells'].get(exp[len('FE_cell_'):]) if exp.startswith('FE_cell_') else None
+    try:
+        spec = load_config(exp)[1]
+    except SpecError:
+        spec = None
+    if spec is not None:
+        try:
+            same = strip_retired(cfg) == spec
+        except SpecError:
+            same = False
+        if not same:
+            diff = sorted(k for k in set(cfg) | set(spec) if cfg.get(k) != spec.get(k))
+            raise Refused(f'{name}: stored config differs from spec {exp} in {diff}')
+        return 'spec'
+    if cell is not None and PT.retired_cell(cell):
+        got = {k: cfg.get(k) for k in ('window', 'train_stride')}
+        if got != {k: cell[k] for k in ('window', 'train_stride')}:
+            raise Refused(f'{name}: stored {got} differ from the retired protocol cell {exp[len("FE_cell_"):]}')
+        return 'retired cell'
+    raise Refused(f'{name}: no spec {exp}')
+
+
 def provenance_check(runs, protocol) -> dict:
-    spec_hash, data, commits = {}, {}, set()
+    checks, data, commits = {}, {}, set()
     for (e, p, d, s), (js, _) in runs.items():
         pv, name = js.get('provenance') or {}, f'{e} {p} {d} seed {s}'
         if pv.get('protocol_hash') != protocol['hash']:
             raise Refused(f'{name}: made with another protocol ({pv.get("protocol_hash")})')
         if pv.get('git_dirty'):
             raise Refused(f'{name}: made on uncommitted code')
-        if e not in spec_hash:
-            spec_hash[e] = PV.config_hash(load_config(e)[1])
-        if js.get('config_hash') != spec_hash[e]:
-            raise Refused(f'{name}: config hash {js.get("config_hash")} differs from spec {e} ({spec_hash[e]})')
+        checks[e] = config_check(e, js, protocol, name)
         for f, h in (pv.get('data_sha256') or {}).items():
             data.setdefault(f, {}).setdefault(h, []).append(name)
         commits.add(pv.get('git_commit'))
@@ -102,7 +132,8 @@ def provenance_check(runs, protocol) -> dict:
         if len(by_hash) > 1:
             raise Refused(f'recording {f} was read with different contents: ' +
                           '; '.join(f'{h[:12]}: {", ".join(n[:3])}' for h, n in by_hash.items()))
-    return {'n_runs': len(runs), 'commits': sorted(c for c in commits if c), 'protocol_hash': protocol['hash']}
+    return {'n_runs': len(runs), 'commits': sorted(c for c in commits if c), 'protocol_hash': protocol['hash'],
+            'config_checks': dict(sorted(checks.items()))}
 
 
 def _span_s(js):
