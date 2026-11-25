@@ -77,14 +77,3 @@ def tmp_results(tmp_path, monkeypatch):
     monkeypatch.setattr(PR, 'RESULTS_V2', str(v2))
     return tmp_path
 
-
-def pytest_collection_modifyitems(config, items):
-    """Tests marked ``data`` need the participant recordings; skip them where ML/subjects has none."""
-    import glob
-    from ML.config import DATA_DIR
-    if glob.glob(os.path.join(DATA_DIR, '*.flb')):
-        return
-    skip = pytest.mark.skip(reason=f'no recordings in {DATA_DIR}')
-    for item in items:
-        if 'data' in item.keywords:
-            item.add_marker(skip)
