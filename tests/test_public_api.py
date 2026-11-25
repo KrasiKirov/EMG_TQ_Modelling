@@ -39,7 +39,7 @@ def test_monkeypatched_build_model_is_used(patch_subject, monkeypatch):
     from ML.research.run import prepare
     monkeypatch.setitem(RC.PROTOCOLS, 'unit', dict(batch=256, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=1))
     _, cfg = PR.load_config('FE_A0')
-    rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step', 'train_stride',
+    rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step',
                                 'state', 'lp_order', 'val_gap', 'metadata_passive', 'scale_part')}
     data = PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
     built = []

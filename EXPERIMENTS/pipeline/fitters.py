@@ -105,11 +105,8 @@ def fit(data, cfg, seed, *, save_weights=None, protocol_file=STUDIES['study_v2']
     if cfg['model'] == 'ridge_lagged':
         pred, info = fit_ridge(data, protocol_file)
         return pred, info, data
-    ew, ew_mode = cfg['epoch_windows'], 'passes'
-    if ew == 'full':                                   # equal updates across overlap (study v2)
-        ew, ew_mode = data['n_train_full'], 'exact'
     pred, info = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], cfg['train_protocol'], seed,
                                 lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
-                                save_weights=save_weights, epoch_windows=ew, epoch_mode=ew_mode,
+                                save_weights=save_weights,
                                 clipnorm=cfg['clipnorm'], batch=cfg['batch'], build=make_builder(cfg))
     return pred, info, data

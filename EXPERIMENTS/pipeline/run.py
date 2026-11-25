@@ -35,7 +35,7 @@ from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 
 RESULTS = str(P.RESULTS)
 RESULTS_V2 = str(P.RESULTS_V2)
-RCFG_KEYS = ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step', 'train_stride', 'state', 'lp_order',
+RCFG_KEYS = ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step', 'state', 'lp_order',
              'val_gap', 'metadata_passive', 'scale_part')
 
 
@@ -112,8 +112,7 @@ def main(argv=None):
     res = {'experiment': a.exp, 'subject': a.subject, 'direction': a.direction, 'seed': a.seed,
            'config': cfg, 'hypothesis': spec.get('hypothesis'), 'details': details,
            'train_info': {k: v for k, v in info.items() if k != 'init_weights'},
-           'n_windows': dict({p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
-                             train_full=int(data['n_train_full'])),
+           'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
            'prep_s': t_prep, 'train_s': t_train, 'config_hash': PV.config_hash(cfg), 'provenance': prov,
            'versions': {'tensorflow': tf.__version__, 'numpy': np.__version__, 'python': sys.version.split()[0]}}
     from EXPERIMENTS.pipeline.outputs import write_run

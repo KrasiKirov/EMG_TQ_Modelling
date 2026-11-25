@@ -50,8 +50,7 @@ def prepare(subject, protocol, cfg):
     rest = rest_flags(bundle, protocol)
     step = cfg.get('input_step', 1)
     gap = bool(cfg.get('val_gap', False))
-    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest, step=step,
-                        train_stride=cfg.get('train_stride', 1), val_gap=gap)
+    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest, step=step, val_gap=gap)
     if cfg.get('state', 'reset') == 'carry':
         data['streams'] = splits.streams(protocol, recs, feats, targets, window=window, step=step, val_gap=gap)
     data['trial_len'] = {r['idx']: len(r['t']) for r in recs}

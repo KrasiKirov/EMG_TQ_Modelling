@@ -42,13 +42,13 @@ def test_scale_default_unchanged(synthetic_bundle):
     assert np.allclose(feats[tr[0]['idx']], tr[0]['env_raw'] / want)
 
 
-# --- splits: purge gap, overlap, common targets (D2, D16, D24) ----------------------------------------------------
+# --- splits: purge gap, every window, common targets (D2, D16, D24) ----------------------------------------------------
 
-def _build(b, window, stride=1):
+def _build(b, window):
     recs = b['active']
     feats = {r['idx']: r['env_raw'] for r in recs}
     targets = {r['idx']: r['tq'] for r in recs}
-    return SP.build('S1toS2', recs, feats, targets, window=window, train_stride=stride, val_gap=True)
+    return SP.build('S1toS2', recs, feats, targets, window=window, val_gap=True)
 
 
 @pytest.mark.parametrize('window', [20, 1000])
@@ -60,11 +60,12 @@ def test_purge_gap_one_window_span(synthetic_bundle, window):
         assert first_va - last_tr == (window - 1) + 1
 
 
-def test_val_windows_same_across_overlap(synthetic_bundle):
-    a, b = _build(synthetic_bundle, 20, 1), _build(synthetic_bundle, 20, 20)
-    assert np.array_equal(a['X_val'], b['X_val']) and np.array_equal(a['y_val'], b['y_val'])
-    assert a['n_train_full'] == b['n_train_full'] == len(a['y_train'])
-    assert len(b['y_train']) < len(a['y_train'])
+def test_build_keeps_every_training_window(synthetic_bundle):
+    d = _build(synthetic_bundle, 20)
+    assert 'n_train_full' not in d
+    m = d['meta_train']
+    for i in np.unique(m['trial']):
+        assert np.all(np.diff(m['last'][m['trial'] == i]) == 1)
 
 
 def test_common_val_targets(synthetic_bundle):
@@ -85,12 +86,12 @@ def test_d24_targets_every_trial(synthetic_bundle):
         SP.check_common_targets(short, min_s=5.0)
 
 
-# --- training: clipping, logging, equal updates, validation predictions -----------------------------------------
+# --- training: clipping, logging, validation predictions -----------------------------------------
 
-def _data(window=20, stride=1):
+def _data(window=20):
     from ML.research.run import prepare
     rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0, input_step=1,
-                train_stride=stride, state='reset', lp_order=2, val_gap=True, metadata_passive=True, scale_part='train')
+                state='reset', lp_order=2, val_gap=True, metadata_passive=True, scale_part='train')
     return PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
 
 
@@ -101,21 +102,8 @@ def test_clipnorm_windowed_applied(patch_subject, monkeypatch):
     assert info['clipnorm'] == 1.0 and info['optimizer_clipnorm'] == 1.0
 
 
-def test_equal_updates_across_overlap(patch_subject, monkeypatch):
-    from ML.research import train as RT
-    monkeypatch.setitem(RC.PROTOCOLS, 'unit', UNIT)
-    full, sparse = _data(stride=1), _data(stride=20)
-    n = full['n_train_full']
-    _, a = RT.fit_predict(full, 'lstm8', protocol='unit', shuffle=False, epoch_windows=n, epoch_mode='exact')
-    _, b = RT.fit_predict(sparse, 'lstm8', protocol='unit', shuffle=False, epoch_windows=n, epoch_mode='exact')
-    assert a['updates'] == b['updates'] == 2 * int(np.ceil(n / UNIT['batch']))
 
 
-def test_epoch_windows_time_order():
-    from ML.research.train import epoch_indices
-    idx = epoch_indices(5, 12)
-    assert idx.tolist() == [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1]
-    assert epoch_indices(10, 4).tolist() == [0, 1, 2, 3]
 
 
 def _cfg(**over):
@@ -161,9 +149,6 @@ def test_info_logs_clipnorm_cap_shuffle(run_unit):
         assert np.isclose(ti['val_mae'], np.mean(np.abs(v['y_pred'] - v['y'])))
 
 
-def test_epoch_windows_full(run_unit):
-    res, _ = run_unit('TS2_unit_s', train_stride=20, epoch_windows='full')
-    assert res['train_info']['epoch_windows'] == res['n_windows']['train_full']
 
 
 def test_ridge_lagged_run(run_unit):

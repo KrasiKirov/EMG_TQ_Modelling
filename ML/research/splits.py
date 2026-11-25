@@ -93,24 +93,22 @@ def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=Fal
     return out
 
 
-def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, train_stride=1, val_gap=False):
-    """Train / val / test arrays for ``protocol``.
+def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, val_gap=False):
+    """Train / val / test arrays for ``protocol``: every window of every trial (full overlap; the overlap
+    setting train_stride was retired 2026-11-24, tag study-v2-final).
 
     feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}; rest: optional {trial idx: (T,) bool}
-    train_stride  keep every k-th training window (validation and test keep all)
     val_gap       start validation one window span after the training cut (purged split)
     """
     spec = PROTOCOLS[protocol]
     parts = {'train': [], 'val': [], 'test': []}
-    n_train_full = 0
     for r in recs:
         X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window, step)
         rr = rest[r['idx']] if rest is not None else None
         n = len(X)
         if r['session'] in spec['train']:
             n_tr = int(n * C.TRAIN_FRAC)
-            n_train_full += n_tr
-            tr = slice(0, n_tr, train_stride)
+            tr = slice(0, n_tr)
             parts['train'].append((X[tr], y[tr], _meta(r, last[tr], 'train', rr)))
             v0 = n_tr + ((window - 1) * step if val_gap else 0)
             parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:], 'val', rr)))
@@ -122,6 +120,5 @@ def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, tr
         out[f'X_{p}'] = np.concatenate([x for x, _, _ in items])
         out[f'y_{p}'] = np.concatenate([y for _, y, _ in items])
         out[f'meta_{p}'] = {k: np.concatenate([m[k] for _, _, m in items]) for k in items[0][2]}
-    out['n_train_full'] = int(n_train_full)       # training windows at train_stride 1 (equal-updates target)
     out['train_angles'] = sorted({float(np.round(a, 3)) for a in out['meta_train']['angle']})
     return out

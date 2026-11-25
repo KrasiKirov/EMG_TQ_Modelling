@@ -42,15 +42,9 @@ def build_original(name, n_steps, n_features, knots):
 build_model = build_original
 
 
-def epoch_indices(n, n_epoch):
-    """Indices of one epoch of exactly ``n_epoch`` windows taken in time order from ``n`` windows, wrapping to
-    the first window when the set runs out (every epoch starts at the first window)."""
-    return np.resize(np.arange(n), n_epoch)
-
-
 def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                 protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
-                save_weights=None, epoch_windows=None, epoch_mode='passes', clipnorm=None, batch=None, build=None):
+                save_weights=None, clipnorm=None, batch=None, build=None):
     """Train on data['X_train'] / ['X_val'] and predict X_test; returns (y_pred_test (Nm), info).
 
     model_name    'lstm' / 'lstm8' (built by the module attribute ``build_model``) or 'ridge' (ridge.py)
@@ -59,9 +53,6 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     lr            overrides the protocol's learning rate
     shuffle       False feeds the windows in stored order (shuffle ablation)
     save_weights  path for the best-epoch weights
-    epoch_windows one epoch = round(N / n_train) whole passes (at least 1), so settings with few windows get
-                  about as many updates per epoch as one with N windows
-    epoch_mode    'passes' (above, v1) or 'exact': every epoch is exactly N windows, cycling in time order
     clipnorm      gradient-norm clipping of Nadam (None = off)
     batch         overrides the protocol's batch size
     build         model builder (name, n_steps, n_features, knots) -> keras model; default: the module attribute
@@ -101,17 +92,7 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
                              min_lr=1e-6, verbose=0),
            EarlyStopping(monitor='val_loss', patience=p['early'], restore_best_weights=True, verbose=0)]
     val = (data['X_val'], t_va.astype(np.float32))
-    X_fit, t_fit = data['X_train'], t_tr.astype(np.float32)
-    passes = max(1, int(round(epoch_windows / len(X_fit)))) if epoch_windows else 1
-    if epoch_windows and epoch_mode == 'exact':
-        sel = epoch_indices(len(X_fit), int(epoch_windows))
-        X_fit, t_fit = X_fit[sel], t_fit[sel]
-        passes = len(sel) / len(data['X_train'])
-    elif epoch_mode != 'passes':
-        raise ValueError(f'epoch_mode must be passes or exact, got {epoch_mode!r}')
-    elif passes > 1:                            # whole passes, each in stored order
-        X_fit, t_fit = np.concatenate([X_fit] * passes), np.concatenate([t_fit] * passes)
-    hist = model.fit(X_fit, t_fit, sample_weight=None,
+    hist = model.fit(data['X_train'], t_tr.astype(np.float32), sample_weight=None,
                      validation_data=val, epochs=p['epochs'], batch_size=batch or p['batch'],
                      callbacks=cbs, shuffle=shuffle, verbose=verbose)
     if save_weights:
@@ -126,8 +107,7 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
             'best_val_loss': float(hist.history['val_loss'][best]),
             'knots': knots.tolist(), 'sd_per_knot': sd.tolist(), 'n_params': int(model.count_params()),
             'init_weights': None, 'lr': lr or p['lr'],
-            'passes_per_epoch': passes, 'updates': int(model.optimizer.iterations.numpy()),
+            'updates': int(model.optimizer.iterations.numpy()),
             'clipnorm': clipnorm, 'optimizer_clipnorm': model.optimizer.clipnorm, 'max_epochs': p['epochs'],
-            'batch': batch or p['batch'], 'shuffle': bool(shuffle), 'epoch_windows': epoch_windows,
-            'epoch_mode': epoch_mode, 'val_pred': pv, 'val_mae': float(np.mean(np.abs(pv - y_va)))}
+            'batch': batch or p['batch'], 'shuffle': bool(shuffle), 'val_pred': pv, 'val_mae': float(np.mean(np.abs(pv - y_va)))}
     return pred, info
