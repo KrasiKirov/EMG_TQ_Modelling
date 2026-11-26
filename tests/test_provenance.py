@@ -26,7 +26,7 @@ def _short_schedule(monkeypatch, schedule):
 
 def _data(patch_subject, window=20):
     from ML.research.prepare import prepare
-    rcfg = dict(passive='static', window=window, envelope='causal', state='reset')
+    rcfg = dict(passive='static', window=window, state='reset')
     data, _ = prepare('SYN', 'S1toS2', rcfg)
     return PR.drop_last_val_window(data)
 

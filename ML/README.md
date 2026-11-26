@@ -12,7 +12,7 @@ this package.
 | **`preprocessing/`** | **recording → signals (1 kHz)** |
 | `preprocessing/flb_reader.py` | reads an `.flb` file into one DataFrame per trial: `time`, `position` (rad), `torque` (Nm), `gm`, `gl`, `sol`, `ta` (EMG, mV) |
 | `preprocessing/trials.py` | sorts trials into MVC / passive / active by their comment; splits a passive trial at device steps |
-| `preprocessing/emg_envelope.py` | EMG envelope of one channel: band-pass 30–300 Hz, rectify, 2 Hz low-pass (zero-phase or forward-only) |
+| `preprocessing/emg_envelope.py` | EMG envelope of one channel: band-pass 30–300 Hz, rectify, 2 Hz low-pass, forward-only (only past EMG, as in a real-time device) |
 | `preprocessing/passive_map.py` | passive-torque map (angle → torque) from the static passive holds, and the lookup between its angles |
 | `preprocessing/rest.py` | finds rest periods in a trial from the EMG alone |
 | **`research/`** | **signals → windowed arrays → trained model** |
@@ -58,7 +58,7 @@ One participant, settings of the study v2 model A0 (spec `EXPERIMENTS/configs/FE
 10. **Output:** torque predictions (Nm) for every sample of session 2 that a window ends on, plus the validation
     predictions.
 
-A spec can change only the passive target, envelope, window length, state, chunk, network size, dropout, learning
+A spec can change only the passive target, window length, state, chunk, network size, dropout, learning
 rate, batch and model (LSTM or lagged ridge); `EXPERIMENTS/pipeline/settings.py` lists the defaults and allowed
 values, and `EXPERIMENTS/configs/TEMPLATE_reference.json` explains each one. Everything else above is fixed.
 
@@ -81,4 +81,5 @@ python -m EXPERIMENTS.pipeline.run --exp FE_A0 --subject JM --seed 10
 Options and models no longer used were removed in November 2026. Tag `pre-cleanup-2026-11` keeps the code before the
 reorganization, tag `study-v2-final` keeps the settings retired first (overlap, per-angle loss scaling, input step),
 and tag `older-options-2026-11-26` keeps the settings and the 84 specs that only the experiments before study v2
-used. `EXPERIMENTS/pipeline/settings.py` lists what was retired and when.
+used, as well as the zero-phase envelope and its descriptive study v2 arm FE_A0_zerophase (whose saved runs stay).
+`EXPERIMENTS/pipeline/settings.py` lists what was retired and when.

@@ -12,13 +12,15 @@ strip_retired drops them and refuses any other value. The tag named with each da
   2026-11-26 (study v2 values only; tag older-options-2026-11-26): emg, scale_part, shuffle, extra_input, trim_end_s,
              lp_order, val_gap, metadata_passive, train_protocol and clipnorm, with the passive option 'legacy' and the
              model 'ridge'; the 84 older specs that used other values were removed
+  2026-11-26 (causal envelope only; tag older-options-2026-11-26): envelope; its spec FE_A0_zerophase (a descriptive
+             arm, deviation 2026-11-23, whose saved runs stay) was removed
 """
 from __future__ import annotations
 
 from EXPERIMENTS.pipeline.spec import SpecError, load
 
-BASE = dict(passive='static', units=8, layers=2, dropout=0.3, model='lstm', window=20, lr=None, envelope='causal',
-            state='reset', chunk=None, batch=None)
+BASE = dict(passive='static', units=8, layers=2, dropout=0.3, model='lstm', window=20, lr=None, state='reset',
+            chunk=None, batch=None)
 
 # retired settings and the only values still accepted. train_protocol 'orig' was the old default: the lagged-ridge
 # run FE_A1 (no training schedule) stored it
@@ -26,7 +28,7 @@ RETIRED = {'train_stride': (1,), 'epoch_windows': (None, 'full'), 'balance': ('n
            'pf_extra': (None,), 'rest_weight': (None,),
            'emg': ('trainmax',), 'scale_part': ('train',), 'shuffle': (False,), 'extra_input': (None,),
            'trim_end_s': (1.0,), 'lp_order': (2,), 'val_gap': (True,), 'metadata_passive': (True,),
-           'train_protocol': ('study400', 'orig'), 'clipnorm': (1.0,)}
+           'train_protocol': ('study400', 'orig'), 'clipnorm': (1.0,), 'envelope': ('causal',)}
 _V2_ONLY = ('2026-11-26 (study v2 values only)', 'older-options-2026-11-26')
 _RETIRED_ON = {'train_stride': ('2026-11-24 (full overlap only)', 'study-v2-final'),
                'epoch_windows': ('2026-11-24 (full overlap only)', 'study-v2-final'),
@@ -35,20 +37,19 @@ _RETIRED_ON = {'train_stride': ('2026-11-24 (full overlap only)', 'study-v2-fina
                'pf_extra': ('2026-11-26 (never set by any spec)', 'study-v2-final'),
                'rest_weight': ('2026-11-26 (never set by any spec)', 'study-v2-final'),
                **{k: _V2_ONLY for k in ('emg', 'scale_part', 'shuffle', 'extra_input', 'trim_end_s', 'lp_order',
-                                        'val_gap', 'metadata_passive', 'train_protocol', 'clipnorm')}}
+                                        'val_gap', 'metadata_passive', 'train_protocol', 'clipnorm')},
+               'envelope': ('2026-11-26 (causal envelope only)', 'older-options-2026-11-26')}
 
 # every run learns from session 1 and predicts session 2 (study v2 is S1→S2 only); there is no other direction
 DIRECTION = 'S1toS2'
 
 
 def _allowed() -> dict[str, tuple]:
-    from ML.research.data import ENVELOPES
     from ML.research.passive import KINDS as PASSIVE_KINDS
     return {
         'passive': PASSIVE_KINDS + ('none',),
         'model': ('lstm', 'ridge_lagged'),
         'state': ('reset', 'carry'),
-        'envelope': ENVELOPES,
     }
 
 

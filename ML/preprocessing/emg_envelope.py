@@ -1,7 +1,7 @@
-"""EMG linear envelope of one raw signal: band-pass, full-wave rectify, low-pass (zero-phase or forward-only)."""
+"""EMG linear envelope of one raw signal: band-pass, full-wave rectify, low-pass, all forward-only (causal)."""
 
 import numpy as np
-from scipy.signal import butter, sosfilt, sosfilt_zi, sosfiltfilt
+from scipy.signal import butter, sosfilt, sosfilt_zi
 
 from ML.config import FS_RAW
 
@@ -13,8 +13,8 @@ BP_HIGH = 300.0     # Hz, band-pass upper cutoff
 BP_ORDER = 4        # Butterworth order of the band-pass
 LP_CUTOFF = 2.0     # Hz, envelope low-pass cutoff
 LP_ORDER = 2        # Butterworth order of the low-pass
-SETTLE_S = 1.0      # s, causal envelope: the offset is the mean of the first SETTLE_S seconds
-LP_START_S = 0.2    # s, causal envelope: the low-pass starts from the mean rectified value of this first stretch
+SETTLE_S = 1.0      # s, the offset is the mean of the first SETTLE_S seconds
+LP_START_S = 0.2    # s, the low-pass starts from the mean rectified value of this first stretch
 
 _EMG_KEYWORDS = {'emg', 'gm', 'gl', 'sol', 'ta', 'mg', 'lg'}
 _NON_EMG_NAMES = {'time', 'pos', 'tq', 'position', 'torque'}
@@ -49,13 +49,13 @@ def _filters():
             butter(LP_ORDER, LP_CUTOFF / nyq, btype='low', output='sos'))
 
 
-def extract_envelope_causal(signal):
+def extract_envelope(signal):
     """
-    Forward-only version of ``extract_envelope``: each output sample uses only current and earlier input.
+    Linear envelope of one raw EMG signal (un-normalised, same length): remove the offset, Butterworth band-pass,
+    full-wave rectify, Butterworth low-pass. Each output sample uses only current and earlier input.
 
-    Lags the zero-phase envelope by about 0.12 s. The offset is the mean of the first SETTLE_S seconds and the
-    low-pass starts from the mean rectified value of the first LP_START_S; the pipeline drops that start (filter
-    start-up), so no kept sample depends on later data.
+    The offset is the mean of the first SETTLE_S seconds and the low-pass starts from the mean rectified value of the
+    first LP_START_S; the pipeline drops that start (filter start-up), so no kept sample depends on later data.
     """
     x = np.asarray(signal, dtype=np.float64)
     x = x - np.mean(x[:max(1, int(SETTLE_S * FS_RAW))])
@@ -63,15 +63,3 @@ def extract_envelope_causal(signal):
     rectified = np.abs(sosfilt(sos_bp, x))
     zi = sosfilt_zi(sos_lp) * np.mean(rectified[:max(1, int(LP_START_S * FS_RAW))])
     return sosfilt(sos_lp, rectified, zi=zi)[0]
-
-
-def extract_envelope(signal):
-    """
-    Linear envelope of one raw EMG signal: demean (as MATLAB ``demean.m``), zero-phase Butterworth band-pass,
-    full-wave rectify, zero-phase Butterworth low-pass. Returns the un-normalised envelope (same length).
-    """
-    x = np.asarray(signal, dtype=np.float64)
-    sos_bp, sos_lp = _filters()
-    rectified = np.abs(sosfiltfilt(sos_bp, x - np.mean(x)))
-    # sosfiltfilt can give tiny negative values at the edges
-    return np.clip(sosfiltfilt(sos_lp, rectified), 0, None)

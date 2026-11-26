@@ -7,7 +7,7 @@ from EXPERIMENTS.pipeline import settings as ST
 from EXPERIMENTS.pipeline.spec import CONFIGS, SpecError
 
 BASE_2026_11_26 = dict(passive='static', units=8, layers=2, dropout=0.3, model='lstm', window=20, lr=None,
-                       envelope='causal', state='reset', chunk=None, batch=None)
+                       state='reset', chunk=None, batch=None)
 
 
 def test_base_frozen():
@@ -20,7 +20,7 @@ def test_every_committed_spec_validates():
         ST.load_config(p.stem)
 
 
-@pytest.mark.parametrize('key,value', [('passive', 'legacy'), ('model', 'ridge'), ('envelope', 'raw')])
+@pytest.mark.parametrize('key,value', [('passive', 'legacy'), ('model', 'ridge'), ('state', 'stream')])
 def test_removed_value_is_rejected_by_name(key, value):
     with pytest.raises(SpecError, match=key):
         ST.validate(dict(ST.BASE, **{key: value}))
@@ -83,7 +83,7 @@ def test_strip_retired_pf_extra_and_rest_weight():
 
 
 V2_VALUES = dict(emg='trainmax', scale_part='train', shuffle=False, extra_input=None, trim_end_s=1.0, lp_order=2,
-                 val_gap=True, metadata_passive=True, train_protocol='study400', clipnorm=1.0)
+                 val_gap=True, metadata_passive=True, train_protocol='study400', clipnorm=1.0, envelope='causal')
 
 
 def test_strip_retired_study_v2_values():
@@ -95,7 +95,7 @@ def test_strip_retired_study_v2_values():
 @pytest.mark.parametrize('over', [dict(emg='mvc_global'), dict(scale_part='train_val'), dict(shuffle=True),
                                   dict(extra_input='passive_trial_value'), dict(trim_end_s=0.0), dict(lp_order=4),
                                   dict(val_gap=False), dict(metadata_passive=False), dict(train_protocol='fast'),
-                                  dict(clipnorm=None), dict(train_protocol='orig')])
+                                  dict(clipnorm=None), dict(train_protocol='orig'), dict(envelope='zerophase')])
 def test_strip_retired_refuses_older_values(over):
     with pytest.raises(SpecError, match='older-options-2026-11-26'):
         ST.strip_retired(dict(ST.BASE, **over))

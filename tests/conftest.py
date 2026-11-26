@@ -39,7 +39,7 @@ def make_bundle(seed=0, T=T_TRIAL, subject='SYN'):
             tq = 5.0 * env.sum(axis=1) + passive_of(a)
             recs.append({'idx': idx, 'comment': f'{sess} {a:.2f}', 'session': sess, 'angle': float(a),
                          't': 1.0 + np.arange(T) / FS, 'env_raw': env, 'env_max1k': env.max(axis=0) * 1.1,
-                         'pos': pos, 'tq': tq, 'envelope': 'causal'})
+                         'pos': pos, 'tq': tq})
             idx += 2
     entries = sorted((float(a), float(passive_of(a))) for a in ANGLES)
     return {'subject': subject, 'active': recs, 'maps': {'static': {'S1': list(entries), 'S2': list(entries)}}}

@@ -1,19 +1,12 @@
-"""Passive torque maps: (angle, torque) tables from the passive trials, and the lookup between their angles.
-
-The interpolated map (``get_passive_torque_map``) is the original pipeline's; ``static_hold_passive_map`` keeps only
-genuinely static holds (``is_static_hold``: position sd <= 5 mrad, torque sd <= 1 Nm, at least 5 s).
+"""Passive torque maps: (angle, torque) tables from the static holds of the passive trials (``is_static_hold``:
+position sd <= 5 mrad, torque sd <= 1 Nm, at least 5 s), and the lookup between their angles.
 """
-
-import warnings
 
 import numpy as np
 
 from ML.config import FS_RAW
 
 from .trials import POSITION_COL, POSITION_TOLERANCE, TORQUE_COL, split_passive_segments
-
-_PASSIVE_STD_THRESHOLD = 20.0   # Nm  — segment rejected if torque still noisy after split
-_PASSIVE_TQ_BOUND      = 20.0   # Nm  — mean passive torque above this is physiologically implausible
 
 STATIC_MAX_POS_STD = 0.005   # rad
 STATIC_MAX_TQ_STD  = 1.0     # Nm
@@ -36,36 +29,6 @@ def _merge_nearby(raw, pos_tolerance):
         else:
             clusters.append((pos, tq, 1))
     return [(pos, tq) for pos, tq, _ in clusters]
-
-
-def get_passive_torque_map(passive_trials):
-    """
-    Sorted [(mean position rad, mean passive torque Nm)] from the passive trials.
-
-    Trials are split with ``split_passive_segments``; segments with torque std above _PASSIVE_STD_THRESHOLD are dropped
-    and positions within POSITION_TOLERANCE rad are merged by weighted averaging.
-    """
-    raw = []
-    for df in passive_trials:
-        for seg in split_passive_segments(df):
-            tq_std = float(seg[TORQUE_COL].std())
-            if tq_std > _PASSIVE_STD_THRESHOLD:
-                continue
-            mean_pos = float(seg[POSITION_COL].mean())
-            mean_tq  = float(seg[TORQUE_COL].mean())
-            if abs(mean_tq) > _PASSIVE_TQ_BOUND:
-                continue
-            raw.append((mean_pos, mean_tq))
-    raw.sort(key=lambda x: x[0])     # by position only (ties keep their trial order)
-    # Merge near-identical holds so they cannot give contradictory offsets.
-    entries = _merge_nearby(raw, POSITION_TOLERANCE)
-    if len(entries) < 2:
-        warnings.warn(
-            f"Only {len(entries)} passive torque entry/entries found. "
-            f"Extrapolation will be limited to constant value.",
-            stacklevel=2,
-        )
-    return entries
 
 
 def _extrapolate(positions, torques, x):

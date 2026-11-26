@@ -51,7 +51,7 @@ def lag_ms(y, p, trial):
 def main():
     rows = []
     for person in PEOPLE:
-        b = D.load_subject(person, envelope='causal')
+        b = D.load_subject(person)
         t0 = {r['idx']: float(r['t'][0]) for r in b['active']}
         for seed in SEEDS:
             if not (os.path.exists(causal_path(person, seed)) and os.path.exists(zero_path(person, seed))):

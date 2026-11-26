@@ -30,9 +30,9 @@ def apply_metadata_passive(bundle, subject):
 def prepare(subject, protocol, cfg):
     """Return (data, details): the windowed arrays of splits.build and a summary of the choices made.
 
-    cfg: passive ('static' or 'none'), window (steps), envelope ('causal' or 'zerophase'), state ('reset' or 'carry').
+    cfg: passive ('static' or 'none'), window (steps), state ('reset' or 'carry').
     """
-    bundle = apply_metadata_passive(load_subject(subject, envelope=cfg['envelope']), subject)
+    bundle = apply_metadata_passive(load_subject(subject), subject)
     recs = bundle['active']
     spec = splits.SESSION_SPLITS[protocol]
     train_recs = [r for r in recs if r['session'] in spec['train']]

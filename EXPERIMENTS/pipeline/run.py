@@ -34,7 +34,7 @@ from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 
 RESULTS = str(P.RESULTS)
 RESULTS_V2 = str(P.RESULTS_V2)
-RCFG_KEYS = ('passive', 'window', 'envelope', 'state')     # the settings ML.research.prepare reads
+RCFG_KEYS = ('passive', 'window', 'state')     # the settings ML.research.prepare reads
 
 
 def is_study(exp):

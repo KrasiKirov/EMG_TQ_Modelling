@@ -1,10 +1,9 @@
 """
-Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subject and envelope in ML.config.CACHE_DIR).
+Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subject in ML.config.CACHE_DIR).
 
 active : one dict per active trial, both sessions: idx (0-based trial index), comment, session ('S1' = lab "test",
          'S2' = "retest"), angle (rad), t (s, t[0] = 1.0 after the start-up trim), env_raw (T, 4) envelopes
-         [GM, GL, SOL, TA], env_max1k (4,) maximum of the 1 kHz envelope over the kept samples, pos (rad), tq (Nm),
-         envelope
+         [GM, GL, SOL, TA], env_max1k (4,) maximum of the 1 kHz envelope over the kept samples, pos (rad), tq (Nm)
 maps   : {'static': {'S1': map, 'S2': map}}: each session's passive map from its static holds (YES: the worksheet
          values in ML.config.PASSIVE_TORQUE_OVERRIDES)
 
@@ -13,7 +12,6 @@ Active trials and their sessions follow the original pipeline (trial comments, M
 
 import os
 import pickle
-import warnings
 
 import numpy as np
 from scipy.signal import decimate
@@ -22,11 +20,10 @@ from ML.config import (CACHE_DIR, DATA_DIR, DOWNSAMPLE, FS_RAW, PASSIVE_TORQUE_O
                        TRIAL_OVERRIDES, TRIM_END_S, TRIM_START)
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing.trials import ACTIVE_STD_THRESHOLD, POSITION_COL, TORQUE_COL, classify_trials
-from ML.preprocessing.passive_map import get_passive_torque_map, static_hold_passive_map
-from ML.preprocessing.emg_envelope import LP_ORDER, extract_envelope, extract_envelope_causal, detect_emg_columns
+from ML.preprocessing.passive_map import static_hold_passive_map
+from ML.preprocessing.emg_envelope import LP_ORDER, extract_envelope, detect_emg_columns
 
 CACHE_VERSION = 2          # 2: the torque target is down-sampled before trimming
-ENVELOPES = ('zerophase', 'causal')
 
 
 def _decim(x):
@@ -58,25 +55,19 @@ def _split_trials(trials, subject):
     return passive, active, s1, s2
 
 
-def _process_active(df, emg_cols, session, envelope):
+def _process_active(df, emg_cols, session):
     """One active trial at 100 Hz, without the first TRIM_START samples and the last TRIM_END_S seconds.
 
-    envelope   'zerophase' (forward-backward filters) or 'causal' (forward-only; inputs are plain 1-in-10 samples,
-               so no input uses later data; the torque target keeps the zero-phase decimation)
-    The target is down-sampled over the whole trial and then trimmed, so every kept target value has real torque on
-    both sides of its ~0.1 s zero-phase filter.
+    Inputs (envelopes, angle) are plain 1-in-10 samples of forward-only signals, so no input uses later data. The
+    torque target is down-sampled with a zero-phase filter over the whole trial and then trimmed, so every kept target
+    value has real torque on both sides of its ~0.1 s filter.
     """
-    fn = extract_envelope_causal if envelope == 'causal' else extract_envelope
-    env1k = np.column_stack([fn(df[c].values) for c in emg_cols])
+    env1k = np.column_stack([extract_envelope(df[c].values) for c in emg_cols])
     pos = df[POSITION_COL].values
     tq = df[TORQUE_COL].values
     s = TRIM_START
     e = len(tq) - int(round(TRIM_END_S * FS_RAW))
-    if envelope == 'causal':
-        env, p = env1k[s:e:DOWNSAMPLE], pos[s:e:DOWNSAMPLE].astype(np.float64)
-    else:
-        env = np.column_stack([_decim(env1k[s:e, k]) for k in range(env1k.shape[1])])
-        p = _decim(pos[s:e])
+    env, p = env1k[s:e:DOWNSAMPLE], pos[s:e:DOWNSAMPLE].astype(np.float64)
     assert s % DOWNSAMPLE == 0
     q = _decim(tq)[s // DOWNSAMPLE:]            # down-sample, then trim: no target sits at a filter edge
     n = min(len(env), len(p), len(q))
@@ -85,14 +76,8 @@ def _process_active(df, emg_cols, session, envelope):
         'idx': int(df.attrs.get('trial_index')), 'comment': df.attrs.get('comment', ''),
         'session': session, 'angle': float(np.mean(p[:n])), 't': t,
         'env_raw': env[:n], 'env_max1k': env1k[s:e].max(axis=0),
-        'pos': p[:n], 'tq': q[:n], 'envelope': envelope,
+        'pos': p[:n], 'tq': q[:n],
     }
-
-
-def _static_map(trials):
-    """Static-hold map, or the original pipeline's map when fewer than 2 static holds are found."""
-    entries = static_hold_passive_map(trials)
-    return entries if len(entries) >= 2 else get_passive_torque_map(trials)
 
 
 def _passive_maps(subject, passive_trials):
@@ -102,19 +87,15 @@ def _passive_maps(subject, passive_trials):
         return {'static': {'S1': sorted(ov['test']), 'S2': sorted(ov.get('retest', ov['test']))}}
     p1 = [df for df in passive_trials if df.attrs.get('session') != 'retest']
     p2 = [df for df in passive_trials if df.attrs.get('session') == 'retest']
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        m1 = _static_map(p1)
-        m2 = _static_map(p2) if p2 else m1
+    m1 = static_hold_passive_map(p1)
+    m2 = static_hold_passive_map(p2) if p2 else m1
     return {'static': {'S1': m1, 'S2': m2}}
 
 
-def load_subject(subject, envelope='causal', use_cache=True):
+def load_subject(subject, use_cache=True):
     """The processed bundle for ``subject`` (see the module docstring and ``_process_active``)."""
-    if envelope not in ENVELOPES:
-        raise ValueError(f'envelope must be one of {ENVELOPES}, got {envelope!r}')
     os.makedirs(CACHE_DIR, exist_ok=True)
-    tag = f'_{envelope}_end{TRIM_END_S:g}_lp{LP_ORDER}'
+    tag = f'_causal_end{TRIM_END_S:g}_lp{LP_ORDER}'
     path = os.path.join(CACHE_DIR, f'{subject}_bundle_v{CACHE_VERSION}{tag}.pkl')
     if use_cache and os.path.exists(path):
         with open(path, 'rb') as f:
@@ -129,7 +110,7 @@ def load_subject(subject, envelope='causal', use_cache=True):
     for df in active:
         i = df.attrs.get('trial_index')
         if i in s1 or i in s2:
-            recs.append(_process_active(df, emg_cols, 'S1' if i in s1 else 'S2', envelope))
+            recs.append(_process_active(df, emg_cols, 'S1' if i in s1 else 'S2'))
     recs.sort(key=lambda r: r['idx'])
 
     bundle = {'subject': subject, 'active': recs, 'maps': _passive_maps(subject, passive)}

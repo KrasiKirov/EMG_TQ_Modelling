@@ -98,7 +98,7 @@ def test_d24_targets_every_trial(synthetic_bundle):
 
 def _data(window=20):
     from ML.research.prepare import prepare
-    rcfg = dict(passive='static', window=window, envelope='causal', state='reset')
+    rcfg = dict(passive='static', window=window, state='reset')
     return PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
 
 

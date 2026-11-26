@@ -1,14 +1,13 @@
 {
  "id": "TEMPLATE_reference",
  "title": "Template: study v2's final model (A0)",
- "description": "Copy this file to start a new experiment: save it as EXPERIMENTS/configs/<new id>.json, set \"id\" to the same name, change \"title\", \"description\" and the values under \"changes\". As it stands it trains study v2's final model A0: active torque, causal EMG envelopes scaled by their session-1 training maximum, one LSTM layer of 64 units whose state is carried through each trial (trained in chunks of 200 samples = 2 s), trained on session 1 and tested on session 2. Run one person and seed with: python -m EXPERIMENTS.pipeline.run --exp TEMPLATE_reference --subject EG --seed 0. Predictions are written to EXPERIMENTS/results/<id>/<person>/S1toS2/seed<k>.npz with the full settings in the matching .json. Settings not listed under \"changes\" take the defaults in BASE (EXPERIMENTS/pipeline/settings.py), which also lists the values each setting may take. The fixed processing (filters, trims, EMG scaling, training schedule) is in ML/config.py and ML/README.md.",
+ "description": "Copy this file to start a new experiment: save it as EXPERIMENTS/configs/<new id>.json, set \"id\" to the same name, change \"title\", \"description\" and the values under \"changes\". As it stands it trains study v2's final model A0: active torque, EMG envelopes (forward-only filters) scaled by their session-1 training maximum, one LSTM layer of 64 units whose state is carried through each trial (trained in chunks of 200 samples = 2 s), trained on session 1 and tested on session 2. Run one person and seed with: python -m EXPERIMENTS.pipeline.run --exp TEMPLATE_reference --subject EG --seed 0. Predictions are written to EXPERIMENTS/results/<id>/<person>/S1toS2/seed<k>.npz with the full settings in the matching .json. Settings not listed under \"changes\" take the defaults in BASE (EXPERIMENTS/pipeline/settings.py), which also lists the values each setting may take. The fixed processing (filters, trims, EMG scaling, training schedule) is in ML/config.py and ML/README.md.",
  "tags": [
   "template"
  ],
  "changes": {
   "model": "lstm",
   "passive": "static",
-  "envelope": "causal",
   "window": 20,
   "state": "carry",
   "chunk": 200,
@@ -21,7 +20,6 @@
  "settings_help": {
   "model": "'lstm' = the LSTM (ML/models/lstm.py, or ML/research/stateful.py with state 'carry'); 'ridge_lagged' = ridge regression on lagged envelopes (ML/models/baselines.py)",
   "passive": "target: 'static' = measured torque minus the passive torque of the same session's relaxed holds (active torque); 'none' = total measured torque",
-  "envelope": "'causal' = forward-only filters (only past EMG, as in a real-time device); 'zerophase' = forward-backward filters",
   "window": "time steps per input window (one step = 10 ms, so 20 = 200 ms). With state 'carry' it sets the samples at the start of each trial that are not scored",
   "state": "'reset' = LSTM state reset at every window; 'carry' = state carried through the whole trial",
   "chunk": "state 'carry' only: samples per training chunk (null = window)",
