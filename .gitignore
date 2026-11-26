@@ -3,6 +3,8 @@
 *.mat
 *.mldatx
 __pycache__/
+.pytest_cache/
+.cache/
 .DS_Store
 *.keras
 *.h5

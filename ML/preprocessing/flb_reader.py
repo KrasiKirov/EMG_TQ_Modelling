@@ -1,5 +1,5 @@
 """
-Read REKLAB .flb binary files into one pandas DataFrame per trial (optionally export them to CSV).
+Read REKLAB .flb binary files into one pandas DataFrame per trial.
 
 FLB binary format (reverse-engineered from flbio.m / flb2mat.m by R. Kearney, McGill):
   Each trial block:
