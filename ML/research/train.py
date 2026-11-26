@@ -23,17 +23,12 @@ def angle_groups(train_angles):
     return np.array([np.mean(k) for k in knots])
 
 
-def snap(angles, knots):
-    return np.argmin(np.abs(np.asarray(angles)[:, None] - knots[None, :]), axis=1)
-
-
 def build_original(name, n_steps, n_features, knots):
     """The original two-layer LSTM-8 for ``name`` 'lstm' / 'lstm8'."""
     if name not in ('lstm', 'lstm8'):
         raise ValueError(f'unknown model {name!r}')
     from ML.models.lstm import build_lstm
     return build_lstm(n_steps, n_features, units=8, layers=2, dropout=0.3, name='ankle_torque_lstm')
-
 
 
 def fit_predict(data, model_name='lstm8', pf_extra=None,

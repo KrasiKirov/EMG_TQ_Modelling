@@ -1,7 +1,6 @@
 """EMG-detected rest periods of every active trial (rest is found from the EMG only, never from torque).
 
-Used for the rest flags of every window. (The 'restanchor' target, a baseline through these periods, was removed in
-2026-11; see tag pre-cleanup-2026-11.)
+Used for the rest flags of every window.
 """
 
 import numpy as np

@@ -13,7 +13,7 @@ CANONICAL_EMG_ORDER = ['gm', 'gl', 'sol', 'ta']
 DEFAULT_FS = FS_RAW        # Hz — sampling frequency of the recordings
 DEFAULT_BP_LOW = 30.0      # Hz — bandpass lower cutoff
 DEFAULT_BP_HIGH = 300.0    # Hz — bandpass upper cutoff
-DEFAULT_LP_CUTOFF = 2.0    # Hz — lowpass cutoff for envelope (Can also use 1.5 Hz)
+DEFAULT_LP_CUTOFF = 2.0    # Hz — lowpass cutoff for envelope
 DEFAULT_ORDER = 4          # Butterworth filter order
 
 _EMG_KEYWORDS = {'emg', 'gm', 'gl', 'sol', 'ta', 'mg', 'lg'}

@@ -12,8 +12,6 @@ agc_auto     trainmax, then causal adaptive gain control (ML.preprocessing.emg_a
 train_p99    ÷ 99th percentile over the training part of the training-session trials
 session_p99  each session ÷ its own 99th percentile (test session: all its EMG, no torque). Transductive, after
              AdaBN (Du et al. 2017, Sensors 17:458)
-
-(mvc_angle and agc_soft were removed in 2026-11; see tag pre-cleanup-2026-11.)
 """
 
 import numpy as np

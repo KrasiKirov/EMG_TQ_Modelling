@@ -7,8 +7,7 @@ evaluated on.
 legacy        old pipeline's map (20 Nm rules), looked up at each sample's angle (YES: worksheet values)
 static        map from static holds only
 
-('none', total torque, is handled in run.prepare. The fitted kinds gain, hold_gain, holdend_gain, drift and
-holdextrap were removed in 2026-11; see tag pre-cleanup-2026-11.)
+The setting 'none' (total torque, nothing subtracted) is handled in run.prepare.
 """
 
 import numpy as np

@@ -1,7 +1,6 @@
 """The study's network: stacked LSTM layers, each followed by dropout, then one linear output (ankle torque, Nm).
 
-build_lstm(n_steps, n_features, 8, 2, 0.3) is the original model (1,001 parameters). The mixture-of-experts and
-anchored variants were removed in 2026-11; see tag pre-cleanup-2026-11.
+build_lstm(n_steps, n_features, 8, 2, 0.3) is the original model (1,001 parameters).
 """
 from tensorflow.keras.layers import Dense, Dropout, Input, LSTM
 from tensorflow.keras.models import Sequential

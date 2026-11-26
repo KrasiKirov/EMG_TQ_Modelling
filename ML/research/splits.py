@@ -1,8 +1,7 @@
 """
-Evaluation protocols and sliding windows.
+Session split and sliding windows.
 
 S1toS2   train on session 1 (first 80 % of each trial train, last 20 % validation), test on all of session 2
-         (the only protocol; S2toS1 and pooled were removed in 2026-11, see tag pre-cleanup-2026-11)
 
 A window is WINDOW steps x [GM, GL, SOL, TA, angle]; the target is the active torque at its last step. Each window
 carries metadata (trial, session, angle, time, rest).
@@ -95,8 +94,8 @@ def streams(protocol, recs, feats, targets, window=WINDOW, val_gap=False):
 
 
 def build(protocol, recs, feats, targets, window=WINDOW, rest=None, val_gap=False):
-    """Train / val / test arrays for ``protocol``: every window of every trial (full overlap; the overlap
-    setting train_stride was retired 2026-11-24, tag study-v2-final).
+    """Train / val / test arrays for ``protocol``: every window of every trial (a new window starts at every
+    sample).
 
     feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}; rest: optional {trial idx: (T,) bool}
     val_gap       start validation one window span after the training cut (purged split)
