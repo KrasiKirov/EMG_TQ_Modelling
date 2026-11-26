@@ -120,6 +120,12 @@
    "what": "Runs whose validation loss becomes NaN during training are kept as results: scored from the weights Keras restored (the best epoch before the NaN), never re-run or excluded. The number of such runs per arm is reported.",
    "seen": "19 runs finished, none scored on session 2. FE_win_w1000 CH s10 hit NaN validation loss at epoch 42 (stopped at 54; val MAE 3.29 vs 1.28 at w200); FE_win_w500 CH s10 trained normally. train_info best_epoch/best_val_loss are wrong for such runs (np.argmin over NaN); the analysis uses np.nanargmin and does not change ML/research/train.py mid-sweep.",
    "decided_by": "the user"
+  },
+  {
+   "date": "2026-11-26",
+   "what": "If time remains after all 252 runs, every FE_win_w1000 run whose validation loss went NaN is re-run once for the same person with the next unused seed (15, 16, ...; one per diverged run). Sensitivity analysis only: the primary WS1/WS3 results keep the diverged runs as registered; the re-runs are reported separately (w1000 with each diverged run swapped for its re-run), with how many of them diverge again.",
+   "seen": "117 of 252 runs finished, none scored on session 2; 2 of 7 finished w1000 runs diverged (CH seeds 10 and 11).",
+   "decided_by": "the user"
   }
  ]
 }
