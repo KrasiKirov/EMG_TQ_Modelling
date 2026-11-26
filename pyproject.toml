@@ -5,7 +5,7 @@ addopts = '-q -p no:cacheprovider'
 
 [tool.ruff]
 line-length = 120
-extend-exclude = ["EXPERIMENTS/baseline", "EXPERIMENTS/run_collections","presentations", "notes", "exp_gui", "exp_model", "functions", "ES_sandbox"]
+extend-exclude = ["EXPERIMENTS/baseline", "presentations", "notes", "exp_gui", "exp_model", "functions", "ES_sandbox"]
 
 [tool.ruff.lint]
 select = ["F"]
