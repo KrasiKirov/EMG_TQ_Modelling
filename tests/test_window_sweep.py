@@ -31,7 +31,7 @@ def test_only_the_length_differs_from_the_reference(tmp_path):
                                                           'carry50', 'carry100', 'carry500', 'carry1000'))
     for i in ids:
         ch = dict(SPEC.load(i, tmp_path).changes)
-        ref, key = (CARRY, 'chunk') if 'carry' in i else (strip_retired(RESET), 'window')
+        ref, key = (strip_retired(CARRY), 'chunk') if 'carry' in i else (strip_retired(RESET), 'window')
         assert {k for k in set(ch) | set(ref) if ch.get(k) != ref.get(k)} <= {key}
         assert ch[key] == int(i.rsplit('carry' if 'carry' in i else 'w', 1)[1])
         assert 'train_stride' not in ch

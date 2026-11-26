@@ -1,4 +1,4 @@
-"""Participants, folders, sampling rates, data-processing constants, training schedules and per-participant
+"""Participants, folders, sampling rates, data-processing constants, the training schedule and per-participant
 data overrides."""
 
 import os
@@ -19,17 +19,14 @@ CACHE_DIR = os.environ.get('RESEARCH_CACHE_DIR',
 # Windows and the session-1 split
 WINDOW = 20              # steps (200 ms) per input window
 TRIM_START = 1000        # raw samples dropped at the start of a trial (filter start-up)
+TRIM_END_S = 1.0         # seconds dropped at the end of a trial
 TRAIN_FRAC = 0.8         # first 80 % of each training trial = train, rest = validation
 
-# Training schedules (setting train_protocol). 'orig' = the original pipeline's settings
-# (EXPERIMENTS/baseline/original_code/ML/config.py); 'fast' = batch 64 for screening; 'fast400' = up to 400 epochs;
-# 'study400' = study v2: early stopping under a 400-epoch cap, batch and lr from each config.
-TRAIN_PROTOCOLS = {
-    'orig': dict(batch=8, lr=0.003, lr_factor=0.7, lr_patience=10, early=25, epochs=200),
-    'fast': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=150),
-    'fast400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
-    'study400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
-}
+# Training schedule (study v2): Nadam, learning rate x lr_factor after lr_patience flat epochs, early stopping
+# after `early` flat epochs under an `epochs` cap. A spec's lr and batch replace the defaults here.
+TRAINING = dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400)
+MIN_LR = 1e-6            # the learning rate is never reduced below this
+CLIPNORM = 1.0           # gradient-norm clipping of Nadam
 
 # Subject registry
 # Maps a participant's initials to (flb_filename, channel order for read_flb: 'IES01' or 'default')
@@ -87,8 +84,8 @@ PASSIVE_TORQUE_OVERRIDES = {
     },
 }
 
-# Passive torque from experiment metadata (opt-in)
-# Used only when an experiment sets "metadata_passive": true AND the subject has no relaxed-hold passive map.
+# Passive torque from experiment metadata
+# Used only when the subject has no relaxed-hold passive map.
 # IES: no relaxed holds or usable passive trials were recorded; these are the passive torques noted at each
 # position during the MVC trials (ML/subjects/experiment_metadata_IES.docx, recorded once for both sessions).
 # (position_rad, passive_torque_Nm), same sign convention as the recordings (checked against IES's rest torque).

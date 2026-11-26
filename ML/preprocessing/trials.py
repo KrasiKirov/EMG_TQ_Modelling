@@ -57,14 +57,14 @@ def classify_trials(trials):
     return mvc, passive, active
 
 
-def split_passive_segments(df, position_col=POSITION_COL):
+def split_passive_segments(df):
     """
     Split a passive trial at single-sample position steps (two back-to-back static holds in one trial).
 
     Splits at jumps above ``_STEP_VEL_THRESHOLD`` rad/s and drops ``_SETTLE_SAMPLES`` after each jump.
     Returns one DataFrame slice per static-hold segment.
     """
-    pos   = df[position_col].values
+    pos   = df[POSITION_COL].values
     dt    = df.attrs.get('domainIncr', 0.001)
     speed = np.abs(np.diff(pos)) / dt          # instantaneous speed, length T-1
     jumps = np.where(speed > _STEP_VEL_THRESHOLD)[0]   # sample just before jump

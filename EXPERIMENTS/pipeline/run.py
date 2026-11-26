@@ -4,14 +4,13 @@ Run ONE experiment configuration for one subject and one seed, trained on sessio
     python -m EXPERIMENTS.pipeline.run --exp FE_A0 --subject JM \
         --seed 0 --threads 1
 
-The configuration is read from EXPERIMENTS/configs/<exp>.json.  Every
-configuration starts from the LSTM-8 baseline and lists only what it changes
-(see configs/X00f_baseline_framework.json for the full baseline definition).
+The configuration is read from EXPERIMENTS/configs/<exp>.json: the defaults in settings.BASE updated with the spec's
+"changes".
 
-Data building, passive-torque models, EMG normalisation and the training loop come from ML/research, which
-builds the same data as the frozen original pipeline. As in the original split, the last validation window of
-every training trial is dropped. Training settings default to the original ones (Nadam 0.003, batch 8,
-200 epochs, ReduceLROnPlateau 0.7/10, EarlyStopping 25).
+Data building, passive torque, EMG scaling and the training loops come from ML/research. As in the original split,
+the last validation window of every training trial is dropped. The training schedule is ML.config.TRAINING (Nadam
+0.003, batch 64, at most 400 epochs, learning rate x 0.5 after 6 flat epochs, early stop after 15); a spec may set
+lr and batch.
 
 Outputs: EXPERIMENTS/results/<exp>/<subject>/<direction>/seed<k>.{npz,json}
 Runs of a pre-registered study (EXPERIMENTS/protocol/protocol.STUDIES; study v2: ids TS2_ / FE_) write to the
@@ -29,14 +28,13 @@ import time
 import numpy as np
 
 from EXPERIMENTS import paths as P
-from EXPERIMENTS.pipeline.fitters import add_passive_input, drop_last_val_window, fit
+from EXPERIMENTS.pipeline.fitters import drop_last_val_window, fit
 from EXPERIMENTS.pipeline.settings import BASE, DIRECTION, load_config  # noqa: F401  (re-exported)
 from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 
 RESULTS = str(P.RESULTS)
 RESULTS_V2 = str(P.RESULTS_V2)
-RCFG_KEYS = ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'state', 'lp_order',
-             'val_gap', 'metadata_passive', 'scale_part')
+RCFG_KEYS = ('passive', 'window', 'envelope', 'state')     # the settings ML.research.prepare reads
 
 
 def is_study(exp):
@@ -98,8 +96,6 @@ def main(argv=None):
         except ValueError as e:
             raise SystemExit(f'{a.subject}: {e}')
     data = drop_last_val_window(data)
-    if cfg.get('extra_input') == 'passive_trial_value':
-        data = add_passive_input(data, a.subject)
     t_prep = time.time() - t0
     out = os.path.join(a.out_root or results_root(a.exp), a.exp, a.subject, a.direction)
     os.makedirs(out, exist_ok=True)

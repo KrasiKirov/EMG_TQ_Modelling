@@ -20,10 +20,10 @@ STATIC_MAX_TQ_STD  = 1.0     # Nm
 STATIC_MIN_DUR_S   = 5.0     # s
 
 
-def is_static_hold(seg, fs=FS_RAW, position_col=POSITION_COL, torque_col=TORQUE_COL):
+def is_static_hold(seg):
     """True if a passive segment is a static hold: long enough, with position and torque nearly constant."""
-    p, t = seg[position_col].values, seg[torque_col].values
-    return not (len(t) < STATIC_MIN_DUR_S * fs or p.std() > STATIC_MAX_POS_STD or t.std() > STATIC_MAX_TQ_STD)
+    p, t = seg[POSITION_COL].values, seg[TORQUE_COL].values
+    return not (len(t) < STATIC_MIN_DUR_S * FS_RAW or p.std() > STATIC_MAX_POS_STD or t.std() > STATIC_MAX_TQ_STD)
 
 
 def _merge_nearby(raw, pos_tolerance):
@@ -38,30 +38,27 @@ def _merge_nearby(raw, pos_tolerance):
     return [(pos, tq) for pos, tq, _ in clusters]
 
 
-def get_passive_torque_map(passive_trials, position_col=POSITION_COL,
-                           torque_col=TORQUE_COL,
-                           std_threshold=_PASSIVE_STD_THRESHOLD,
-                           pos_tolerance=POSITION_TOLERANCE):
+def get_passive_torque_map(passive_trials):
     """
     Sorted [(mean position rad, mean passive torque Nm)] from the passive trials.
 
-    Trials are split with ``split_passive_segments``; segments with torque std above ``std_threshold`` are dropped and
-    positions within ``pos_tolerance`` rad are merged by weighted averaging.
+    Trials are split with ``split_passive_segments``; segments with torque std above _PASSIVE_STD_THRESHOLD are dropped
+    and positions within POSITION_TOLERANCE rad are merged by weighted averaging.
     """
     raw = []
     for df in passive_trials:
-        for seg in split_passive_segments(df, position_col):
-            tq_std = float(seg[torque_col].std())
-            if tq_std > std_threshold:
+        for seg in split_passive_segments(df):
+            tq_std = float(seg[TORQUE_COL].std())
+            if tq_std > _PASSIVE_STD_THRESHOLD:
                 continue
-            mean_pos = float(seg[position_col].mean())
-            mean_tq  = float(seg[torque_col].mean())
+            mean_pos = float(seg[POSITION_COL].mean())
+            mean_tq  = float(seg[TORQUE_COL].mean())
             if abs(mean_tq) > _PASSIVE_TQ_BOUND:
                 continue
             raw.append((mean_pos, mean_tq))
     raw.sort(key=lambda x: x[0])     # by position only (ties keep their trial order)
     # Merge near-identical holds so they cannot give contradictory offsets.
-    entries = _merge_nearby(raw, pos_tolerance)
+    entries = _merge_nearby(raw, POSITION_TOLERANCE)
     if len(entries) < 2:
         warnings.warn(
             f"Only {len(entries)} passive torque entry/entries found. "
@@ -106,13 +103,13 @@ def lookup_passive_torque(passive_entries, ankle_position_rad):
                  else _extrapolate(positions, torques, ankle_position_rad))
 
 
-def static_hold_passive_map(passive_trials, pos_tolerance=POSITION_TOLERANCE):
+def static_hold_passive_map(passive_trials):
     """Sorted [(position, mean torque)] of the static holds (``is_static_hold``) in the passive trials, each trial
-    split at device steps first; positions within ``pos_tolerance`` rad are averaged."""
+    split at device steps first; positions within POSITION_TOLERANCE rad are averaged."""
     raw = []
     for df in passive_trials:
         for seg in split_passive_segments(df):
             if is_static_hold(seg):
                 raw.append((float(seg[POSITION_COL].values.mean()), float(seg[TORQUE_COL].values.mean())))
     raw.sort()                       # by position, then torque
-    return _merge_nearby(raw, pos_tolerance)
+    return _merge_nearby(raw, POSITION_TOLERANCE)

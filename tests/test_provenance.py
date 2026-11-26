@@ -17,10 +17,16 @@ def test_config_hash_stable():
     assert PV.config_hash(a) != PV.config_hash(dict(a, units=16))
 
 
+def _short_schedule(monkeypatch, schedule):
+    """Replace the training schedule (ML.config.TRAINING) for one test."""
+    from ML import config as RC
+    for k, v in schedule.items():
+        monkeypatch.setitem(RC.TRAINING, k, v)
+
+
 def _data(patch_subject, window=20):
     from ML.research.prepare import prepare
-    rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0,
-                state='reset', lp_order=2, val_gap=True, metadata_passive=True)
+    rcfg = dict(passive='static', window=window, envelope='causal', state='reset')
     data, _ = prepare('SYN', 'S1toS2', rcfg)
     return PR.drop_last_val_window(data)
 
@@ -28,26 +34,23 @@ def _data(patch_subject, window=20):
 def test_same_seed_identical(patch_subject, monkeypatch):
     import tensorflow as tf
     tf.config.threading.set_intra_op_parallelism_threads(1)
-    from ML import config as RC
     from ML.research import train as RT
-    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', dict(FAST, epochs=3))
+    _short_schedule(monkeypatch, dict(FAST, epochs=3))
     data = _data(patch_subject)
-    p1, _ = RT.fit_predict(data, 'lstm8', protocol='unit', seed=0, shuffle=False)
-    p2, _ = RT.fit_predict(data, 'lstm8', protocol='unit', seed=0, shuffle=False)
+    p1, _ = RT.fit_predict(data, 8, 2, 0.3, seed=0)
+    p2, _ = RT.fit_predict(data, 8, 2, 0.3, seed=0)
     assert np.array_equal(p1, p2)
 
 
 def _cfg(**over):
-    cfg = dict(PR.BASE, passive='static', envelope='causal', trim_end_s=1.0, lp_order=2, val_gap=True,
-               metadata_passive=True, shuffle=False, train_protocol='unit', units=4, layers=1, dropout=0.0)
+    cfg = dict(PR.BASE, units=4, layers=1, dropout=0.0)
     cfg.update(over)
     return cfg
 
 
 @pytest.fixture
 def unit_run(patch_subject, tmp_results, monkeypatch):
-    from ML import config as RC
-    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', FAST)
+    _short_schedule(monkeypatch, FAST)
     monkeypatch.setattr(PR, 'load_config', lambda exp: ({'id': exp}, _cfg()))
     monkeypatch.setattr(PR, 'protocol_hash', lambda *a: 'p' * 64)
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(

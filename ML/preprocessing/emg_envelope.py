@@ -5,16 +5,16 @@ from scipy.signal import butter, sosfilt, sosfilt_zi, sosfiltfilt
 
 from ML.config import FS_RAW
 
-
-# Default parameters
-
 # Canonical muscle order; detect_emg_columns enforces it so the features are [MG, LG, SOL, TA, position].
 CANONICAL_EMG_ORDER = ['gm', 'gl', 'sol', 'ta']
-DEFAULT_FS = FS_RAW        # Hz — sampling frequency of the recordings
-DEFAULT_BP_LOW = 30.0      # Hz — bandpass lower cutoff
-DEFAULT_BP_HIGH = 300.0    # Hz — bandpass upper cutoff
-DEFAULT_LP_CUTOFF = 2.0    # Hz — lowpass cutoff for envelope
-DEFAULT_ORDER = 4          # Butterworth filter order
+
+BP_LOW = 30.0       # Hz, band-pass lower cutoff
+BP_HIGH = 300.0     # Hz, band-pass upper cutoff
+BP_ORDER = 4        # Butterworth order of the band-pass
+LP_CUTOFF = 2.0     # Hz, envelope low-pass cutoff
+LP_ORDER = 2        # Butterworth order of the low-pass
+SETTLE_S = 1.0      # s, causal envelope: the offset is the mean of the first SETTLE_S seconds
+LP_START_S = 0.2    # s, causal envelope: the low-pass starts from the mean rectified value of this first stretch
 
 _EMG_KEYWORDS = {'emg', 'gm', 'gl', 'sol', 'ta', 'mg', 'lg'}
 _NON_EMG_NAMES = {'time', 'pos', 'tq', 'position', 'torque'}
@@ -42,56 +42,36 @@ def detect_emg_columns(df):
     return ordered
 
 
-# Single-signal envelope extraction
+def _filters():
+    """(band-pass, low-pass) Butterworth filters as second-order sections."""
+    nyq = 0.5 * FS_RAW
+    return (butter(BP_ORDER, [BP_LOW / nyq, BP_HIGH / nyq], btype='band', output='sos'),
+            butter(LP_ORDER, LP_CUTOFF / nyq, btype='low', output='sos'))
 
-def extract_envelope_causal(signal, fs=DEFAULT_FS,
-                            bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
-                            lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
-                            settle_s=1.0, lp_order=None):
+
+def extract_envelope_causal(signal):
     """
     Forward-only version of ``extract_envelope``: each output sample uses only current and earlier input.
 
-    Lags the zero-phase envelope by about 0.23 s (4th-order 2 Hz low-pass) or 0.12 s (``lp_order=2``). The offset is
-    the mean of the first ``settle_s`` seconds and the low-pass starts from the mean rectified value of the first
-    200 ms; the pipeline drops that start (filter start-up), so no kept sample depends on later data.
+    Lags the zero-phase envelope by about 0.12 s. The offset is the mean of the first SETTLE_S seconds and the
+    low-pass starts from the mean rectified value of the first LP_START_S; the pipeline drops that start (filter
+    start-up), so no kept sample depends on later data.
     """
     x = np.asarray(signal, dtype=np.float64)
-    head = max(1, int(settle_s * fs))
-    x = x - np.mean(x[:head])
-    nyq = 0.5 * fs
-    sos_bp = butter(order, [bp_low / nyq, bp_high / nyq], btype='band', output='sos')
+    x = x - np.mean(x[:max(1, int(SETTLE_S * FS_RAW))])
+    sos_bp, sos_lp = _filters()
     rectified = np.abs(sosfilt(sos_bp, x))
-    sos_lp = butter(lp_order or order, lp_cutoff / nyq, btype='low', output='sos')
-    zi = sosfilt_zi(sos_lp) * np.mean(rectified[:max(1, int(0.2 * fs))])
+    zi = sosfilt_zi(sos_lp) * np.mean(rectified[:max(1, int(LP_START_S * FS_RAW))])
     return sosfilt(sos_lp, rectified, zi=zi)[0]
 
 
-def extract_envelope(signal, fs=DEFAULT_FS,
-                     bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
-                     lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER, lp_order=None):
+def extract_envelope(signal):
     """
     Linear envelope of one raw EMG signal: demean (as MATLAB ``demean.m``), zero-phase Butterworth band-pass,
-    full-wave rectify, zero-phase Butterworth low-pass (order ``lp_order``, default ``order``).
-
-    Returns the un-normalised envelope (same length).
+    full-wave rectify, zero-phase Butterworth low-pass. Returns the un-normalised envelope (same length).
     """
-    signal = np.asarray(signal, dtype=np.float64)
-
-    # Step 0: Remove DC offset (matches MATLAB demean.m: y = x - mean(x))
-    demeaned = signal - np.mean(signal)
-
-    nyq = 0.5 * fs
-
-    # Step 1: Bandpass filter
-    sos_bp = butter(order, [bp_low / nyq, bp_high / nyq], btype='band', output='sos')
-    filtered = sosfiltfilt(sos_bp, demeaned)
-
-    # Step 2: Full-wave rectification
-    rectified = np.abs(filtered)
-
-    # Step 3: Lowpass filter → linear envelope
-    sos_lp = butter(lp_order or order, lp_cutoff / nyq, btype='low', output='sos')
-    envelope = sosfiltfilt(sos_lp, rectified)
-
-    # Clip: sosfiltfilt can produce tiny negative values at edges after rectification
-    return np.clip(envelope, 0, None)
+    x = np.asarray(signal, dtype=np.float64)
+    sos_bp, sos_lp = _filters()
+    rectified = np.abs(sosfiltfilt(sos_bp, x - np.mean(x)))
+    # sosfiltfilt can give tiny negative values at the edges
+    return np.clip(sosfiltfilt(sos_lp, rectified), 0, None)

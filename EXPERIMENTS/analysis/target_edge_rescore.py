@@ -22,7 +22,7 @@ OLD = os.path.join(C.CACHE_DIR, '{}_bundle_v1_causal_end1_lp2.pkl')
 
 def deltas(person):
     old = pickle.load(open(OLD.format(person), 'rb'))
-    new = D.load_subject(person, envelope='causal', trim_end_s=1.0, lp_order=2)
+    new = D.load_subject(person, envelope='causal')
     out = {}
     for a, b in zip(old['active'], new['active']):
         assert a['idx'] == b['idx'] and np.array_equal(a['t'], b['t']) and np.array_equal(a['env_raw'], b['env_raw'])

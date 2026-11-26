@@ -12,6 +12,12 @@ from ML.research.emg_norm import normalise
 UNIT = dict(batch=256, lr=0.003, lr_factor=0.5, lr_patience=6, early=50, epochs=2)
 
 
+def _short_schedule(monkeypatch):
+    """Train for 2 epochs (ML.config.TRAINING replaced for one test)."""
+    for k, v in UNIT.items():
+        monkeypatch.setitem(RC.TRAINING, k, v)
+
+
 def _recs(b, sess='S1'):
     return [r for r in b['active'] if r['session'] == sess]
 
@@ -21,7 +27,7 @@ def _recs(b, sess='S1'):
 def test_scale_from_train_part_only(synthetic_bundle):
     b = synthetic_bundle
     tr = _recs(b)
-    _, info = normalise('trainmax', b, tr, b['active'], window=20, scale_part='train')
+    _, scale = normalise(tr, b['active'], window=20)
     b2 = copy.deepcopy(b)
     for r in b2['active']:
         cut = int((len(r['t']) - 19) * RC.TRAIN_FRAC) + 19
@@ -30,16 +36,17 @@ def test_scale_from_train_part_only(synthetic_bundle):
         else:
             r['env_raw'] *= 50.0                  # test session
         r['env_max1k'] = r['env_raw'].max(axis=0) * 1.1
-    _, info2 = normalise('trainmax', b2, _recs(b2), b2['active'], window=20, scale_part='train')
-    assert np.allclose(info['train_max'], info2['train_max'])
+    _, scale2 = normalise(_recs(b2), b2['active'], window=20)
+    assert np.allclose(scale, scale2)
 
 
-def test_scale_default_unchanged(synthetic_bundle):
+def test_scale_is_train_part_maximum(synthetic_bundle):
     b = synthetic_bundle
     tr = _recs(b)
-    feats, info = normalise('trainmax', b, tr, b['active'], window=20)
-    want = np.max(np.stack([r['env_max1k'] for r in tr]), axis=0)
-    assert np.allclose(info['train_max'], want)
+    feats, scale = normalise(tr, b['active'], window=20)
+    want = np.max(np.stack([r['env_raw'][:int((len(r['t']) - 19) * RC.TRAIN_FRAC) + 19].max(axis=0) for r in tr]),
+                  axis=0)
+    assert np.allclose(scale, want)
     assert np.allclose(feats[tr[0]['idx']], tr[0]['env_raw'] / want)
 
 
@@ -49,7 +56,7 @@ def _build(b, window):
     recs = b['active']
     feats = {r['idx']: r['env_raw'] for r in recs}
     targets = {r['idx']: r['tq'] for r in recs}
-    return SP.build('S1toS2', recs, feats, targets, window=window, val_gap=True)
+    return SP.build('S1toS2', recs, feats, targets, window=window)
 
 
 @pytest.mark.parametrize('window', [20, 1000])
@@ -80,37 +87,31 @@ def test_common_val_targets(synthetic_bundle):
 
 def test_d24_targets_every_trial(synthetic_bundle):
     recs = _recs(synthetic_bundle)
-    SP.check_common_targets(recs, min_s=5.0)                  # 90 s trials pass
+    SP.check_common_targets(recs)                             # 90 s trials pass
     short = copy.deepcopy(recs)
     short[3]['t'] = short[3]['t'][:6000]
     with pytest.raises(ValueError, match=f"trial {short[3]['idx']}"):
-        SP.check_common_targets(short, min_s=5.0)
+        SP.check_common_targets(short)
 
 
 # --- training: clipping, logging, validation predictions -----------------------------------------
 
 def _data(window=20):
     from ML.research.prepare import prepare
-    rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0,
-                state='reset', lp_order=2, val_gap=True, metadata_passive=True, scale_part='train')
+    rcfg = dict(passive='static', window=window, envelope='causal', state='reset')
     return PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
 
 
 def test_clipnorm_windowed_applied(patch_subject, monkeypatch):
     from ML.research import train as RT
-    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', UNIT)
-    _, info = RT.fit_predict(_data(), 'lstm8', protocol='unit', shuffle=False, clipnorm=1.0)
-    assert info['clipnorm'] == 1.0 and info['optimizer_clipnorm'] == 1.0
-
-
-
+    _short_schedule(monkeypatch)
+    _, info = RT.fit_predict(_data(), 8, 2, 0.3)
+    assert info['clipnorm'] == 1.0 and info['optimizer_clipnorm'] == 1.0 and info['shuffle'] is False
 
 
 
 def _cfg(**over):
-    cfg = dict(PR.BASE, passive='static', envelope='causal', trim_end_s=1.0, lp_order=2, val_gap=True,
-               metadata_passive=True, shuffle=False, train_protocol='unit', units=4, layers=1, dropout=0.0,
-               scale_part='train', clipnorm=1.0)
+    cfg = dict(PR.BASE, units=4, layers=1, dropout=0.0)
     cfg.update(over)
     return cfg
 
@@ -118,7 +119,7 @@ def _cfg(**over):
 @pytest.fixture
 def run_unit(patch_subject, tmp_results, monkeypatch):
     from EXPERIMENTS.pipeline import provenance as PV
-    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', UNIT)
+    _short_schedule(monkeypatch)
     monkeypatch.setattr(PR, 'protocol_hash', lambda *a: 'p' * 64)
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(git_commit='abc', git_dirty=False, data_sha256={},
                                                          versions={}, threads=1, host='h', protocol_hash=None))
@@ -148,7 +149,6 @@ def test_info_logs_clipnorm_cap_shuffle(run_unit):
         ti = res['train_info']
         assert ti['clipnorm'] == 1.0 and ti['max_epochs'] == UNIT['epochs'] and ti['shuffle'] is False
         assert np.isclose(ti['val_mae'], np.mean(np.abs(v['y_pred'] - v['y'])))
-
 
 
 

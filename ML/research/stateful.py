@@ -7,12 +7,14 @@ training   the training trials run side by side, one batch lane each, in chunks 
 validation after each epoch the whole training-session trial runs from a zero state; loss on the validation part.
 test       each test trial runs once from a zero state.
 
-Loss (plain MSE), optimiser, LR schedule and early stopping follow ``train.fit_predict``.
+Loss (plain MSE), optimiser, LR schedule and early stopping follow ``train.fit_predict`` (ML.config.TRAINING).
 """
 import numpy as np
 
+from ML.config import CLIPNORM, MIN_LR, TRAINING
 
-def build_seq(n_features, units=8, layers=2, dropout=0.3):
+
+def build_seq(n_features, units, layers, dropout):
     """Sequence model: (x, initial states) -> (y for every step, final states)."""
     from tensorflow.keras import Input, Model
     from tensorflow.keras.layers import LSTM, Dropout, Dense
@@ -26,12 +28,6 @@ def build_seq(n_features, units=8, layers=2, dropout=0.3):
         h = Dropout(dropout)(h)
     y = Dense(1)(h)
     return Model([x] + states_in, [y] + states_out, name='lstm_carry')
-
-
-def make_optimizer(lr, clipnorm=None):
-    """Nadam, optionally with gradient-norm clipping (useful for long chunks)."""
-    import tensorflow as tf
-    return tf.keras.optimizers.Nadam(learning_rate=lr, clipnorm=clipnorm)
 
 
 def _zeros(model, B):
@@ -57,18 +53,19 @@ def _pad(streams, key, T, dtype=np.float32):
     return out
 
 
-def fit_predict_carry(train, test, chunk=20, seed=0, epochs=200, early=25, lr=0.003, lr_factor=0.7,
-                      lr_patience=10, min_lr=1e-6, units=8, layers=2, dropout=0.3, verbose=0, clipnorm=None):
+def fit_predict_carry(train, test, chunk, units, layers, dropout, seed=0, lr=None, verbose=0):
     """train: list of {'X' (T, F), 'y' (T,), 'train_mask', 'val_mask'} (one per session-1 trial);
-    test : list of {'X' (T, F)}. Returns ([predictions per test trial, in Nm], info)."""
+    test : list of {'X' (T, F)}. lr replaces the schedule's learning rate.
+    Returns ([predictions per test trial, in Nm], info)."""
     import tensorflow as tf
     tf.keras.utils.set_random_seed(seed)
+    sch = TRAINING
     T = max(len(s['y']) for s in train)
     X, y = _pad(train, 'X', T), _pad(train, 'y', T, np.float64)
     m_tr, m_va = _pad(train, 'train_mask', T), _pad(train, 'val_mask', T)
     t = y.astype(np.float32)
     model = build_seq(X.shape[2], units, layers, dropout)
-    opt = make_optimizer(lr, clipnorm)
+    opt = tf.keras.optimizers.Nadam(learning_rate=lr or sch['lr'], clipnorm=CLIPNORM)
 
     @tf.function(reduce_retracing=True)
     def step(x, yt, m, *states):
@@ -82,7 +79,7 @@ def fit_predict_carry(train, test, chunk=20, seed=0, epochs=200, early=25, lr=0.
 
     last_train = int(np.max(np.nonzero(m_tr.any(axis=0))[0])) + 1
     hist, best, best_w, wait, plateau = [], np.inf, None, 0, 0
-    for ep in range(epochs):
+    for ep in range(sch['epochs']):
         states = _zeros(model, len(X))
         for a in range(0, last_train, chunk):
             if not m_tr[:, a:a + chunk].any():
@@ -98,9 +95,9 @@ def fit_predict_carry(train, test, chunk=20, seed=0, epochs=200, early=25, lr=0.
             best, best_w, wait, plateau = val, model.get_weights(), 0, 0
         else:
             wait += 1; plateau += 1
-            if plateau >= lr_patience:
-                opt.learning_rate.assign(max(float(opt.learning_rate.numpy()) * lr_factor, min_lr)); plateau = 0
-            if wait >= early:
+            if plateau >= sch['lr_patience']:
+                opt.learning_rate.assign(max(float(opt.learning_rate.numpy()) * sch['lr_factor'], MIN_LR)); plateau = 0
+            if wait >= sch['early']:
                 break
     model.set_weights(best_w)
     pv = run_streams(model, X, chunk=max(chunk, 200))
@@ -109,8 +106,8 @@ def fit_predict_carry(train, test, chunk=20, seed=0, epochs=200, early=25, lr=0.
     for s in test:
         p = run_streams(model, np.asarray(s['X'], np.float32)[None], chunk=max(chunk, 200))[0]
         preds.append(p.astype(np.float64))
-    info = {'state': 'carry', 'chunk': chunk, 'clipnorm': clipnorm, 'epochs': len(hist), 'best_epoch': int(np.argmin(hist)) + 1,
+    info = {'state': 'carry', 'chunk': chunk, 'clipnorm': CLIPNORM, 'epochs': len(hist), 'best_epoch': int(np.argmin(hist)) + 1,
             'best_val_loss': float(best), 'first_val_loss': float(hist[0]),
-            'n_params': int(model.count_params()), 'max_epochs': epochs, 'shuffle': False,
+            'n_params': int(model.count_params()), 'max_epochs': sch['epochs'], 'shuffle': False,
             'val_streams': val_streams}
     return preds, info

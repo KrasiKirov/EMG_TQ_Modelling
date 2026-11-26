@@ -39,15 +39,10 @@ def make_bundle(seed=0, T=T_TRIAL, subject='SYN'):
             tq = 5.0 * env.sum(axis=1) + passive_of(a)
             recs.append({'idx': idx, 'comment': f'{sess} {a:.2f}', 'session': sess, 'angle': float(a),
                          't': 1.0 + np.arange(T) / FS, 'env_raw': env, 'env_max1k': env.max(axis=0) * 1.1,
-                         'pos': pos, 'tq': tq, 'hold': None})
+                         'pos': pos, 'tq': tq, 'envelope': 'causal'})
             idx += 2
     entries = sorted((float(a), float(passive_of(a))) for a in ANGLES)
-    maps = {k: {'S1': list(entries), 'S2': list(entries)} for k in ('legacy', 'static', 'worksheet')}
-    mvc = [{'idx': 100 + i, 'angle': float(a), 'env_peak': np.full(4, 5.0), 'tq_peak': 50.0}
-           for i, a in enumerate(ANGLES[::3])]
-    return {'subject': subject, 'emg_cols': ['GM', 'GL', 'SOL', 'TA'], 'active': recs, 'holds': [], 'mvc': mvc,
-            'maps': maps, 'sessions': {'S1': [r['idx'] for r in recs if r['session'] == 'S1'],
-                                       'S2': [r['idx'] for r in recs if r['session'] == 'S2']}}
+    return {'subject': subject, 'active': recs, 'maps': {'static': {'S1': list(entries), 'S2': list(entries)}}}
 
 
 @pytest.fixture

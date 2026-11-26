@@ -37,8 +37,6 @@ def parse(raw: dict, stem: str | None = None) -> Spec:
     for key in ('id', 'title', 'changes'):
         if key not in raw:
             raise SpecError(f'missing field {key!r}')
-    if 'calibration' in raw:
-        raise SpecError('calibration was removed: predictions are always scored as saved, on the whole trial')
     if 'dashboard' in raw:
         raise SpecError('the dashboard block was removed with the v1 dashboard')
     if not ID_RE.match(raw['id']):

@@ -149,15 +149,12 @@ def _read_data(f, h):
     return arr[:, :, 0]   # shape: (chanLen, nChan)
 
 
-def read_flb(filepath, subject_id='default', channel_names=None):
+def read_flb(filepath, subject_id='default'):
     """
     All trials of an FLB file as DataFrames with columns ['time', 'position', 'torque', 'gm', 'gl', 'sol', 'ta'] and
-    attrs trial_index, domainIncr, domainStart, comment, chanName, source_file, raw_domainIncr, chanFormat.
+    attrs trial_index, domainIncr (sampling interval, s), comment and source_file.
     subject_id 'IES01' applies that subject's channel order.
     """
-    if channel_names is None:
-        channel_names = DEFAULT_CHANNEL_NAMES
-
     trials = []
 
     with open(filepath, 'rb') as f:
@@ -182,14 +179,14 @@ def read_flb(filepath, subject_id='default', channel_names=None):
                     raise ValueError('IES channel mapping expects exactly six channels.')
                 data = data[:, IES01_CHANNEL_ORDER]
                 # After the reorder the data follow DEFAULT_CHANNEL_NAMES; the file's header names are ignored.
-                col_names = channel_names
+                col_names = DEFAULT_CHANNEL_NAMES
             else:
                 # Use channel names from the file header if available, else defaults
                 file_chan_names = h.get('chanName', [])
                 if file_chan_names and all(c not in ('DEFAULT', '') for c in file_chan_names):
                     col_names = [c.lower().replace(' ', '_') for c in file_chan_names]
                 else:
-                    col_names = channel_names
+                    col_names = DEFAULT_CHANNEL_NAMES
 
             # Normalize to canonical names (e.g. 'pos' -> 'position')
             col_names = [_CANONICAL_NAMES.get(c, c) for c in col_names]
@@ -202,12 +199,8 @@ def read_flb(filepath, subject_id='default', channel_names=None):
             # Attach metadata as DataFrame attributes
             df.attrs['trial_index'] = trial_idx
             df.attrs['domainIncr']  = Ts
-            df.attrs['domainStart'] = h['domainStart']
             df.attrs['comment']     = h['comment']
-            df.attrs['chanName']    = h['chanName']
             df.attrs['source_file'] = os.path.basename(filepath)
-            df.attrs['raw_domainIncr'] = h['domainIncr']
-            df.attrs['chanFormat'] = h['chanFormat']
 
             trials.append(df)
             trial_idx += 1
