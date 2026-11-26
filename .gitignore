@@ -38,6 +38,7 @@ ML/research/_cache/
 /ML/archive/
 /ML/research/results/
 
-# Markdown (docs, reports, notes) stays local; only the one-line README is in the repository
+# Markdown (docs, reports, notes) stays local; only the one-line README and the ML guide are in the repository
 *.md
 !/README.md
+!/ML/README.md
