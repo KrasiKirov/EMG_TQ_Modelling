@@ -87,7 +87,7 @@ def main(argv=None):
     except RuntimeError:          # TensorFlow already running in this process (tests): keep its settings
         pass
 
-    from ML.research.run import prepare
+    from ML.research.prepare import prepare
 
     t0 = time.time()
     data, details = prepare(a.subject, a.direction, {k: cfg[k] for k in RCFG_KEYS})

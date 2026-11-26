@@ -13,7 +13,7 @@ import pickle
 
 import numpy as np
 
-from ML.research import config as C
+from ML import config as C
 from ML.research import data as D
 
 PEOPLE = ['CH', 'EG', 'HM', 'IES', 'JM', 'YES']

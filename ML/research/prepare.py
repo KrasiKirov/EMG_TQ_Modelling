@@ -1,19 +1,19 @@
-"""Build the windowed train / validation / test data for one subject and protocol (used by EXPERIMENTS/pipeline/run.py).
+"""Build the windowed train / validation / test data for one subject (used by EXPERIMENTS/pipeline/run.py).
 
 Steps: load the subject (cached), normalise the EMG on training data, find rest periods from the EMG, build the
-target (measured torque minus a passive model), cut windows.
+target (measured torque minus the passive torque), cut windows.
 """
 
 import copy
 
 import numpy as np
 
-from ML.research.config import WINDOW
+from ML.config import WINDOW
 from ML.research import splits
-from ML.research import truth
 from ML.research.data import load_subject
 from ML.research.emg_norm import normalise, push_directions
-from ML.research.passive import PassiveModel
+from ML.research.passive import passive_torque
+from ML.research.rest_flags import rest_flags
 
 
 def apply_metadata_passive(bundle, subject):
@@ -45,9 +45,9 @@ def prepare(subject, protocol, cfg):
     if cfg['passive'] == 'none':              # total torque: nothing subtracted
         targets, pinfo = {r['idx']: r['tq'].copy() for r in recs}, {'kind': 'none'}
     else:
-        pm = PassiveModel(cfg['passive'], bundle)
-        targets, pinfo = {r['idx']: r['tq'] - pm.predict(r) for r in recs}, pm.describe()
-    rest = rest_flags(bundle, protocol)
+        targets = {r['idx']: r['tq'] - passive_torque(cfg['passive'], bundle, r) for r in recs}
+        pinfo = {'kind': cfg['passive']}
+    rest = rest_flags(bundle)
     gap = bool(cfg.get('val_gap', False))
     data = splits.build(protocol, recs, feats, targets, window=window, rest=rest, val_gap=gap)
     if cfg.get('state', 'reset') == 'carry':
@@ -60,13 +60,3 @@ def prepare(subject, protocol, cfg):
                'rest_frac_train': float(np.mean(data['meta_train']['rest']))}
     return data, details
 
-
-def rest_flags(bundle, protocol):
-    """{trial idx: (T,) bool} EMG-detected rest per sample (window metadata 'rest', rest-window metrics)."""
-    out = {}
-    for sess in ('S1', 'S2'):
-        segs = truth.session_rest(bundle, sess)
-        for r in bundle['active']:
-            if r['session'] == sess:
-                out[r['idx']] = truth.rest_mask(len(r['tq']), segs[r['idx']])
-    return out

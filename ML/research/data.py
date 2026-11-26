@@ -1,5 +1,5 @@
 """
-Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subject in config.CACHE_DIR).
+Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subject in ML.config.CACHE_DIR).
 
 active : one dict per active trial, both sessions: idx (0-based trial index), comment, session ('S1' = lab "test",
          'S2' = "retest"), angle (rad), t (s, t[0] = 1.0 after the start-up trim), env_raw (T, 4) envelopes
@@ -21,14 +21,13 @@ import warnings
 import numpy as np
 from scipy.signal import decimate
 
-from ML.config import DATA_DIR, DOWNSAMPLE, FS, FS_RAW, PASSIVE_TORQUE_OVERRIDES, SUBJECTS, TRIAL_OVERRIDES
+from ML.config import (CACHE_DIR, DATA_DIR, DOWNSAMPLE, FS, FS_RAW, PASSIVE_TORQUE_OVERRIDES, SUBJECTS,
+                       TRIAL_OVERRIDES, TRIM_START)
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing.trials import (ACTIVE_STD_THRESHOLD, POSITION_COL, TORQUE_COL, classify_trials,
                                      split_passive_segments)
 from ML.preprocessing.passive_map import get_passive_torque_map, is_static_hold, static_hold_passive_map
 from ML.preprocessing.emg_envelope import extract_envelope, extract_envelope_causal, detect_emg_columns
-
-from .config import CACHE_DIR, TRIM_START
 
 CACHE_VERSION = 2          # 2: the torque target is down-sampled before trimming (non-legacy bundles)
 HOLD_ANGLE_TOL = 0.05      # rad, hold <-> next active trial angle match

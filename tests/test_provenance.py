@@ -18,7 +18,7 @@ def test_config_hash_stable():
 
 
 def _data(patch_subject, window=20):
-    from ML.research.run import prepare
+    from ML.research.prepare import prepare
     rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0,
                 state='reset', lp_order=2, val_gap=True, metadata_passive=True)
     data, _ = prepare('SYN', 'S1toS2', rcfg)
@@ -28,8 +28,9 @@ def _data(patch_subject, window=20):
 def test_same_seed_identical(patch_subject, monkeypatch):
     import tensorflow as tf
     tf.config.threading.set_intra_op_parallelism_threads(1)
-    from ML.research import config as RC, train as RT
-    monkeypatch.setitem(RC.PROTOCOLS, 'unit', dict(FAST, epochs=3))
+    from ML import config as RC
+    from ML.research import train as RT
+    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', dict(FAST, epochs=3))
     data = _data(patch_subject)
     p1, _ = RT.fit_predict(data, 'lstm8', protocol='unit', seed=0, shuffle=False)
     p2, _ = RT.fit_predict(data, 'lstm8', protocol='unit', seed=0, shuffle=False)
@@ -45,8 +46,8 @@ def _cfg(**over):
 
 @pytest.fixture
 def unit_run(patch_subject, tmp_results, monkeypatch):
-    from ML.research import config as RC
-    monkeypatch.setitem(RC.PROTOCOLS, 'unit', FAST)
+    from ML import config as RC
+    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', FAST)
     monkeypatch.setattr(PR, 'load_config', lambda exp: ({'id': exp}, _cfg()))
     monkeypatch.setattr(PR, 'protocol_hash', lambda *a: 'p' * 64)
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(

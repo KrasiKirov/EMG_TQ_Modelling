@@ -33,7 +33,7 @@ DIRECTION = 'S1toS2'
 
 
 def _allowed() -> dict[str, tuple]:
-    from ML.research import config as RC
+    from ML.config import TRAIN_PROTOCOLS
     from ML.research.data import ENVELOPES
     from ML.research.emg_norm import KINDS as EMG_KINDS
     from ML.research.passive import KINDS as PASSIVE_KINDS
@@ -43,7 +43,7 @@ def _allowed() -> dict[str, tuple]:
         'model': ('lstm', 'ridge', 'ridge_lagged'),
         'state': ('reset', 'carry'),
         'envelope': ENVELOPES,
-        'train_protocol': tuple(RC.PROTOCOLS),
+        'train_protocol': tuple(TRAIN_PROTOCOLS),
         'scale_part': ('train_val', 'train'),
         'extra_input': (None, 'passive_trial_value'),
     }

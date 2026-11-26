@@ -9,9 +9,7 @@ carries metadata (trial, session, angle, time, rest).
 
 import numpy as np
 
-from ML.config import FS
-
-from .config import TRAIN_FRAC, WINDOW
+from ML.config import FS, TRAIN_FRAC, WINDOW
 
 SESSION_SPLITS = {
     'S1toS2': {'train': ['S1'], 'test': ['S2']},

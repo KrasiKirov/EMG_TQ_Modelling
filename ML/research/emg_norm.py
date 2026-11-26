@@ -16,9 +16,8 @@ session_p99  each session ÷ its own 99th percentile (test session: all its EMG,
 
 import numpy as np
 
+from ML.config import TRAIN_FRAC, WINDOW
 from ML.preprocessing import emg_agc
-
-from .config import TRAIN_FRAC, WINDOW
 
 AUTO_DIR_NM = 2.0   # Nm, push-direction threshold of the 'agc_auto' rule (as in report 1)
 

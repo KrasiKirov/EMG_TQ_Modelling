@@ -5,7 +5,8 @@ import numpy as np
 import pytest
 
 from EXPERIMENTS.pipeline import run as PR
-from ML.research import config as RC, splits as SP
+from ML import config as RC
+from ML.research import splits as SP
 from ML.research.emg_norm import normalise
 
 UNIT = dict(batch=256, lr=0.003, lr_factor=0.5, lr_patience=6, early=50, epochs=2)
@@ -89,7 +90,7 @@ def test_d24_targets_every_trial(synthetic_bundle):
 # --- training: clipping, logging, validation predictions -----------------------------------------
 
 def _data(window=20):
-    from ML.research.run import prepare
+    from ML.research.prepare import prepare
     rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0,
                 state='reset', lp_order=2, val_gap=True, metadata_passive=True, scale_part='train')
     return PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
@@ -97,7 +98,7 @@ def _data(window=20):
 
 def test_clipnorm_windowed_applied(patch_subject, monkeypatch):
     from ML.research import train as RT
-    monkeypatch.setitem(RC.PROTOCOLS, 'unit', UNIT)
+    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', UNIT)
     _, info = RT.fit_predict(_data(), 'lstm8', protocol='unit', shuffle=False, clipnorm=1.0)
     assert info['clipnorm'] == 1.0 and info['optimizer_clipnorm'] == 1.0
 
@@ -117,7 +118,7 @@ def _cfg(**over):
 @pytest.fixture
 def run_unit(patch_subject, tmp_results, monkeypatch):
     from EXPERIMENTS.pipeline import provenance as PV
-    monkeypatch.setitem(RC.PROTOCOLS, 'unit', UNIT)
+    monkeypatch.setitem(RC.TRAIN_PROTOCOLS, 'unit', UNIT)
     monkeypatch.setattr(PR, 'protocol_hash', lambda *a: 'p' * 64)
     monkeypatch.setattr(PV, 'collect', lambda **kw: dict(git_commit='abc', git_dirty=False, data_sha256={},
                                                          versions={}, threads=1, host='h', protocol_hash=None))

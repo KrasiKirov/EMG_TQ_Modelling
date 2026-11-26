@@ -67,11 +67,12 @@ def fit_ridge(data, protocol_file=STUDIES['study_v2'].protocol_file):
 def fit_carry(data, cfg, seed):
     """state='carry': train ML.research.stateful on whole trials; return test predictions on the same samples
     (and in the same order) as the windowed model's data['y_test'] / data['meta_test']."""
-    from ML.research import config as RC, stateful as ST
+    from ML.config import TRAIN_PROTOCOLS
+    from ML.research import stateful as ST
     from ML.research.train import angle_groups
     knots = angle_groups(data['train_angles'])
     train, test = data['streams']['train'], data['streams']['test']
-    p = RC.PROTOCOLS[cfg['train_protocol']]
+    p = TRAIN_PROTOCOLS[cfg['train_protocol']]
     preds, info = ST.fit_predict_carry(train, test, chunk=cfg['chunk'] or cfg['window'],
                                        seed=seed, epochs=p['epochs'], early=p['early'], lr=cfg['lr'] or p['lr'],
                                        lr_factor=p['lr_factor'], lr_patience=p['lr_patience'],

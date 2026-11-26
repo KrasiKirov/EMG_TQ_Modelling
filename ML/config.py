@@ -1,4 +1,5 @@
-"""Subject registry, recordings folder and per-subject data overrides."""
+"""Participants, folders, sampling rates, data-processing constants, training schedules and per-participant
+data overrides."""
 
 import os
 
@@ -10,6 +11,25 @@ DATA_DIR  = os.environ.get('EMG_DATA_DIR', os.path.join(ML_DIR, 'subjects'))
 FS_RAW = 1000.0            # Hz, recordings
 DOWNSAMPLE = 10            # 1000 Hz -> 100 Hz
 FS = FS_RAW / DOWNSAMPLE   # Hz, after downsampling
+
+# Processed-data cache (one bundle per participant and envelope setting); RESEARCH_CACHE_DIR moves it
+CACHE_DIR = os.environ.get('RESEARCH_CACHE_DIR',
+                           os.path.join(os.path.dirname(os.path.abspath(__file__)), 'research', '_cache'))
+
+# Windows and the session-1 split
+WINDOW = 20              # steps (200 ms) per input window
+TRIM_START = 1000        # raw samples dropped at the start of a trial (filter start-up)
+TRAIN_FRAC = 0.8         # first 80 % of each training trial = train, rest = validation
+
+# Training schedules (setting train_protocol). 'orig' = the original pipeline's settings
+# (EXPERIMENTS/baseline/original_code/ML/config.py); 'fast' = batch 64 for screening; 'fast400' = up to 400 epochs;
+# 'study400' = study v2: early stopping under a 400-epoch cap, batch and lr from each config.
+TRAIN_PROTOCOLS = {
+    'orig': dict(batch=8, lr=0.003, lr_factor=0.7, lr_patience=10, early=25, epochs=200),
+    'fast': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=150),
+    'fast400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
+    'study400': dict(batch=64, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=400),
+}
 
 # Subject registry
 # Maps a participant's initials to (flb_filename, channel order for read_flb: 'IES01' or 'default')

@@ -58,7 +58,7 @@ def synthetic_bundle():
 @pytest.fixture
 def patch_subject(monkeypatch, synthetic_bundle):
     """load_subject('SYN', ...) returns the synthetic bundle (any keyword arguments are ignored)."""
-    from ML.research import data as RD, run as RR
+    from ML.research import data as RD, prepare as RR
 
     def fake(subject, *args, **kwargs):
         assert subject == 'SYN', subject

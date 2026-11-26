@@ -6,7 +6,8 @@ Training angles closer than KNOT_TOL are merged into knots (used by the ridge ba
 
 import numpy as np
 
-from .config import PROTOCOLS
+from ML.config import TRAIN_PROTOCOLS
+
 from .ridge import fit_ridge
 
 KNOT_TOL = 0.02   # rad: training trials closer than this share an angle group
@@ -49,7 +50,7 @@ def fit_predict(data, model_name='lstm8', protocol='fast', seed=0, verbose=0, lr
     from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 
     tf.keras.utils.set_random_seed(seed)
-    p = PROTOCOLS[protocol]
+    p = TRAIN_PROTOCOLS[protocol]
     knots = angle_groups(data['train_angles'])
     y_tr, y_va = data['y_train'].astype(np.float64), data['y_val'].astype(np.float64)
 
