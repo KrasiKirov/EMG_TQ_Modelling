@@ -2,20 +2,47 @@
  "id": "window_sweep",
  "status": "pre-registered 25 Nov 2026, before any of its runs started. Written AFTER every study_v2 result had been seen, session 2 included. Logged in deviations.json. Later changes go to a 'deviations' list in this file with what had been seen.",
  "kind": "exploratory follow-up of study_v2 (sensitivity analysis of history length); does not change study_v2's choice.json, A0 or families F1-F3",
- "parent": {"protocol": "study_v2", "protocol_hash": "3fbb2cea01ad691ce3693dc9573c8dfbbbc8d5a355d853a886d354ea1082e030"},
+ "parent": {
+  "protocol": "study_v2",
+  "protocol_hash": "3fbb2cea01ad691ce3693dc9573c8dfbbbc8d5a355d853a886d354ea1082e030"
+ },
  "question": "With one fixed, already tuned network, how does session-2 accuracy change with the length of history the model sees: reset windows of 0.5-10 s and carried-state chunks of 0.5-10 s?",
  "seen_at_registration": "all study_v2 results, session 2 included; the 2 s reset window was screened in study_v2 R1 only (did not clearly lose to 1 s); 5 s and 10 s reset windows were never run; carried state was tuned at 2, 5 and 10 s chunks.",
  "design": "no tuning: every arm takes a reference config unchanged except its length (reset: 'window'; carried state: 'chunk'). The configs are not re-tuned per length, so a length that would want other settings is under-rated; this is a limitation, not corrected.",
  "references": {
-  "reset": {"spec": "FE_cell_w50_full", "config": "study_v2's 0.5 s full-overlap winner TS2_R2_w50_full_f3: 64 units, 1 layer, dropout 0.004, lr 0.00556, batch 64"},
-  "carry": {"spec": "FE_A0", "config": "A0 = study_v2's 2 s carried-state winner TS2_R1_carry_2s_d5: 64 units, 1 layer, dropout 0.017, lr 0.00754"}
+  "reset": {
+   "spec": "FE_cell_w50_full",
+   "config": "study_v2's 0.5 s full-overlap winner TS2_R2_w50_full_f3: 64 units, 1 layer, dropout 0.004, lr 0.00556, batch 64"
+  },
+  "carry": {
+   "spec": "FE_A0",
+   "config": "A0 = study_v2's 2 s carried-state winner TS2_R1_carry_2s_d5: 64 units, 1 layer, dropout 0.017, lr 0.00754"
+  }
  },
  "arms": {
-  "reset": {"w50": 50, "w100": 100, "w200": 200, "w500": 500, "w1000": 1000},
-  "carry": {"carry50": 50, "carry100": 100, "carry200": 200, "carry500": 500, "carry1000": 1000}
+  "reset": {
+   "w50": 50,
+   "w100": 100,
+   "w200": 200,
+   "w500": 500,
+   "w1000": 1000
+  },
+  "carry": {
+   "carry50": 50,
+   "carry100": 100,
+   "carry200": 200,
+   "carry500": 500,
+   "carry1000": 1000
+  }
  },
  "length_unit": "samples at 100 Hz (50 = 0.5 s ... 1000 = 10 s)",
- "seeds": [10, 11, 12, 13, 14],
+ "seeds": [
+  10,
+  11,
+  12,
+  13,
+  14
+ ],
  "reused_runs": {
   "w50": "seeds 10-12 from FE_cell_w50_full (same changes); 13-14 run as FE_win_w50",
   "carry200": "seeds 10-12 from FE_cell_carry_2s, 13-14 from FE_A0 (same changes); nothing new is run"
@@ -27,9 +54,47 @@
  "runs": "w50 12 + w100/w200/w500/w1000 4 x 30 + carry50/100/500/1000 4 x 30 = 252",
  "order": "longest first (w1000, w500, w200, w100, then carried state, then w50), so the slowest arms are not the last to start",
  "families": {
-  "WS1": {"what": "reset windows vs the 0.5 s window", "comparator": "w50", "arms": ["w100", "w200", "w500", "w1000"]},
-  "WS2": {"what": "carried-state chunks vs the 2 s chunk (A0)", "comparator": "carry200", "arms": ["carry50", "carry100", "carry500", "carry1000"]},
-  "WS3": {"what": "reset window vs carried state at the same length", "pairs": [["w100", "carry100"], ["w200", "carry200"], ["w500", "carry500"], ["w1000", "carry1000"]]}
+  "WS1": {
+   "what": "reset windows vs the 0.5 s window",
+   "comparator": "w50",
+   "arms": [
+    "w100",
+    "w200",
+    "w500",
+    "w1000"
+   ]
+  },
+  "WS2": {
+   "what": "carried-state chunks vs the 2 s chunk (A0)",
+   "comparator": "carry200",
+   "arms": [
+    "carry50",
+    "carry100",
+    "carry500",
+    "carry1000"
+   ]
+  },
+  "WS3": {
+   "what": "reset window vs carried state at the same length",
+   "pairs": [
+    [
+     "w100",
+     "carry100"
+    ],
+    [
+     "w200",
+     "carry200"
+    ],
+    [
+     "w500",
+     "carry500"
+    ],
+    [
+     "w1000",
+     "carry1000"
+    ]
+   ]
+  }
  },
  "metric": "study_v2's: session-2 nMAE per person, median over the 5 seeds",
  "decision_rule": "study_v2's: per comparison, an effect counts only if all 6 people agree in sign and the median effect is at least 5 %; otherwise 'no clear difference'. Each comparison is scored on the samples both of its arms predict (from max(1 s, the later first prediction of the two arms)), so a 10 s window is compared only on samples from 10 s into a trial on.",
@@ -39,11 +104,22 @@
   "run time and weight updates per arm"
  ],
  "relation_to_followup_carry_chunks": "followup_carry_chunks.json (19 Nov) asks about chunks of 1, 0.5 and 0.2 s with full tuning. WS2 gives a fixed-config answer for 1 and 0.5 s; the follow-up is not replaced and stays as registered.",
- "budget": {"workers": 6, "estimate": "about 83 h from study_v2 run times scaled with window length (reset finals 33 min at 0.5 s and 51 min at 1 s; 2-10 s extrapolated; carried state about 17 min at any chunk); the first 10 s runs are measured before the estimate is relied on"},
+ "budget": {
+  "workers": 6,
+  "estimate": "about 83 h from study_v2 run times scaled with window length (reset finals 33 min at 0.5 s and 51 min at 1 s; 2-10 s extrapolated; carried state about 17 min at any chunk); the first 10 s runs are measured before the estimate is relied on"
+ },
  "paused": "fine_round_2 (5 of 234 runs finished) is paused while this runs and resumes after it",
  "limitations": [
   "Chosen after seeing every study_v2 result, session 2 included: exploratory, never reported as part of study_v2's pre-registered comparisons.",
   "One config per sweep, tuned at 0.5 s (reset) or 2 s (carried state); other lengths are not tuned.",
   "Long windows are scored on fewer samples per trial (from 10 s on for the 10 s window)."
+ ],
+ "deviations": [
+  {
+   "date": "2026-11-26",
+   "what": "Runs whose validation loss becomes NaN during training are kept as results: scored from the weights Keras restored (the best epoch before the NaN), never re-run or excluded. The number of such runs per arm is reported.",
+   "seen": "19 runs finished, none scored on session 2. FE_win_w1000 CH s10 hit NaN validation loss at epoch 42 (stopped at 54; val MAE 3.29 vs 1.28 at w200); FE_win_w500 CH s10 trained normally. train_info best_epoch/best_val_loss are wrong for such runs (np.argmin over NaN); the analysis uses np.nanargmin and does not change ML/research/train.py mid-sweep.",
+   "decided_by": "the user"
+  }
  ]
 }
