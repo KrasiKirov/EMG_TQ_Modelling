@@ -1,1 +1,1 @@
-"""Recordings to signals: FLB reading, EMG envelopes, automatic gain control, trial classification, passive maps."""
+"""Recordings to signals: FLB reading, trial classification, EMG envelopes, passive-torque maps, rest detection."""

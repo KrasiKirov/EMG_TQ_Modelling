@@ -166,7 +166,7 @@ def read_flb(filepath, subject_id='default'):
 
             data = _read_data(f, h)   # (chanLen, nChan)
 
-            # Retain the acquisition interval; callers can validate/override explicitly.
+            # sampling interval (s) from the header
             Ts = float(h['domainIncr'])
             if not np.isfinite(Ts) or Ts <= 0:
                 raise ValueError('FLB sampling interval must be finite and positive.')

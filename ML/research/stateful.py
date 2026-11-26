@@ -31,6 +31,7 @@ def build_seq(n_features, units, layers, dropout):
 
 
 def _zeros(model, B):
+    """Zero initial states (h and c of every layer) for B streams."""
     return [np.zeros((B, int(t.shape[-1])), np.float32) for t in model.inputs[1:]]
 
 
@@ -46,6 +47,7 @@ def run_streams(model, X, chunk=200):
 
 
 def _pad(streams, key, T, dtype=np.float32):
+    """Stack ``key`` of every stream into one (B, T, ...) array, zero-padded to T samples."""
     first = np.asarray(streams[0][key])
     out = np.zeros((len(streams), T) + first.shape[1:], dtype)
     for i, s in enumerate(streams):

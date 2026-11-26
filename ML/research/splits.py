@@ -58,6 +58,7 @@ def check_common_targets(recs):
 
 
 def _meta(rec, last, part, rest=None):
+    """Per-window metadata of one trial; ``last`` = index of each window's last sample."""
     return {'trial': np.full(len(last), rec['idx']), 'angle': np.full(len(last), rec['angle']),
             'session': np.array([rec['session']] * len(last)), 't': rec['t'][last].astype(np.float32),
             'last': last, 'part': np.array([part] * len(last)),

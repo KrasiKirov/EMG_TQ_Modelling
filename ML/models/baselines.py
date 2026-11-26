@@ -16,13 +16,14 @@ def lagged_features(X, lags_steps=range(0, 51, 5)):
 
 
 class LaggedRidge:
-    """Ridge on lagged_features; alpha chosen on the validation block (lowest MAE), then refit is not needed:
-    each alpha is fitted on the training block only."""
+    """Ridge on lagged_features: one fit per alpha on the training block; the alpha with the lowest validation MAE
+    is kept (ties: the smaller alpha)."""
 
     def __init__(self, alphas, lags_steps=range(0, 51, 5)):
         self.alphas, self.lags = [float(a) for a in alphas], list(lags_steps)
 
     def _fit_one(self, F, y, alpha):
+        """(feature mean, feature scale, [intercept, weights]) of one ridge fit on standardised features."""
         mean, scale = F.mean(axis=0), np.maximum(F.std(axis=0), 1e-8)
         z = np.column_stack([np.ones(len(y)), (F - mean) / scale])
         penalty = np.eye(z.shape[1]) * alpha
@@ -30,6 +31,7 @@ class LaggedRidge:
         return mean, scale, np.linalg.solve(z.T @ z + penalty, z.T @ y)
 
     def fit(self, X, y, X_val, y_val):
+        """Fit every alpha on (X, y), keep the one with the lowest MAE on (X_val, y_val)."""
         F, Fv = lagged_features(X, self.lags), lagged_features(X_val, self.lags)
         fits, self.val_mae = {}, {}
         for a in self.alphas:
@@ -41,4 +43,5 @@ class LaggedRidge:
         return self
 
     def predict(self, X):
+        """Torque (Nm) for windows X with the kept alpha."""
         return self.weights[0] + ((lagged_features(X, self.lags) - self.mean) / self.scale) @ self.weights[1:]
