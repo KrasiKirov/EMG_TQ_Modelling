@@ -31,15 +31,11 @@ def build_original(name, n_steps, n_features, knots):
     return build_lstm(n_steps, n_features, units=8, layers=2, dropout=0.3, name='ankle_torque_lstm')
 
 
-def fit_predict(data, model_name='lstm8', pf_extra=None,
-                protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
+def fit_predict(data, model_name='lstm8', protocol='fast', seed=0, verbose=0, lr=None, shuffle=True,
                 save_weights=None, clipnorm=None, batch=None, build=None):
     """Train on data['X_train'] / ['X_val'] and predict X_test; returns (y_pred_test (Nm), info).
 
     model_name    'lstm' / 'lstm8' (built by ``build``) or 'ridge' (ridge.py)
-    pf_extra, init_weights, rest_weight
-                  removed options (2026-11, tag pre-cleanup-2026-11): kept in the signature, must be None
-                  (the per-angle target scaling 'balance' was removed on 2026-11-26; tag study-v2-final keeps it)
     lr            overrides the protocol's learning rate
     shuffle       False feeds the windows in stored order (shuffle ablation)
     save_weights  path for the best-epoch weights
@@ -48,9 +44,6 @@ def fit_predict(data, model_name='lstm8', pf_extra=None,
     build         model builder (name, n_steps, n_features, knots) -> keras model; default ``build_original``
     Also returns the validation predictions (Nm, best-epoch weights) as info['val_pred'] and their MAE.
     """
-    for name, value in (('pf_extra', pf_extra), ('init_weights', init_weights), ('rest_weight', rest_weight)):
-        if value is not None:
-            raise ValueError(f'{name}={value!r} is not supported (removed 2026-11; see tag pre-cleanup-2026-11)')
     import tensorflow as tf
     from tensorflow.keras.optimizers import Nadam
     from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
@@ -81,7 +74,7 @@ def fit_predict(data, model_name='lstm8', pf_extra=None,
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
             'best_val_loss': float(hist.history['val_loss'][best]),
             'knots': knots.tolist(), 'n_params': int(model.count_params()),
-            'init_weights': None, 'lr': lr or p['lr'],
+            'lr': lr or p['lr'],
             'updates': int(model.optimizer.iterations.numpy()),
             'clipnorm': clipnorm, 'optimizer_clipnorm': model.optimizer.clipnorm, 'max_epochs': p['epochs'],
             'batch': batch or p['batch'], 'shuffle': bool(shuffle), 'val_pred': pv, 'val_mae': float(np.mean(np.abs(pv - y_va)))}

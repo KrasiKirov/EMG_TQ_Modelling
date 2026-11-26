@@ -1,5 +1,5 @@
-"""Run settings: the defaults, the retired settings (overlap 2026-11-24; balance, input_step 2026-11-26) and spec
-loading."""
+"""Run settings: the defaults, the retired settings (overlap 2026-11-24; balance, input_step, pf_extra, rest_weight
+2026-11-26) and spec loading."""
 import pytest
 
 from EXPERIMENTS.pipeline import run as PR
@@ -7,8 +7,8 @@ from EXPERIMENTS.pipeline import settings as ST
 from EXPERIMENTS.pipeline.spec import CONFIGS, SpecError
 
 BASE_2026_11_26 = dict(
-    passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm', pf_extra=None,
-    window=20, lr=None, train_protocol='orig', rest_weight=None, extra_input=None, shuffle=True, envelope='zerophase',
+    passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm',
+    window=20, lr=None, train_protocol='orig', extra_input=None, shuffle=True, envelope='zerophase',
     trim_end_s=0.0, state='reset', lp_order=4, val_gap=False, metadata_passive=False,
     chunk=None, clipnorm=None, scale_part='train_val', batch=None)
 
@@ -23,8 +23,7 @@ def test_every_committed_spec_validates():
         ST.load_config(p.stem)
 
 
-@pytest.mark.parametrize('key,value', [('passive', 'drift'), ('emg', 'agc_soft'), ('model', 'moe'),
-                                       ('pf_extra', [2, 3.0]), ('rest_weight', 0.0)])
+@pytest.mark.parametrize('key,value', [('passive', 'drift'), ('emg', 'agc_soft'), ('model', 'moe')])
 def test_removed_value_is_rejected_by_name(key, value):
     with pytest.raises(SpecError, match=key):
         ST.validate(dict(ST.BASE, **{key: value}))
@@ -78,3 +77,10 @@ def test_strip_retired_refuses_overlap(over):
 def test_full_overlap_spec_still_loads():
     cfg = ST.load_config('FE_cell_w20_full')[1]
     assert 'train_stride' not in cfg and 'epoch_windows' not in cfg and cfg['window'] == 20
+
+
+def test_strip_retired_pf_extra_and_rest_weight():
+    assert ST.strip_retired(dict(ST.BASE, pf_extra=None, rest_weight=None)) == ST.BASE
+    for over in (dict(pf_extra=[2, 3.0]), dict(rest_weight=0.0)):
+        with pytest.raises(SpecError, match='retired on 2026-11-26'):
+            ST.strip_retired(dict(ST.BASE, **over))

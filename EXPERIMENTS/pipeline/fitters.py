@@ -102,8 +102,7 @@ def fit(data, cfg, seed, *, save_weights=None, protocol_file=STUDIES['study_v2']
     if cfg['model'] == 'ridge_lagged':
         pred, info = fit_ridge(data, protocol_file)
         return pred, info, data
-    pred, info = RT.fit_predict(data, cfg['model'], cfg['pf_extra'], cfg['train_protocol'], seed,
-                                lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
-                                save_weights=save_weights,
+    pred, info = RT.fit_predict(data, model_name=cfg['model'], protocol=cfg['train_protocol'], seed=seed,
+                                lr=cfg['lr'], shuffle=cfg['shuffle'], save_weights=save_weights,
                                 clipnorm=cfg['clipnorm'], batch=cfg['batch'], build=make_builder(cfg))
     return pred, info, data

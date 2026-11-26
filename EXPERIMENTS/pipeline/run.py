@@ -111,7 +111,7 @@ def main(argv=None):
     val_pred = info.pop('val_pred')
     res = {'experiment': a.exp, 'subject': a.subject, 'direction': a.direction, 'seed': a.seed,
            'config': cfg, 'hypothesis': spec.get('hypothesis'), 'details': details,
-           'train_info': {k: v for k, v in info.items() if k != 'init_weights'},
+           'train_info': info,
            'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
            'prep_s': t_prep, 'train_s': t_train, 'config_hash': PV.config_hash(cfg), 'provenance': prov,
            'versions': {'tensorflow': tf.__version__, 'numpy': np.__version__, 'python': sys.version.split()[0]}}
