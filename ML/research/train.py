@@ -35,17 +35,13 @@ def build_original(name, n_steps, n_features, knots):
     return build_lstm(n_steps, n_features, units=8, layers=2, dropout=0.3, name='ankle_torque_lstm')
 
 
-# default builder of fit_predict; the pipeline passes build= instead, and LSTM_Presentation's training scripts
-# replace this module attribute
-build_model = build_original
-
 
 def fit_predict(data, model_name='lstm8', pf_extra=None,
                 protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
                 save_weights=None, clipnorm=None, batch=None, build=None):
     """Train on data['X_train'] / ['X_val'] and predict X_test; returns (y_pred_test (Nm), info).
 
-    model_name    'lstm' / 'lstm8' (built by the module attribute ``build_model``) or 'ridge' (ridge.py)
+    model_name    'lstm' / 'lstm8' (built by ``build``) or 'ridge' (ridge.py)
     pf_extra, init_weights, rest_weight
                   removed options (2026-11, tag pre-cleanup-2026-11): kept in the signature, must be None
                   (the per-angle target scaling 'balance' was removed on 2026-11-26; tag study-v2-final keeps it)
@@ -54,8 +50,7 @@ def fit_predict(data, model_name='lstm8', pf_extra=None,
     save_weights  path for the best-epoch weights
     clipnorm      gradient-norm clipping of Nadam (None = off)
     batch         overrides the protocol's batch size
-    build         model builder (name, n_steps, n_features, knots) -> keras model; default: the module attribute
-                  ``build_model``
+    build         model builder (name, n_steps, n_features, knots) -> keras model; default ``build_original``
     Also returns the validation predictions (Nm, best-epoch weights) as info['val_pred'] and their MAE.
     """
     for name, value in (('pf_extra', pf_extra), ('init_weights', init_weights), ('rest_weight', rest_weight)):
@@ -74,7 +69,7 @@ def fit_predict(data, model_name='lstm8', pf_extra=None,
         pred, info = fit_ridge(data, knots)
         info.update(knots=knots.tolist(), model='ridge')
         return pred, info
-    model = (build or build_model)(model_name, data['X_train'].shape[1], data['X_train'].shape[2], knots)
+    model = (build or build_original)(model_name, data['X_train'].shape[1], data['X_train'].shape[2], knots)
     model.compile(optimizer=Nadam(learning_rate=lr or p['lr'], clipnorm=clipnorm), loss='mse')
     cbs = [ReduceLROnPlateau(monitor='val_loss', factor=p['lr_factor'], patience=p['lr_patience'],
                              min_lr=1e-6, verbose=0),

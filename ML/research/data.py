@@ -21,19 +21,16 @@ import warnings
 import numpy as np
 from scipy.signal import decimate
 
-from ML.config import SUBJECTS, DATA_DIR, TRIAL_OVERRIDES, PASSIVE_TORQUE_OVERRIDES
+from ML.config import DATA_DIR, DOWNSAMPLE, FS, FS_RAW, PASSIVE_TORQUE_OVERRIDES, SUBJECTS, TRIAL_OVERRIDES
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing.trials import (ACTIVE_STD_THRESHOLD, POSITION_COL, TORQUE_COL, classify_trials,
                                      split_passive_segments)
-from ML.preprocessing.passive_map import (STATIC_MAX_POS_STD, STATIC_MAX_TQ_STD, STATIC_MIN_DUR_S,
-                                          get_passive_torque_map, is_static_hold, static_hold_passive_map)
+from ML.preprocessing.passive_map import get_passive_torque_map, is_static_hold, static_hold_passive_map
 from ML.preprocessing.emg_envelope import extract_envelope, extract_envelope_causal, detect_emg_columns
 
-from .config import CACHE_DIR, DOWNSAMPLE, FS, FS_RAW, TRIM_START
+from .config import CACHE_DIR, TRIM_START
 
 CACHE_VERSION = 2          # 2: the torque target is down-sampled before trimming (non-legacy bundles)
-# static-hold thresholds (defined in ML.preprocessing.passive_map; these names are read by LSTM_Presentation)
-HOLD_MAX_POS_STD, HOLD_MAX_TQ_STD, HOLD_MIN_DUR_S = STATIC_MAX_POS_STD, STATIC_MAX_TQ_STD, STATIC_MIN_DUR_S
 HOLD_ANGLE_TOL = 0.05      # rad, hold <-> next active trial angle match
 HOLD_START_S = 2.0         # s, hold 'start' = mean torque of its first 2 s
 HOLD_END_S = 5.0           # s, hold 'end' = mean torque of its last 5 s

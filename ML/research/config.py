@@ -1,13 +1,11 @@
 """Paths, signal constants and training protocols of the experiment pipeline.
 
-The recordings folder comes from EMG_DATA_DIR (ML.config); RESEARCH_CACHE_DIR moves the processed-data cache.
+The recordings folder and the sampling rates are in ML.config; RESEARCH_CACHE_DIR moves the processed-data cache.
 """
 
 import os
 
 CACHE_DIR = os.environ.get('RESEARCH_CACHE_DIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), '_cache'))
-
-from ML.config import DOWNSAMPLE, FS, FS_RAW  # noqa: F401  (sampling rates, re-exported)
 
 WINDOW = 20              # steps (200 ms) per input window
 TRIM_START = 1000        # raw samples dropped at the start of a trial (filter start-up)

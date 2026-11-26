@@ -29,7 +29,7 @@ import time
 import numpy as np
 
 from EXPERIMENTS import paths as P
-from EXPERIMENTS.pipeline.fitters import add_passive_input, drop_last_val_window, fit, make_builder  # noqa: F401
+from EXPERIMENTS.pipeline.fitters import add_passive_input, drop_last_val_window, fit
 from EXPERIMENTS.pipeline.settings import BASE, DIRECTION, load_config  # noqa: F401  (re-exported)
 from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 

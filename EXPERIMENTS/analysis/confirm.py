@@ -33,7 +33,7 @@ from EXPERIMENTS.pipeline.spec import SpecError
 from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
 from EXPERIMENTS.tuning import budget as BG
-from ML.research import config as MC
+from ML import config as MC
 
 OUT = DASH_DATA / 'confirm.json'
 ARM = {'A0': 'FE_A0', 'A1': 'FE_A1', 'A2': 'FE_A2', 'A3': 'FE_A3'}
