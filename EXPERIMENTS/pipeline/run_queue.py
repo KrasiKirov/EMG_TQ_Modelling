@@ -6,7 +6,6 @@ The queue can be stopped and relaunched safely. Each job's console output goes t
 
     python -m EXPERIMENTS.pipeline.run_queue --exps FE_A0 FE_A1 \
         --subjects YES JM --seeds 0 1 --workers 13
-    python -m EXPERIMENTS.pipeline.run_queue --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
 """
 import argparse
 import json
@@ -17,7 +16,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 D = 'S1toS2'   # the only direction: train on session 1, test on session 2
 
-from EXPERIMENTS.paths import EXP, LOGS, ROOT
+from EXPERIMENTS.paths import LOGS, ROOT
 from EXPERIMENTS.pipeline.run import results_root
 from EXPERIMENTS.pipeline.settings import BASE, load_config, strip_retired
 from EXPERIMENTS.pipeline.spec import SpecError
@@ -52,7 +51,6 @@ def is_done(json_path, cfg):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--exps', nargs='*', default=[])
-    ap.add_argument('--original-baseline', action='store_true')
     ap.add_argument('--subjects', nargs='+', required=True)
     ap.add_argument('--seeds', nargs='+', type=int, default=[0])
     ap.add_argument('--workers', type=int, default=13)
@@ -63,12 +61,6 @@ def main():
     a = ap.parse_args()
     py = sys.executable
     jobs = []
-    if a.original_baseline:
-        for seed in a.seeds:
-            for s in a.subjects:
-                res = os.path.join(EXP, 'results', 'X00_baseline', s, 'S1toS2', f'seed{seed}.json')
-                cmd = [py, str(EXP / 'baseline' / 'run_original_baseline.py'), '--subject', s, '--seed', str(seed)]
-                jobs.append((res, cmd, f'X00_baseline__{s}__S1toS2__s{seed}', None))
     if a.jobs_file:
         for e, s_, d, seed in json.load(open(a.jobs_file)):
             if d != D:
@@ -89,26 +81,20 @@ def main():
     cfgs = {}
     for j in jobs:
         res, _, name, exp = j
-        if exp is not None and exp not in cfgs:
+        if exp not in cfgs:
             cfgs[exp] = load_config(exp)[1]
-        done = is_done(res, cfgs[exp]) if exp is not None else os.path.exists(res)
+        done = is_done(res, cfgs[exp])
         if not done and name not in skip and name not in seen:
             seen.add(j[2])
             todo.append(j)
     print(f'{len(jobs)} jobs, {len(todo)} to run, {a.workers} workers', flush=True)
     os.makedirs(LOGS, exist_ok=True)
     env = dict(os.environ)
-    if a.original_baseline:
-        if not a.exps:
-            env.pop('PYTHONPATH', None)
 
     def run(job):
         res, cmd, name, _ = job
-        e2 = dict(env)
-        if cmd[1].endswith('run_original_baseline.py'):
-            e2.pop('PYTHONPATH', None)                 # the frozen original code must not see the worktree package
         with open(LOGS / f'{name}.log', 'w') as f:
-            r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, env=e2, cwd=ROOT)
+            r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, env=env, cwd=ROOT)
         print(('done ' if r.returncode == 0 else f'FAILED({r.returncode}) ') + name, flush=True)
 
     with ThreadPoolExecutor(a.workers) as ex:
