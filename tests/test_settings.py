@@ -1,20 +1,21 @@
-"""Run settings: the defaults, the retired overlap settings (2026-11-24) and spec loading."""
+"""Run settings: the defaults, the retired settings (overlap 2026-11-24; balance, input_step 2026-11-26) and spec
+loading."""
 import pytest
 
 from EXPERIMENTS.pipeline import run as PR
 from EXPERIMENTS.pipeline import settings as ST
 from EXPERIMENTS.pipeline.spec import CONFIGS, SpecError
 
-BASE_2026_11_25 = dict(
-    passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm', balance='none', pf_extra=None,
+BASE_2026_11_26 = dict(
+    passive='legacy', emg='trainmax', units=8, layers=2, dropout=0.3, model='lstm', pf_extra=None,
     window=20, lr=None, train_protocol='orig', rest_weight=None, extra_input=None, shuffle=True, envelope='zerophase',
-    trim_end_s=0.0, input_step=1, state='reset', lp_order=4, val_gap=False, metadata_passive=False,
+    trim_end_s=0.0, state='reset', lp_order=4, val_gap=False, metadata_passive=False,
     chunk=None, clipnorm=None, scale_part='train_val', batch=None)
 
 
 def test_base_frozen():
-    assert PR.BASE == BASE_2026_11_25
-    assert list(PR.BASE) == list(BASE_2026_11_25)
+    assert PR.BASE == BASE_2026_11_26
+    assert list(PR.BASE) == list(BASE_2026_11_26)
 
 
 def test_every_committed_spec_validates():
@@ -22,8 +23,8 @@ def test_every_committed_spec_validates():
         ST.load_config(p.stem)
 
 
-@pytest.mark.parametrize('key,value', [('passive', 'drift'), ('emg', 'agc_soft'), ('balance', 'weights'),
-                                       ('model', 'moe'), ('pf_extra', [2, 3.0]), ('rest_weight', 0.0)])
+@pytest.mark.parametrize('key,value', [('passive', 'drift'), ('emg', 'agc_soft'), ('model', 'moe'),
+                                       ('pf_extra', [2, 3.0]), ('rest_weight', 0.0)])
 def test_removed_value_is_rejected_by_name(key, value):
     with pytest.raises(SpecError, match=key):
         ST.validate(dict(ST.BASE, **{key: value}))
@@ -44,13 +45,28 @@ def test_run_reexports_settings():
     assert PR.BASE is ST.BASE and PR.load_config is ST.load_config
 
 
-def test_base_has_no_overlap_keys():
-    assert 'train_stride' not in ST.BASE and 'epoch_windows' not in ST.BASE
+def test_base_has_no_retired_keys():
+    assert not set(ST.RETIRED) & set(ST.BASE)
 
 
 def test_strip_retired_accepts_full_overlap_values():
     assert ST.strip_retired(dict(ST.BASE, train_stride=1, epoch_windows='full')) == ST.BASE
     assert ST.strip_retired(dict(ST.BASE, epoch_windows=None)) == ST.BASE
+
+
+def test_strip_retired_accepts_plain_mse():
+    assert ST.strip_retired(dict(ST.BASE, balance='none')) == ST.BASE
+
+
+def test_strip_retired_refuses_balance_scale():
+    with pytest.raises(SpecError, match='balance was retired on 2026-11-26'):
+        ST.strip_retired(dict(ST.BASE, balance='scale'))
+
+
+def test_strip_retired_input_step():
+    assert ST.strip_retired(dict(ST.BASE, input_step=1)) == ST.BASE
+    with pytest.raises(SpecError, match='input_step was retired on 2026-11-26'):
+        ST.strip_retired(dict(ST.BASE, input_step=5))
 
 
 @pytest.mark.parametrize('over', [dict(train_stride=5), dict(epoch_windows=1000)])

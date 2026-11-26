@@ -6,7 +6,7 @@ Used for the rest flags of every window. (The 'restanchor' target, a baseline th
 
 import numpy as np
 
-from ML.preprocessing import rest as RS
+from ML.preprocessing.rest import detect_rest, emg_rest_stats
 
 
 def session_rest(bundle, session, max_frac=None):
@@ -19,8 +19,8 @@ def session_rest(bundle, session, max_frac=None):
     for r in recs:
         e = r['env_raw'] / emg_max
         env[r['idx']] = e[:int(len(e) * max_frac)] if max_frac else e
-    stats = RS.emg_rest_stats(list(env.values()))
-    return {i: RS.detect_rest(e, stats) for i, e in env.items()}
+    stats = emg_rest_stats(list(env.values()))
+    return {i: detect_rest(e, stats) for i, e in env.items()}
 
 
 def rest_mask(T, segs):

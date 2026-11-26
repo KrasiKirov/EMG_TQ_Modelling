@@ -1,11 +1,8 @@
-"""EMG-only rest detection at 100 Hz (rest is never detected from torque).
-
-Moved unchanged from active_torque.py.
-"""
+"""EMG-only rest detection at 100 Hz (rest is never detected from torque)."""
 
 import numpy as np
 
-FS_DS = 100.0   # Hz after downsampling
+from ML.config import FS   # Hz, after downsampling
 
 
 def emg_rest_stats(env_list, q_lo=5.0, q_hi=99.0):
@@ -35,12 +32,12 @@ def detect_rest(env, stats, thr_lo=0.03, thr_hi=0.06, min_run_s=0.5,
             state, a = True, i
     if state:
         runs.append((a, T))
-    settle, pre = int(settle_s * FS_DS), int(pre_s * FS_DS)
+    settle, pre = int(settle_s * FS), int(pre_s * FS)
     out = []
     for a, b in runs:
-        if b - a < int(min_run_s * FS_DS):
+        if b - a < int(min_run_s * FS):
             continue
         s, e = a + settle, (b - pre if b < T else b)
-        if e - s >= int(min_keep_s * FS_DS):
+        if e - s >= int(min_keep_s * FS):
             out.append((s, e))
     return out

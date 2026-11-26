@@ -8,7 +8,7 @@ import copy
 
 import numpy as np
 
-from ML.research import config as C
+from ML.research.config import WINDOW
 from ML.research import splits
 from ML.research import truth
 from ML.research.data import load_subject
@@ -35,9 +35,9 @@ def prepare(subject, protocol, cfg):
     if cfg.get('metadata_passive'):
         bundle = apply_metadata_passive(bundle, subject)
     recs = bundle['active']
-    spec = splits.PROTOCOLS[protocol]
+    spec = splits.SESSION_SPLITS[protocol]
     train_recs = [r for r in recs if r['session'] in spec['train']]
-    window = cfg.get('window', C.WINDOW)
+    window = cfg.get('window', WINDOW)
 
     feats, emg_info = normalise(cfg['emg'], bundle, train_recs, recs, window=window,
                                 scale_part=cfg.get('scale_part', 'train_val'))
@@ -48,11 +48,10 @@ def prepare(subject, protocol, cfg):
         pm = PassiveModel(cfg['passive'], bundle)
         targets, pinfo = {r['idx']: r['tq'] - pm.predict(r) for r in recs}, pm.describe()
     rest = rest_flags(bundle, protocol)
-    step = cfg.get('input_step', 1)
     gap = bool(cfg.get('val_gap', False))
-    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest, step=step, val_gap=gap)
+    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest, val_gap=gap)
     if cfg.get('state', 'reset') == 'carry':
-        data['streams'] = splits.streams(protocol, recs, feats, targets, window=window, step=step, val_gap=gap)
+        data['streams'] = splits.streams(protocol, recs, feats, targets, window=window, val_gap=gap)
     data['trial_len'] = {r['idx']: len(r['t']) for r in recs}
     data['train_recs'] = train_recs
     details = {'passive': pinfo, 'emg': {k: v for k, v in emg_info.items() if k in ('kind', 'rmin_frac', 'transductive', 'auto_decision', 'scale_part')},

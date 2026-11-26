@@ -95,47 +95,26 @@ def _read_header(f):
         raise ValueError(f"Unsupported FLB version: {flb_version}")
 
     h = {'version': flb_version}
-
-    if flb_version == 2:
-        # Older format
-        h['nDim']        = 2
-        h['nReal']       = 1
-        h['nChan']       = _read_int32(f)
-        h['chanLen']     = _read_int32(f)
-        h['chanFormat']  = _read_int32(f)
-        str_len          = _read_int32(f)
-        h['domainName']  = _read_string(f, str_len)
-        h['domainIncr']  = _read_float32(f)
-        h['domainStart'] = _read_float32(f)
-        comment_len      = _read_int32(f)
-        h['comment']     = _read_string(f, comment_len)
-        h['chanName']    = []
-        for _ in range(h['nChan']):
-            name_len = _read_int32(f)
-            h['chanName'].append(_read_string(f, name_len))
-        h['chanMin'] = [_read_float64(f) for _ in range(h['nChan'])]
-        h['chanMax'] = [_read_float64(f) for _ in range(h['nChan'])]
-
-    else:
-        # Version 3 / 4 format (written by flbwdet)
-        h['nDim']        = _read_int32(f)
-        h['nReal']       = _read_int32(f)
-        h['nChan']       = _read_int32(f)
-        h['chanLen']     = _read_int32(f)
-        h['chanFormat']  = _read_int32(f)
-        str_len          = _read_int32(f)
-        h['domainName']  = _read_string(f, str_len)
-        h['domainIncr']  = _read_float32(f)
-        h['domainStart'] = _read_float32(f)
-        comment_len      = _read_int32(f)
-        h['comment']     = _read_string(f, comment_len)
-        h['chanName']    = []
-        for _ in range(h['nChan']):
-            name_len = _read_int32(f)
-            h['chanName'].append(_read_string(f, name_len))
-        h['chanMin'] = [_read_float64(f) for _ in range(h['nChan'])]
-        h['chanMax'] = [_read_float64(f) for _ in range(h['nChan'])]
-
+    if flb_version == 2:            # version 2 has no nDim / nReal fields
+        h['nDim'], h['nReal'] = 2, 1
+    else:                           # versions 3 and 4 (written by flbwdet)
+        h['nDim'] = _read_int32(f)
+        h['nReal'] = _read_int32(f)
+    h['nChan']       = _read_int32(f)
+    h['chanLen']     = _read_int32(f)
+    h['chanFormat']  = _read_int32(f)
+    str_len          = _read_int32(f)
+    h['domainName']  = _read_string(f, str_len)
+    h['domainIncr']  = _read_float32(f)
+    h['domainStart'] = _read_float32(f)
+    comment_len      = _read_int32(f)
+    h['comment']     = _read_string(f, comment_len)
+    h['chanName']    = []
+    for _ in range(h['nChan']):
+        name_len = _read_int32(f)
+        h['chanName'].append(_read_string(f, name_len))
+    h['chanMin'] = [_read_float64(f) for _ in range(h['nChan'])]
+    h['chanMax'] = [_read_float64(f) for _ in range(h['nChan'])]
     return h
 
 
@@ -172,8 +151,9 @@ def _read_data(f, h):
 
 def read_flb(filepath, subject_id='default', channel_names=None):
     """
-    All trials of an FLB file as DataFrames with columns ['time', 'pos', 'tq', 'gm', 'gl', 'sol', 'ta'] and attrs
-    trial_index, domainIncr, comment, chanName. subject_id 'IES01' applies that subject's channel order.
+    All trials of an FLB file as DataFrames with columns ['time', 'position', 'torque', 'gm', 'gl', 'sol', 'ta'] and
+    attrs trial_index, domainIncr, domainStart, comment, chanName, source_file, raw_domainIncr, chanFormat.
+    subject_id 'IES01' applies that subject's channel order.
     """
     if channel_names is None:
         channel_names = DEFAULT_CHANNEL_NAMES
@@ -231,6 +211,4 @@ def read_flb(filepath, subject_id='default', channel_names=None):
 
             trials.append(df)
             trial_idx += 1
-
-    print(f"Read {len(trials)} trials from '{os.path.basename(filepath)}'")
     return trials

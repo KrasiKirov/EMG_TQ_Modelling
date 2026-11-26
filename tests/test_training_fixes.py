@@ -90,7 +90,7 @@ def test_d24_targets_every_trial(synthetic_bundle):
 
 def _data(window=20):
     from ML.research.run import prepare
-    rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0, input_step=1,
+    rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0,
                 state='reset', lp_order=2, val_gap=True, metadata_passive=True, scale_part='train')
     return PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
 

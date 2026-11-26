@@ -1,14 +1,16 @@
-"""EMG linear envelope: band-pass, full-wave rectify, low-pass; optional division by the per-channel global maximum."""
+"""EMG linear envelope of one raw signal: band-pass, full-wave rectify, low-pass (zero-phase or forward-only)."""
 
 import numpy as np
 from scipy.signal import butter, sosfilt, sosfilt_zi, sosfiltfilt
+
+from ML.config import FS_RAW
 
 
 # Default parameters
 
 # Canonical muscle order; detect_emg_columns enforces it so the features are [MG, LG, SOL, TA, position].
 CANONICAL_EMG_ORDER = ['gm', 'gl', 'sol', 'ta']
-DEFAULT_FS = 1000.0        # Hz — sampling frequency used in REKLAB experiments
+DEFAULT_FS = FS_RAW        # Hz — sampling frequency of the recordings
 DEFAULT_BP_LOW = 30.0      # Hz — bandpass lower cutoff
 DEFAULT_BP_HIGH = 300.0    # Hz — bandpass upper cutoff
 DEFAULT_LP_CUTOFF = 2.0    # Hz — lowpass cutoff for envelope (Can also use 1.5 Hz)
@@ -66,23 +68,17 @@ def extract_envelope_causal(signal, fs=DEFAULT_FS,
 
 def extract_envelope(signal, fs=DEFAULT_FS,
                      bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
-                     lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
-                     demean=True,
-                     return_intermediates=False, lp_order=None):
+                     lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER, lp_order=None):
     """
     Linear envelope of one raw EMG signal: demean (as MATLAB ``demean.m``), zero-phase Butterworth band-pass,
     full-wave rectify, zero-phase Butterworth low-pass (order ``lp_order``, default ``order``).
 
-    Returns the un-normalised envelope (same length), plus a dict of the stages ``demeaned``, ``filtered``,
-    ``rectified`` if ``return_intermediates``.
+    Returns the un-normalised envelope (same length).
     """
     signal = np.asarray(signal, dtype=np.float64)
 
     # Step 0: Remove DC offset (matches MATLAB demean.m: y = x - mean(x))
-    if demean:
-        demeaned = signal - np.mean(signal)
-    else:
-        demeaned = signal
+    demeaned = signal - np.mean(signal)
 
     nyq = 0.5 * fs
 
@@ -98,64 +94,4 @@ def extract_envelope(signal, fs=DEFAULT_FS,
     envelope = sosfiltfilt(sos_lp, rectified)
 
     # Clip: sosfiltfilt can produce tiny negative values at edges after rectification
-    envelope = np.clip(envelope, 0, None)
-
-    if return_intermediates:
-        return envelope, {
-            'demeaned': demeaned,
-            'filtered': filtered,
-            'rectified': rectified,
-        }
-    return envelope
-
-
-# Batch processing + normalization
-
-
-def process_trials(trials, emg_columns=None, max_values=None, fs=DEFAULT_FS,
-                   bp_low=DEFAULT_BP_LOW, bp_high=DEFAULT_BP_HIGH,
-                   lp_cutoff=DEFAULT_LP_CUTOFF, order=DEFAULT_ORDER,
-                   demean=True):
-    """
-    Add ``{col}_env`` and ``{col}_env_norm`` (÷ per-channel max) columns to every trial.
-
-    The maximum is taken over ``trials`` unless ``max_values`` is given. Returns (trials, {column: max used}).
-    """
-    trials = [df.copy(deep=True) for df in trials]
-    if not trials:
-        raise ValueError('At least one trial is required.')
-    if emg_columns is None:
-        emg_columns = detect_emg_columns(trials[0])
-
-    # Step 1: Extract envelopes
-    for df in trials:
-        for col in emg_columns:
-            env, stages = extract_envelope(df[col].values, fs=fs,
-                                         bp_low=bp_low, bp_high=bp_high,
-                                         lp_cutoff=lp_cutoff, order=order,
-                                         demean=demean,
-                                         return_intermediates=True)
-            df[f'{col}_rect'] = stages['rectified']
-            df[f'{col}_env'] = env
-
-    # Step 2: Determine max per channel
-    if max_values is None:
-        # Fall back to global max across the provided trials
-        max_values = {}
-        for col in emg_columns:
-            global_max = max(df[f'{col}_env'].max() for df in trials)
-            max_values[col] = global_max if global_max > 0 else 1.0
-
-    # Step 3: Normalize
-    for df in trials:
-        for col in emg_columns:
-            df[f'{col}_env_norm'] = df[f'{col}_env'] / max_values[col]
-
-    print(f"Processed {len(trials)} trials × {len(emg_columns)} EMG channels")
-    print(f"  Bandpass: {bp_low}–{bp_high} Hz | Lowpass: {lp_cutoff} Hz | "
-          f"Order: {order}")
-    for col in emg_columns:
-        print(f"  {col} max used: {max_values[col]:.6f}")
-
-    return trials, max_values
-
+    return np.clip(envelope, 0, None)

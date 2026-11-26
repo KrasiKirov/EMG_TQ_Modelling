@@ -1,5 +1,5 @@
 """Per-angle polynomial ridge baseline (model 'ridge'): lagged EMG and EMG² times a hat basis over the training
-angles, alpha chosen on validation MSE. Moved unchanged from train.py."""
+angles, alpha chosen on validation MSE."""
 
 import numpy as np
 
@@ -27,24 +27,21 @@ def ridge_features(X, knots):
     return np.concatenate([(F[:, :, None] * B[:, None, :]).reshape(len(X), -1), B], axis=1)
 
 
-def fit_ridge(data, knots, w_tr=None, w_va=None):
-    """Weighted ridge, alpha chosen on validation MSE. Use balance='none': each angle already has its own
-    coefficients."""
+def fit_ridge(data, knots):
+    """Ridge, alpha chosen on validation MSE. Each angle has its own coefficients."""
     F_tr, F_va = ridge_features(data['X_train'], knots), ridge_features(data['X_val'], knots)
     mu, sd = F_tr.mean(0), F_tr.std(0) + 1e-8
     Z_tr, Z_va = (F_tr - mu) / sd, (F_va - mu) / sd
     y_tr, y_va = data['y_train'].astype(np.float64), data['y_val'].astype(np.float64)
-    w_tr = np.ones(len(y_tr)) if w_tr is None else w_tr
-    w_va = np.ones(len(y_va)) if w_va is None else w_va
-    ym = np.average(y_tr, weights=w_tr)
-    G = (Z_tr * w_tr[:, None]).T @ Z_tr
-    b = (Z_tr * w_tr[:, None]).T @ (y_tr - ym)
+    ym = y_tr.mean()
+    G = Z_tr.T @ Z_tr.copy()                    # copy: keeps the general product (Z.T @ Z rounds differently)
+    b = Z_tr.T @ (y_tr - ym)
     lam, V = np.linalg.eigh(G)                  # one decomposition, stable for small alpha
     lam, Vb = np.maximum(lam, 0.0), V.T @ b
     best = None
     for al in RIDGE_ALPHAS:
         coef = V @ (Vb / (lam + al * len(y_tr)))
-        err = float(np.average((Z_va @ coef + ym - y_va) ** 2, weights=w_va))
+        err = float(np.mean((Z_va @ coef + ym - y_va) ** 2))
         if best is None or err < best[0]:
             best = (err, al, coef)
     err, al, coef = best

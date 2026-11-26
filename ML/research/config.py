@@ -7,9 +7,8 @@ import os
 
 CACHE_DIR = os.environ.get('RESEARCH_CACHE_DIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), '_cache'))
 
-FS_RAW = 1000.0          # Hz, recordings
-DOWNSAMPLE = 10          # 1000 Hz -> 100 Hz
-FS = FS_RAW / DOWNSAMPLE
+from ML.config import DOWNSAMPLE, FS, FS_RAW  # noqa: F401  (sampling rates, re-exported)
+
 WINDOW = 20              # steps (200 ms) per input window
 TRIM_START = 1000        # raw samples dropped at the start of a trial (filter start-up)
 TRAIN_FRAC = 0.8         # first 80 % of each training trial = train, rest = validation

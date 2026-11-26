@@ -20,33 +20,20 @@ import numpy as np
 
 from ML.preprocessing import emg_agc
 
-from . import config as C
+from .config import TRAIN_FRAC, WINDOW
 
 AUTO_DIR_NM = 2.0   # Nm, push-direction threshold of the 'agc_auto' rule (as in report 1)
 
 
-def _train_part(rec, train_frac=C.TRAIN_FRAC, window=C.WINDOW):
+def _train_part(rec, train_frac=TRAIN_FRAC, window=WINDOW):
     n_win = len(rec['t']) - window + 1
     return int(n_win * train_frac) + window - 1
-
-
-def _agc(env, prior_lo, prior_hi, rmin_frac):
-    """emg_agc.apply_agc with a configurable minimum range (same algorithm)."""
-    rmin = rmin_frac * np.maximum(prior_hi - prior_lo, 1e-3)
-    lo, hi = emg_agc._running_lo_hi(env, prior_lo, prior_hi)
-    clean, n_bad = env.copy(), 0
-    for k in range(env.shape[1]):
-        clean[:, k], n = emg_agc._despike(env[:, k], lo[:, k], np.maximum(hi[:, k] - lo[:, k], rmin[k]))
-        n_bad += n
-    if n_bad:
-        lo, hi = emg_agc._running_lo_hi(clean, prior_lo, prior_hi)
-    return np.clip((clean - lo) / np.maximum(hi - lo, rmin[None, :]), 0.0, emg_agc.CLIP_HI)
 
 
 KINDS = ('trainmax', 'agc_auto', 'train_p99', 'session_p99', 'mvc_global')
 
 
-def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, window=C.WINDOW, scale_part='train_val'):
+def normalise(kind, bundle, train_recs, all_recs, train_frac=TRAIN_FRAC, window=WINDOW, scale_part='train_val'):
     """Normalised envelopes for every record in ``all_recs``; statistics from ``train_recs``.
 
     scale_part  : 'train_val' (original) = whole-trial 1 kHz maximum of each training trial; 'train' = maximum of the
@@ -76,10 +63,9 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, windo
                    else 'AGC ON', push_directions=dirs)
         return out, sub
     if kind == 'agc':
-        rmin_frac = 0.35
         priors = emg_agc.agc_priors([base[r['idx']][:_train_part(r, train_frac, window)] for r in train_recs])
-        info.update(rmin_frac=rmin_frac, prior_lo=priors[0].tolist(), prior_hi=priors[1].tolist())
-        return {i: _agc(e, priors[0], priors[1], rmin_frac) for i, e in base.items()}, info
+        info.update(rmin_frac=emg_agc.RMIN_FRAC, prior_lo=priors[0].tolist(), prior_hi=priors[1].tolist())
+        return {i: emg_agc.apply_agc(e, priors[0], priors[1])[0] for i, e in base.items()}, info
     if kind == 'train_p99':
         src = np.concatenate([r['env_raw'][:_train_part(r, train_frac, window)] for r in train_recs])
         sc = np.maximum(np.percentile(src, 99, axis=0), 1e-9)
@@ -107,7 +93,7 @@ def normalise(kind, bundle, train_recs, all_recs, train_frac=C.TRAIN_FRAC, windo
     raise ValueError(kind)
 
 
-def push_directions(bundle, train_recs, env_norm, train_frac=C.TRAIN_FRAC, window=C.WINDOW):
+def push_directions(bundle, train_recs, env_norm, train_frac=TRAIN_FRAC, window=WINDOW):
     """Push direction per training trial (Nm): torque in high-EMG phases minus torque in low-EMG phases."""
     dirs = []
     for r in train_recs:

@@ -19,7 +19,7 @@ def test_config_hash_stable():
 
 def _data(patch_subject, window=20):
     from ML.research.run import prepare
-    rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0, input_step=1,
+    rcfg = dict(passive='static', emg='trainmax', window=window, envelope='causal', trim_end_s=1.0,
                 state='reset', lp_order=2, val_gap=True, metadata_passive=True)
     data, _ = prepare('SYN', 'S1toS2', rcfg)
     return PR.drop_last_val_window(data)

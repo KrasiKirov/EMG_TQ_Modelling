@@ -8,13 +8,16 @@ import pytest
 PUBLIC = {
     'EXPERIMENTS.pipeline.run': ('load_config', 'make_builder', 'drop_last_val_window'),
     'EXPERIMENTS.pipeline.scoring': ('score_trial', 'person_scale'),
+    'EXPERIMENTS.tuning.halving': ('keep', 'score'),
+    'EXPERIMENTS.tuning.select': ('load_val', 'n_params', 'winner', 'within_one_se'),
     'ML.research.run': ('prepare', 'rest_flags'),
-    'ML.research.data': ('load_subject',),
+    'ML.research.data': ('load_subject', 'CACHE_VERSION', 'HOLD_MAX_POS_STD', 'HOLD_MAX_TQ_STD', 'HOLD_MIN_DUR_S'),
     'ML.research.splits': ('common_start', 'COMMON_MAX_WINDOW'),
     'ML.research.train': ('fit_predict', 'build_model'),
-    'ML.research.config': ('PROTOCOLS',),
+    'ML.research.config': ('PROTOCOLS', 'DOWNSAMPLE', 'FS_RAW', 'TRAIN_FRAC', 'TRIM_START'),
+    'ML.research.emg_norm': ('_train_part',),
     'ML.preprocessing.flb_reader': ('read_flb',),
-    'ML.preprocessing.emg_envelope': ('detect_emg_columns',),
+    'ML.preprocessing.emg_envelope': ('detect_emg_columns', 'extract_envelope_causal'),
     'ML.config': ('SUBJECTS', 'DATA_DIR'),
 }
 
@@ -29,7 +32,7 @@ def test_names_importable(module, names):
 def test_fit_predict_positional_signature():
     from ML.research import train as RT
     params = list(inspect.signature(RT.fit_predict).parameters)
-    assert params[:6] == ['data', 'model_name', 'balance', 'pf_extra', 'protocol', 'seed']
+    assert params[:5] == ['data', 'model_name', 'pf_extra', 'protocol', 'seed']
 
 
 def test_monkeypatched_build_model_is_used(patch_subject, monkeypatch):
@@ -39,7 +42,7 @@ def test_monkeypatched_build_model_is_used(patch_subject, monkeypatch):
     from ML.research.run import prepare
     monkeypatch.setitem(RC.PROTOCOLS, 'unit', dict(batch=256, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=1))
     _, cfg = PR.load_config('FE_A0')
-    rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step',
+    rcfg = {k: cfg[k] for k in ('passive', 'emg', 'window', 'envelope', 'trim_end_s',
                                 'state', 'lp_order', 'val_gap', 'metadata_passive', 'scale_part')}
     data = PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
     built = []
@@ -49,5 +52,5 @@ def test_monkeypatched_build_model_is_used(patch_subject, monkeypatch):
         built.append(args[0])
         return real(*args)
     monkeypatch.setattr(RT, 'build_model', stub)
-    pred, _ = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], 'unit', 10)
+    pred, _ = RT.fit_predict(data, cfg['model'], cfg['pf_extra'], 'unit', 10)
     assert built == ['lstm'] and np.isfinite(pred).all()

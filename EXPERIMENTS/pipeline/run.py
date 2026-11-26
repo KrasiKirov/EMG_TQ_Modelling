@@ -1,7 +1,7 @@
 """
 Run ONE experiment configuration for one subject and one seed, trained on session 1 and tested on session 2.
 
-    python -m EXPERIMENTS.pipeline.run --exp A0_active_trainmax --subject JM \
+    python -m EXPERIMENTS.pipeline.run --exp FE_A0 --subject JM \
         --seed 0 --threads 1
 
 The configuration is read from EXPERIMENTS/configs/<exp>.json.  Every
@@ -35,7 +35,7 @@ from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 
 RESULTS = str(P.RESULTS)
 RESULTS_V2 = str(P.RESULTS_V2)
-RCFG_KEYS = ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'input_step', 'state', 'lp_order',
+RCFG_KEYS = ('passive', 'emg', 'window', 'envelope', 'trim_end_s', 'state', 'lp_order',
              'val_gap', 'metadata_passive', 'scale_part')
 
 

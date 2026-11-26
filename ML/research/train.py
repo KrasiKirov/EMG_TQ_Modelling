@@ -1,14 +1,12 @@
 """
-Keras training of the windowed LSTM, with optional per-angle target scaling (and the ridge baseline, ridge.py).
+Keras training of the windowed LSTM on plain MSE (and the ridge baseline, ridge.py).
 
-Plain MSE is dominated by the strong angles (YES: torque sd 15 Nm at +0.14 rad vs 0.4 Nm at -0.49 rad).
-balance: 'none' plain MSE (original), 'scale' train on target / sd(angle) and scale predictions back.
-A window has its trial's angle; test windows use the nearest training angle.
+Training angles closer than KNOT_TOL are merged into knots (used by the ridge basis and stored in the run info).
 """
 
 import numpy as np
 
-from . import config as C
+from .config import PROTOCOLS
 from .ridge import fit_ridge
 
 KNOT_TOL = 0.02   # rad: training trials closer than this share an angle group
@@ -37,12 +35,12 @@ def build_original(name, n_steps, n_features, knots):
     return build_lstm(n_steps, n_features, units=8, layers=2, dropout=0.3, name='ankle_torque_lstm')
 
 
-# EXPERIMENTS.pipeline replaces this module attribute with a builder that reads units / layers / dropout from the
-# run settings (LSTM_Presentation/training_run.py does the same)
+# default builder of fit_predict; the pipeline passes build= instead, and LSTM_Presentation's training scripts
+# replace this module attribute
 build_model = build_original
 
 
-def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
+def fit_predict(data, model_name='lstm8', pf_extra=None,
                 protocol='fast', seed=0, verbose=0, init_weights=None, lr=None, rest_weight=None, shuffle=True,
                 save_weights=None, clipnorm=None, batch=None, build=None):
     """Train on data['X_train'] / ['X_val'] and predict X_test; returns (y_pred_test (Nm), info).
@@ -50,6 +48,7 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     model_name    'lstm' / 'lstm8' (built by the module attribute ``build_model``) or 'ridge' (ridge.py)
     pf_extra, init_weights, rest_weight
                   removed options (2026-11, tag pre-cleanup-2026-11): kept in the signature, must be None
+                  (the per-angle target scaling 'balance' was removed on 2026-11-26; tag study-v2-final keeps it)
     lr            overrides the protocol's learning rate
     shuffle       False feeds the windows in stored order (shuffle ablation)
     save_weights  path for the best-epoch weights
@@ -62,25 +61,14 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     for name, value in (('pf_extra', pf_extra), ('init_weights', init_weights), ('rest_weight', rest_weight)):
         if value is not None:
             raise ValueError(f'{name}={value!r} is not supported (removed 2026-11; see tag pre-cleanup-2026-11)')
-    if balance not in ('none', 'scale'):
-        raise ValueError(f"balance must be 'none' or 'scale', got {balance!r}")
     import tensorflow as tf
     from tensorflow.keras.optimizers import Nadam
     from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 
     tf.keras.utils.set_random_seed(seed)
-    p = C.PROTOCOLS[protocol]
+    p = PROTOCOLS[protocol]
     knots = angle_groups(data['train_angles'])
-    k_tr = snap(data['meta_train']['angle'], knots)
-    k_va = snap(data['meta_val']['angle'], knots)
-    k_te = snap(data['meta_test']['angle'], knots)
     y_tr, y_va = data['y_train'].astype(np.float64), data['y_val'].astype(np.float64)
-
-    sd = np.array([max(np.std(y_tr[k_tr == j]), 0.1) for j in range(len(knots))])
-    if balance == 'scale':
-        t_tr, t_va = y_tr / sd[k_tr], y_va / sd[k_va]
-    else:
-        t_tr, t_va = y_tr, y_va
 
     if model_name == 'ridge':
         pred, info = fit_ridge(data, knots)
@@ -91,21 +79,18 @@ def fit_predict(data, model_name='lstm8', balance='none', pf_extra=None,
     cbs = [ReduceLROnPlateau(monitor='val_loss', factor=p['lr_factor'], patience=p['lr_patience'],
                              min_lr=1e-6, verbose=0),
            EarlyStopping(monitor='val_loss', patience=p['early'], restore_best_weights=True, verbose=0)]
-    val = (data['X_val'], t_va.astype(np.float32))
-    hist = model.fit(data['X_train'], t_tr.astype(np.float32), sample_weight=None,
+    val = (data['X_val'], y_va.astype(np.float32))
+    hist = model.fit(data['X_train'], y_tr.astype(np.float32), sample_weight=None,
                      validation_data=val, epochs=p['epochs'], batch_size=batch or p['batch'],
                      callbacks=cbs, shuffle=shuffle, verbose=verbose)
     if save_weights:
         model.save_weights(save_weights)
     pred = model.predict(data['X_test'], verbose=0, batch_size=4096).ravel().astype(np.float64)
     pv = model.predict(data['X_val'], verbose=0, batch_size=4096).ravel().astype(np.float64)
-    if balance == 'scale':
-        pred = pred * sd[k_te]
-        pv = pv * sd[k_va]
     best = int(np.argmin(hist.history['val_loss']))
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
             'best_val_loss': float(hist.history['val_loss'][best]),
-            'knots': knots.tolist(), 'sd_per_knot': sd.tolist(), 'n_params': int(model.count_params()),
+            'knots': knots.tolist(), 'n_params': int(model.count_params()),
             'init_weights': None, 'lr': lr or p['lr'],
             'updates': int(model.optimizer.iterations.numpy()),
             'clipnorm': clipnorm, 'optimizer_clipnorm': model.optimizer.clipnorm, 'max_epochs': p['epochs'],

@@ -6,20 +6,25 @@ import os
 ML_DIR    = os.path.dirname(__file__)
 DATA_DIR  = os.environ.get('EMG_DATA_DIR', os.path.join(ML_DIR, 'subjects'))
 
+# Sampling rates
+FS_RAW = 1000.0            # Hz, recordings
+DOWNSAMPLE = 10            # 1000 Hz -> 100 Hz
+FS = FS_RAW / DOWNSAMPLE   # Hz, after downsampling
+
 # Subject registry
-# Maps a short name to (flb_filename, subject_id_for_channel_ordering)
+# Maps a participant's initials to (flb_filename, channel order for read_flb: 'IES01' or 'default')
 SUBJECTS = {
-    'IES': ('IES_081024.flb', 'IES01'),   # S1 — non-standard channel order
-    'YES': ('YES_281124.flb', 'default'),  # S3
-    'EG':  ('EG_121224.flb',  'default'),  # S4
-    'CH':  ('CH_151224.flb',  'default'),  # S5
-    'JM':  ('JM_140325.flb',  'default'),  # S6
-    'HM':  ('HM_110425.flb',  'IES01'),   # S7 — same non-standard channel order as IES01
+    'IES': ('IES_081024.flb', 'IES01'),    # non-standard channel order
+    'YES': ('YES_281124.flb', 'default'),
+    'EG':  ('EG_121224.flb',  'default'),
+    'CH':  ('CH_151224.flb',  'default'),
+    'JM':  ('JM_140325.flb',  'default'),
+    'HM':  ('HM_110425.flb',  'IES01'),    # same non-standard channel order as IES
 }
 
 # Per-subject trial index overrides
 # Used when auto-detection from comment strings is unreliable.
-# Values are 1-indexed trial numbers (as passed to build_dataset).
+# Values are 1-indexed trial numbers (trial_index + 1).
 # YES: passive/dynamic trials lack the "passive" keyword → must specify explicitly.
 TRIAL_OVERRIDES = {
     'YES': {

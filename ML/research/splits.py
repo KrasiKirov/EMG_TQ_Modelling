@@ -10,21 +10,20 @@ carries metadata (trial, session, angle, time, rest).
 
 import numpy as np
 
-from . import config as C
+from .config import FS, TRAIN_FRAC, WINDOW
 
-PROTOCOLS = {
+SESSION_SPLITS = {
     'S1toS2': {'train': ['S1'], 'test': ['S2']},
 }
 
 
-def windows(feat, pos, y, window=C.WINDOW, step=1):
-    """All windows of one trial: X (N, W, 5), y_last (N,), last index (N,).
-    step = samples between the W time steps of one window (1 = every 10 ms sample; 5 = every 50 ms, so a
-    20-step window spans 0.95 s). A new window still starts at every sample."""
+def windows(feat, pos, y, window=WINDOW):
+    """All windows of one trial: X (N, W, 5) of W consecutive 10 ms samples, y_last (N,), last index (N,).
+    A new window starts at every sample."""
     F = np.column_stack([feat, pos[:, None]]).astype(np.float32)
-    span = (window - 1) * step
+    span = window - 1
     n = len(F) - span
-    idx = np.arange(n)[:, None] + (np.arange(window) * step)[None, :]
+    idx = np.arange(n)[:, None] + np.arange(window)[None, :]
     last = np.arange(n) + span
     return F[idx], y[last].astype(np.float32), last
 
@@ -32,21 +31,21 @@ def windows(feat, pos, y, window=C.WINDOW, step=1):
 COMMON_MAX_WINDOW = 1000   # steps: the longest window of study v2 (10 s at 10 ms)
 
 
-def common_start(T, max_window=COMMON_MAX_WINDOW, step=1):
-    """First target index every window length up to ``max_window`` validates on (D24): the first validation target
-    of the longest window, i.e. its training cut plus one window span (purged split)."""
-    span = (max_window - 1) * step
-    return 2 * span + int((T - span) * C.TRAIN_FRAC)
+def common_start(T, max_window=COMMON_MAX_WINDOW):
+    """First target index every window length up to ``max_window`` validates on, so comparisons across lengths use
+    the same targets: the first validation target of the longest window (its training cut plus one window span)."""
+    span = max_window - 1
+    return 2 * span + int((T - span) * TRAIN_FRAC)
 
 
 def common_mask(meta, lengths, max_window=COMMON_MAX_WINDOW):
-    """Boolean mask over validation rows: True for targets shared by every window length (D24).
+    """Boolean mask over validation rows: True for targets shared by every window length.
     lengths: {trial idx: number of samples in the trial}."""
     start = np.array([common_start(lengths[int(i)], max_window) for i in meta['trial']])
     return np.asarray(meta['last']) >= start
 
 
-def check_common_targets(recs, min_s=5.0, max_window=COMMON_MAX_WINDOW, fs=C.FS):
+def check_common_targets(recs, min_s=5.0, max_window=COMMON_MAX_WINDOW, fs=FS):
     """Raise ValueError naming the trial if any training trial has < min_s seconds of common validation targets
     (the last validation window of each trial is dropped, so targets end at T - 2)."""
     for r in recs:
@@ -64,7 +63,7 @@ def _meta(rec, last, part, rest=None):
             'rest': (rest[last] if rest is not None else np.zeros(len(last), bool))}
 
 
-def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=False):
+def streams(protocol, recs, feats, targets, window=WINDOW, val_gap=False):
     """Whole trials for the carried-state model (``stateful.py``), aligned with ``build``.
 
     train : one stream per training-session trial with masks that select exactly the target samples of the
@@ -74,8 +73,8 @@ def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=Fal
     test  : one stream per test-session trial; ``first`` = index of the first sample the windowed model scores,
             so the carried-state predictions are scored on the same samples.
     """
-    spec = PROTOCOLS[protocol]
-    span = (window - 1) * step
+    spec = SESSION_SPLITS[protocol]
+    span = window - 1
     out = {'train': [], 'test': []}
     for r in recs:
         F = np.column_stack([feats[r['idx']], r['pos'][:, None]]).astype(np.float32)
@@ -83,7 +82,7 @@ def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=Fal
         T = len(F)
         if r['session'] in spec['train']:
             n = T - span
-            cut = span + int(n * C.TRAIN_FRAC)
+            cut = span + int(n * TRAIN_FRAC)
             i = np.arange(T)
             first_val = cut + (span if val_gap else 0)
             out['train'].append({'X': F, 'y': y, 'rec': r, 'train_mask': (i >= span) & (i < cut),
@@ -93,24 +92,24 @@ def streams(protocol, recs, feats, targets, window=C.WINDOW, step=1, val_gap=Fal
     return out
 
 
-def build(protocol, recs, feats, targets, window=C.WINDOW, rest=None, step=1, val_gap=False):
+def build(protocol, recs, feats, targets, window=WINDOW, rest=None, val_gap=False):
     """Train / val / test arrays for ``protocol``: every window of every trial (full overlap; the overlap
     setting train_stride was retired 2026-11-24, tag study-v2-final).
 
     feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}; rest: optional {trial idx: (T,) bool}
     val_gap       start validation one window span after the training cut (purged split)
     """
-    spec = PROTOCOLS[protocol]
+    spec = SESSION_SPLITS[protocol]
     parts = {'train': [], 'val': [], 'test': []}
     for r in recs:
-        X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window, step)
+        X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window)
         rr = rest[r['idx']] if rest is not None else None
         n = len(X)
         if r['session'] in spec['train']:
-            n_tr = int(n * C.TRAIN_FRAC)
+            n_tr = int(n * TRAIN_FRAC)
             tr = slice(0, n_tr)
             parts['train'].append((X[tr], y[tr], _meta(r, last[tr], 'train', rr)))
-            v0 = n_tr + ((window - 1) * step if val_gap else 0)
+            v0 = n_tr + (window - 1 if val_gap else 0)
             parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:], 'val', rr)))
         elif r['session'] in spec['test']:
             parts['test'].append((X, y, _meta(r, last, 'test', rr)))

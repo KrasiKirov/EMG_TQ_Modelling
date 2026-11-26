@@ -1,7 +1,4 @@
-"""Trial classification by comment, and the split of a passive trial into its static holds (1 kHz recordings).
-
-Moved unchanged from the original dataset builder (EXPERIMENTS/baseline/original_code keeps the full original).
-"""
+"""Trial classification by comment, and the split of a passive trial into its static holds (1 kHz recordings)."""
 
 import re
 

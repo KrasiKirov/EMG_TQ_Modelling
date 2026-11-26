@@ -12,7 +12,8 @@ and blended at the trial start with priors from the training part. Pops / drop-o
 
 import numpy as np
 
-FS = 100            # Hz after downsampling
+from ML.config import FS   # Hz, after downsampling
+
 LO_Q, HI_Q = 10.0, 95.0
 LO_WIN_S, HI_WIN_S = 20.0, 45.0
 UPDATE_S = 0.5

@@ -4,7 +4,7 @@ A job whose result JSON already exists is skipped only if the stored config equa
 if the spec changed since, the queue stops with ConfigMismatch instead of silently keeping old results.
 The queue can be stopped and relaunched safely. Each job's console output goes to EXPERIMENTS/logs/.
 
-    python -m EXPERIMENTS.pipeline.run_queue --exps A0_active_trainmax N0_total_trainmax \
+    python -m EXPERIMENTS.pipeline.run_queue --exps FE_A0 FE_A1 \
         --subjects YES JM --seeds 0 1 --workers 13
     python -m EXPERIMENTS.pipeline.run_queue --original-baseline --subjects YES JM EG IES CH HM --seeds 0 1 2
 """

@@ -68,16 +68,13 @@ def fit_carry(data, cfg, seed):
     """state='carry': train ML.research.stateful on whole trials; return test predictions on the same samples
     (and in the same order) as the windowed model's data['y_test'] / data['meta_test']."""
     from ML.research import config as RC, stateful as ST
-    from ML.research.train import angle_groups, snap
+    from ML.research.train import angle_groups
     knots = angle_groups(data['train_angles'])
-    k_of = lambda r: int(snap(np.array([r['angle']]), knots)[0])
-    st = data['streams']
-    train = [dict(s, k=k_of(s['rec'])) for s in st['train']]
-    test = [dict(s, k=k_of(s['rec'])) for s in st['test']]
+    train, test = data['streams']['train'], data['streams']['test']
     p = RC.PROTOCOLS[cfg['train_protocol']]
-    preds, info = ST.fit_predict_carry(train, test, n_knots=len(knots), chunk=cfg['chunk'] or cfg['window'] * cfg['input_step'],
+    preds, info = ST.fit_predict_carry(train, test, chunk=cfg['chunk'] or cfg['window'],
                                        seed=seed, epochs=p['epochs'], early=p['early'], lr=cfg['lr'] or p['lr'],
-                                       lr_factor=p['lr_factor'], lr_patience=p['lr_patience'], balance=cfg['balance'],
+                                       lr_factor=p['lr_factor'], lr_patience=p['lr_patience'],
                                        units=cfg['units'], layers=cfg['layers'], dropout=cfg['dropout'],
                                        clipnorm=cfg['clipnorm'])
     vs = {s['rec']['idx']: v for s, v in zip(train, info.pop('val_streams'))}
@@ -105,7 +102,7 @@ def fit(data, cfg, seed, *, save_weights=None, protocol_file=STUDIES['study_v2']
     if cfg['model'] == 'ridge_lagged':
         pred, info = fit_ridge(data, protocol_file)
         return pred, info, data
-    pred, info = RT.fit_predict(data, cfg['model'], cfg['balance'], cfg['pf_extra'], cfg['train_protocol'], seed,
+    pred, info = RT.fit_predict(data, cfg['model'], cfg['pf_extra'], cfg['train_protocol'], seed,
                                 lr=cfg['lr'], rest_weight=cfg['rest_weight'], shuffle=cfg['shuffle'],
                                 save_weights=save_weights,
                                 clipnorm=cfg['clipnorm'], batch=cfg['batch'], build=make_builder(cfg))
