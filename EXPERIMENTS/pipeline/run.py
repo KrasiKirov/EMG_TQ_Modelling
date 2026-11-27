@@ -84,7 +84,7 @@ def main(argv=None):
     from ML.research.prepare import prepare
 
     t0 = time.time()
-    data, details = prepare(a.subject, a.direction, {k: cfg[k] for k in RCFG_KEYS})
+    data, details = prepare(a.subject, {k: cfg[k] for k in RCFG_KEYS})
     if st:
         from ML.research.splits import check_common_targets
         try:

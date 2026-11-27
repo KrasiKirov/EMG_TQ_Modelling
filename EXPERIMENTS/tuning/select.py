@@ -22,12 +22,11 @@ from pathlib import Path
 
 import numpy as np
 
+from EXPERIMENTS.analysis.stats import person_scale
 from EXPERIMENTS.paths import RESULTS_V2
-from EXPERIMENTS.pipeline.scoring import person_scale
+from EXPERIMENTS.pipeline.settings import DIRECTION
 from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import halving as HV
-
-DIRECTION = 'S1toS2'
 
 
 def _run_dir(results_dir, exp, person, direction=DIRECTION):

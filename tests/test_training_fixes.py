@@ -55,7 +55,7 @@ def _build(b, window):
     recs = b['active']
     feats = {r['idx']: r['env_raw'] for r in recs}
     targets = {r['idx']: r['tq'] for r in recs}
-    return SP.build('S1toS2', recs, feats, targets, window=window)
+    return SP.build(recs, feats, targets, window=window)
 
 
 @pytest.mark.parametrize('window', [20, 1000])
@@ -98,7 +98,7 @@ def test_d24_targets_every_trial(synthetic_bundle):
 def _data(window=20):
     from ML.research.prepare import prepare
     rcfg = dict(passive='static', window=window, state='reset')
-    return PR.drop_last_val_window(prepare('SYN', 'S1toS2', rcfg)[0])
+    return PR.drop_last_val_window(prepare('SYN', rcfg)[0])
 
 
 def test_clipnorm_windowed_applied(patch_subject, monkeypatch):

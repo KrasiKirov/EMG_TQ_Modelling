@@ -4,8 +4,8 @@ Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subj
 active : one dict per active trial, both sessions: idx (0-based trial index), comment, session ('S1' = lab "test",
          'S2' = "retest"), angle (rad), t (s, t[0] = 1.0 after the start-up trim), env_raw (T, 4) envelopes
          [GM, GL, SOL, TA], pos (rad), tq (Nm)
-maps   : {'static': {'S1': map, 'S2': map}}: each session's passive map from its static holds (YES: the worksheet
-         values in ML.config.PASSIVE_TORQUE_OVERRIDES)
+maps   : {'S1': map, 'S2': map}: each session's passive map from its static holds (YES: the worksheet values in
+         ML.config.PASSIVE_TORQUE_OVERRIDES; IES, which has no usable holds: ML.config.METADATA_PASSIVE)
 
 Active trials and their sessions follow the original pipeline (trial comments, ML.config.TRIAL_OVERRIDES).
 """
@@ -16,14 +16,14 @@ import pickle
 import numpy as np
 from scipy.signal import decimate
 
-from ML.config import (CACHE_DIR, DATA_DIR, DOWNSAMPLE, FS_RAW, PASSIVE_TORQUE_OVERRIDES, SUBJECTS,
-                       TRIAL_OVERRIDES, TRIM_END_S, TRIM_START)
+from ML.config import (CACHE_DIR, DATA_DIR, DOWNSAMPLE, FS_RAW, METADATA_PASSIVE, PASSIVE_TORQUE_OVERRIDES,
+                       SUBJECTS, TRIAL_OVERRIDES, TRIM_END_S, TRIM_START)
 from ML.preprocessing.flb_reader import read_flb
 from ML.preprocessing.trials import ACTIVE_STD_THRESHOLD, POSITION_COL, TORQUE_COL, classify_trials
 from ML.preprocessing.passive_map import static_hold_passive_map
 from ML.preprocessing.emg_envelope import LP_ORDER, extract_envelope, detect_emg_columns
 
-CACHE_VERSION = 2          # 2: the torque target is down-sampled before trimming
+CACHE_VERSION = 3          # 2: target down-sampled before trimming; 3: maps per session, IES metadata map included
 
 
 def _decim(x):
@@ -81,15 +81,18 @@ def _process_active(df, emg_cols, session):
 
 
 def _passive_maps(subject, passive_trials):
-    """{'static': {'S1': map, 'S2': map}}; a subject with worksheet values (PASSIVE_TORQUE_OVERRIDES) uses those."""
+    """{'S1': map, 'S2': map}. Worksheet values (PASSIVE_TORQUE_OVERRIDES) replace the static holds; a subject with
+    no hold in either session uses its METADATA_PASSIVE table, if it has one."""
     ov = PASSIVE_TORQUE_OVERRIDES.get(subject)
     if ov:
-        return {'static': {'S1': sorted(ov['test']), 'S2': sorted(ov.get('retest', ov['test']))}}
+        return {'S1': sorted(ov['test']), 'S2': sorted(ov.get('retest', ov['test']))}
     p1 = [df for df in passive_trials if df.attrs.get('session') != 'retest']
     p2 = [df for df in passive_trials if df.attrs.get('session') == 'retest']
     m1 = static_hold_passive_map(p1)
     m2 = static_hold_passive_map(p2) if p2 else m1
-    return {'static': {'S1': m1, 'S2': m2}}
+    if not m1 and not m2 and subject in METADATA_PASSIVE:
+        m1, m2 = sorted(METADATA_PASSIVE[subject]), sorted(METADATA_PASSIVE[subject])
+    return {'S1': m1, 'S2': m2}
 
 
 def load_subject(subject, use_cache=True):

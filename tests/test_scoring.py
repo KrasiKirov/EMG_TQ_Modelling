@@ -1,6 +1,6 @@
 import numpy as np
 
-from EXPERIMENTS.pipeline import scoring as SC
+from EXPERIMENTS.analysis import stats as SC
 
 
 def test_person_scale_ies_metadata_target(synthetic_bundle):

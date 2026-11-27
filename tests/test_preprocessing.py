@@ -1,17 +1,16 @@
 """ML.preprocessing.{trials, passive_map}: values computed with the old dataset_builder / active_torque (22 Nov 2026)."""
 import numpy as np
 import pandas as pd
-import pytest
 
 from ML.preprocessing import passive_map as PM, trials as TR
 
 
 def test_lookup_extrapolates_like_before():
     e = [(-0.5, 8.0), (0.0, 1.0), (0.2, -3.0)]
-    got = [PM.lookup_passive_torque(e, x) for x in (-0.7, -0.25, 0.1, 0.4)]
-    assert got == pytest.approx([10.799999999999999, 4.5, -1.0, -7.0], abs=0, rel=0)
-    assert PM.lookup_passive_torque([], 0.3) == 0.0
-    assert PM.lookup_passive_torque([(0.1, 2.5)], -1.0) == 2.5
+    got = PM.lookup_passive_torque(e, [-0.7, -0.25, 0.1, 0.4])
+    assert got.tolist() == [10.799999999999999, 4.5, -1.0, -7.0]
+    assert PM.lookup_passive_torque([], [0.3]).tolist() == [0.0]
+    assert PM.lookup_passive_torque([(0.1, 2.5)], [-1.0]).tolist() == [2.5]
 
 
 def test_classify_trials_by_comment():

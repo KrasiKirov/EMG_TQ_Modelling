@@ -1,5 +1,5 @@
 """Passive torque maps: (angle, torque) tables from the static holds of the passive trials (``is_static_hold``:
-position sd <= 5 mrad, torque sd <= 1 Nm, at least 5 s), and the lookup between their angles.
+position sd <= 5 mrad, torque sd <= 1 Nm, at least 5 s), and the passive torque at any angle from a map.
 """
 
 import numpy as np
@@ -31,36 +31,30 @@ def _merge_nearby(raw, pos_tolerance):
     return [(pos, tq) for pos, tq, _ in clusters]
 
 
-def _extrapolate(positions, torques, x):
-    """Linear extrapolation beyond the measured range of passive positions (at least 2 of them)."""
-    if x < positions[0]:
-        p0, p1 = positions[0], positions[1]
-        t0, t1 = torques[0],   torques[1]
-    else:
-        p0, p1 = positions[-2], positions[-1]
-        t0, t1 = torques[-2],   torques[-1]
+def _line(p0, p1, t0, t1, x):
+    """The straight line through (p0, t0) and (p1, t1) at x (t0 if the two positions coincide)."""
     if abs(p1 - p0) < 1e-12:
-        return float(t0)
-    slope = (t1 - t0) / (p1 - p0)
-    return float(t0 + slope * (x - p0))
+        return np.full(x.shape, float(t0))
+    return t0 + (t1 - t0) / (p1 - p0) * (x - p0)
 
 
-def lookup_passive_torque(passive_entries, ankle_position_rad):
+def lookup_passive_torque(passive_entries, angles):
     """
-    Passive torque at ``ankle_position_rad``: linear interpolation in the map, linear extrapolation from the two
-    boundary points outside it; 0.0 if the map is empty.
+    Passive torque (Nm) at each angle in ``angles`` (rad): linear interpolation in the map, linear extrapolation
+    from the two boundary points outside it; 0 for an empty map, the one torque for a one-point map.
     """
+    x = np.asarray(angles, np.float64)
     if not passive_entries:
-        return 0.0
+        return np.zeros(x.shape)
     if len(passive_entries) == 1:
-        return passive_entries[0][1]
-
-    positions = np.array([p for p, _ in passive_entries])
-    torques   = np.array([t for _, t in passive_entries])
-    # np.interp clamps at the boundaries, so outside the map the two boundary points are extrapolated instead
-    return float(np.interp(ankle_position_rad, positions, torques)
-                 if positions[0] <= ankle_position_rad <= positions[-1]
-                 else _extrapolate(positions, torques, ankle_position_rad))
+        return np.full(x.shape, float(passive_entries[0][1]))
+    p = np.array([e[0] for e in passive_entries], np.float64)
+    t = np.array([e[1] for e in passive_entries], np.float64)
+    out = np.interp(x, p, t)                   # clamps outside the map, so both ends are extrapolated below
+    lo, hi = x < p[0], x > p[-1]
+    out[lo] = _line(p[0], p[1], t[0], t[1], x[lo])
+    out[hi] = _line(p[-2], p[-1], t[-2], t[-1], x[hi])
+    return out
 
 
 def static_hold_passive_map(passive_trials):

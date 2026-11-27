@@ -22,35 +22,41 @@ from EXPERIMENTS.pipeline.spec import SpecError, load
 BASE = dict(passive='static', units=8, layers=2, dropout=0.3, model='lstm', window=20, lr=None, state='reset',
             chunk=None, batch=None)
 
-# retired settings and the only values still accepted. train_protocol 'orig' was the old default: the lagged-ridge
-# run FE_A1 (no training schedule) stored it
-RETIRED = {'train_stride': (1,), 'epoch_windows': (None, 'full'), 'balance': ('none',), 'input_step': (1,),
-           'pf_extra': (None,), 'rest_weight': (None,),
-           'emg': ('trainmax',), 'scale_part': ('train',), 'shuffle': (False,), 'extra_input': (None,),
-           'trim_end_s': (1.0,), 'lp_order': (2,), 'val_gap': (True,), 'metadata_passive': (True,),
-           'train_protocol': ('study400', 'orig'), 'clipnorm': (1.0,), 'envelope': ('causal',)}
+# retired setting: (the only values still accepted, when it was retired, the tag that keeps the removed code).
+# train_protocol 'orig' was the old default: the lagged-ridge run FE_A1 (no training schedule) stored it
+_OVERLAP = ('2026-11-24 (full overlap only)', 'study-v2-final')
+_NEVER_SET = ('2026-11-26 (never set by any spec)', 'study-v2-final')
 _V2_ONLY = ('2026-11-26 (study v2 values only)', 'older-options-2026-11-26')
-_RETIRED_ON = {'train_stride': ('2026-11-24 (full overlap only)', 'study-v2-final'),
-               'epoch_windows': ('2026-11-24 (full overlap only)', 'study-v2-final'),
-               'balance': ('2026-11-26 (plain MSE only)', 'study-v2-final'),
-               'input_step': ('2026-11-26 (consecutive samples only)', 'study-v2-final'),
-               'pf_extra': ('2026-11-26 (never set by any spec)', 'study-v2-final'),
-               'rest_weight': ('2026-11-26 (never set by any spec)', 'study-v2-final'),
-               **{k: _V2_ONLY for k in ('emg', 'scale_part', 'shuffle', 'extra_input', 'trim_end_s', 'lp_order',
-                                        'val_gap', 'metadata_passive', 'train_protocol', 'clipnorm')},
-               'envelope': ('2026-11-26 (causal envelope only)', 'older-options-2026-11-26')}
+RETIRED = {
+    'train_stride': ((1,), *_OVERLAP),
+    'epoch_windows': ((None, 'full'), *_OVERLAP),
+    'balance': (('none',), '2026-11-26 (plain MSE only)', 'study-v2-final'),
+    'input_step': ((1,), '2026-11-26 (consecutive samples only)', 'study-v2-final'),
+    'pf_extra': ((None,), *_NEVER_SET),
+    'rest_weight': ((None,), *_NEVER_SET),
+    'emg': (('trainmax',), *_V2_ONLY),
+    'scale_part': (('train',), *_V2_ONLY),
+    'shuffle': ((False,), *_V2_ONLY),
+    'extra_input': ((None,), *_V2_ONLY),
+    'trim_end_s': ((1.0,), *_V2_ONLY),
+    'lp_order': ((2,), *_V2_ONLY),
+    'val_gap': ((True,), *_V2_ONLY),
+    'metadata_passive': ((True,), *_V2_ONLY),
+    'train_protocol': (('study400', 'orig'), *_V2_ONLY),
+    'clipnorm': ((1.0,), *_V2_ONLY),
+    'envelope': (('causal',), '2026-11-26 (causal envelope only)', 'older-options-2026-11-26'),
+}
 
-# every run learns from session 1 and predicts session 2 (study v2 is S1→S2 only); there is no other direction
+# every run learns from session 1 and predicts session 2 (study v2 is S1→S2 only); also the results folder name
 DIRECTION = 'S1toS2'
 
 
-def _allowed() -> dict[str, tuple]:
-    from ML.research.passive import KINDS as PASSIVE_KINDS
-    return {
-        'passive': PASSIVE_KINDS + ('none',),
-        'model': ('lstm', 'ridge_lagged'),
-        'state': ('reset', 'carry'),
-    }
+# the values each setting with a fixed set of choices may take
+ALLOWED = {
+    'passive': ('static', 'none'),
+    'model': ('lstm', 'ridge_lagged'),
+    'state': ('reset', 'carry'),
+}
 
 
 def validate(cfg: dict) -> None:
@@ -58,7 +64,7 @@ def validate(cfg: dict) -> None:
     unknown = sorted(set(cfg) - set(BASE))
     if unknown:
         raise SpecError(f'unknown setting(s) {", ".join(unknown)}')
-    for key, values in _allowed().items():
+    for key, values in ALLOWED.items():
         if cfg[key] not in values:
             raise SpecError(f'{key} must be one of {values}, got {cfg[key]!r} (removed options: tags '
                             'pre-cleanup-2026-11 and older-options-2026-11-26)')
@@ -68,9 +74,8 @@ def validate(cfg: dict) -> None:
 
 def strip_retired(cfg: dict) -> dict:
     """``cfg`` without the retired settings; SpecError if one holds anything but its accepted value."""
-    for key, ok in RETIRED.items():
+    for key, (ok, when, tag) in RETIRED.items():
         if key in cfg and cfg[key] not in ok:
-            when, tag = _RETIRED_ON[key]
             raise SpecError(f'{key}={cfg[key]!r}: {key} was retired on {when}; tag {tag} keeps it')
     if cfg.get('train_protocol') == 'orig' and cfg.get('model') != 'ridge_lagged':
         raise SpecError("train_protocol='orig' was retired on 2026-11-26 (study v2 values only); "

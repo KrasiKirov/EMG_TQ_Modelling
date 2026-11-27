@@ -30,7 +30,6 @@ from EXPERIMENTS.pipeline import provenance as PV
 from EXPERIMENTS.paths import DASH_DATA, RESULTS_V2
 from EXPERIMENTS.pipeline.settings import load_config, strip_retired
 from EXPERIMENTS.pipeline.spec import SpecError
-from EXPERIMENTS.pipeline.scoring import person_scale
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
 from EXPERIMENTS.tuning import budget as BG
 from ML import config as MC
@@ -152,7 +151,7 @@ def _timing(runs):
             start[p, d, int(i)] = min(start.get((p, d, int(i)), np.inf), f - _span_s(js))
             first.setdefault((e, p, d, int(i)), []).append(f)
         if e == 'FE_A0' and (p, d) not in scale:
-            scale[p, d] = person_scale(z['y_own_target'])
+            scale[p, d] = ST.person_scale(z['y_own_target'])
     delay = {(e, p, d, i): max(fs) - start[p, d, i] for (e, p, d, i), fs in first.items()}
     return start, delay, scale
 

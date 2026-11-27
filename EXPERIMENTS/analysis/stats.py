@@ -1,4 +1,4 @@
-"""Statistics of study v2 (decision D9): per-person effects, a descriptive t-interval and the decision rule.
+"""Statistics of study v2 (decision D9): the nMAE scale, per-person effects, a descriptive t-interval and the decision rule.
 
 Effect of an arm for one person = log(median nMAE of the arm over its seeds / median nMAE of the comparator).
 "Differs" only when all people agree in sign and the absolute median effect is at least log(1 + min_effect);
@@ -10,6 +10,11 @@ from typing import Literal
 
 import numpy as np
 from scipy import stats as _st
+
+
+def person_scale(y_measured) -> float:
+    """Normalising scale of one person and target: 99th percentile of |measured target| (never a prediction)."""
+    return float(np.percentile(np.abs(np.asarray(y_measured, float)), 99))
 
 
 def person_effects(arm: dict[str, dict[int, float]], ref: dict[str, dict[int, float]]) -> dict[str, float]:

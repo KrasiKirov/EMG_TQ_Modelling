@@ -14,11 +14,9 @@ import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
-D = 'S1toS2'   # the only direction: train on session 1, test on session 2
-
 from EXPERIMENTS.paths import LOGS, ROOT
 from EXPERIMENTS.pipeline.run import results_root
-from EXPERIMENTS.pipeline.settings import BASE, load_config, strip_retired
+from EXPERIMENTS.pipeline.settings import BASE, DIRECTION as D, load_config, strip_retired
 from EXPERIMENTS.pipeline.spec import SpecError
 
 

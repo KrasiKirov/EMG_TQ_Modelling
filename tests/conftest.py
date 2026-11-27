@@ -42,7 +42,7 @@ def make_bundle(seed=0, T=T_TRIAL, subject='SYN'):
                          'pos': pos, 'tq': tq})
             idx += 2
     entries = sorted((float(a), float(passive_of(a))) for a in ANGLES)
-    return {'subject': subject, 'active': recs, 'maps': {'static': {'S1': list(entries), 'S2': list(entries)}}}
+    return {'subject': subject, 'active': recs, 'maps': {'S1': list(entries), 'S2': list(entries)}}
 
 
 @pytest.fixture

@@ -1,8 +1,8 @@
 """
 Session split and sliding windows.
 
-S1toS2   train on session 1 (first 80 % of each trial's windows train, then validation after a one-window gap), test
-         on all of session 2
+Train on session 1 (first 80 % of each trial's windows train, then validation after a one-window gap), test on all
+of session 2.
 
 A window is WINDOW steps x [GM, GL, SOL, TA, angle]; the target is the active torque at its last step. Each window
 carries metadata (trial, session, angle, time, index of its last sample).
@@ -12,9 +12,8 @@ import numpy as np
 
 from ML.config import FS, TRAIN_FRAC, WINDOW
 
-SESSION_SPLITS = {
-    'S1toS2': {'train': ['S1'], 'test': ['S2']},
-}
+TRAIN_SESSIONS = ('S1',)
+TEST_SESSIONS = ('S2',)
 
 
 def windows(feat, pos, y, window=WINDOW):
@@ -64,7 +63,7 @@ def _meta(rec, last):
             'last': last}
 
 
-def streams(protocol, recs, feats, targets, window=WINDOW):
+def streams(recs, feats, targets, window=WINDOW):
     """Whole trials for the carried-state model (``stateful.py``), aligned with ``build``.
 
     train : one stream per training-session trial with masks that select exactly the target samples of the
@@ -73,44 +72,42 @@ def streams(protocol, recs, feats, targets, window=WINDOW):
     test  : one stream per test-session trial; ``first`` = index of the first sample the windowed model scores,
             so the carried-state predictions are scored on the same samples.
     """
-    spec = SESSION_SPLITS[protocol]
     span = window - 1
     out = {'train': [], 'test': []}
     for r in recs:
         F = np.column_stack([feats[r['idx']], r['pos'][:, None]]).astype(np.float32)
         y = np.asarray(targets[r['idx']], np.float64)
         T = len(F)
-        if r['session'] in spec['train']:
+        if r['session'] in TRAIN_SESSIONS:
             n = T - span
             cut = span + int(n * TRAIN_FRAC)
             i = np.arange(T)
             first_val = cut + span
             out['train'].append({'X': F, 'y': y, 'rec': r, 'train_mask': (i >= span) & (i < cut),
                                  'val_mask': (i >= first_val) & (i < T - 1)})
-        elif r['session'] in spec['test']:
+        elif r['session'] in TEST_SESSIONS:
             out['test'].append({'X': F, 'y': y, 'rec': r, 'first': span})
     return out
 
 
-def build(protocol, recs, feats, targets, window=WINDOW):
-    """Train / val / test arrays for ``protocol``: every window of every trial (a new window starts at every
+def build(recs, feats, targets, window=WINDOW):
+    """Train / val / test arrays: every window of every trial (a new window starts at every
     sample). Validation starts one window span after the training cut, so no validation window reuses a training
     sample.
 
     feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}
     """
-    spec = SESSION_SPLITS[protocol]
     parts = {'train': [], 'val': [], 'test': []}
     for r in recs:
         X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window)
         n = len(X)
-        if r['session'] in spec['train']:
+        if r['session'] in TRAIN_SESSIONS:
             n_tr = int(n * TRAIN_FRAC)
             tr = slice(0, n_tr)
             parts['train'].append((X[tr], y[tr], _meta(r, last[tr])))
             v0 = n_tr + window - 1
             parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:])))
-        elif r['session'] in spec['test']:
+        elif r['session'] in TEST_SESSIONS:
             parts['test'].append((X, y, _meta(r, last)))
 
     out = {}

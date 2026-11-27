@@ -1,48 +1,33 @@
 """Build the windowed train / validation / test data for one subject (used by EXPERIMENTS/pipeline/run.py).
 
-Steps: load the subject (cached), fill IES's empty passive maps from its metadata, scale the EMG on training data,
-build the target (measured torque minus the passive torque), cut windows.
+Steps: load the subject (cached), scale the EMG on training data, build the target (measured torque minus the passive
+torque of the trial's own session), cut windows.
 """
 
-import copy
-
+from ML.preprocessing.passive_map import lookup_passive_torque
 from ML.research import splits
 from ML.research.data import load_subject
 from ML.research.emg_norm import normalise
-from ML.research.passive import passive_torque
 
 
-def apply_metadata_passive(bundle, subject):
-    """Fill empty static passive maps from ML.config.METADATA_PASSIVE (IES only); a measured map is never replaced."""
-    from ML.config import METADATA_PASSIVE
-    table = METADATA_PASSIVE.get(subject)
-    st = bundle['maps']['static']
-    if not table or any(len(st.get(s) or []) for s in ('S1', 'S2')):
-        return bundle
-    out = copy.copy(bundle)
-    out['maps'] = dict(bundle['maps'], static={'S1': sorted(table), 'S2': sorted(table)})
-    return out
-
-
-def prepare(subject, protocol, cfg):
+def prepare(subject, cfg):
     """Return (data, details): the windowed arrays of splits.build and a summary of the choices made.
 
     cfg: passive ('static' or 'none'), window (steps), state ('reset' or 'carry').
     """
-    bundle = apply_metadata_passive(load_subject(subject), subject)
+    bundle = load_subject(subject)
     recs = bundle['active']
-    spec = splits.SESSION_SPLITS[protocol]
-    train_recs = [r for r in recs if r['session'] in spec['train']]
+    train_recs = [r for r in recs if r['session'] in splits.TRAIN_SESSIONS]
     window = cfg['window']
 
     feats, _ = normalise(train_recs, recs, window=window)
     if cfg['passive'] == 'none':              # total torque: nothing subtracted
         targets = {r['idx']: r['tq'].copy() for r in recs}
     else:
-        targets = {r['idx']: r['tq'] - passive_torque(bundle, r) for r in recs}
-    data = splits.build(protocol, recs, feats, targets, window=window)
+        targets = {r['idx']: r['tq'] - lookup_passive_torque(bundle['maps'][r['session']], r['pos']) for r in recs}
+    data = splits.build(recs, feats, targets, window=window)
     if cfg['state'] == 'carry':
-        data['streams'] = splits.streams(protocol, recs, feats, targets, window=window)
+        data['streams'] = splits.streams(recs, feats, targets, window=window)
     data['trial_len'] = {r['idx']: len(r['t']) for r in recs}
     data['train_recs'] = train_recs
     details = {'passive': {'kind': cfg['passive']}, 'emg': {'kind': 'trainmax', 'scale_part': 'train'},
