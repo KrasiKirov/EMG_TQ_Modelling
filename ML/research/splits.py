@@ -5,7 +5,7 @@ S1toS2   train on session 1 (first 80 % of each trial's windows train, then vali
          on all of session 2
 
 A window is WINDOW steps x [GM, GL, SOL, TA, angle]; the target is the active torque at its last step. Each window
-carries metadata (trial, session, angle, time, rest).
+carries metadata (trial, session, angle, time, index of its last sample).
 """
 
 import numpy as np
@@ -57,12 +57,11 @@ def check_common_targets(recs):
                              f"common validation targets, fewer than {COMMON_MIN_S} s")
 
 
-def _meta(rec, last, part, rest=None):
+def _meta(rec, last):
     """Per-window metadata of one trial; ``last`` = index of each window's last sample."""
     return {'trial': np.full(len(last), rec['idx']), 'angle': np.full(len(last), rec['angle']),
             'session': np.array([rec['session']] * len(last)), 't': rec['t'][last].astype(np.float32),
-            'last': last, 'part': np.array([part] * len(last)),
-            'rest': (rest[last] if rest is not None else np.zeros(len(last), bool))}
+            'last': last}
 
 
 def streams(protocol, recs, feats, targets, window=WINDOW):
@@ -93,32 +92,30 @@ def streams(protocol, recs, feats, targets, window=WINDOW):
     return out
 
 
-def build(protocol, recs, feats, targets, window=WINDOW, rest=None):
+def build(protocol, recs, feats, targets, window=WINDOW):
     """Train / val / test arrays for ``protocol``: every window of every trial (a new window starts at every
     sample). Validation starts one window span after the training cut, so no validation window reuses a training
     sample.
 
-    feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}; rest: optional {trial idx: (T,) bool}
+    feats, targets: {trial idx: (T, 4) EMG}, {trial idx: (T,) torque}
     """
     spec = SESSION_SPLITS[protocol]
     parts = {'train': [], 'val': [], 'test': []}
     for r in recs:
         X, y, last = windows(feats[r['idx']], r['pos'], targets[r['idx']], window)
-        rr = rest[r['idx']] if rest is not None else None
         n = len(X)
         if r['session'] in spec['train']:
             n_tr = int(n * TRAIN_FRAC)
             tr = slice(0, n_tr)
-            parts['train'].append((X[tr], y[tr], _meta(r, last[tr], 'train', rr)))
+            parts['train'].append((X[tr], y[tr], _meta(r, last[tr])))
             v0 = n_tr + window - 1
-            parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:], 'val', rr)))
+            parts['val'].append((X[v0:], y[v0:], _meta(r, last[v0:])))
         elif r['session'] in spec['test']:
-            parts['test'].append((X, y, _meta(r, last, 'test', rr)))
+            parts['test'].append((X, y, _meta(r, last)))
 
     out = {}
     for p, items in parts.items():
         out[f'X_{p}'] = np.concatenate([x for x, _, _ in items])
         out[f'y_{p}'] = np.concatenate([y for _, y, _ in items])
         out[f'meta_{p}'] = {k: np.concatenate([m[k] for _, _, m in items]) for k in items[0][2]}
-    out['train_angles'] = sorted({float(np.round(a, 3)) for a in out['meta_train']['angle']})
     return out

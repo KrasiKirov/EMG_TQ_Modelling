@@ -35,13 +35,10 @@ CHANNEL_COLORS = {
     'ta':       '#8c564b',   # brown
 }
 
-# Aliases for backward compatibility with old short names
-_NAME_ALIASES = {'pos': 'position', 'tq': 'torque'}
-
 
 def _ch_label(col: str):
     """Return (name, unit) for y-axis label."""
-    key = _NAME_ALIASES.get(col.lower(), col.lower())
+    key = col.lower()
     return CHANNEL_META.get(key, (col, ''))
 
 
@@ -51,7 +48,7 @@ _COLOR_PALETTE = list(CHANNEL_COLORS.values())
 
 def _ch_color(col: str, idx: int = 0) -> str:
     """Return the hex colour for a channel by name, then by index."""
-    key = _NAME_ALIASES.get(col.lower(), col.lower())
+    key = col.lower()
     c = CHANNEL_COLORS.get(key)
     if c:
         return c

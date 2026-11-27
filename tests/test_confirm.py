@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from EXPERIMENTS.analysis import confirm as CF
-from EXPERIMENTS.pipeline import provenance as PV, run as PR, spec as SPEC
+from EXPERIMENTS.pipeline import provenance as PV, settings as ST, spec as SPEC
 from EXPERIMENTS.protocol import lock as LK, protocol as PT
 
 P = PT.load()
@@ -47,7 +47,7 @@ def study(tmp_path, monkeypatch):
                 changes['window'] = cell['window']      # no spec: the run's own window is the protocol cell's
             else:
                 (cfg_dir / f'{e}.json').write_text(json.dumps({'id': e, 'title': e, 'changes': changes}))
-            cfg = dict(PR.BASE, **changes)
+            cfg = dict(ST.BASE, **changes)
             if 'train_stride' in cell:                  # the overlap settings the run was made with
                 cfg.update(train_stride=cell['train_stride'], epoch_windows='full')
             for p in PEOPLE:

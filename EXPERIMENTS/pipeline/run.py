@@ -29,7 +29,7 @@ import numpy as np
 
 from EXPERIMENTS import paths as P
 from EXPERIMENTS.pipeline.fitters import drop_last_val_window, fit
-from EXPERIMENTS.pipeline.settings import BASE, DIRECTION, load_config  # noqa: F401  (re-exported)
+from EXPERIMENTS.pipeline.settings import DIRECTION, load_config
 from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 
 RESULTS = str(P.RESULTS)
@@ -37,12 +37,8 @@ RESULTS_V2 = str(P.RESULTS_V2)
 RCFG_KEYS = ('passive', 'window', 'state')     # the settings ML.research.prepare reads
 
 
-def is_study(exp):
-    return study_of(exp) is not None
-
-
 def results_root(exp):
-    """Study runs live apart from v1, so v1 scripts never read them."""
+    """Results folder of a spec: its study's folder, or EXPERIMENTS/results for runs outside a study."""
     st = study_of(exp)
     if st is None:
         return RESULTS
@@ -99,9 +95,9 @@ def main(argv=None):
     t_prep = time.time() - t0
     out = os.path.join(a.out_root or results_root(a.exp), a.exp, a.subject, a.direction)
     os.makedirs(out, exist_ok=True)
-    pred, info, data = fit(data, cfg, a.seed,
-                           save_weights=os.path.join(out, f'seed{a.seed}.weights.h5') if a.save_weights else None,
-                           protocol_file=st.protocol_file if st else STUDIES['study_v2'].protocol_file)
+    pred, info = fit(data, cfg, a.seed,
+                      save_weights=os.path.join(out, f'seed{a.seed}.weights.h5') if a.save_weights else None,
+                      protocol_file=st.protocol_file if st else STUDIES['study_v2'].protocol_file)
     t_train = time.time() - t0 - t_prep
 
     val_pred = info.pop('val_pred')

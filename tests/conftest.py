@@ -38,7 +38,7 @@ def make_bundle(seed=0, T=T_TRIAL, subject='SYN'):
             pos = np.full(T, a) + 0.001 * rng.standard_normal(T)
             tq = 5.0 * env.sum(axis=1) + passive_of(a)
             recs.append({'idx': idx, 'comment': f'{sess} {a:.2f}', 'session': sess, 'angle': float(a),
-                         't': 1.0 + np.arange(T) / FS, 'env_raw': env, 'env_max1k': env.max(axis=0) * 1.1,
+                         't': 1.0 + np.arange(T) / FS, 'env_raw': env,
                          'pos': pos, 'tq': tq})
             idx += 2
     entries = sorted((float(a), float(passive_of(a))) for a in ANGLES)

@@ -17,11 +17,6 @@ _P = PT.load()
 ANCHOR = dict(_P['anchor'])
 
 
-def cells() -> dict[str, dict]:
-    """{cell: protocol entry} for the live cells: 6 always-run and 3 gated (full overlap or carried state)."""
-    return {k: dict(v) for k, v in PT.live_cells(_P).items()}
-
-
 def changes(cell: str) -> dict:
     """The run settings of one cell (the keys run.py reads); KeyError for a retired overlap cell."""
     return {k: v for k, v in PT.live_cells(_P)[cell].items() if k in RUN_KEYS}

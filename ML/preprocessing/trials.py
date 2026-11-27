@@ -1,7 +1,5 @@
 """Trial classification by comment, and the split of a passive trial into its static holds (1 kHz recordings)."""
 
-import re
-
 import numpy as np
 
 POSITION_COL = 'position'   # ankle angle column name (rad)
@@ -15,16 +13,8 @@ _SETTLE_SAMPLES = 1000        # samples to skip after a step (1 s at 1000 Hz)
 
 
 def _parse_comment(comment: str):
-    """Parse a trial comment into (trial_type 'mvc'|'passive'|'active', session 'test'|'retest'|None, position 'p1'..'p8'|None)."""
+    """Parse a trial comment into (trial_type 'mvc'|'passive'|'active', session 'test'|'retest'|None)."""
     comment = comment.lower().strip()
-
-    # Position: match "p3" style OR "pos indx 3" / "indx 3" style
-    m = re.search(r'p(\d+)', comment)
-    if m:
-        pos = m.group(0)
-    else:
-        m2 = re.search(r'(?:pos\s*)?indx\s*(\d+)', comment)
-        pos = f"p{m2.group(1)}" if m2 else None
 
     # Determine session (retest must be checked before test)
     if 'retest' in comment:
@@ -35,18 +25,18 @@ def _parse_comment(comment: str):
         session = None
 
     if comment.startswith('mvc'):
-        return 'mvc', session, pos
+        return 'mvc', session
     elif 'passive' in comment:
-        return 'passive', session, pos
+        return 'passive', session
     else:
-        return 'active', session, pos
+        return 'active', session
 
 
 def classify_trials(trials):
     """Split trials into (mvc, passive, active) lists and tag each with ``attrs['session']`` from its comment."""
     mvc, passive, active = [], [], []
     for df in trials:
-        t_type, session, _ = _parse_comment(df.attrs.get('comment', ''))
+        t_type, session = _parse_comment(df.attrs.get('comment', ''))
         df.attrs['session'] = session
         if t_type == 'mvc':
             mvc.append(df)

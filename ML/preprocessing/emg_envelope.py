@@ -22,24 +22,15 @@ _NON_EMG_NAMES = {'time', 'pos', 'tq', 'position', 'torque'}
 
 def detect_emg_columns(df):
     """
-    EMG column names of a trial DataFrame (by keyword, excluding time / position / torque), sorted to
-    CANONICAL_EMG_ORDER so the features are always [MG, LG, SOL, TA].
+    EMG column names of a trial DataFrame (by keyword, excluding time / position / torque), in CANONICAL_EMG_ORDER
+    so the features are always [MG, LG, SOL, TA]. ValueError for an EMG-like column outside that order.
     """
-    emg_cols = set()
-    for col in df.columns:
-        col_lower = col.lower()
-        if col_lower.endswith(('_env', '_env_norm', '_rect')):
-            continue
-        if col_lower in _NON_EMG_NAMES:
-            continue
-        if any(kw in col_lower for kw in _EMG_KEYWORDS):
-            emg_cols.add(col)
-
-    # Sort to canonical order: [gm, gl, sol, ta]
-    ordered = [c for c in CANONICAL_EMG_ORDER if c in emg_cols]
-    # Append any unexpected columns that weren't in the canonical list
-    ordered += sorted(emg_cols - set(ordered))
-    return ordered
+    emg_cols = {c for c in df.columns
+                if c.lower() not in _NON_EMG_NAMES and any(kw in c.lower() for kw in _EMG_KEYWORDS)}
+    extra = sorted(emg_cols - set(CANONICAL_EMG_ORDER))
+    if extra:
+        raise ValueError(f'unexpected EMG column(s) {extra}; expected {CANONICAL_EMG_ORDER}')
+    return [c for c in CANONICAL_EMG_ORDER if c in emg_cols]
 
 
 def _filters():

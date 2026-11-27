@@ -1,25 +1,8 @@
-"""
-Keras training of the windowed LSTM (ML.models.lstm) on plain MSE, with the schedule in ML.config.TRAINING.
-
-Training angles closer than KNOT_TOL are merged into knots (stored in the run info).
-"""
+"""Keras training of the windowed LSTM (ML.models.lstm) on plain MSE, with the schedule in ML.config.TRAINING."""
 
 import numpy as np
 
 from ML.config import CLIPNORM, MIN_LR, TRAINING
-
-KNOT_TOL = 0.02   # rad: training trials closer than this share an angle group
-
-
-def angle_groups(train_angles):
-    """Merge near-identical training angles into knots (sorted)."""
-    knots = []
-    for a in sorted(train_angles):
-        if knots and a - knots[-1][-1] < KNOT_TOL:
-            knots[-1].append(a)
-        else:
-            knots.append([a])
-    return np.array([np.mean(k) for k in knots])
 
 
 def fit_predict(data, units, layers, dropout, seed=0, lr=None, batch=None, save_weights=None, verbose=0):
@@ -38,7 +21,6 @@ def fit_predict(data, units, layers, dropout, seed=0, lr=None, batch=None, save_
 
     tf.keras.utils.set_random_seed(seed)
     sch = TRAINING
-    knots = angle_groups(data['train_angles'])
     y_tr, y_va = data['y_train'].astype(np.float64), data['y_val'].astype(np.float64)
 
     model = build_lstm(data['X_train'].shape[1], data['X_train'].shape[2], units, layers, dropout)
@@ -57,7 +39,7 @@ def fit_predict(data, units, layers, dropout, seed=0, lr=None, batch=None, save_
     best = int(np.argmin(hist.history['val_loss']))
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
             'best_val_loss': float(hist.history['val_loss'][best]),
-            'knots': knots.tolist(), 'n_params': int(model.count_params()),
+            'n_params': int(model.count_params()),
             'lr': lr or sch['lr'],
             'updates': int(model.optimizer.iterations.numpy()),
             'clipnorm': CLIPNORM, 'optimizer_clipnorm': model.optimizer.clipnorm, 'max_epochs': sch['epochs'],

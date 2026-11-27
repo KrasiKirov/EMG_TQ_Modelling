@@ -11,12 +11,13 @@ import argparse
 import json
 from pathlib import Path
 
+from EXPERIMENTS.paths import PROTOCOL_DIR
 from EXPERIMENTS.pipeline import spec as SPEC
 from EXPERIMENTS.pipeline.settings import strip_retired
 from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import make_specs as MS, select as SEL
 
-P = json.loads((PT.HERE / 'window_sweep.json').read_text())
+P = json.loads((PROTOCOL_DIR / 'window_sweep.json').read_text())
 REF = {'reset': ('FE_cell_w50_full', 'window'), 'carry': ('FE_A0', 'chunk')}
 REUSED = {'w50': [('FE_cell_w50_full', s) for s in (10, 11, 12)],
           'carry200': [('FE_cell_carry_2s', s) for s in (10, 11, 12)] + [('FE_A0', s) for s in (13, 14)]}

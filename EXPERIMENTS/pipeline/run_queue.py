@@ -85,16 +85,15 @@ def main():
             cfgs[exp] = load_config(exp)[1]
         done = is_done(res, cfgs[exp])
         if not done and name not in skip and name not in seen:
-            seen.add(j[2])
+            seen.add(name)
             todo.append(j)
     print(f'{len(jobs)} jobs, {len(todo)} to run, {a.workers} workers', flush=True)
     os.makedirs(LOGS, exist_ok=True)
-    env = dict(os.environ)
 
     def run(job):
         res, cmd, name, _ = job
         with open(LOGS / f'{name}.log', 'w') as f:
-            r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, env=env, cwd=ROOT)
+            r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, cwd=ROOT)
         print(('done ' if r.returncode == 0 else f'FAILED({r.returncode}) ') + name, flush=True)
 
     with ThreadPoolExecutor(a.workers) as ex:

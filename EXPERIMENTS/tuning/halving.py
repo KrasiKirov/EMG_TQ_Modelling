@@ -39,17 +39,3 @@ def gate(screen: dict[str, dict[str, float]], shorter: dict[str, dict[str, dict[
     stops = (np.median(list(rat.values())) > 1 + margin
              and sum(r > 1 + margin for r in rat.values()) >= min_people)
     return not stops, ref, rat
-
-
-def gated_lengths_to_run(decisions: dict[str, bool], order: list[str] = _G['order']) -> list[str]:
-    """Gated lengths to run next, in order: every length that passed, then the next unscreened one; a stopped length
-    stops every longer one."""
-    out = []
-    for cell in order:
-        d = decisions.get(cell)
-        if d is False:
-            break
-        out.append(cell)
-        if d is None:
-            break
-    return out

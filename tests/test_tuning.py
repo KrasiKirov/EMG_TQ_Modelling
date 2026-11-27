@@ -36,7 +36,7 @@ def test_live_cells_drop_overlap():
     live = PT.live_cells(PT.load())
     assert not any(c.endswith(('_o75', '_o50', '_o0')) for c in live)
     assert {'w20_full', 'w50_full', 'w100_full', 'carry_2s', 'carry_5s', 'carry_10s'} <= set(live)
-    assert SPC.cells() == live and len(live) == 9
+    assert len(live) == 9
 
 
 def test_make_specs_refuses_retired_cell(tmp_path):
@@ -141,13 +141,6 @@ def test_gate_one_comparison_against_best_shorter_length():
     # 8 % worse than the best shorter length: continues
     cont, ref, _ = HV.gate({'x': dict.fromkeys(P6, 0.216)}, {'w20_full': a, 'w50_full': b})
     assert cont is True and ref == 'w50_full'
-
-
-def test_stopped_length_stops_longer():
-    assert HV.gated_lengths_to_run({'w200_full': False}) == []
-    assert HV.gated_lengths_to_run({'w200_full': True, 'w500_full': False}) == ['w200_full']
-    assert HV.gated_lengths_to_run({'w200_full': True}) == ['w200_full', 'w500_full']
-    assert HV.gated_lengths_to_run({}) == ['w200_full']
 
 
 CENTER = dict(units=16, layers=2, dropout=0.05, lr=0.001, batch=64)

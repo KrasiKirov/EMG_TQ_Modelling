@@ -32,9 +32,7 @@ def _merge_nearby(raw, pos_tolerance):
 
 
 def _extrapolate(positions, torques, x):
-    """Linear extrapolation beyond the measured range of passive positions."""
-    if len(positions) < 2:
-        return float(torques[0]) if len(torques) > 0 else 0.0
+    """Linear extrapolation beyond the measured range of passive positions (at least 2 of them)."""
     if x < positions[0]:
         p0, p1 = positions[0], positions[1]
         t0, t1 = torques[0],   torques[1]
@@ -59,9 +57,8 @@ def lookup_passive_torque(passive_entries, ankle_position_rad):
 
     positions = np.array([p for p, _ in passive_entries])
     torques   = np.array([t for _, t in passive_entries])
-    # np.interp clamps at boundaries; use manual linear extrapolation instead
-    return float(np.interp(ankle_position_rad, positions, torques,
-                           left=None, right=None)
+    # np.interp clamps at the boundaries, so outside the map the two boundary points are extrapolated instead
+    return float(np.interp(ankle_position_rad, positions, torques)
                  if positions[0] <= ankle_position_rad <= positions[-1]
                  else _extrapolate(positions, torques, ankle_position_rad))
 

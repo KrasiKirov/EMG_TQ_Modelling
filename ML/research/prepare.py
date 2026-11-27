@@ -1,18 +1,15 @@
 """Build the windowed train / validation / test data for one subject (used by EXPERIMENTS/pipeline/run.py).
 
 Steps: load the subject (cached), fill IES's empty passive maps from its metadata, scale the EMG on training data,
-build the target (measured torque minus the passive torque), find rest periods from the EMG, cut windows.
+build the target (measured torque minus the passive torque), cut windows.
 """
 
 import copy
-
-import numpy as np
 
 from ML.research import splits
 from ML.research.data import load_subject
 from ML.research.emg_norm import normalise
 from ML.research.passive import passive_torque
-from ML.research.rest_flags import rest_flags
 
 
 def apply_metadata_passive(bundle, subject):
@@ -43,13 +40,11 @@ def prepare(subject, protocol, cfg):
         targets = {r['idx']: r['tq'].copy() for r in recs}
     else:
         targets = {r['idx']: r['tq'] - passive_torque(bundle, r) for r in recs}
-    rest = rest_flags(bundle)
-    data = splits.build(protocol, recs, feats, targets, window=window, rest=rest)
+    data = splits.build(protocol, recs, feats, targets, window=window)
     if cfg['state'] == 'carry':
         data['streams'] = splits.streams(protocol, recs, feats, targets, window=window)
     data['trial_len'] = {r['idx']: len(r['t']) for r in recs}
     data['train_recs'] = train_recs
     details = {'passive': {'kind': cfg['passive']}, 'emg': {'kind': 'trainmax', 'scale_part': 'train'},
-               'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')},
-               'rest_frac_train': float(np.mean(data['meta_train']['rest']))}
+               'n_windows': {p: int(len(data[f'y_{p}'])) for p in ('train', 'val', 'test')}}
     return data, details

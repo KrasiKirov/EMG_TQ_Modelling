@@ -2,7 +2,6 @@
 the study-v2-only settings 2026-11-26) and spec loading."""
 import pytest
 
-from EXPERIMENTS.pipeline import run as PR
 from EXPERIMENTS.pipeline import settings as ST
 from EXPERIMENTS.pipeline.spec import CONFIGS, SpecError
 
@@ -11,8 +10,8 @@ BASE_2026_11_26 = dict(passive='static', units=8, layers=2, dropout=0.3, model='
 
 
 def test_base_frozen():
-    assert PR.BASE == BASE_2026_11_26
-    assert list(PR.BASE) == list(BASE_2026_11_26)
+    assert ST.BASE == BASE_2026_11_26
+    assert list(ST.BASE) == list(BASE_2026_11_26)
 
 
 def test_every_committed_spec_validates():
@@ -34,10 +33,6 @@ def test_unknown_key_is_rejected():
 def test_carry_limits():
     with pytest.raises(SpecError, match='carry'):
         ST.validate(dict(ST.BASE, state='carry', model='ridge_lagged'))
-
-
-def test_run_reexports_settings():
-    assert PR.BASE is ST.BASE and PR.load_config is ST.load_config
 
 
 def test_base_has_no_retired_keys():

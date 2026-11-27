@@ -4,7 +4,7 @@ import json
 import numpy as np
 import pytest
 
-from EXPERIMENTS.pipeline import run as PR
+from EXPERIMENTS.pipeline import run as PR, settings as ST
 from ML import config as RC
 from ML.research import splits as SP
 from ML.research.emg_norm import normalise
@@ -35,7 +35,6 @@ def test_scale_from_train_part_only(synthetic_bundle):
             r['env_raw'][cut:] *= 50.0           # validation block
         else:
             r['env_raw'] *= 50.0                  # test session
-        r['env_max1k'] = r['env_raw'].max(axis=0) * 1.1
     _, scale2 = normalise(_recs(b2), b2['active'], window=20)
     assert np.allclose(scale, scale2)
 
@@ -111,7 +110,7 @@ def test_clipnorm_windowed_applied(patch_subject, monkeypatch):
 
 
 def _cfg(**over):
-    cfg = dict(PR.BASE, units=4, layers=1, dropout=0.0)
+    cfg = dict(ST.BASE, units=4, layers=1, dropout=0.0)
     cfg.update(over)
     return cfg
 

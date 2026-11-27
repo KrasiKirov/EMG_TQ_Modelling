@@ -100,6 +100,3 @@ def test_cli_rounds_and_gate(tmp_path, monkeypatch, capsys):
     g = json.loads(capsys.readouterr().out)
     assert g['continues'] is False and g['reference'] == 'w20_full' and len(g['ratios']) == 6   # w200 last: worst
 
-
-def test_choose_ridge_alpha():
-    assert SEL.choose_ridge_alpha({0.1: 0.3, 1.0: 0.2, 10.0: 0.25}) == 1.0

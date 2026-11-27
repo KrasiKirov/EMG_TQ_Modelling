@@ -15,13 +15,13 @@ from pathlib import Path
 
 import numpy as np
 
-from EXPERIMENTS.paths import RESULTS_V2
+from EXPERIMENTS.paths import PROTOCOL_DIR, RESULTS_V2
 from EXPERIMENTS.pipeline import spec as SPEC
 from EXPERIMENTS.pipeline.settings import strip_retired
 from EXPERIMENTS.protocol import protocol as PT
 from EXPERIMENTS.tuning import halving as HV, make_specs as MS, select as SEL, space as SPC
 
-P = json.loads((PT.HERE / 'fine_round_2.json').read_text())
+P = json.loads((PROTOCOL_DIR / 'fine_round_2.json').read_text())
 _S2 = PT.load()
 NET = ('units', 'layers', 'dropout', 'lr', 'batch')
 

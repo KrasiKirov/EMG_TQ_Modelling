@@ -12,9 +12,7 @@ from pathlib import Path
 
 from EXPERIMENTS.paths import PROTOCOL_DIR, RESULTS_V2
 
-HERE = PROTOCOL_DIR
-PATH = HERE / 'study_v2.json'
-DEVIATIONS = HERE / 'deviations.json'
+PATH = PROTOCOL_DIR / 'study_v2.json'
 
 
 @dataclass(frozen=True)

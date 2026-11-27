@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from EXPERIMENTS.pipeline import provenance as PV
-from EXPERIMENTS.pipeline import run as PR
+from EXPERIMENTS.pipeline import run as PR, settings as ST
 
 FAST = dict(batch=256, lr=0.003, lr_factor=0.5, lr_patience=6, early=15, epochs=2)
 
@@ -43,7 +43,7 @@ def test_same_seed_identical(patch_subject, monkeypatch):
 
 
 def _cfg(**over):
-    cfg = dict(PR.BASE, units=4, layers=1, dropout=0.0)
+    cfg = dict(ST.BASE, units=4, layers=1, dropout=0.0)
     cfg.update(over)
     return cfg
 

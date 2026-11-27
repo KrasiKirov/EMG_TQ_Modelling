@@ -3,7 +3,7 @@ Load one subject into a "bundle" of per-trial records at 100 Hz (cached per subj
 
 active : one dict per active trial, both sessions: idx (0-based trial index), comment, session ('S1' = lab "test",
          'S2' = "retest"), angle (rad), t (s, t[0] = 1.0 after the start-up trim), env_raw (T, 4) envelopes
-         [GM, GL, SOL, TA], env_max1k (4,) maximum of the 1 kHz envelope over the kept samples, pos (rad), tq (Nm)
+         [GM, GL, SOL, TA], pos (rad), tq (Nm)
 maps   : {'static': {'S1': map, 'S2': map}}: each session's passive map from its static holds (YES: the worksheet
          values in ML.config.PASSIVE_TORQUE_OVERRIDES)
 
@@ -75,7 +75,7 @@ def _process_active(df, emg_cols, session):
     return {
         'idx': int(df.attrs.get('trial_index')), 'comment': df.attrs.get('comment', ''),
         'session': session, 'angle': float(np.mean(p[:n])), 't': t,
-        'env_raw': env[:n], 'env_max1k': env1k[s:e].max(axis=0),
+        'env_raw': env[:n],
         'pos': p[:n], 'tq': q[:n],
     }
 

@@ -145,7 +145,6 @@ def _read_data(f, h):
     arr = np.frombuffer(raw, dtype=dtype).astype(np.float64)
     # MATLAB reshape: (chanLen, nChan, nReal), column-major (Fortran order)
     arr = arr.reshape((h['chanLen'], h['nChan'], h['nReal']), order='F')
-    # Take first realization (nReal is almost always 1)
     return arr[:, :, 0]   # shape: (chanLen, nChan)
 
 
@@ -174,7 +173,7 @@ def read_flb(filepath, subject_id='default'):
             time = h['domainStart'] + np.arange(n_samples) * Ts
 
             # Reorder channels for IES01
-            if subject_id.upper() == 'IES01' and data.shape[1] >= 6:
+            if subject_id.upper() == 'IES01':
                 if data.shape[1] != 6:
                     raise ValueError('IES channel mapping expects exactly six channels.')
                 data = data[:, IES01_CHANNEL_ORDER]

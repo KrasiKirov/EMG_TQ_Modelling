@@ -100,11 +100,6 @@ def choose_a0(tables, out=None, cell_winners=None, ridge_alpha=None) -> str:
     return a0
 
 
-def choose_ridge_alpha(val_by_alpha: dict[float, float]) -> float:
-    """The α with the lowest session-1 validation nMAE (A1, one person)."""
-    return min(val_by_alpha, key=lambda a: (val_by_alpha[a], a))
-
-
 def round_ids(rnd, cell, configs_dir=None):
     from EXPERIMENTS.pipeline import spec as SPEC
     return sorted(p.stem for p in Path(configs_dir or SPEC.CONFIGS).glob(f'TS2_{rnd}_{cell}_*.json'))
