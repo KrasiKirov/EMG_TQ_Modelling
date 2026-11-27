@@ -28,17 +28,24 @@ def fit_predict(data, units, layers, dropout, seed=0, lr=None, batch=None, save_
     cbs = [ReduceLROnPlateau(monitor='val_loss', factor=sch['lr_factor'], patience=sch['lr_patience'],
                              min_lr=MIN_LR, verbose=0),
            EarlyStopping(monitor='val_loss', patience=sch['early'], restore_best_weights=True, verbose=0)]
+    # Keras 3 starts both from no best loss, so a NaN in epoch 1 would become the best and never be beaten;
+    # starting from inf makes a NaN epoch count as no improvement (same as before when every loss is finite).
+    for cb in cbs:
+        cb.best = np.inf
     val = (data['X_val'], y_va.astype(np.float32))
     hist = model.fit(data['X_train'], y_tr.astype(np.float32),
                      validation_data=val, epochs=sch['epochs'], batch_size=batch or sch['batch'],
                      callbacks=cbs, shuffle=False, verbose=verbose)
+    val_loss = hist.history['val_loss']
+    if not np.isfinite(val_loss).any():
+        raise FloatingPointError(f'validation loss is not finite in any of the {len(val_loss)} epochs')
+    best = cbs[1].best_epoch                 # the epoch whose weights were restored; NaN epochs never count
     if save_weights:
         model.save_weights(save_weights)
     pred = model.predict(data['X_test'], verbose=0, batch_size=4096).ravel().astype(np.float64)
     pv = model.predict(data['X_val'], verbose=0, batch_size=4096).ravel().astype(np.float64)
-    best = int(np.argmin(hist.history['val_loss']))
     info = {'epochs': len(hist.history['loss']), 'best_epoch': best + 1,
-            'best_val_loss': float(hist.history['val_loss'][best]),
+            'best_val_loss': float(val_loss[best]),
             'n_params': int(model.count_params()),
             'lr': lr or sch['lr'],
             'updates': int(model.optimizer.iterations.numpy()),

@@ -80,7 +80,7 @@ def fit_predict_carry(train, test, chunk, units, layers, dropout, seed=0, lr=Non
         return [loss] + list(res[1:])
 
     last_train = int(np.max(np.nonzero(m_tr.any(axis=0))[0])) + 1
-    hist, best, best_w, wait, plateau = [], np.inf, None, 0, 0
+    hist, best, best_ep, best_w, wait, plateau = [], np.inf, 0, None, 0, 0
     for ep in range(sch['epochs']):
         states = _zeros(model, len(X))
         for a in range(0, last_train, chunk):
@@ -93,14 +93,16 @@ def fit_predict_carry(train, test, chunk, units, layers, dropout, seed=0, lr=Non
         hist.append(val)
         if verbose:
             print(f'epoch {ep + 1}: val {val:.4f}', flush=True)
-        if val < best - 1e-12:
-            best, best_w, wait, plateau = val, model.get_weights(), 0, 0
+        if val < best - 1e-12:                 # False for NaN: a NaN epoch counts as no improvement
+            best, best_ep, best_w, wait, plateau = val, ep, model.get_weights(), 0, 0
         else:
             wait += 1; plateau += 1
             if plateau >= sch['lr_patience']:
                 opt.learning_rate.assign(max(float(opt.learning_rate.numpy()) * sch['lr_factor'], MIN_LR)); plateau = 0
             if wait >= sch['early']:
                 break
+    if best_w is None:
+        raise FloatingPointError(f'validation loss is not finite in any of the {len(hist)} epochs')
     model.set_weights(best_w)
     pv = run_streams(model, X, chunk=max(chunk, 200))
     val_streams = [pv[i, :len(s['y'])].astype(np.float64) for i, s in enumerate(train)]
@@ -108,7 +110,7 @@ def fit_predict_carry(train, test, chunk, units, layers, dropout, seed=0, lr=Non
     for s in test:
         p = run_streams(model, np.asarray(s['X'], np.float32)[None], chunk=max(chunk, 200))[0]
         preds.append(p.astype(np.float64))
-    info = {'state': 'carry', 'chunk': chunk, 'clipnorm': CLIPNORM, 'epochs': len(hist), 'best_epoch': int(np.argmin(hist)) + 1,
+    info = {'state': 'carry', 'chunk': chunk, 'clipnorm': CLIPNORM, 'epochs': len(hist), 'best_epoch': best_ep + 1,
             'best_val_loss': float(best), 'first_val_loss': float(hist[0]),
             'n_params': int(model.count_params()), 'max_epochs': sch['epochs'], 'shuffle': False,
             'val_streams': val_streams}
