@@ -7,7 +7,7 @@ Run ONE experiment configuration for one subject and one seed, trained on sessio
 The configuration is read from EXPERIMENTS/configs/<exp>.json: the defaults in settings.BASE updated with the spec's
 "changes".
 
-Data building, passive torque, EMG scaling and the training loops come from ML/research. As in the original split,
+Data building, passive torque, EMG scaling and the training loops come from ML/dataset and ML/training. As in the original split,
 the last validation window of every training trial is dropped. The training schedule is ML.config.TRAINING (Nadam
 0.003, batch 64, at most 400 epochs, learning rate x 0.5 after 6 flat epochs, early stop after 15); a spec may set
 lr and batch.
@@ -34,7 +34,7 @@ from EXPERIMENTS.protocol.protocol import STUDIES, study_of
 
 RESULTS = str(P.RESULTS)
 RESULTS_V2 = str(P.RESULTS_V2)
-RCFG_KEYS = ('passive', 'window', 'state')     # the settings ML.research.prepare reads
+RCFG_KEYS = ('passive', 'window', 'state')     # the settings ML.dataset.prepare reads
 
 
 def results_root(exp):
@@ -81,12 +81,12 @@ def main(argv=None):
     except RuntimeError:          # TensorFlow already running in this process (tests): keep its settings
         pass
 
-    from ML.research.prepare import prepare
+    from ML.dataset.prepare import prepare
 
     t0 = time.time()
     data, details = prepare(a.subject, {k: cfg[k] for k in RCFG_KEYS})
     if st:
-        from ML.research.splits import check_common_targets
+        from ML.dataset.splits import check_common_targets
         try:
             check_common_targets(data['train_recs'])
         except ValueError as e:

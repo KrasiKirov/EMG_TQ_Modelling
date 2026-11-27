@@ -33,9 +33,9 @@ def fit_ridge(data, protocol_file=STUDIES['study_v2'].protocol_file):
 
 
 def fit_carry(data, cfg, seed):
-    """state='carry': train ML.research.stateful on whole trials; return test predictions on the same samples
+    """state='carry': train ML.training.carried on whole trials; return test predictions on the same samples
     (and in the same order) as the windowed model's data['y_test'] / data['meta_test']."""
-    from ML.research import stateful as ST
+    from ML.training import carried as ST
     train, test = data['streams']['train'], data['streams']['test']
     preds, info = ST.fit_predict_carry(train, test, chunk=cfg['chunk'] or cfg['window'], units=cfg['units'],
                                        layers=cfg['layers'], dropout=cfg['dropout'], seed=seed, lr=cfg['lr'])
@@ -57,7 +57,7 @@ def fit_carry(data, cfg, seed):
 def fit(data, cfg, seed, *, save_weights=None, protocol_file=STUDIES['study_v2'].protocol_file):
     """Fit the model ``cfg`` asks for on ``data`` (already through drop_last_val_window): returns (test predictions,
     info). info['val_pred'] holds the validation predictions."""
-    from ML.research import train as RT
+    from ML.training import windowed as RT
     if cfg['state'] == 'carry':
         return fit_carry(data, cfg, seed)
     if cfg['model'] == 'ridge_lagged':

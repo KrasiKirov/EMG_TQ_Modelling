@@ -64,7 +64,7 @@ def _meta(rec, last):
 
 
 def streams(recs, feats, targets, window=WINDOW):
-    """Whole trials for the carried-state model (``stateful.py``), aligned with ``build``.
+    """Whole trials for the carried-state model (ML.training.carried), aligned with ``build``.
 
     train : one stream per training-session trial with masks that select exactly the target samples of the
             windowed model's training and validation windows (the last validation window excluded, as

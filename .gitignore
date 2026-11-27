@@ -29,16 +29,17 @@ docs/superpowers/
 /Capstone LSTM Comparison Implementation Plan.md
 
 # Participant recordings and their metadata are never committed (the repository is public); share them privately.
+# data/ holds them (data/subjects/) and the processed-data cache (data/cache/); ML/subjects/ is the old location.
+/data/
 /ML/subjects/
 
 # Runs outside a pre-registered study stay local (the v1 results are kept in tag v1-artifacts-2026-11-26)
 /EXPERIMENTS/results/
-ML/research/_cache/
 
 # Run logs and the old screening outputs stay local (the old outputs are kept in tag pre-cleanup-2026-11)
 /EXPERIMENTS/logs/
 /ML/archive/
-/ML/research/results/
+/ML/research/
 
 # Markdown (docs, reports, notes) stays local; only the one-line README and the ML guide are in the repository
 *.md

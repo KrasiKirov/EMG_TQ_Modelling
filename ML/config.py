@@ -3,18 +3,17 @@ data overrides."""
 
 import os
 
-# Paths
-ML_DIR    = os.path.dirname(__file__)
-DATA_DIR  = os.environ.get('EMG_DATA_DIR', os.path.join(ML_DIR, 'subjects'))
+# Paths: data/ at the repository root holds the recordings and the cache (not in git); the variables move them
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.environ.get('EMG_DATA_DIR', os.path.join(ROOT, 'data', 'subjects'))
 
 # Sampling rates
 FS_RAW = 1000.0            # Hz, recordings
 DOWNSAMPLE = 10            # 1000 Hz -> 100 Hz
 FS = FS_RAW / DOWNSAMPLE   # Hz, after downsampling
 
-# Processed-data cache (one bundle per participant and envelope setting); RESEARCH_CACHE_DIR moves it
-CACHE_DIR = os.environ.get('RESEARCH_CACHE_DIR',
-                           os.path.join(os.path.dirname(os.path.abspath(__file__)), 'research', '_cache'))
+# Processed-data cache (one bundle per participant)
+CACHE_DIR = os.environ.get('RESEARCH_CACHE_DIR', os.path.join(ROOT, 'data', 'cache'))
 
 # Windows and the session-1 split
 WINDOW = 20              # steps (200 ms) per input window
@@ -87,7 +86,7 @@ PASSIVE_TORQUE_OVERRIDES = {
 # Passive torque from experiment metadata
 # Used only when the subject has no relaxed-hold passive map.
 # IES: no relaxed holds or usable passive trials were recorded; these are the passive torques noted at each
-# position during the MVC trials (ML/subjects/experiment_metadata_IES.docx, recorded once for both sessions).
+# position during the MVC trials (data/subjects/experiment_metadata_IES.docx, recorded once for both sessions).
 # (position_rad, passive_torque_Nm), same sign convention as the recordings (checked against IES's rest torque).
 METADATA_PASSIVE = {
     'IES': [(-0.6, 1.6), (-0.4929, 1.36), (-0.3857, 0.6), (-0.2786, 0.4),

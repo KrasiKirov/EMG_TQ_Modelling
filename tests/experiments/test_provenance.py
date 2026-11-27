@@ -25,7 +25,7 @@ def _short_schedule(monkeypatch, schedule):
 
 
 def _data(patch_subject, window=20):
-    from ML.research.prepare import prepare
+    from ML.dataset.prepare import prepare
     rcfg = dict(passive='static', window=window, state='reset')
     data, _ = prepare('SYN', rcfg)
     return PR.drop_last_val_window(data)
@@ -34,7 +34,7 @@ def _data(patch_subject, window=20):
 def test_same_seed_identical(patch_subject, monkeypatch):
     import tensorflow as tf
     tf.config.threading.set_intra_op_parallelism_threads(1)
-    from ML.research import train as RT
+    from ML.training import windowed as RT
     _short_schedule(monkeypatch, dict(FAST, epochs=3))
     data = _data(patch_subject)
     p1, _ = RT.fit_predict(data, 8, 2, 0.3, seed=0)

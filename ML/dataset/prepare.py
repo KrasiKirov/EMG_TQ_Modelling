@@ -5,9 +5,9 @@ torque of the trial's own session), cut windows.
 """
 
 from ML.preprocessing.passive_map import lookup_passive_torque
-from ML.research import splits
-from ML.research.data import load_subject
-from ML.research.emg_norm import normalise
+from ML.dataset import splits
+from ML.dataset.bundle import load_subject
+from ML.dataset.emg_norm import normalise
 
 
 def prepare(subject, cfg):

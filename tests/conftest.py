@@ -1,4 +1,4 @@
-"""Shared fixtures: a synthetic subject with the same structure as ML.research.data.load_subject.
+"""Shared fixtures: a synthetic subject with the same structure as ML.dataset.bundle.load_subject.
 
 8 positions from -0.8 to +0.2 rad, 2 sessions, 90 s at 100 Hz per trial; torque = 5 * sum of the 4 envelopes plus
 a passive torque that depends on the angle only. No participant data is used.
@@ -53,7 +53,7 @@ def synthetic_bundle():
 @pytest.fixture
 def patch_subject(monkeypatch, synthetic_bundle):
     """load_subject('SYN', ...) returns the synthetic bundle (any keyword arguments are ignored)."""
-    from ML.research import data as RD, prepare as RR
+    from ML.dataset import bundle as RD, prepare as RR
 
     def fake(subject, *args, **kwargs):
         assert subject == 'SYN', subject

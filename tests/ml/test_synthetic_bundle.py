@@ -6,5 +6,5 @@ def test_synthetic_bundle_shapes(synthetic_bundle):
 
 
 def test_patch_subject(patch_subject):
-    from ML.research import prepare as RR
+    from ML.dataset import prepare as RR
     assert RR.load_subject('SYN')['subject'] == 'SYN'

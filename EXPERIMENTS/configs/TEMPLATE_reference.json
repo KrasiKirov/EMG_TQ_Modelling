@@ -18,7 +18,7 @@
   "batch": null
  },
  "settings_help": {
-  "model": "'lstm' = the LSTM (ML/models/lstm.py, or ML/research/stateful.py with state 'carry'); 'ridge_lagged' = ridge regression on lagged envelopes (ML/models/baselines.py)",
+  "model": "'lstm' = the LSTM (ML/models/lstm.py, or ML/training/carried.py with state 'carry'); 'ridge_lagged' = ridge regression on lagged envelopes (ML/models/baselines.py)",
   "passive": "target: 'static' = measured torque minus the passive torque of the same session's relaxed holds (active torque); 'none' = total measured torque",
   "window": "time steps per input window (one step = 10 ms, so 20 = 200 ms). With state 'carry' it sets the samples at the start of each trial that are not scored",
   "state": "'reset' = LSTM state reset at every window; 'carry' = state carried through the whole trial",

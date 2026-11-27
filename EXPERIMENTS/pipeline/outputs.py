@@ -16,7 +16,7 @@ def _save_npz(path, **arrays):
 
 def write_run(stem, data, pred, val_pred, res):
     """``stem`` = results folder / 'seed<k>'; ``res`` is the run summary written as JSON (dict order kept)."""
-    from ML.research.splits import common_mask
+    from ML.dataset.splits import common_mask
     stem = str(stem)
     mv = data['meta_val']
     _save_npz(stem + '_val.npz', y=data['y_val'].astype(np.float32),

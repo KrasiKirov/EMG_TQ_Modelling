@@ -5,7 +5,7 @@ import pytest
 
 from EXPERIMENTS.protocol import lock as LK
 from EXPERIMENTS.tuning import select as SEL
-from tests.test_tuning import P6, _fake_results
+from tests.experiments.test_tuning import P6, _fake_results
 
 IDS = ['TS2_R3_w20_full_anchor', 'TS2_R3_w20_full_d0', 'TS2_R3_w20_full_d1']
 

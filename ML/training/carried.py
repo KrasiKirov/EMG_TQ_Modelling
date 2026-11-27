@@ -1,5 +1,5 @@
 """
-LSTM with carried state (experiment setting ``"state": "carry"``); ``train.fit_predict`` is the stateless version.
+LSTM with carried state (experiment setting ``"state": "carry"``); ``windowed.fit_predict`` resets the state at every window.
 
 training   the training trials run side by side, one batch lane each, in chunks of ``chunk`` samples; the weights
            update after each chunk and the hidden and cell states carry into the next chunk (truncated BPTT).
@@ -7,7 +7,7 @@ training   the training trials run side by side, one batch lane each, in chunks 
 validation after each epoch the whole training-session trial runs from a zero state; loss on the validation part.
 test       each test trial runs once from a zero state.
 
-Loss (plain MSE), optimiser, LR schedule and early stopping follow ``train.fit_predict`` (ML.config.TRAINING).
+Loss (plain MSE), optimiser, LR schedule and early stopping follow ``windowed.fit_predict`` (ML.config.TRAINING).
 """
 import numpy as np
 
