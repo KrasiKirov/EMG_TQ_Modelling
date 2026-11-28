@@ -42,31 +42,44 @@ One participant, settings of the study v2 model A0 (spec `EXPERIMENTS/configs/FE
    `tq` (T,) Nm, `t` (T,) s, its session and mean angle.
 5. **Target** = measured torque − passive torque (setting `passive: static`). The passive torque is looked up at each
    sample's angle in the map of that trial's own session, built from its static relaxed holds. IES has no usable
-   holds: its map comes from `ML.config.METADATA_PASSIVE`. `passive: none` keeps the total torque.
+   holds: its map comes from `ML.config.METADATA_PASSIVE`. YES's maps use the worksheet values in
+   `ML.config.PASSIVE_TORQUE_OVERRIDES`. `passive: none` keeps the total torque.
 6. **EMG scaling:** each channel ÷ its largest value in the training part of the session-1 trials.
 7. **Split** (session 1 → session 2, results folder `S1toS2`): in every session-1 trial the first 80 % of windows train; validation starts one window
    length later, so no validation window reuses a training sample; the pipeline drops the last validation window.
-   Every session-2 trial is test data.
+   Every session-2 trial is test data. To compare window lengths on the same samples, each run also marks the
+   validation targets that every window length up to 10 s has (`splits.common_mask`, saved as `common` in the
+   validation file); every training trial must keep at least 5 s of them.
 8. **Windows:** 20 consecutive samples (0.2 s) × [GM, GL, SOL, TA, angle] = (20, 5); the target is the torque at
    the last sample. A new window starts at every sample.
-9. **Model:** A0 is a 64-unit, 1-layer LSTM trained on whole trials in chunks of 200 samples with its state
-   carried between chunks (`training/carried.py`). Nadam with gradient clipping (norm 1), MSE loss, learning rate × 0.5
-   after 6 flat epochs, early stopping after 15, at most 400 epochs (`ML.config.TRAINING`), samples in time order
-   (no shuffling).
+9. **Model:** A0 is a 64-unit, 1-layer LSTM with dropout 0.017, trained on whole trials in chunks of 200 samples
+   with its state carried between chunks (`training/carried.py`). Nadam starting at learning rate 0.00754, with
+   gradient clipping (norm 1), MSE loss, learning rate × 0.5 after 6 epochs without improvement (never below 1e-6),
+   early stopping after 15, at most 400 epochs (`ML.config.TRAINING`), samples in time order (no shuffling).
+   The model keeps the weights of the epoch with the lowest validation loss. An epoch whose validation loss is NaN
+   never counts as the best; if no epoch has a finite validation loss, the run stops with `FloatingPointError`.
 10. **Output:** torque predictions (Nm) for every sample of session 2 that a window ends on, plus the validation
     predictions.
 
 A spec can change only the passive target, window length, state, chunk, network size, dropout, learning
 rate, batch and model (LSTM or lagged ridge); `EXPERIMENTS/pipeline/settings.py` lists the defaults and allowed
 values, and `EXPERIMENTS/configs/TEMPLATE_reference.json` explains each one. Everything else above is fixed.
+The study v2 specs (`FE_`, `TS2_`) also list retired settings such as `balance`, `emg` or `input_step`: these are
+accepted only at the one value the study used, and `RETIRED` in `settings.py` lists them with the tag that keeps
+their removed code.
 
 ## Running
 
-From the repository root, with the environment in `requirements-lock.txt`:
+From the repository root, with Python 3.13 and the packages in `requirements-lock.txt`:
 
 ```sh
-python -m EXPERIMENTS.pipeline.run --exp FE_A0 --subject JM --seed 10
+python -m EXPERIMENTS.pipeline.run --exp FE_A0 --subject JM --seed 10 --out-root /tmp/emg_runs
 ```
+
+This writes the run to `/tmp/emg_runs/FE_A0/JM/S1toS2/seed10.*`. Without `--out-root`, a run goes into the study's
+results folder (`EXPERIMENTS/results_v2/FE_A0/...`), where the export and `EXPERIMENTS/analysis/confirm.py` count
+every seed file they find, so a test run there would change the study's results. Study runs (`FE_`, `TS2_`) also
+refuse to start on uncommitted code.
 
 - **Recordings:** `data/subjects/` at the repository root (not in git), or the folder named by `EMG_DATA_DIR`.
 - **Cache:** processed bundles are cached in `data/cache/`, or in `RESEARCH_CACHE_DIR`. Delete the cache after
